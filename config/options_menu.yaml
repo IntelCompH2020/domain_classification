@@ -1,0 +1,132 @@
+# This file contains the complete list of options in the main script.
+# It must contain at least a root menu with several options, and a description
+# of each option in the root menu.
+# Each option in any menu should have a description
+
+# ROOT MENU
+root:
+  options: 
+    # - create   <Some true options may be missed because the appropriate one
+    # - load      may have been selected by the starting command> 
+    - setup
+    - show_data
+    - reset_data
+    - import_data
+    - computeA
+    - computeB
+
+# In the following, each menu option is described.
+# GENERIC FORMAT OF AN OPTION DESCRIPTOR:
+# optionName:
+#   title: <Here, the text describing the option, that will be shown to user>
+#   options: <Contains the list of submenu options>
+#     <The list of options can be a simple list:>
+#     - option
+#     - option
+#     - ...
+#     <In this case, each option specifies a task to be done by the task
+#      manager, or a node of the navigation tree, that will be followed by
+#      further list of options>
+#     <Alternatively, options may contain a list of single-key dicts. This
+#      happens when the task has been already selected, but some input
+#      arguments are needed. 
+#      The single key of each dictionary specifes the way to get the input
+#      arguments. There are thres possible ways: >
+#     <1: 'parameter': in that case, the options are defined in another
+#                      dictionary, where the keys are the input arguments and
+#                      the values describe the meaning of the input argument>
+#     - parameter:
+#         param0: description
+#         param1: description
+#         ...
+#     <2: 'path': the input argument is one of the folder or file names
+#                 in the path specified in paths2data[name], where paths2data
+#                 is one the dictionaries required to create a MenuNavigator
+#                 object>
+#     - path: name  
+#     <3: 'get_method': the possible values of the input argument are computed
+#                       by the specified method 'name' defined in the task
+#                       TaskManager class>
+#     - get_method: name  
+#   post_opt: <Specify the list of options that will be activated after
+#              executing the selected task>
+#     - option  
+#     - option
+#     - option
+
+# ##########################
+# OPTIONS FROM THE ROOT MENU
+# For each option in the root menu, some info must be provided.
+# Note, also, that specific informacion can be provided about options that do
+# not appear in the root menu, but may be selected from the starting command
+# from the main script.
+create: 
+  title: Create new project
+  post_opts:
+    - setup
+
+load:
+  title: Load existing project
+
+setup: 
+  title: Activate configuration file
+
+show_data:
+  title: Show data sources
+  options:
+    - parameters:
+        features: Features
+        labels: A collection of labels
+        images: Nice images
+
+reset_data:
+  title: Reset data
+  options:
+    - reset_features
+    - reset_labels
+    - reset_images
+
+import_data:
+  title: Import data from external sources
+  options:
+    - parameters:
+        sql: Import data from sql database
+        files: Import data from files
+        url: Import data from the web
+
+computeA:
+  title: Basic computations with the very famous method A
+  options:
+    - parameters:
+        alg1: Use algorithm 1
+        alg2: Use algorithm 2
+        alg3: Use algorithm 3
+    - path: input    # This must be one of the keys in paths2data (see main)
+
+computeB:
+  title: Complex computations with the unknown method B
+  options:
+    - parameters:
+        alg4: Use algorithm 4
+        alg5: Use algorithm 5
+        alg6: Use algorithm 6
+    - path: input    # This must be one of the keys in paths2data (see main)
+    - get_method: get_model   # A method with this name must exist in the
+                              # taskmanager
+
+# #####################
+# Options for resetData
+reset_features:
+  title: Reset the features
+
+reset_labels:
+  title: Reset the labels
+  options:
+    - get_method: get_labels
+
+reset_images:
+  title: Reset the images
+  options:
+    - get_method: get_images
+
+
