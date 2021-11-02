@@ -6,14 +6,16 @@
 # ROOT MENU
 root:
   options: 
-    # - create   <Some true options may be missed because the appropriate one
-    # - load      may have been selected by the starting command> 
+    # - create   <Some true options may be missed because the appropriate one
+    # - load      may have been selected by the starting command> 
     - setup
-    - show_data
-    - reset_data
-    - import_data
-    - computeA
-    - computeB
+    - load_corpus
+    - get_labels
+    - load_labels
+    - reset_labels
+    - train_model
+    - get_feedback
+    - update_model
 
 # In the following, each menu option is described.
 # GENERIC FORMAT OF AN OPTION DESCRIPTOR:
@@ -65,68 +67,110 @@ create:
   post_opts:
     - setup
 
-load:
-  title: Load existing project
-
 setup: 
   title: Activate configuration file
 
-show_data:
-  title: Show data sources
-  options:
-    - parameters:
-        features: Features
-        labels: A collection of labels
-        images: Nice images
+load:
+  title: Load existing project
 
-reset_data:
-  title: Reset data
+load_corpus:
+  title: Load corpus (this will reset any previous corpus in the project)
   options:
-    - reset_features
-    - reset_labels
-    - reset_images
+    - get_method: _get_corpus_list
 
-import_data:
-  title: Import data from external sources
+get_labels:
+  title: Select a preliminary subcorpus from the positive class
   options:
-    - parameters:
-        sql: Import data from sql database
-        files: Import data from files
-        url: Import data from the web
+    - import_labels
+    - get_labels_by_keywords
+    - get_labels_by_topics
+    - get_labels_by_definitions
 
-computeA:
-  title: Basic computations with the very famous method A
+load_labels:
+  title: Load labels
   options:
-    - parameters:
-        alg1: Use algorithm 1
-        alg2: Use algorithm 2
-        alg3: Use algorithm 3
-    - path: input    # This must be one of the keys in paths2data (see main)
-
-computeB:
-  title: Complex computations with the unknown method B
-  options:
-    - parameters:
-        alg4: Use algorithm 4
-        alg5: Use algorithm 5
-        alg6: Use algorithm 6
-    - path: input    # This must be one of the keys in paths2data (see main)
-    - get_method: get_model   # A method with this name must exist in the
-                              # taskmanager
-
-# #####################
-# Options for resetData
-reset_features:
-  title: Reset the features
+    - get_method: _get_labelset_list
 
 reset_labels:
-  title: Reset the labels
+  title: Reset labels
   options:
-    - get_method: get_labels
+    - get_method: _get_labelset_list
 
-reset_images:
-  title: Reset the images
-  options:
-    - get_method: get_images
+train_model:
+  title: Train classifier model with the available labels
+
+get_feedback:
+  title: Launch the GUI to get relevance feedback from user
+
+update_model:
+  title: Update the classifier model with the latest relevance feedback
+
+# ######################
+# Options for get_labels
+import_labels:
+    title: Import labels from a source file
+
+get_labels_by_keywords:
+    title: Get subcorpus from a given list of keywords
+
+get_labels_by_topics:
+    title: Get subcorpus from a topic selection function
+
+get_labels_by_definitions:
+    title: Get subcorpus from documents defining categories
+
+
+
+
+# ####################
+# ####################
+# ####################
+# ####################
+# ####################
+# Options for
+
+
+# import_data:
+#   title: Import data from external sources
+#   options:
+#     - parameters:
+#         sql: Import data from sql database
+#         files: Import data from files
+#         url: Import data from the web
+
+# computeA:
+#   title: Basic computations with the very famous method A
+#   options:
+#     - parameters:
+#         alg1: Use algorithm 1
+#         alg2: Use algorithm 2
+#         alg3: Use algorithm 3
+#     - path: input    # This must be one of the keys in paths2data (see main)
+
+# computeB:
+#   title: Complex computations with the unknown method B
+#   options:
+#     - parameters:
+#         alg4: Use algorithm 4
+#         alg5: Use algorithm 5
+#         alg6: Use algorithm 6
+#     - path: input    # This must be one of the keys in paths2data (see main)
+#     - get_method: get_model   # A method with this name must exist in the
+#                               # taskmanager
+
+# # #####################
+# # Options for resetData
+# reset_features:
+#   title: Reset the features
+
+# reset_labels:
+#   title: Reset the labels
+#   options:
+#     - get_method: get_labels
+
+# reset_images:
+#   title: Reset the images
+#   options:
+#     - get_method: get_images
 
 

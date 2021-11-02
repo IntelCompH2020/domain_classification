@@ -235,7 +235,7 @@ class baseTaskManager(object):
 
         print(f"-- Project {p2p} created.")
         print("---- Project metadata saved in {0}".format(self.metadata_fname))
-        print("---- A default config file has been located in the project " +
+        print("---- A default config file has been located in the project "
               "folder.")
         print("---- Open it and set your configuration variables properly.")
         print("---- Once the config file is ready, activate it.")
@@ -257,9 +257,9 @@ class baseTaskManager(object):
 
         # Check and clean project folder location
         if not self.path2metadata.exists():
-            exit(f'-- ERROR: Metadata file {self.path2metadata} does not' +
-                 '   exist.\n' +
-                 '   This is likely not a project folder. Select another ' +
+            exit(f'-- ERROR: Metadata file {self.path2metadata} does not'
+                 '   exist.\n'
+                 '   This is likely not a project folder. Select another '
                  'project or create a new one.')
 
         else:
@@ -280,9 +280,9 @@ class baseTaskManager(object):
                 self.setup()
                 print(f'-- Project {self.path2project} succesfully loaded.')
             else:
-                exit(f'-- WARNING: Project {self.path2project} loaded, but ' +
-                     'configuration file could not be activated. You can: \n' +
-                     '(1) revise and reactivate the configuration file, or\n' +
+                exit(f'-- WARNING: Project {self.path2project} loaded, but '
+                     'configuration file could not be activated. You can: \n'
+                     '(1) revise and reactivate the configuration file, or\n'
                      '(2) delete the project folder to restart')
 
         return
@@ -298,7 +298,7 @@ class baseTaskManager(object):
         print("\n*** ACTIVATING CONFIGURATION FILE")
 
         if self.ready2setup is False:
-            exit("---- Error: you cannot setup a project that has not been " +
+            exit("---- Error: you cannot setup a project that has not been "
                  "created or loaded")
 
         with open(self.path2config, 'r', encoding='utf8') as f:

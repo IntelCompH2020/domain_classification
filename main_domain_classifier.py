@@ -28,7 +28,7 @@ from code.task_manager import TaskManager
 parser = argparse.ArgumentParser()
 parser.add_argument('--p', type=str, default=None,
                     help="path to a new or an existing project")
-parser.add_argument('--source', type=str, default='../source_data',
+parser.add_argument('--source', type=str, default='../datasets',
                     help="path to the source data folder")
 args = parser.parse_args()
 
