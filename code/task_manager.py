@@ -8,6 +8,7 @@ import pathlib
 
 # You might need to update the location of the baseTaskManager class
 from .base_taskmanager import baseTaskManager
+from .domain_classifier.preprocessor import Preprocessor
 
 
 class TaskManager(baseTaskManager):
@@ -81,13 +82,42 @@ class TaskManager(baseTaskManager):
 
         return corpus_list
 
-    def _get_labels_list(self):
+    def _get_labelset_list(self):
         """
         Returns the list of available corpus
         """
         corpus_list = ['arxiv']
 
         return corpus_list
+
+    def _get_keywords(self):
+        """
+        Ask the user for a list of keywords.
+
+        Returns
+        -------
+        keywords : list of str
+            List of keywords
+        """
+
+        keywords_fpath = (self.path2source / self.corpus_name / 'queries'
+                          / 'IA_keywords_SEAD_REV_JAG.txt')
+
+        df_keywords = pd.read_csv(keywords_fpath)
+        kw_library = list(df_keywords['artificial neural network'])
+        logging.info(f"-- Suggested list of keywords: {kw_library}")
+        logging.info(
+            f"-- Suggested list of keywords: {', '.join(kw_library)}")
+
+        str_keys = input('-- Write your keywords (separated by commas, '
+                         'e.g.: "gradient descent, gibbs sampling")')
+
+        # Split by commas, removing leading and trailing spaces
+        keywords = [x.strip() for x in str_keys.split(',')]
+        # Remove multiple spaces
+        keywords = [' '.join(x.split()) for x in keywords]
+
+        return keywords
 
     def load_corpus(self, corpus_name):
         """
@@ -115,37 +145,55 @@ class TaskManager(baseTaskManager):
         # ###########
         # Load corpus
 
-        # Load corpus 1
-        path2corpus1 = self.path2corpus / corpus_fpath1
-        df_corpus1 = pd.read_excel(path2corpus1)
-        logging.info(f'-- Corpus fp7 loaded with {len(df_corpus1)} documents')
-        path2corpus2 = self.path2corpus / corpus_fpath2
-        df_corpus2 = pd.read_excel(path2corpus2)
+        if self.corpus_name == 'EU_projects':
 
-        # The following is because df_corpus2['frameworkProgramme'] appears as
-        # "H2020;H2020H...;H2020" in some cases
-        df_corpus2['frameworkProgramme'] = 'H2020'
+            # Load corpus 1
+            path2corpus1 = self.path2corpus / corpus_fpath1
+            df_corpus1 = pd.read_excel(path2corpus1, engine='openpyxl')
+            logging.info(
+                f'-- Corpus fp7 loaded with {len(df_corpus1)} documents')
+            path2corpus2 = self.path2corpus / corpus_fpath2
+            df_corpus2 = pd.read_excel(path2corpus2, engine='openpyxl')
 
-        logging.info(
-            f'-- Corpus H2020 loaded with {len(df_corpus2)} documents')
+            # The following is because df_corpus2['frameworkProgramme']
+            # appears as "H2020;H2020H...;H2020" in some cases
+            df_corpus2['frameworkProgramme'] = 'H2020'
 
-        # Test if corpus ids overlap
-        doc_ids_in_c1 = list(df_corpus1['id'])
-        doc_ids_in_c2 = list(df_corpus2['id'])
-        common_ids = set(doc_ids_in_c1).intersection(doc_ids_in_c2)
-        if len(common_ids) > 0:
-            logging.warn(f"-- There are {len(common_ids)} ids appearing in "
-                         'both corpus')
+            logging.info(
+                f'-- Corpus H2020 loaded with {len(df_corpus2)} documents')
 
-        # Join corpus.
-        # Original fields are:
-        # 'id', 'acronym', 'status', 'title', 'startDate', 'endDate',
-        # 'totalCost', 'ecMaxContribution', 'frameworkProgramme', 'subCall',
-        # 'fundingScheme', 'nature', 'objective', 'contentUpdateDate', 'rcn'
-        self.df_corpus = df_corpus1.append(df_corpus2)
-        breakpoint()
-        self.df_corpus = self.df_corpus[['id', 'acronym', 'title',
-                                         'objective', 'rcn']]
+            # Test if corpus ids overlap
+            doc_ids_in_c1 = list(df_corpus1['id'])
+            doc_ids_in_c2 = list(df_corpus2['id'])
+            common_ids = set(doc_ids_in_c1).intersection(doc_ids_in_c2)
+            if len(common_ids) > 0:
+                logging.warn(f"-- There are {len(common_ids)} ids appearing "
+                             "in both corpus")
+
+            # Join corpus.
+            # Original fields are:
+            #     id, acronym, status, title, startDate, endDate, totalCost,
+            #     ecMaxContribution, frameworkProgramme, subCall,
+            #     fundingScheme, nature, objective, contentUpdateDate, rcn
+            # WARNING: We DO NOT use "id" as the project id.
+            #          We use "rcn" instead, renamed as "id"
+            self.df_corpus = df_corpus1.append(df_corpus2)
+            self.df_corpus = self.df_corpus[['acronym', 'title',
+                                             'objective', 'rcn']]
+
+            # Map column names to normalized names
+            mapping = {'rcn': 'id',
+                       'objective': 'description'}
+            self.df_corpus.rename(columns=mapping, inplace=True)
+
+            # Fill nan cells with empty strings
+            self.df_corpus.fillna("", inplace=True)
+
+            logging.info(f"-- Aggregated corpus with {len(self.df_corpus)} "
+                         " documents")
+
+        else:
+            logging.warning("-- Unknown corpus")
 
         return
 
@@ -165,8 +213,12 @@ class TaskManager(baseTaskManager):
         # Load excel file of "models"
         labels_fpath = path2labels / labels_fname
         self.df_labels = pd.read_excel(labels_fpath)
-        # Original label file contains 'id', 'Title', 'Abstract',
-        self.df_labels.rename(columns={'Project ID': 'id'}, inplace=True)
+        # Original label file contains 'Project ID', 'Title', 'Abstract',
+        # Normalize column names:
+        mapping = {'Project ID': 'id',
+                   'Title': 'title',
+                   'Abstract': 'description'}
+        self.df_labels.rename(columns=mapping, inplace=True)
         # All samples are (hopefully) from the positive class
         self.df_labels['class'] = 1
 
@@ -175,8 +227,7 @@ class TaskManager(baseTaskManager):
 
         # Check if all labeled docs are in the corpus.
         ids_labels = self.df_labels['id']
-        breakpoint()
-        ids_corpus = self.df_corpus['rcn']
+        ids_corpus = self.df_corpus['id']
         strange_labels = set(ids_labels) - set(ids_corpus)
         if len(strange_labels) > 0:
             logging.warn(f"-- There are {len(strange_labels)} documents in the"
@@ -190,9 +241,14 @@ class TaskManager(baseTaskManager):
 
     def get_labels_by_keywords(self):
 
-        labels = ['lab1', 'lab2', 'lab3']
+        keywords = self._get_keywords()
+        logging.info(f'-- Selected keywords: {keywords}')
 
-        return labels
+        prep = Preprocessor()
+        docs = self.df_corpus['description']
+        y = prep.score_by_keywords(docs, keywords)
+
+        return y
 
     def get_labels_by_topics(self):
 
