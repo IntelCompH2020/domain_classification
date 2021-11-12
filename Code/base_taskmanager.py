@@ -48,6 +48,7 @@ class baseTaskManager(object):
         self.path2project = pathlib.Path(path2project)
         self.path2metadata = self.path2project / metadata_fname
         self.path2config = self.path2project / config_fname
+
         if path2source is not None:
             self.path2source = pathlib.Path(path2source)
 
@@ -271,7 +272,7 @@ class baseTaskManager(object):
 
             # The following is used to automatically update any changes in the
             # keys of the self.f_struct dictionary. This will be likely
-            # unnecesary once a stable version of the code is reached, but it
+            # unnecesary once a stable version of the Code is reached, but it
             # is useful to update older application projects.
             self._update_folders(self.f_struct)
 
