@@ -243,6 +243,59 @@ class baseTaskManager(object):
 
         return
 
+    def configure_project_folder(self):
+        """
+        Configures an application project.
+        To do so, it defines the main folder structure, and creates
+        the project folder, specified in self.path2project
+        """
+
+        print("\n*** CREATING NEW PROJECT")
+
+        # #####################
+        # Create project folder
+
+        # This is just to abbreviate
+        p2p = self.path2project
+        p2c = self.path2config
+
+        # ########################
+        # Add files and subfolders
+
+        # Subfolders
+        self._update_folders(None)
+
+        # Place a copy of a default configuration file in the project folder.
+        # This file should be adapted by the user to the new project settings.
+        p2default_c = pathlib.Path(
+            'config', p2c.stem + '.default' + p2c.suffix)
+        if p2default_c.is_file():
+            # If a default configuration file exists, it is copied into the
+            # project folder.
+            shutil.copyfile(p2default_c, p2c)
+
+        # #####################
+        # Update project status
+
+        # Update the state of the project.
+        self.state['isProject'] = True
+        self.metadata.update({'state': self.state})
+
+        # Save metadata
+        self._save_metadata()
+        # The project is ready to setup, but the user should edit the
+        # configuration file first
+        self.ready2setup = True
+
+        print(f"-- Project {p2p} created.")
+        print("---- Project metadata saved in {0}".format(self.metadata_fname))
+        print("---- A default config file has been located in the project "
+              "folder.")
+        print("---- Open it and set your configuration variables properly.")
+        print("---- Once the config file is ready, activate it.")
+
+        return
+
     def load(self):
         """
         Loads an existing project, by reading the metadata file in the project
