@@ -1381,6 +1381,11 @@ QPushButton:hover {
 QPushButton:pressed {	
 	background-color: #ABC2CB;
 	border: 2px solid #ABC2CB;
+}
+
+QToolTip {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
 }</string>
                             </property>
                             <property name="text">
@@ -1582,6 +1587,11 @@ QPushButton:hover {
 	border: 2px solid #ABC2CB;
 }
 QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+
+QToolTip {	
 	background-color: #ABC2CB;
 	border: 2px solid #ABC2CB;
 }</string>
