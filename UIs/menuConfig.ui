@@ -14,7 +14,7 @@
    <string>MusicalSpoon</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">background-color: #CFCEC6;</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_6">
    <item>
@@ -60,7 +60,7 @@
             <string notr="true">color: rgb(254, 121, 199);</string>
            </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#aa0000;&quot;&gt;DOMAIN &lt;/span&gt;&lt;span style=&quot; color:#aa0000;&quot;&gt;CLASSIFICATION&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#d67667;&quot;&gt;DOMAIN &lt;/span&gt;&lt;span style=&quot; color:#d67667;&quot;&gt;CLASSIFICATION&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -79,7 +79,7 @@
             <string notr="true">color: rgb(98, 114, 164);</string>
            </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#005500;&quot;&gt;A binary domain classifier based on &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#005500;&quot;&gt;positive labels and an active learning algorithm.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#816852;&quot;&gt;A binary domain classifier based on &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#816852;&quot;&gt;positive labels and an active learning algorithm.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -118,14 +118,19 @@
            <property name="font">
             <font>
              <family>Arial</family>
-             <pointsize>10</pointsize>
+             <pointsize>8</pointsize>
              <weight>50</weight>
              <italic>true</italic>
              <bold>false</bold>
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true"/>
+            <string notr="true">QLineEdit {	
+	background-color: #FFFFFF;
+	border-radius: 5px;
+	gridline-color: #FFFFFF;
+	border-bottom: 1px solid #FFFFFF;
+}</string>
            </property>
            <property name="text">
             <string>C:/project_data_small</string>
@@ -143,13 +148,25 @@
            <property name="font">
             <font>
              <family>Arial</family>
-             <pointsize>10</pointsize>
+             <pointsize>8</pointsize>
              <weight>50</weight>
              <bold>false</bold>
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true"/>
+            <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
            </property>
            <property name="text">
             <string> Select old/ create new project folder </string>
@@ -171,12 +188,17 @@
            <property name="font">
             <font>
              <family>Arial</family>
-             <pointsize>10</pointsize>
+             <pointsize>8</pointsize>
              <italic>true</italic>
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true"/>
+            <string notr="true">QLineEdit {	
+	background-color: #FFFFFF;
+	border-radius: 5px;
+	gridline-color: #FFFFFF;
+	border-bottom: 1px solid #FFFFFF;
+}</string>
            </property>
            <property name="text">
             <string>C:/mallet/S24Ever_corpus_small.txt</string>
@@ -194,13 +216,25 @@
            <property name="font">
             <font>
              <family>Arial</family>
-             <pointsize>10</pointsize>
+             <pointsize>8</pointsize>
              <weight>50</weight>
              <bold>false</bold>
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true"/>
+            <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
            </property>
            <property name="text">
             <string>Select source data folder</string>
@@ -235,13 +269,25 @@
            <property name="font">
             <font>
              <family>Arial</family>
-             <pointsize>12</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
+             <pointsize>8</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
             </font>
            </property>
            <property name="styleSheet">
-            <string notr="true"/>
+            <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
            </property>
            <property name="text">
             <string>START</string>

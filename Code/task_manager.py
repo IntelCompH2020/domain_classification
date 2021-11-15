@@ -119,6 +119,28 @@ class TaskManager(baseTaskManager):
 
         return keywords
 
+    def get_suggested_keywords(self):
+        """
+        Ask the user for a list of keywords.
+
+        Returns
+        -------
+        keywords : list of str
+            List of keywords
+        """
+
+        keywords_fpath = (self.path2source / self.corpus_name / 'queries'
+                          / 'IA_keywords_SEAD_REV_JAG.txt')
+
+        df_keywords = pd.read_csv(keywords_fpath)
+        kw_library = list(df_keywords['artificial neural network'])
+        suggested_keywords = ', '.join(kw_library)
+        logging.info(f"-- Suggested list of keywords: {kw_library}")
+        logging.info(
+            f"-- Suggested list of keywords: {suggested_keywords}")
+
+        return suggested_keywords
+
     def load_corpus(self, corpus_name):
         """
         Loads a dataframe of documents from a given corpus.
@@ -242,6 +264,17 @@ class TaskManager(baseTaskManager):
     def get_labels_by_keywords(self):
 
         keywords = self._get_keywords()
+        logging.info(f'-- Selected keywords: {keywords}')
+
+        prep = Preprocessor()
+        docs = self.df_corpus['description']
+        y = prep.score_by_keywords(docs, keywords)
+
+        return y
+
+    def get_labels_by_keywords_gui(self, keywords):
+
+        # keywords = self._get_keywords()
         logging.info(f'-- Selected keywords: {keywords}')
 
         prep = Preprocessor()

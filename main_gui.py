@@ -68,7 +68,7 @@ class PreConfig(QDialog):
         mainWindow = GUI(self.projectFolder, self.sourceFolder, tm)
         widget.addWidget(mainWindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
-        widget.resize(1680, 960)
+        widget.resize(1980, 1160)
         return
 
 
