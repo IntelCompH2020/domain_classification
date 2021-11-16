@@ -15,8 +15,8 @@ class Messages:
     INCORRECT_NO_LABEL_OPTION_SELECTED = 'You must first choose how you want to load the subcorpus.'
 
     INFO_SELECT_CORPUS = 'Double click on one of the corpus below listed in order to load it into the application.'
-    INFO_LOAD_LABELS = 'Select the option through which you want to load the labels and then clicked on the button ' \
-                       'Get subcorpus. If you are a list of keywords to get the subcorpus, you must first select the '\
+    INFO_LOAD_LABELS = 'Select the option through which you want to load the labels and then clicked on the button\n ' \
+                       'Get subcorpus. If you are a list of keywords to get the subcorpus, you must first select the\n '\
                        'keywords that you want to use.'
     INFO_TYPE_KEYWORDS = 'Write your keywords (separated by commas, e.g.: "gradient descent, gibbs sampling") '
 
