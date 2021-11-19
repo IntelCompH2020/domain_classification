@@ -83,6 +83,7 @@ get_labels:
   options:
     - import_labels
     - get_labels_by_keywords
+    - analyze_keywords
     - get_labels_by_topics
     - get_labels_by_definitions
 
@@ -112,6 +113,9 @@ import_labels:
 
 get_labels_by_keywords:
     title: Get subcorpus from a given list of keywords
+
+analyze_keywords:
+    title: Analyze the presence of selected keywords in the corpus
 
 get_labels_by_topics:
     title: Get subcorpus from a topic selection function
