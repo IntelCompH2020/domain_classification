@@ -1,20 +1,23 @@
-import numpy as np
 import pandas as pd
-import scipy.sparse as scp
 import logging
-import pathlib
+
+import matplotlib.pyplot as plt
 
 # Local imports
 
 # You might need to update the location of the baseTaskManager class
 from .base_taskmanager import baseTaskManager
-from .domain_classifier.preprocessor import Preprocessor
+from .data_manager import DataManager
+from .domain_classifier.preprocessor import CorpusDFProcessor
+from .utils import plotter
+
+from simpletransformers.classification import ClassificationModel
 
 
 class TaskManager(baseTaskManager):
     """
-    This is an example of task manager that extends the functionality of
-    the baseTaskManager class for a specific example application
+    This class extends the functionality of the baseTaskManager class for a
+    specific example application
 
     This class inherits from the baseTaskManager class, which provides the
     basic method to create, load and setup an application project.
@@ -61,14 +64,23 @@ class TaskManager(baseTaskManager):
         # This list can be modified within an active project by adding new
         # folders. Every time a new entry is found in this list, a new folder
         # is created automatically.
-        self.f_struct = {'figures': 'figures',
+        self.f_struct = {'labels': 'labels',
                          'output': 'output'}
+
+        # Main paths
+        # Path to the folder with the corpus files
+        self.path2corpus = None
+        # Path to the folder with label files
+        self.path2labels_out = self.path2project / self.f_struct['labels']
 
         # Corpus dataframe
         self.corpus_name = None    # Name of the corpus
-        self.path2corpus = None    # Path to the folder with the corpus files
         self.df_corpus = None      # Corpus dataframe
         self.df_labels = None      # Labels
+        self.keywords = None
+
+        # Datamanager
+        self.DM = DataManager(self.path2source, self.path2labels_out)
 
         return
 
@@ -77,20 +89,24 @@ class TaskManager(baseTaskManager):
         Returns the list of available corpus
         """
 
-        corpus_list = [e.name for e in self.path2source.iterdir()
-                       if e.is_dir()]
-
-        return corpus_list
+        return self.DM.get_corpus_list()
 
     def _get_labelset_list(self):
         """
         Returns the list of available corpus
         """
-        corpus_list = ['arxiv']
 
-        return corpus_list
+        if self.corpus_name is None:
+            logging.warning("\n")
+            logging.warning(
+                "-- No corpus loaded. You must load a corpus first")
+            labelset_list = []
+        else:
+            labelset_list = self.DM.get_labelset_list(self.corpus_name)
 
-    def _get_keywords(self):
+        return labelset_list
+
+    def _ask_keywords(self):
         """
         Ask the user for a list of keywords.
 
@@ -100,17 +116,14 @@ class TaskManager(baseTaskManager):
             List of keywords
         """
 
-        keywords_fpath = (self.path2source / self.corpus_name / 'queries'
-                          / 'IA_keywords_SEAD_REV_JAG.txt')
+        # Read available list of AI keywords
+        kw_library = self.DM.get_keywords_list(self.corpus_name)
 
-        df_keywords = pd.read_csv(keywords_fpath)
-        kw_library = list(df_keywords['artificial neural network'])
-        logging.info(f"-- Suggested list of keywords: {kw_library}")
         logging.info(
-            f"-- Suggested list of keywords: {', '.join(kw_library)}")
+            f"-- Suggested list of keywords: {', '.join(kw_library)}\n")
 
         str_keys = input('-- Write your keywords (separated by commas, '
-                         'e.g.: "gradient descent, gibbs sampling")')
+                         'e.g., "gradient descent, gibbs sampling") ')
 
         # Split by commas, removing leading and trailing spaces
         keywords = [x.strip() for x in str_keys.split(',')]
@@ -118,6 +131,54 @@ class TaskManager(baseTaskManager):
         keywords = [' '.join(x.split()) for x in keywords]
 
         return keywords
+
+    def _ask_label_tag(self):
+        """
+        Ask the user for a tag to compose the label file name.
+
+        Returns
+        -------
+        keywords : list of str
+            List of keywords
+        """
+
+        # Read available list of AI keywords
+        tag = input('\n-- Write a tag for the new label file: ')
+
+        return tag
+
+    def _ask_topics(self, topic_words):
+        """
+        Ask the user for a weighted list of topics
+        """
+
+        logging.info("-- Topic descriptions: ")
+        n_topics = len(topic_words)
+
+        for i in range(n_topics):
+            logging.info(f"-- -- Topic {i}: {topic_words[i]}")
+
+        logging.info("")
+        logging.info("-- Introduce your weigted topic list: ")
+        logging.info("   id_0, weight_0, id_1, weight_1, ...")
+        topic_weights_str = input(": ")
+
+        tw_list = topic_weights_str.split(',')
+
+        # Get topic indices as integers
+        keys = [int(k) for k in tw_list[::2]]
+        # Get topic weights as floats
+        weights = [float(w) for w in tw_list[1::2]]
+
+        # Normalize weights
+        sum_w = sum(weights)
+        weights = [w / sum_w for w in weights]
+
+        # Store in dictionary
+        tw = dict(zip(keys, weights))
+        logging.info(f"-- Normalized weights: {tw}")
+
+        return tw
 
     def load_corpus(self, corpus_name):
         """
@@ -130,161 +191,120 @@ class TaskManager(baseTaskManager):
             self.path2source
         """
 
+        # Store the name of the corpus an object attribute because later
+        # tasks will be referred to this corpus
         self.corpus_name = corpus_name
-        self.path2corpus = self.path2source / self.corpus_name
 
-        # ####################
-        # Paths and file names
-
-        # Some file and folder names that could be specific of the current
-        # corpus. They should be possibly moved to a config file
-        corpus_fpath1 = pathlib.Path('corpus') / 'Cordis-fp7' / 'project.xlsx'
-        corpus_fpath2 = (pathlib.Path('corpus') / 'Cordis-H2020'
-                         / 'project.xlsx')
-
-        # ###########
-        # Load corpus
-
-        if self.corpus_name == 'EU_projects':
-
-            # Load corpus 1
-            path2corpus1 = self.path2corpus / corpus_fpath1
-            df_corpus1 = pd.read_excel(path2corpus1, engine='openpyxl')
-            logging.info(
-                f'-- Corpus fp7 loaded with {len(df_corpus1)} documents')
-            path2corpus2 = self.path2corpus / corpus_fpath2
-            df_corpus2 = pd.read_excel(path2corpus2, engine='openpyxl')
-
-            # The following is because df_corpus2['frameworkProgramme']
-            # appears as "H2020;H2020H...;H2020" in some cases
-            df_corpus2['frameworkProgramme'] = 'H2020'
-
-            logging.info(
-                f'-- Corpus H2020 loaded with {len(df_corpus2)} documents')
-
-            # Test if corpus ids overlap
-            doc_ids_in_c1 = list(df_corpus1['id'])
-            doc_ids_in_c2 = list(df_corpus2['id'])
-            common_ids = set(doc_ids_in_c1).intersection(doc_ids_in_c2)
-            if len(common_ids) > 0:
-                logging.warn(f"-- There are {len(common_ids)} ids appearing "
-                             "in both corpus")
-
-            # Join corpus.
-            # Original fields are:
-            #     id, acronym, status, title, startDate, endDate, totalCost,
-            #     ecMaxContribution, frameworkProgramme, subCall,
-            #     fundingScheme, nature, objective, contentUpdateDate, rcn
-            # WARNING: We DO NOT use "id" as the project id.
-            #          We use "rcn" instead, renamed as "id"
-            self.df_corpus = df_corpus1.append(df_corpus2)
-            self.df_corpus = self.df_corpus[['acronym', 'title',
-                                             'objective', 'rcn']]
-
-            # Map column names to normalized names
-            mapping = {'rcn': 'id',
-                       'objective': 'description'}
-            self.df_corpus.rename(columns=mapping, inplace=True)
-
-            # Fill nan cells with empty strings
-            self.df_corpus.fillna("", inplace=True)
-
-            logging.info(f"-- Aggregated corpus with {len(self.df_corpus)} "
-                         " documents")
-
-        else:
-            logging.warning("-- Unknown corpus")
+        # Load corpus in a dataframe.
+        self.df_corpus = self.DM.load_corpus(self.corpus_name)
+        self.CorpusProc = CorpusDFProcessor(self.df_corpus)
 
         return
 
     def import_labels(self):
+        """
+        Import labels from file
+        """
 
-        # ####################
-        # Paths and file names
-
-        # Some file and folder names that could be specific of the current
-        # corpus. They should be possibly moved to a config file
-        path2labels = self.path2corpus / 'labels'
-        labels_fname = 'CORDIS720_3models.xlsx'
-
-        # ####################
-        # Doc selection for AI
-
-        # Load excel file of "models"
-        labels_fpath = path2labels / labels_fname
-        self.df_labels = pd.read_excel(labels_fpath)
-        # Original label file contains 'Project ID', 'Title', 'Abstract',
-        # Normalize column names:
-        mapping = {'Project ID': 'id',
-                   'Title': 'title',
-                   'Abstract': 'description'}
-        self.df_labels.rename(columns=mapping, inplace=True)
-        # All samples are (hopefully) from the positive class
-        self.df_labels['class'] = 1
-
-        # ############
-        # Check labels
-
-        # Check if all labeled docs are in the corpus.
-        ids_labels = self.df_labels['id']
         ids_corpus = self.df_corpus['id']
-        strange_labels = set(ids_labels) - set(ids_corpus)
-        if len(strange_labels) > 0:
-            logging.warn(f"-- There are {len(strange_labels)} documents in the"
-                         " labeled dataset that do not belong to the corpus")
-        # common_labels = set(ids_labels) - strange_labels
+        self.df_labels = self.DM.import_labels(
+            corpus_name=self.corpus_name, ids_corpus=ids_corpus)
 
-        logging.info(f"-- File with {len(self.df_labels)} labels from the "
-                     "positive class loaded")
+        return
+
+    def analyze_keywords(self):
+        """
+        Get a set of positive labels using keyword-based search
+        """
+
+        if self.keywords is None:
+            logging.info("-- No active keywords in this session.")
+            self.keywords = self._ask_keywords()
+
+        else:
+            logging.info("-- Analyzing current list of active keywords")
+
+        # Weight of the title words
+        wt = 2
+        logging.info(f'-- Selected keywords: {self.keywords}')
+
+        df_stats, kf_stats = self.CorpusProc.compute_keyword_stats(
+            self.keywords, wt)
+        plotter.plot_top_values(
+            df_stats, title="Document frequencies", xlabel="No. of docs")
+        plotter.plot_top_values(
+            kf_stats, title="Keyword frequencies", xlabel="No. of keywords")
+
+        y = self.CorpusProc.score_by_keywords(self.keywords, wt=20)
+
+        # Plot sorted document scores
+        plt.figure()
+        plt.plot(sorted(y))
+        plt.xlabel('Document')
+        plt.ylabel('Score')
+        plt.show(block=False)
 
         return
 
     def get_labels_by_keywords(self):
+        """
+        Get a set of positive labels using keyword-based search
+        """
 
-        keywords = self._get_keywords()
-        logging.info(f'-- Selected keywords: {keywords}')
+        # Weight of the title words
+        wt = 2
+        n_max = 2000
+        s_min = 1
 
-        prep = Preprocessor()
-        docs = self.df_corpus['description']
-        y = prep.score_by_keywords(docs, keywords)
+        self.keywords = self._ask_keywords()
+        tag = self._ask_label_tag()
 
-        return y
+        logging.info(f'-- Selected keywords: {self.keywords}')
+
+        # Find the documents with the highest scores given the keywords
+        ids = self.CorpusProc.filter_by_keywords(
+            self.keywords, wt=wt, n_max=n_max, s_min=s_min)
+
+        # Create dataframe of positive labels from the list of ids
+        self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
+
+        # Save labels
+        self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
+                            tag=tag)
+
+        return
 
     def get_labels_by_topics(self):
 
-        # ####################
-        # Paths and file names
+        # Weight of the title words
+        n_max = 2000
+        # Significance threshold.
+        s_min = 0.2
 
-        # Some file and folder names that could be specific of the current
-        # corpus. They should be possibly moved to a config file
-        topic_folder = 'topic_model'
-        topic_model_fname = 'modelo_sparse.npz'
-        metadata_fname = 'CORDIS720all-metadata.csv'
+        # Load topics
+        T, df_metadata, topic_words = self.DM.load_topics()
 
-        # ###########
-        # Topic model
+        # Remove all documents (rows) from the topic matrix, that are not
+        # in self.df_corpus.
+        T, df_metadata = self.CorpusProc.remove_docs_from_topics(
+            T, df_metadata, col_id='corpusid')
 
-        # Load topic model
-        path2topics = self.path2corpus / topic_folder / topic_model_fname
-        data = np.load(path2topics)
+        # Ask for topic weights
+        topic_weights = self._ask_topics(topic_words)
+        # Ask tag for the label file
+        tag = self._ask_label_tag()
 
-        # Extract topic model info:
-        T = scp.csr_matrix((data['thetas_data'], data['thetas_indices'],
-                            data['thetas_indptr']))
-        n_docs, n_topics = T.shape
+        # Filter documents by topics
+        ids = self.CorpusProc.filter_by_topics(
+            T, df_metadata['corpusid'], topic_weights, n_max=n_max,
+            s_min=s_min)
 
-        logging.info(f'-- Topic matrix loaded with {n_topics} topics and'
-                     f' {n_docs} documents')
+        # Create dataframe of positive labels from the list of ids
+        self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
 
-        # Load metadata
-        path2metadata = self.path2corpus / topic_folder / metadata_fname
-        df_metadata = pd.read_csv(path2metadata)
-        logging.info(f'-- Topic matrix metadata loaded about '
-                     f'{len(df_metadata)} documents')
-        df_metadata.head()
-        docs_in_tm = list(df_metadata['corpusid'])
-
-        print("Up to here.")
+        # Save labels
+        self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
+                            tag=tag)
 
         return
 
@@ -296,24 +316,63 @@ class TaskManager(baseTaskManager):
 
     def load_labels(self, labelset):
 
-        labels = ['lab1', 'lab2', 'lab3']
+        print(f"-- -- Labelset {labelset} loaded")
 
-        return labels
+        return
 
     def reset_labels(self, labelset):
         """
         Reset a given set of labels
         """
 
-        pass
+        path2labelset = self.path2labels_out / labelset
+        path2labelset.unlink()
+        print(f"-- -- Labelset {labelset} removed")
 
         return
 
-    def train_models(self):
+    def train_model(self):
 
-        images = ['im1', 'im2', 'im3']
+        prefix = '../yelp_review_polarity_csv/'
 
-        return images
+        train_df = pd.read_csv(prefix + 'train.csv', header=None)
+        train_df.head()
+
+        eval_df = pd.read_csv(prefix + 'test.csv', header=None)
+        eval_df.head()
+
+        train_df[0] = (train_df[0] == 2).astype(int)
+        eval_df[0] = (eval_df[0] == 2).astype(int)
+
+        train_df = pd.DataFrame({
+            'text': train_df[1].replace(r'\n', ' ', regex=True),
+            'label': train_df[0]})
+
+        print(train_df.head())
+
+        eval_df = pd.DataFrame({
+            'text': eval_df[1].replace(r'\n', ' ', regex=True),
+            'label': eval_df[0]})
+
+        print(eval_df.head())
+
+        # ##############
+        # Classification
+
+        breakpoint()
+
+        # Create a TransformerModel
+        model = ClassificationModel('roberta', 'roberta-base', use_cuda=False)
+
+        # Train the model
+        model.train_model(train_df)
+
+        # Evaluate the model
+        result, model_outputs, wrong_predictions = model.eval_model(eval_df)
+
+        a = 1
+
+        return
 
     def get_feedback(self, image):
 
