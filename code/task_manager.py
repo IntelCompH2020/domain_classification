@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 # You might need to update the location of the baseTaskManager class
 from .base_taskmanager import baseTaskManager
 from .data_manager import DataManager
+from .query_manager import QueryManager
 from .domain_classifier.preprocessor import CorpusDFProcessor
 from .utils import plotter
 
@@ -82,6 +83,9 @@ class TaskManager(baseTaskManager):
         # Datamanager
         self.DM = DataManager(self.path2source, self.path2labels_out)
 
+        # Query manager
+        self.QM = QueryManager()
+
         return
 
     def _get_corpus_list(self):
@@ -118,17 +122,8 @@ class TaskManager(baseTaskManager):
 
         # Read available list of AI keywords
         kw_library = self.DM.get_keywords_list(self.corpus_name)
-
-        logging.info(
-            f"-- Suggested list of keywords: {', '.join(kw_library)}\n")
-
-        str_keys = input('-- Write your keywords (separated by commas, '
-                         'e.g., "gradient descent, gibbs sampling") ')
-
-        # Split by commas, removing leading and trailing spaces
-        keywords = [x.strip() for x in str_keys.split(',')]
-        # Remove multiple spaces
-        keywords = [' '.join(x.split()) for x in keywords]
+        # Ask keywords through the query manager
+        keywords = self.QM.ask_keywords(kw_library)
 
         return keywords
 
@@ -138,47 +133,18 @@ class TaskManager(baseTaskManager):
 
         Returns
         -------
-        keywords : list of str
-            List of keywords
+        tag : str
+            User-defined tag
         """
 
-        # Read available list of AI keywords
-        tag = input('\n-- Write a tag for the new label file: ')
-
-        return tag
+        return self.QM.ask_label_tag()
 
     def _ask_topics(self, topic_words):
         """
         Ask the user for a weighted list of topics
         """
 
-        logging.info("-- Topic descriptions: ")
-        n_topics = len(topic_words)
-
-        for i in range(n_topics):
-            logging.info(f"-- -- Topic {i}: {topic_words[i]}")
-
-        logging.info("")
-        logging.info("-- Introduce your weigted topic list: ")
-        logging.info("   id_0, weight_0, id_1, weight_1, ...")
-        topic_weights_str = input(": ")
-
-        tw_list = topic_weights_str.split(',')
-
-        # Get topic indices as integers
-        keys = [int(k) for k in tw_list[::2]]
-        # Get topic weights as floats
-        weights = [float(w) for w in tw_list[1::2]]
-
-        # Normalize weights
-        sum_w = sum(weights)
-        weights = [w / sum_w for w in weights]
-
-        # Store in dictionary
-        tw = dict(zip(keys, weights))
-        logging.info(f"-- Normalized weights: {tw}")
-
-        return tw
+        return self.QM.ask_topics(topic_words)
 
     def load_corpus(self, corpus_name):
         """
@@ -359,6 +325,9 @@ class TaskManager(baseTaskManager):
         # ##############
         # Classification
 
+        logging.warning("THE FOLLOWING CODE IS UNDER CONSTRUCTION. BE AWARE "
+                        "THAT IT ADDS LARGE FILES INTO THE CODE FOLDERS, THAT "
+                        "PRODUCES ERRORS WHEN USING GIT")
         breakpoint()
 
         # Create a TransformerModel
