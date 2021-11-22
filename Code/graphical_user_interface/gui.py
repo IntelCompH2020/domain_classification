@@ -11,7 +11,9 @@ from PyQt5 import uic, QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QButtonGroup
 from PyQt5.QtCore import QThreadPool
+import time
 
+from Code.graphical_user_interface.AnalyzeKeywordsWindow import AnalyzeKeywordsWindow
 from Code.graphical_user_interface.GetKeywordsWindow import GetKeywordsWindow
 from Code.graphical_user_interface.Messages import Messages
 from Code.graphical_user_interface.util import toggleMenu, execute_in_thread
@@ -38,6 +40,7 @@ class GUI(QtWidgets.QMainWindow):
         self.corpus_selected_name = ""
         self.get_label_option = 0
         self.get_keywords_window = GetKeywordsWindow(tm)
+        self.analyze_keywords_window = AnalyzeKeywordsWindow(tm)
 
         # INFORMATION BUTTONS
         ########################################################################
@@ -166,6 +169,19 @@ class GUI(QtWidgets.QMainWindow):
             elif self.get_labels_radio_buttons.checkedId() == 3:
                 print("Analyze the presence of selected keywords in the corpus")
                 self.get_label_option = 3
+                # Show the window for selecting the keywords in case they have not been selected yet
+                if self.tm.keywords is None:
+                    QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE, Messages.INFO_NO_ACTIVE_KEYWORDS)
+                    # Show the window for selecting the keywords
+                    self.get_keywords_window.show_suggested_keywords()
+                    self.get_keywords_window.exec()
+                    self.get_labels_by_keywords_aux()
+                else:
+                    QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE, Messages.INFO_NO_ACTIVE_KEYWORDS)
+                # Show the window for the analysis of the keywords
+                self.analyze_keywords_window.do_analysis()
+                self.analyze_keywords_window.exec()
+
             elif self.get_labels_radio_buttons.checkedId() == 4:
                 print("Get subcorpus from a topic selection function")
                 self.get_label_option = 4
@@ -181,7 +197,7 @@ class GUI(QtWidgets.QMainWindow):
             if self.get_label_option == 1:
                 self.tm.import_labels()
             elif self.get_label_option == 2:
-                self.tm.get_labels_by_keywords_gui(self.get_keywords_window.selectedKeywords, self.get_keywords_window.selectedTag)
+                self.get_labels_by_keywords_aux()
             elif self.get_label_option == 3:
                 print("this is option 3")
             elif self.get_label_option == 4:
@@ -202,3 +218,7 @@ class GUI(QtWidgets.QMainWindow):
         self.get_labels_radio_buttons.setExclusive(True)
         self.get_label_option == 0
         return
+
+    def get_labels_by_keywords_aux(self):
+        self.tm.get_labels_by_keywords_gui(self.get_keywords_window.selectedKeywords,
+                                           self.get_keywords_window.selectedTag)

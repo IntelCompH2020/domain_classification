@@ -59,3 +59,4 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         self.line_edit_get_keywords.setText("")
         self.line_edit_get_tag.setText("")
         return
+

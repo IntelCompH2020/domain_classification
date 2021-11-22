@@ -226,6 +226,22 @@ class TaskManager(baseTaskManager):
 
         return
 
+    def analyze_keywords_gui(self):
+        # Weight of the title words
+        wt = 2
+        logging.info(f'-- Selected keywords: {self.keywords}')
+
+        df_stats, kf_stats = self.CorpusProc.compute_keyword_stats(
+            self.keywords, wt)
+        plotter.plot_top_values(
+            df_stats, title="Document frequencies", xlabel="No. of docs")
+        plotter.plot_top_values(
+            kf_stats, title="Keyword frequencies", xlabel="No. of keywords")
+
+        y = self.CorpusProc.score_by_keywords(self.keywords, wt=20)
+
+        return y
+
     def get_labels_by_keywords(self):
         """
         Get a set of positive labels using keyword-based search

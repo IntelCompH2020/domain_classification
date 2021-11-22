@@ -23,3 +23,6 @@ class Messages:
     NO_KEYWORDS_SELECTED = 'You must write a set of keywords in order to proceed.'
     INFO_TAG = 'Write the tag to compose the label file name.'
     NO_TAG_SELECTED = 'You must select a tag to compose the label file name'
+    INFO_ANALYZE = ''
+    INFO_NO_ACTIVE_KEYWORDS = 'There are no active keywords in this session. Proceeding with its selection...'
+    INFO_ACTIVE_KEYWORDS = 'Analyzing current list of active keywords...'
