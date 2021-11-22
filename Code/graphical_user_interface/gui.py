@@ -16,6 +16,7 @@ import time
 
 from Code.graphical_user_interface.AnalyzeKeywordsWindow import AnalyzeKeywordsWindow
 from Code.graphical_user_interface.GetKeywordsWindow import GetKeywordsWindow
+from Code.graphical_user_interface.GetTopicsListWindow import GetTopicsListWindow
 from Code.graphical_user_interface.Messages import Messages
 from Code.graphical_user_interface.util import toggleMenu, execute_in_thread
 
@@ -40,8 +41,10 @@ class GUI(QtWidgets.QMainWindow):
         self.corpus_selected_name = ""
         self.labels_loaded = None
         self.get_label_option = 0
+        self.message_out = None
         self.get_keywords_window = GetKeywordsWindow(tm)
         self.analyze_keywords_window = AnalyzeKeywordsWindow(tm)
+        self.get_topics_list_window = GetTopicsListWindow(tm)
 
         # INFORMATION BUTTONS
         ########################################################################
@@ -158,12 +161,20 @@ class GUI(QtWidgets.QMainWindow):
         self.corpus_selected_name = str(item.text())
 
         # Loading corpus into the TaskManager object as dataframe
-        self.statusBar().showMessage("'The corpus " + self.corpus_selected_name + "' is being loaded.", 30000)
+        self.statusBar().showMessage("'The corpus " + self.corpus_selected_name + "' is being loaded.", 3000)
         execute_in_thread(self, self.execute_load_corpus, self.do_after_load_corpus, False)
 
     ####################################################################################################################
     # GET LABELS FUNCTIONS
     ####################################################################################################################
+    def execute_import_labels(self):
+        df_labels, message_out = self.tm.import_labels()
+        self.message_out = message_out
+        return "Done"
+
+    def do_after_import_labels(self):
+        QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE, self.message_out)
+
     def clicked_get_labels_option(self):
         """
         Method to control the functionality associated with the selection of each of the QRadioButtons associated with
@@ -181,7 +192,7 @@ class GUI(QtWidgets.QMainWindow):
                 self.get_label_option = 2
                 # Show the window for selecting the keywords
                 self.get_keywords_window.show_suggested_keywords()
-                self.get_keywords_window.show()
+                self.get_keywords_window.exec()
             elif self.get_labels_radio_buttons.checkedId() == 3:
                 print("Analyze the presence of selected keywords in the corpus")
                 self.get_label_option = 3
@@ -192,11 +203,14 @@ class GUI(QtWidgets.QMainWindow):
                     self.get_keywords_window.show_suggested_keywords()
                     self.get_keywords_window.exec()
                 else:
-                    QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE, Messages.INFO_NO_ACTIVE_KEYWORDS)
+                    QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE, Messages.INFO_ACTIVE_KEYWORDS)
 
             elif self.get_labels_radio_buttons.checkedId() == 4:
                 print("Get subcorpus from a topic selection function")
                 self.get_label_option = 4
+                # Show the window for selecting the topics
+                self.get_topics_list_window.show_topics()
+                self.get_topics_list_window.exec()
             else:
                 print("Get subcorpus from documents defining categories")
                 self.get_label_option = 5
@@ -210,23 +224,25 @@ class GUI(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.INCORRECT_NO_LABEL_OPTION_SELECTED)
         else:
             if self.get_label_option == 1:
-                self.tm.import_labels()
+                self.statusBar().showMessage("Labels are being loaded from source file.", 5000)
+                execute_in_thread(self, self.execute_import_labels, self.do_after_import_labels, False)
             elif self.get_label_option == 2:
-                self.tm.get_labels_by_keywords_gui(self.get_keywords_window.selectedKeywords,
-                                                   self.get_keywords_window.selectedTag)
+                message_out = self.tm.get_labels_by_keywords_gui(self.get_keywords_window.selectedKeywords,
+                                                                 self.get_keywords_window.selectedTag)
             elif self.get_label_option == 3:
-                self.tm.get_labels_by_keywords_gui(self.get_keywords_window.selectedKeywords,
-                                                   self.get_keywords_window.selectedTag)
+                message_out = self.tm.get_labels_by_keywords_gui(self.get_keywords_window.selectedKeywords,
+                                                                 self.get_keywords_window.selectedTag)
                 # Show the window for the analysis of the keywords
                 self.analyze_keywords_window.do_analysis()
                 self.analyze_keywords_window.exec()
             elif self.get_label_option == 4:
-                self.tm.get_labels_by_topics()
+                message_out = self.tm.get_labels_by_topics()
             elif self.get_label_option == 5:
-                self.tm.get_labels_by_definitions()
+                df_labels, message_out = self.tm.get_labels_by_definitions()
 
-        QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE,
-                                          "Labels have been loaded.")
+            if self.get_label_option != 1:
+                self.message_out = message_out
+                self.do_after_import_labels()
 
         # Reset after loading labels
         self.get_labels_radio_buttons.setExclusive(False)

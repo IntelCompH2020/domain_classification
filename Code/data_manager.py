@@ -297,9 +297,9 @@ class DataManager(object):
         # Saving id and class only
 
         tag = "imported"
-        self.save_labels(df_labels, corpus_name=corpus_name, tag=tag)
+        df_labels, message_out = self.save_labels(df_labels, corpus_name=corpus_name, tag=tag)
 
-        return df_labels
+        return df_labels, message_out
 
     def save_labels(self, df_labels, corpus_name="", tag=""):
 
@@ -309,8 +309,10 @@ class DataManager(object):
         labels_out_fname = f'labels_{corpus_name}_{tag}.csv'
         path2labels_out = self.path2labels_out / labels_out_fname
         df_labels.to_csv(path2labels_out, index=False)
+        message_out = "File with " + str(len(df_labels)) + " positive labels imported and saved in " +\
+                      str(path2labels_out)
 
         logging.info(f"-- File with {len(df_labels)} positive labels "
                      f"imported and saved in {path2labels_out}")
 
-        return df_labels
+        return df_labels, message_out

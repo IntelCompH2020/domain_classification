@@ -42,6 +42,7 @@ class Messages:
     NO_TAG_SELECTED = 'You must select a tag to compose the label file name'
     INFO_NO_ACTIVE_KEYWORDS = 'There are no active keywords in this session. Proceeding with its selection...'
     INFO_ACTIVE_KEYWORDS = 'Analyzing current list of active keywords...'
+    INFO_TOPIC_LIST = 'Introduce your weighted topic list: "id_0, weight_0, id_1, weight_1, ..."'
 
     # Loading labels messages
     ####################################################################################################################

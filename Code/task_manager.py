@@ -187,10 +187,10 @@ class TaskManager(baseTaskManager):
         """
 
         ids_corpus = self.df_corpus['id']
-        self.df_labels = self.DM.import_labels(
+        df_labels, message_out = self.df_labels = self.DM.import_labels(
             corpus_name=self.corpus_name, ids_corpus=ids_corpus)
 
-        return
+        return df_labels, message_out
 
     def analyze_keywords(self):
         """
@@ -265,10 +265,10 @@ class TaskManager(baseTaskManager):
         self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
 
         # Save labels
-        self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
+        df_labels, message_out = self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
                             tag=tag)
 
-        return
+        return message_out
 
     def get_labels_by_keywords_gui(self, keywords, _tag):
         """
@@ -293,10 +293,10 @@ class TaskManager(baseTaskManager):
         self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
 
         # Save labels
-        self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
+        df_labels, message_out = self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
                             tag=tag)
 
-        return
+        return message_out
 
     def get_labels_by_topics(self):
 
@@ -327,16 +327,36 @@ class TaskManager(baseTaskManager):
         self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
 
         # Save labels
-        self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
+        df_labels, message_out = self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
                             tag=tag)
 
+        return message_out
+
+    def get_topic_words_gui(self):
+        # Weight of the title words
+        n_max = 2000
+        # Significance threshold.
+        s_min = 0.2
+
+        # Load topics
+        T, df_metadata, topic_words = self.DM.load_topics()
+
+        # Remove all documents (rows) from the topic matrix, that are not
+        # in self.df_corpus.
+        T, df_metadata = self.CorpusProc.remove_docs_from_topics(
+            T, df_metadata, col_id='corpusid')
+
+        return topic_words
+
+    def get_labels_by_topics_gui(self):
         return
 
     def get_labels_by_definitions(self):
 
         labels = ['lab1', 'lab2', 'lab3']
+        message = ""
 
-        return labels
+        return labels, message
 
     def load_labels(self, labelset):
 
