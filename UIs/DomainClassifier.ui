@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1224</width>
-    <height>720</height>
+    <width>1247</width>
+    <height>749</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -1345,16 +1345,16 @@ border:2px #676A6E;</string>
                   <property name="currentIndex">
                    <number>0</number>
                   </property>
-                  <widget class="QWidget" name="tabsPage">
-                   <layout class="QVBoxLayout" name="verticalLayout_16">
+                  <widget class="QWidget" name="page_load">
+                   <layout class="QVBoxLayout" name="verticalLayout_19">
                     <item>
-                     <layout class="QVBoxLayout" name="verticalLayout_9">
+                     <layout class="QVBoxLayout" name="verticalLayout_14">
                       <item>
-                       <layout class="QVBoxLayout" name="verticalLayout_13">
+                       <layout class="QVBoxLayout" name="verticalLayout_15">
                         <item>
-                         <layout class="QHBoxLayout" name="horizontalLayout_27">
+                         <layout class="QHBoxLayout" name="horizontalLayout_29">
                           <item>
-                           <widget class="QPushButton" name="infoButtonSelectCorpus">
+                           <widget class="QPushButton" name="info_button_select_corpus">
                             <property name="sizePolicy">
                              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                               <horstretch>0</horstretch>
@@ -1394,7 +1394,7 @@ QToolTip {
                            </widget>
                           </item>
                           <item>
-                           <widget class="QLabel" name="labelSelectDataset">
+                           <widget class="QLabel" name="label_select_dataset">
                             <property name="font">
                              <font>
                               <weight>75</weight>
@@ -1409,7 +1409,7 @@ QToolTip {
                          </layout>
                         </item>
                         <item>
-                         <widget class="QTreeView" name="treeViewSelectCorpus">
+                         <widget class="QTreeView" name="tree_view_select_corpus">
                           <property name="maximumSize">
                            <size>
                             <width>16777215</width>
@@ -1474,9 +1474,9 @@ QHeaderView::section:vertical
                          </widget>
                         </item>
                         <item>
-                         <layout class="QHBoxLayout" name="horizontalLayout_8">
+                         <layout class="QHBoxLayout" name="horizontalLayout_12">
                           <item>
-                           <widget class="QLabel" name="labelCorpusSelected">
+                           <widget class="QLabel" name="labelCorpusSelected_3">
                             <property name="maximumSize">
                              <size>
                               <width>230</width>
@@ -1495,7 +1495,7 @@ QHeaderView::section:vertical
                            </widget>
                           </item>
                           <item>
-                           <widget class="QLabel" name="labelCorpusSelectedIs">
+                           <widget class="QLabel" name="label_corpus_selected_is">
                             <property name="sizePolicy">
                              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                               <horstretch>0</horstretch>
@@ -1526,7 +1526,7 @@ QHeaderView::section:vertical
                        </layout>
                       </item>
                       <item>
-                       <widget class="QFrame" name="frame_grip_6">
+                       <widget class="QFrame" name="frame_grip_8">
                         <property name="enabled">
                          <bool>true</bool>
                         </property>
@@ -1560,171 +1560,27 @@ QHeaderView::section:vertical
                        </widget>
                       </item>
                       <item>
-                       <layout class="QHBoxLayout" name="layout1LoadLabels_4">
+                       <layout class="QHBoxLayout" name="horizontalLayout_13">
                         <item>
-                         <widget class="QPushButton" name="infoButtonLoadLabels">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="minimumSize">
-                           <size>
-                            <width>35</width>
-                            <height>35</height>
-                           </size>
-                          </property>
-                          <property name="styleSheet">
-                           <string notr="true">QPushButton {
-	border: 5px solid #ABC2CB;
-	border-radius: 2px;	
-	background-color: #ABC2CB;
-	border-color:#576079;
-}
-QPushButton:hover {
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}
-QPushButton:pressed {	
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}
-
-QToolTip {	
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}</string>
-                          </property>
-                          <property name="text">
-                           <string/>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QLabel" name="labelLoadLabels">
-                          <property name="font">
-                           <font>
-                            <weight>75</weight>
-                            <bold>true</bold>
-                           </font>
-                          </property>
-                          <property name="text">
-                           <string>Select an option to load a preliminary subcorpus from the positive class:</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
-                      </item>
-                      <item>
-                       <layout class="QVBoxLayout" name="verticalLayout_14">
-                        <item>
-                         <layout class="QHBoxLayout" name="horizontalLayout_9">
+                         <layout class="QVBoxLayout" name="verticalLayout_16">
                           <item>
-                           <layout class="QVBoxLayout" name="layout2LoadLabels">
+                           <layout class="QHBoxLayout" name="horizontalLayout_14">
                             <item>
-                             <spacer name="verticalSpacer_3">
-                              <property name="orientation">
-                               <enum>Qt::Vertical</enum>
+                             <widget class="QPushButton" name="info_button_get_labels">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
                               </property>
-                              <property name="sizeHint" stdset="0">
+                              <property name="minimumSize">
                                <size>
-                                <width>20</width>
-                                <height>40</height>
+                                <width>35</width>
+                                <height>35</height>
                                </size>
                               </property>
-                             </spacer>
-                            </item>
-                            <item>
-                             <widget class="QRadioButton" name="loadLabelsOption1">
-                              <property name="text">
-                               <string>Import labels from a source file</string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
-                             <widget class="QRadioButton" name="loadLabelsOption2">
-                              <property name="text">
-                               <string>Get subcorpus from a given list of keywords</string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
-                             <widget class="QRadioButton" name="loadLabelsOption3">
-                              <property name="text">
-                               <string>Get subcorpus from a topic selection function</string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
-                             <widget class="QRadioButton" name="loadLabelsOption4">
-                              <property name="text">
-                               <string>Get subcorpus from documents defining categories</string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
-                             <spacer name="verticalSpacer_4">
-                              <property name="orientation">
-                               <enum>Qt::Vertical</enum>
-                              </property>
-                              <property name="sizeHint" stdset="0">
-                               <size>
-                                <width>20</width>
-                                <height>40</height>
-                               </size>
-                              </property>
-                             </spacer>
-                            </item>
-                           </layout>
-                          </item>
-                          <item>
-                           <layout class="QVBoxLayout" name="verticalLayout_15">
-                            <item>
-                             <widget class="QTextEdit" name="textEditShowKeywords">
                               <property name="styleSheet">
-                               <string notr="true">QTextEdit {	
-	background-color: #FFFFFF;
-	border-radius: 5px;
-	gridline-color: #FFFFFF;
-	border-bottom: 1px solid #FFFFFF;
-}
-
- QScrollBar:vertical {
-	border: none;
-    background: #ABC2CB;
-    width: 14px;
-    margin: 21px 0 21px 0;
-	border-radius: 0px;
- }</string>
-                              </property>
-                              <property name="readOnly">
-                               <bool>true</bool>
-                              </property>
-                             </widget>
-                            </item>
-                           </layout>
-                          </item>
-                         </layout>
-                        </item>
-                        <item>
-                         <layout class="QHBoxLayout" name="horizontalLayout_10">
-                          <item>
-                           <widget class="QPushButton" name="infoButtonKeywords">
-                            <property name="sizePolicy">
-                             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                              <horstretch>0</horstretch>
-                              <verstretch>0</verstretch>
-                             </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                             <size>
-                              <width>35</width>
-                              <height>35</height>
-                             </size>
-                            </property>
-                            <property name="styleSheet">
-                             <string notr="true">QPushButton {
+                               <string notr="true">QPushButton {
 	border: 5px solid #ABC2CB;
 	border-radius: 2px;	
 	background-color: #ABC2CB;
@@ -1743,82 +1599,127 @@ QToolTip {
 	background-color: #ABC2CB;
 	border: 2px solid #ABC2CB;
 }</string>
-                            </property>
-                            <property name="text">
-                             <string/>
-                            </property>
-                           </widget>
+                              </property>
+                              <property name="text">
+                               <string/>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QLabel" name="labelGetLabels_2">
+                              <property name="font">
+                               <font>
+                                <weight>75</weight>
+                                <bold>true</bold>
+                               </font>
+                              </property>
+                              <property name="text">
+                               <string>Select an option to load a preliminary subcorpus from the positive class:</string>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
                           </item>
                           <item>
-                           <widget class="QLabel" name="labelCorpusSelected_2">
-                            <property name="maximumSize">
-                             <size>
-                              <width>230</width>
-                              <height>35</height>
-                             </size>
+                           <layout class="QHBoxLayout" name="horizontalLayout_15">
+                            <property name="spacing">
+                             <number>0</number>
                             </property>
-                            <property name="font">
-                             <font>
-                              <weight>75</weight>
-                              <bold>true</bold>
-                             </font>
-                            </property>
-                            <property name="text">
-                             <string>Keywords:</string>
-                            </property>
-                           </widget>
+                            <item>
+                             <widget class="QFrame" name="frame_top_btns_3">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="minimumSize">
+                               <size>
+                                <width>340</width>
+                                <height>200</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>16777215</width>
+                                <height>16777215</height>
+                               </size>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">background-color: #576079;</string>
+                              </property>
+                              <property name="frameShape">
+                               <enum>QFrame::NoFrame</enum>
+                              </property>
+                              <property name="frameShadow">
+                               <enum>QFrame::Raised</enum>
+                              </property>
+                              <layout class="QVBoxLayout" name="verticalLayout_17">
+                               <item>
+                                <widget class="QRadioButton" name="get_labels_option1">
+                                 <property name="text">
+                                  <string>Import labels from a source file</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QRadioButton" name="get_labels_option2">
+                                 <property name="text">
+                                  <string>Get subcorpus from a given list of keywords</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QRadioButton" name="get_labels_option3">
+                                 <property name="text">
+                                  <string>Analyze the presence of selected keywords in the corpus</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QRadioButton" name="get_labels_option4">
+                                 <property name="text">
+                                  <string>Get subcorpus from a topic selection function</string>
+                                 </property>
+                                </widget>
+                               </item>
+                               <item>
+                                <widget class="QRadioButton" name="get_labels_option5">
+                                 <property name="text">
+                                  <string>Get subcorpus from documents defining categories</string>
+                                 </property>
+                                </widget>
+                               </item>
+                              </layout>
+                             </widget>
+                            </item>
+                           </layout>
                           </item>
                           <item>
-                           <widget class="QLineEdit" name="lineEditGetKeywords">
-                            <property name="sizePolicy">
-                             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                              <horstretch>0</horstretch>
-                              <verstretch>0</verstretch>
-                             </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                             <size>
-                              <width>0</width>
-                              <height>35</height>
-                             </size>
-                            </property>
-                            <property name="styleSheet">
-                             <string notr="true">QLineEdit {	
-	background-color: #FFFFFF;
-	border-radius: 5px;
-	gridline-color: #FFFFFF;
-	border-bottom: 1px solid #FFFFFF;
-}</string>
-                            </property>
-                           </widget>
-                          </item>
-                         </layout>
-                        </item>
-                        <item>
-                         <layout class="QHBoxLayout" name="horizontalLayout_11">
-                          <item>
-                           <spacer name="horizontalSpacer">
-                            <property name="orientation">
-                             <enum>Qt::Horizontal</enum>
-                            </property>
-                            <property name="sizeHint" stdset="0">
-                             <size>
-                              <width>40</width>
-                              <height>20</height>
-                             </size>
-                            </property>
-                           </spacer>
-                          </item>
-                          <item>
-                           <widget class="QPushButton" name="getSubcorpusPushButton">
-                            <property name="maximumSize">
-                             <size>
-                              <width>16777215</width>
-                              <height>16777215</height>
-                             </size>
-                            </property>
-                            <property name="styleSheet">
-                             <string notr="true">QPushButton {
+                           <layout class="QHBoxLayout" name="horizontalLayout_16">
+                            <item>
+                             <spacer name="horizontalSpacer_6">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>40</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="get_labels_push_button">
+                              <property name="maximumSize">
+                               <size>
+                                <width>16777215</width>
+                                <height>16777215</height>
+                               </size>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">QPushButton {
 	border: 5px solid #ABC2CB;
 	border-radius: 5px;	
 	background-color: #ABC2CB;
@@ -1831,24 +1732,335 @@ QPushButton:pressed {
 	background-color: #ABC2CB;
 	border: 2px solid #ABC2CB;
 }</string>
+                              </property>
+                              <property name="text">
+                               <string>Get labels</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <spacer name="horizontalSpacer_7">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>40</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                           </layout>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <widget class="QFrame" name="frame_grip_9">
+                          <property name="enabled">
+                           <bool>true</bool>
+                          </property>
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                           <size>
+                            <width>20</width>
+                            <height>450</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true">background-color: #ABC2CB;</string>
+                          </property>
+                          <property name="frameShape">
+                           <enum>QFrame::NoFrame</enum>
+                          </property>
+                          <property name="frameShadow">
+                           <enum>QFrame::Raised</enum>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_18">
+                          <item>
+                           <layout class="QHBoxLayout" name="layout1LoadLabels_6">
+                            <item>
+                             <widget class="QPushButton" name="info_button_load_reset_labels">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="minimumSize">
+                               <size>
+                                <width>35</width>
+                                <height>35</height>
+                               </size>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 2px;	
+	background-color: #ABC2CB;
+	border-color:#576079;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+
+QToolTip {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                              </property>
+                              <property name="text">
+                               <string/>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QLabel" name="label_load_reset_labels">
+                              <property name="font">
+                               <font>
+                                <weight>75</weight>
+                                <bold>true</bold>
+                               </font>
+                              </property>
+                              <property name="text">
+                               <string>Select an option to load a preliminary subcorpus from the positive class:</string>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <widget class="QTreeView" name="tree_view_load_labels">
+                            <property name="maximumSize">
+                             <size>
+                              <width>16777215</width>
+                              <height>16777215</height>
+                             </size>
                             </property>
-                            <property name="text">
-                             <string>Get subcorpus</string>
+                            <property name="styleSheet">
+                             <string notr="true">QTreeView {	
+	background-color: #FFFFFF;
+	padding: 10px;
+	border-radius: 5px;
+	gridline-color: #DFE6ED;
+	border-bottom: 1px solid #DFE6ED;
+}
+QTreeView::item{
+	border-color: #DFE6ED;
+	padding-left: 5px;
+	padding-right: 5px;
+	gridline-color: #DFE6ED;
+}
+QTreeView::item:selected{
+	background-color: #E6EDEF;
+}
+QScrollBar:horizontal {
+    border: none;
+    background: #ABC2CB;
+    height: 14px;
+    margin: 0px 21px 0 21px;
+	border-radius: 0px;
+}
+ QScrollBar:vertical {
+	border: none;
+    background: #ABC2CB;
+    width: 14px;
+    margin: 21px 0 21px 0;
+	border-radius: 0px;
+ }
+QHeaderView::section{
+	Background-color: #ABC2CB;
+	max-width: 30px;
+	border: 1px solid #ABC2CB;
+	border-style: none;
+    border-bottom: 1px solid #DFE6ED;
+    border-right: 1px solid #DFE6ED;
+}
+QTreeView::horizontalHeader {	
+	background-color: #ABC2CB;
+}
+QHeaderView::section:horizontal
+{
+    border: 1px solid #DFE6ED;
+	background-color: #ABC2CB;
+	padding: 3px;
+	border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+}
+QHeaderView::section:vertical
+{
+    border: 1px solid #ABC2CB;
+}</string>
                             </property>
                            </widget>
                           </item>
                           <item>
-                           <spacer name="horizontalSpacer_2">
-                            <property name="orientation">
-                             <enum>Qt::Horizontal</enum>
-                            </property>
-                            <property name="sizeHint" stdset="0">
-                             <size>
-                              <width>40</width>
-                              <height>20</height>
-                             </size>
-                            </property>
-                           </spacer>
+                           <layout class="QHBoxLayout" name="horizontalLayout_17">
+                            <item>
+                             <spacer name="horizontalSpacer_8">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>40</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="load_labels_push_button">
+                              <property name="maximumSize">
+                               <size>
+                                <width>16777215</width>
+                                <height>16777215</height>
+                               </size>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                              </property>
+                              <property name="text">
+                               <string>Load labels</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <spacer name="horizontalSpacer_9">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>40</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="reset_labels_push_button">
+                              <property name="maximumSize">
+                               <size>
+                                <width>16777215</width>
+                                <height>16777215</height>
+                               </size>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                              </property>
+                              <property name="text">
+                               <string>Reset labels</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <spacer name="horizontalSpacer_10">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>40</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <layout class="QHBoxLayout" name="horizontalLayout_18">
+                            <item>
+                             <widget class="QLabel" name="label_labels_loaded">
+                              <property name="maximumSize">
+                               <size>
+                                <width>230</width>
+                                <height>35</height>
+                               </size>
+                              </property>
+                              <property name="font">
+                               <font>
+                                <weight>75</weight>
+                                <bold>true</bold>
+                               </font>
+                              </property>
+                              <property name="text">
+                               <string>Labels loaded</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QLabel" name="label_labels_loaded_are">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="minimumSize">
+                               <size>
+                                <width>0</width>
+                                <height>35</height>
+                               </size>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">QLabel {	
+	background-color: #FFFFFF;
+	border-radius: 5px;
+	gridline-color: #FFFFFF;
+	border-bottom: 1px solid #FFFFFF;
+}</string>
+                              </property>
+                              <property name="text">
+                               <string/>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
                           </item>
                          </layout>
                         </item>

@@ -6,13 +6,13 @@ Class representing the main window of the application.
 """
 
 import os
-import time
 import pathlib
 from PyQt5 import uic, QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMenu, QButtonGroup
+from PyQt5.QtWidgets import QButtonGroup
 from PyQt5.QtCore import QThreadPool
 
+from Code.graphical_user_interface.GetKeywordsWindow import GetKeywordsWindow
 from Code.graphical_user_interface.Messages import Messages
 from Code.graphical_user_interface.util import toggleMenu, execute_in_thread
 
@@ -36,25 +36,26 @@ class GUI(QtWidgets.QMainWindow):
         self.tm = tm
         self.corpus_selected_path = None
         self.corpus_selected_name = ""
-        self.load_label_option = 0
+        self.get_label_option = 0
+        self.get_keywords_window = GetKeywordsWindow(tm)
 
         # INFORMATION BUTTONS
         ########################################################################
-        self.infoButtonSelectCorpus.setIcon(QIcon('Images/help2.png'))
-        self.infoButtonSelectCorpus.setToolTip(Messages.INFO_SELECT_CORPUS)
-        self.infoButtonLoadLabels.setIcon(QIcon('Images/help2.png'))
-        self.infoButtonLoadLabels.setToolTip(Messages.INFO_LOAD_LABELS)
-        self.infoButtonKeywords.setIcon(QIcon('Images/help2.png'))
-        self.infoButtonKeywords.setToolTip(Messages.INFO_TYPE_KEYWORDS)
+        self.info_button_select_corpus.setIcon(QIcon('Images/help2.png'))
+        self.info_button_select_corpus.setToolTip(Messages.INFO_SELECT_CORPUS)
+        self.info_button_get_labels.setIcon(QIcon('Images/help2.png'))
+        self.info_button_get_labels.setToolTip(Messages.INFO_GET_LABELS)
+        self.info_button_load_reset_labels.setIcon(QIcon('Images/help2.png'))
+        self.info_button_load_reset_labels.setToolTip(Messages.INFO_LOAD_RESET_LABELS)
 
 
         # CONFIGURE ELEMENTS IN THE "LOAD CORPUS VIEW"
         ########################################################################
         # self.configureTreeViewCorpusToLoad()
 
-        self.treeViewSelectCorpus.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.treeViewSelectCorpus.customContextMenuRequested.connect(self.context_menu)
-        self.treeViewSelectCorpus.doubleClicked.connect(self.clicked_select_corpus)
+        self.tree_view_select_corpus.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.tree_view_select_corpus.customContextMenuRequested.connect(self.context_menu)
+        self.tree_view_select_corpus.doubleClicked.connect(self.clicked_select_corpus)
         self.modelTreeView = QtWidgets.QFileSystemModel(nameFilterDisables=False)
         self.modelTreeView.setRootPath((QtCore.QDir.rootPath()))
         self.show_corpora()
@@ -74,16 +75,17 @@ class GUI(QtWidgets.QMainWindow):
         # PAGES
         ########################################################################
         # PAGE 1: Load corpus/ labels
-        self.pushButtonLoad.clicked.connect(lambda: self.tabs.setCurrentWidget(self.tabsPage))
+        self.pushButtonLoad.clicked.connect(lambda: self.tabs.setCurrentWidget(self.page_load))
         self.pushButtonLoad.setIcon(QIcon('Images/settings.png'))
 
-        self.load_labels_radio_buttons = QButtonGroup(self)
-        self.load_labels_radio_buttons.addButton(self.loadLabelsOption1, 1)
-        self.load_labels_radio_buttons.addButton(self.loadLabelsOption2, 2)
-        self.load_labels_radio_buttons.addButton(self.loadLabelsOption3, 3)
-        self.load_labels_radio_buttons.addButton(self.loadLabelsOption4, 4)
-        self.load_labels_radio_buttons.buttonClicked.connect(self.clicked_load_labels_option)
-        self.getSubcorpusPushButton.clicked.connect(self.clicked_load_subcorpus)
+        self.get_labels_radio_buttons = QButtonGroup(self)
+        self.get_labels_radio_buttons.addButton(self.get_labels_option1, 1)
+        self.get_labels_radio_buttons.addButton(self.get_labels_option2, 2)
+        self.get_labels_radio_buttons.addButton(self.get_labels_option3, 3)
+        self.get_labels_radio_buttons.addButton(self.get_labels_option4, 4)
+        self.get_labels_radio_buttons.addButton(self.get_labels_option5, 5)
+        self.get_labels_radio_buttons.buttonClicked.connect(self.clicked_get_labels_option)
+        self.get_labels_push_button.clicked.connect(self.clicked_get_labels)
 
     ####################################################################################################################
     # LOAD CORPUS FUNCTIONS
@@ -94,10 +96,10 @@ class GUI(QtWidgets.QMainWindow):
         path = pathlib.Path(pathlib.Path(self.source_folder)).as_posix()
         print(self.source_folder)
         print(path)
-        self.treeViewSelectCorpus.setModel(self.modelTreeView)
-        self.treeViewSelectCorpus.setRootIndex(self.modelTreeView.index(path))
+        self.tree_view_select_corpus.setModel(self.modelTreeView)
+        self.tree_view_select_corpus.setRootIndex(self.modelTreeView.index(path))
         # self.modelTreeView.setNameFilters(["*" + ".txt"])
-        self.treeViewSelectCorpus.setSortingEnabled(True)
+        self.tree_view_select_corpus.setSortingEnabled(True)
         return
 
     def context_menu(self):
@@ -115,7 +117,7 @@ class GUI(QtWidgets.QMainWindow):
         """Method to open the content of a file in a text editor when called
         by context_menu.
         """
-        index = self.treeViewSelectCorpus.currentIndex()
+        index = self.tree_view_select_corpus.currentIndex()
         file_path = self.modelTreeView.filePath(index)
         os.startfile(file_path)
 
@@ -131,13 +133,13 @@ class GUI(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE,
                                           "The corpus '" + self.corpus_selected_name + "' has been loaded.")
 
-        self.labelCorpusSelectedIs.setText(str(self.corpus_selected_path))
+        self.label_corpus_selected_is.setText(str(self.corpus_selected_path))
 
     def clicked_select_corpus(self):
         """Method to control the selection of a new corpus by double clicking into one of the items of the corpus list
         within the selected source folder, as well as its loading as dataframe into the TaskManager object.
         """
-        index = self.treeViewSelectCorpus.currentIndex()
+        index = self.tree_view_select_corpus.currentIndex()
         self.corpus_selected_path = self.modelTreeView.filePath(index)
         self.corpus_selected_name = self.modelTreeView.fileName(index)
 
@@ -148,40 +150,41 @@ class GUI(QtWidgets.QMainWindow):
     ####################################################################################################################
     # LOAD LABELS FUNCTIONS
     ####################################################################################################################
-    def clicked_load_labels_option(self):
+    def clicked_get_labels_option(self):
         if self.tm.corpus_name is None:
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.INCORRECT_INPUT_PARAM_SELECTION)
         else:
-            if self.load_labels_radio_buttons.checkedId() == 1:
+            if self.get_labels_radio_buttons.checkedId() == 1:
                 print("Import labels from a source file")
-                self.load_label_option = 1
-            elif self.load_labels_radio_buttons.checkedId() == 2:
+                self.get_label_option = 1
+            elif self.get_labels_radio_buttons.checkedId() == 2:
                 print("Get subcorpus from a given list of keywords")
-                self.load_label_option = 2
-                suggested_keywords = self.tm.get_suggested_keywords()
-                self.textEditShowKeywords.setPlainText(suggested_keywords)
-            elif self.load_labels_radio_buttons.checkedId() == 3:
+                self.get_label_option = 2
+                # Show the window for selecting the keywords
+                self.get_keywords_window.show_suggested_keywords()
+                self.get_keywords_window.show()
+            elif self.get_labels_radio_buttons.checkedId() == 3:
+                print("Analyze the presence of selected keywords in the corpus")
+                self.get_label_option = 3
+            elif self.get_labels_radio_buttons.checkedId() == 4:
                 print("Get subcorpus from a topic selection function")
-                self.load_label_option = 3
+                self.get_label_option = 4
             else:
                 print("Get subcorpus from documents defining categories")
-                self.load_label_option = 4
+                self.get_label_option = 5
         return
 
-    def clicked_load_subcorpus(self):
-        if self.load_label_option == 0:
+    def clicked_get_labels(self):
+        if self.get_label_option == 0:
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.INCORRECT_NO_LABEL_OPTION_SELECTED)
         else:
-            if self.load_label_option == 1:
+            if self.get_label_option == 1:
                 self.tm.import_labels()
-            elif self.load_label_option == 2:
-                keywords = self.lineEditGetKeywords.text()
-                # Split by commas, removing leading and trailing spaces
-                _keywords = [x.strip() for x in keywords.split(',')]
-                # Remove multiple spaces
-                _keywords = [' '.join(x.split()) for x in _keywords]
-                self.tm.get_labels_by_keywords_gui(_keywords)
-            elif self.load_label_option == 3:
+            elif self.get_label_option == 2:
+                self.tm.get_labels_by_keywords_gui(self.get_keywords_window.selectedKeywords, self.get_keywords_window.selectedTag)
+            elif self.get_label_option == 3:
+                print("this is option 3")
+            elif self.get_label_option == 4:
                 self.tm.get_labels_by_topics()
             else:
                 self.tm.get_labels_by_definitions()
@@ -190,13 +193,12 @@ class GUI(QtWidgets.QMainWindow):
                                           "Labels have been loaded.")
 
         # Reset after loading labels
-        self.load_labels_radio_buttons.setExclusive(False)
-        self.loadLabelsOption1.setChecked(False)
-        self.loadLabelsOption2.setChecked(False)
-        self.loadLabelsOption3.setChecked(False)
-        self.loadLabelsOption4.setChecked(False)
-        self.load_labels_radio_buttons.setExclusive(True)
-        self.load_label_option == 0
-        self.textEditShowKeywords.setPlainText("")
-        self.lineEditGetKeywords.setText("")
+        self.get_labels_radio_buttons.setExclusive(False)
+        self.get_labels_option1.setChecked(False)
+        self.get_labels_option2.setChecked(False)
+        self.get_labels_option3.setChecked(False)
+        self.get_labels_option4.setChecked(False)
+        self.get_labels_option5.setChecked(False)
+        self.get_labels_radio_buttons.setExclusive(True)
+        self.get_label_option == 0
         return

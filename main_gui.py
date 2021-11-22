@@ -68,7 +68,7 @@ class PreConfig(QDialog):
         mainWindow = GUI(self.projectFolder, self.sourceFolder, tm)
         widget.addWidget(mainWindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
-        widget.resize(1980, 1160)
+        widget.resize(2480, 1360)
         return
 
 
@@ -80,7 +80,7 @@ if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
 
 # Main
 app = QApplication(sys.argv)
-# app.setWindowIcon(QIcon("logo.png"))
+app.setWindowIcon(QIcon('Images/dc_logo.png'))
 widget = QtWidgets.QStackedWidget()
 widget.setWindowTitle(Messages.WINDOW_TITLE)
 width = widget.frameGeometry().width()
