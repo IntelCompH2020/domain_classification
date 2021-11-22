@@ -1409,7 +1409,7 @@ QToolTip {
                          </layout>
                         </item>
                         <item>
-                         <widget class="QTreeView" name="tree_view_select_corpus">
+                         <widget class="QListWidget" name="tree_view_select_corpus">
                           <property name="maximumSize">
                            <size>
                             <width>16777215</width>
@@ -1417,20 +1417,20 @@ QToolTip {
                            </size>
                           </property>
                           <property name="styleSheet">
-                           <string notr="true">QTreeView {	
+                           <string notr="true">QListWidget {	
 	background-color: #FFFFFF;
 	padding: 10px;
 	border-radius: 5px;
 	gridline-color: #DFE6ED;
 	border-bottom: 1px solid #DFE6ED;
 }
-QTreeView::item{
+QListWidget::item{
 	border-color: #DFE6ED;
 	padding-left: 5px;
 	padding-right: 5px;
 	gridline-color: #DFE6ED;
 }
-QTreeView::item:selected{
+QListWidget::item:selected{
 	background-color: #E6EDEF;
 }
 QScrollBar:horizontal {
@@ -1472,6 +1472,64 @@ QHeaderView::section:vertical
 }</string>
                           </property>
                          </widget>
+                        </item>
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_19">
+                          <item>
+                           <spacer name="horizontalSpacer_11">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="load_corpus_push_button">
+                            <property name="maximumSize">
+                             <size>
+                              <width>16777215</width>
+                              <height>16777215</height>
+                             </size>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                            </property>
+                            <property name="text">
+                             <string>Load corpus</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="horizontalSpacer_12">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
                         </item>
                         <item>
                          <layout class="QHBoxLayout" name="horizontalLayout_12">
@@ -1849,7 +1907,7 @@ QToolTip {
                            </layout>
                           </item>
                           <item>
-                           <widget class="QTreeView" name="tree_view_load_labels">
+                           <widget class="QListWidget" name="tree_view_load_labels">
                             <property name="maximumSize">
                              <size>
                               <width>16777215</width>
@@ -1857,20 +1915,20 @@ QToolTip {
                              </size>
                             </property>
                             <property name="styleSheet">
-                             <string notr="true">QTreeView {	
+                             <string notr="true">QListWidget {	
 	background-color: #FFFFFF;
 	padding: 10px;
 	border-radius: 5px;
 	gridline-color: #DFE6ED;
 	border-bottom: 1px solid #DFE6ED;
 }
-QTreeView::item{
+QListWidget::item{
 	border-color: #DFE6ED;
 	padding-left: 5px;
 	padding-right: 5px;
 	gridline-color: #DFE6ED;
 }
-QTreeView::item:selected{
+QListWidget::item:selected{
 	background-color: #E6EDEF;
 }
 QScrollBar:horizontal {

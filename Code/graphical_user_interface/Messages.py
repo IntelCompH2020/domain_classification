@@ -11,7 +11,7 @@ class Messages:
     WINDOW_TITLE = 'Domain Classification'
     INCORRECT_INPUT_PARAM_SELECTION = 'A project folder and a source folder must be specified to proceed to the main ' \
                                       'menu. '
-    INCORRECT_NO_CORPUS_SELECTED = 'You need to select a corpus first in order to proceed with the label loading.'
+    INCORRECT_NO_CORPUS_SELECTED = 'You need to select a corpus first in order to proceed.'
     INCORRECT_NO_LABEL_OPTION_SELECTED = 'You must first choose how you want to load the subcorpus.'
 
     INFO_SELECT_CORPUS = 'Double click on one of the corpus below listed in order to load it into the application.'
