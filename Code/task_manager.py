@@ -399,7 +399,7 @@ class TaskManager(baseTaskManager):
 
         a = 1
 
-        return
+        return result, model_outputs, wrong_predictions
 
     def get_feedback(self, image):
 

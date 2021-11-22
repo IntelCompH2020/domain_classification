@@ -1046,7 +1046,11 @@ QPushButton:pressed {
     QPushButton:pressed {
         background-color: #576079;
     
-    }</string>
+    }
+	QToolTip {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -1054,7 +1058,7 @@ QPushButton:pressed {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButtonSelectModel_2">
+                 <widget class="QPushButton" name="pushButtonTrain">
                   <property name="minimumSize">
                    <size>
                     <width>60</width>
@@ -1087,7 +1091,11 @@ QPushButton:pressed {
     QPushButton:pressed {
         background-color: #576079;
     
-    }</string>
+    }
+QToolTip {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -1095,7 +1103,7 @@ QPushButton:pressed {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButtonTrainSubmodel_2">
+                 <widget class="QPushButton" name="pushButtonGetFeedback">
                   <property name="minimumSize">
                    <size>
                     <width>60</width>
@@ -1128,7 +1136,11 @@ QPushButton:pressed {
     QPushButton:pressed {
         background-color: #576079;
     
-    }</string>
+    }
+QToolTip {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -1169,7 +1181,11 @@ QPushButton:pressed {
     QPushButton:pressed {
         background-color: #576079;
     
-    }</string>
+    }
+QToolTip {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -1242,7 +1258,7 @@ QPushButton:pressed {
                 <string/>
                </property>
                <property name="pixmap">
-                <pixmap>../logo.png</pixmap>
+                <pixmap>../Images/dc_logo.png</pixmap>
                </property>
                <property name="scaledContents">
                 <bool>true</bool>
@@ -1704,7 +1720,7 @@ QToolTip {
                                </size>
                               </property>
                               <property name="styleSheet">
-                               <string notr="true">background-color: #576079;</string>
+                               <string notr="true">background-color: #ABC2CB;</string>
                               </property>
                               <property name="frameShape">
                                <enum>QFrame::NoFrame</enum>
@@ -1837,7 +1853,7 @@ QPushButton:pressed {
                            </size>
                           </property>
                           <property name="styleSheet">
-                           <string notr="true">background-color: #ABC2CB;</string>
+                           <string notr="true">background-color: #CFCEC6;</string>
                           </property>
                           <property name="frameShape">
                            <enum>QFrame::NoFrame</enum>
@@ -2121,6 +2137,188 @@ QPushButton:pressed {
                            </layout>
                           </item>
                          </layout>
+                        </item>
+                       </layout>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </widget>
+                  <widget class="QWidget" name="page_train">
+                   <layout class="QVBoxLayout" name="verticalLayout_7">
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_6">
+                      <item>
+                       <layout class="QHBoxLayout" name="horizontalLayout_4">
+                        <item>
+                         <spacer name="horizontalSpacer_13">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>40</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="train_classifier_push_button">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                          </property>
+                          <property name="text">
+                           <string>Train classifier</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <spacer name="horizontalSpacer_14">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>40</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <widget class="QTextEdit" name="text_edit_result_training">
+                        <property name="styleSheet">
+                         <string notr="true">QTextEdit {	
+	background-color: #FFFFFF;
+	border-radius: 5px;
+	gridline-color: #FFFFFF;
+	border-bottom: 1px solid #FFFFFF;
+}
+
+ QScrollBar:vertical {
+	border: none;
+    background: #ABC2CB;
+    width: 14px;
+    margin: 21px 0 21px 0;
+	border-radius: 0px;
+ }</string>
+                        </property>
+                        <property name="readOnly">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </widget>
+                  <widget class="QWidget" name="page_feedback">
+                   <layout class="QVBoxLayout" name="verticalLayout_12">
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_9">
+                      <item>
+                       <layout class="QVBoxLayout" name="verticalLayout_10">
+                        <item>
+                         <widget class="QTextEdit" name="text_edit_f">
+                          <property name="styleSheet">
+                           <string notr="true">QTextEdit {	
+	background-color: #FFFFFF;
+	border-radius: 5px;
+	gridline-color: #FFFFFF;
+	border-bottom: 1px solid #FFFFFF;
+}
+
+ QScrollBar:vertical {
+	border: none;
+    background: #ABC2CB;
+    width: 14px;
+    margin: 21px 0 21px 0;
+	border-radius: 0px;
+ }</string>
+                          </property>
+                          <property name="readOnly">
+                           <bool>true</bool>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <layout class="QHBoxLayout" name="horizontalLayout_6">
+                        <item>
+                         <spacer name="horizontalSpacer_15">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>40</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="update_model_push_button">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                          </property>
+                          <property name="text">
+                           <string>Update model based on feedback</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <spacer name="horizontalSpacer_16">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>40</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
                         </item>
                        </layout>
                       </item>

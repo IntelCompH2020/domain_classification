@@ -77,6 +77,18 @@ class GUI(QtWidgets.QMainWindow):
         self.load_labels_push_button.clicked.connect(self.clicked_load_labels)
         self.reset_labels_push_button.clicked.connect(self.clicked_reset_labels)
 
+        # TRAIN CLASSIFIER WIDGETS
+        ########################################################################
+        self.train_classifier_push_button.clicked.connect(self.clicked_train_classifier)
+
+        # GET FEEDBACK WIDGETS
+        ########################################################################
+        self.train_classifier_push_button.clicked.connect(self.clicked_train_classifier)
+
+        # GET FEEDBACK WIDGETS
+        ########################################################################
+        self.update_model_push_button.clicked.connect(self.clicked_update_model)
+
         # THREADS FOR EXECUTING IN PARALLEL
         ########################################################################
         self.thread_pool = QThreadPool()
@@ -94,7 +106,19 @@ class GUI(QtWidgets.QMainWindow):
         # PAGE 1: Load corpus/ labels
         self.pushButtonLoad.clicked.connect(lambda: self.tabs.setCurrentWidget(self.page_load))
         self.pushButtonLoad.setIcon(QIcon('Images/settings.png'))
+        self.pushButtonLoad.setToolTip(Messages.INFO_LOAD_CORPUS_LABELS)
+        # PAGE 2: Train classifier
+        self.pushButtonTrain.clicked.connect(lambda: self.tabs.setCurrentWidget(self.page_train))
+        self.pushButtonTrain.setIcon(QIcon('Images/training.png'))
+        self.pushButtonTrain.setToolTip(Messages.INFO_TRAIN_CLASSIFIER)
+        # PAGE 3: Get relevance feedback
+        self.pushButtonGetFeedback.clicked.connect(lambda: self.tabs.setCurrentWidget(self.page_feedback))
+        self.pushButtonGetFeedback.setIcon(QIcon('Images/feedback.png'))
+        self.pushButtonGetFeedback.setToolTip(Messages.INFO_GET_FEEDBACK)
 
+    ####################################################################################################################
+    # LOAD CORPUS FUNCTIONS
+    ####################################################################################################################
     def show_corpora(self):
         """Method to list all the corpora contained in the source folder selected by the user.
         """
@@ -169,9 +193,6 @@ class GUI(QtWidgets.QMainWindow):
                     self.get_keywords_window.exec()
                 else:
                     QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE, Messages.INFO_NO_ACTIVE_KEYWORDS)
-                # Show the window for the analysis of the keywords
-                self.analyze_keywords_window.do_analysis()
-                self.analyze_keywords_window.exec()
 
             elif self.get_labels_radio_buttons.checkedId() == 4:
                 print("Get subcorpus from a topic selection function")
@@ -190,12 +211,18 @@ class GUI(QtWidgets.QMainWindow):
         else:
             if self.get_label_option == 1:
                 self.tm.import_labels()
-            elif self.get_label_option == 2 or self.get_label_option == 3:
+            elif self.get_label_option == 2:
                 self.tm.get_labels_by_keywords_gui(self.get_keywords_window.selectedKeywords,
                                                    self.get_keywords_window.selectedTag)
+            elif self.get_label_option == 3:
+                self.tm.get_labels_by_keywords_gui(self.get_keywords_window.selectedKeywords,
+                                                   self.get_keywords_window.selectedTag)
+                # Show the window for the analysis of the keywords
+                self.analyze_keywords_window.do_analysis()
+                self.analyze_keywords_window.exec()
             elif self.get_label_option == 4:
                 self.tm.get_labels_by_topics()
-            else:
+            elif self.get_label_option == 5:
                 self.tm.get_labels_by_definitions()
 
         QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE,
@@ -257,12 +284,33 @@ class GUI(QtWidgets.QMainWindow):
         else:
             if self.labels_loaded is not None:
                 self.tm.reset_labels(self.labels_loaded)
+            aux_labels = self.labels_loaded
             self.labels_loaded = None
             # Showing messages in the status bar, pop up window, and corpus label
             self.statusBar().showMessage("'" + self.labels_loaded + "' were removed.", 10000)
             QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE,
-                                              "The labels '" + self.labels_loaded + "' have been removed from the "
-                                                                                    "current session.")
+                                              "The labels '" + aux_labels + "' have been removed from the "
+                                                                            "current session.")
 
             self.label_labels_loaded_are.setText(str(" "))
+        return
+
+    ####################################################################################################################
+    # TRAIN CLASSIFIER FUNCTIONS
+    ####################################################################################################################
+    def clicked_train_classifier(self):
+        # @TODO: '../yelp_review_polarity_csv/' -> Ask Jesús??
+        result, model_outputs, wrong_predictions = self.tm.train_models()
+        if result is not None:
+            QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE, Messages.INCORRECT_NO_CORPUS_SELECTED)
+            print(result)
+            print(model_outputs)
+            print(wrong_predictions)
+        return
+
+    ####################################################################################################################
+    # GET FEEDBACK FUNCTIONS
+    ####################################################################################################################
+    def clicked_update_model(self):
+        # @TODO
         return

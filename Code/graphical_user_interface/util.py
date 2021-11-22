@@ -31,11 +31,15 @@ def toggleMenu(gui, maxWidth):
         widthExtended = maxExtend
         # SHOW TEXT INSTEAD OF ICON
         gui.pushButtonLoad.setText('Load corpus')
+        gui.pushButtonTrain.setText('Train classifier')
+        gui.pushButtonGetFeedback.setText('Get feedback')
         gui.label_logo.setFixedSize(widthExtended, widthExtended)
 
     else:
         widthExtended = standard
         gui.pushButtonLoad.setText('')
+        gui.pushButtonTrain.setText('')
+        gui.pushButtonGetFeedback.setText('')
         gui.label_logo.setFixedSize(widthExtended, widthExtended)
 
     # ANIMATION
