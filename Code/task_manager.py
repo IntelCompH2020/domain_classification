@@ -346,10 +346,21 @@ class TaskManager(baseTaskManager):
         T, df_metadata = self.CorpusProc.remove_docs_from_topics(
             T, df_metadata, col_id='corpusid')
 
-        return topic_words
+        return topic_words, T, df_metadata, n_max, s_min
 
-    def get_labels_by_topics_gui(self):
-        return
+    def get_labels_by_topics_gui(self, topic_weights, tag, T, df_metadata, n_max, s_min):
+        # Filter documents by topics
+        ids = self.CorpusProc.filter_by_topics(
+            T, df_metadata['corpusid'], topic_weights, n_max=n_max,
+            s_min=s_min)
+
+        # Create dataframe of positive labels from the list of ids
+        self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
+
+        # Save labels
+        df_labels, message_out = self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
+                                                     tag=tag)
+        return message_out
 
     def get_labels_by_definitions(self):
 

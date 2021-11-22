@@ -236,7 +236,12 @@ class GUI(QtWidgets.QMainWindow):
                 self.analyze_keywords_window.do_analysis()
                 self.analyze_keywords_window.exec()
             elif self.get_label_option == 4:
-                message_out = self.tm.get_labels_by_topics()
+                message_out = self.tm.get_labels_by_topics_gui(self.get_topics_list_window.tw,
+                                                               self.get_topics_list_window.selectedTag,
+                                                               self.get_topics_list_window.T,
+                                                               self.get_topics_list_window.df_metadata,
+                                                               self.get_topics_list_window.n_max,
+                                                               self.get_topics_list_window.s_min)
             elif self.get_label_option == 5:
                 df_labels, message_out = self.tm.get_labels_by_definitions()
 
@@ -303,7 +308,7 @@ class GUI(QtWidgets.QMainWindow):
             aux_labels = self.labels_loaded
             self.labels_loaded = None
             # Showing messages in the status bar, pop up window, and corpus label
-            self.statusBar().showMessage("'" + self.labels_loaded + "' were removed.", 10000)
+            self.statusBar().showMessage("'" + aux_labels + "' were removed.", 10000)
             QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE,
                                               "The labels '" + aux_labels + "' have been removed from the "
                                                                             "current session.")

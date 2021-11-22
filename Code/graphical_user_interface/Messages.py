@@ -43,6 +43,8 @@ class Messages:
     INFO_NO_ACTIVE_KEYWORDS = 'There are no active keywords in this session. Proceeding with its selection...'
     INFO_ACTIVE_KEYWORDS = 'Analyzing current list of active keywords...'
     INFO_TOPIC_LIST = 'Introduce your weighted topic list: "id_0, weight_0, id_1, weight_1, ..."'
+    NO_TOPIC_LIST_SELECTED = 'You must introduce your weighted topic list with the form:\n'\
+                             '"id_0, weight_0, id_1, weight_1, ..."'
 
     # Loading labels messages
     ####################################################################################################################
