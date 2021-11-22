@@ -51,7 +51,6 @@ class GUI(QtWidgets.QMainWindow):
         self.info_button_load_reset_labels.setIcon(QIcon('Images/help2.png'))
         self.info_button_load_reset_labels.setToolTip(Messages.INFO_LOAD_RESET_LABELS)
 
-
         # CONFIGURE ELEMENTS IN THE "LOAD CORPUS VIEW"
         ########################################################################
         # self.configureTreeViewCorpusToLoad()
@@ -106,9 +105,8 @@ class GUI(QtWidgets.QMainWindow):
         return
 
     def context_menu(self):
-        """Method control the opening of file in a text editor when an element
-        from the dataset list in the mallet directory is clicked with the right
-        mouse button.
+        """
+        Method for controlling the opening of a file when an element from the source data folder is right clicked.
         """
         menu = QtWidgets.QMenu()
         open = menu.addAction("Open file")
@@ -117,29 +115,36 @@ class GUI(QtWidgets.QMainWindow):
         menu.exec_(cursor.pos())
 
     def open_file(self):
-        """Method to open the content of a file in a text editor when called
-        by context_menu.
+        """
+        Method to open the content of a file in a text editor when called by the context_menu() function.
         """
         index = self.tree_view_select_corpus.currentIndex()
         file_path = self.modelTreeView.filePath(index)
         os.startfile(file_path)
 
     def execute_load_corpus(self):
-        """Method to control the execution of the training of a model.
+        """
+        Method to control the execution of the loading of a corpus on a secondary thread while the GUI execution
+        is maintained in the main thread.
         """
         self.tm.load_corpus(self.corpus_selected_name)
         return "Done."
 
     def do_after_load_corpus(self):
+        """
+        Method to be executed after the loading of the corpus has been completed.
+        """
         # Showing messages in the status bar, pop up window, and corpus label
         self.statusBar().showMessage("'" + self.corpus_selected_name + "' was selected as corpus.", 10000)
         QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE,
-                                          "The corpus '" + self.corpus_selected_name + "' has been loaded.")
+                                          "The corpus '" + self.corpus_selected_name + "' has been loaded in the "
+                                                                                       "current session.")
 
         self.label_corpus_selected_is.setText(str(self.corpus_selected_path))
 
     def clicked_select_corpus(self):
-        """Method to control the selection of a new corpus by double clicking into one of the items of the corpus list
+        """
+        Method to control the selection of a new corpus by double clicking into one of the items of the corpus list
         within the selected source folder, as well as its loading as dataframe into the TaskManager object.
         """
         index = self.tree_view_select_corpus.currentIndex()
@@ -154,6 +159,11 @@ class GUI(QtWidgets.QMainWindow):
     # LOAD LABELS FUNCTIONS
     ####################################################################################################################
     def clicked_get_labels_option(self):
+        """
+        Method to control the functionality associated with the selection of each of the QRadioButtons associated with
+        the labels' getting.
+        Only one QRadioButton can be selected at a time.
+        """
         if self.tm.corpus_name is None:
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.INCORRECT_INPUT_PARAM_SELECTION)
         else:
@@ -175,7 +185,6 @@ class GUI(QtWidgets.QMainWindow):
                     # Show the window for selecting the keywords
                     self.get_keywords_window.show_suggested_keywords()
                     self.get_keywords_window.exec()
-                    self.get_labels_by_keywords_aux()
                 else:
                     QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE, Messages.INFO_NO_ACTIVE_KEYWORDS)
                 # Show the window for the analysis of the keywords
@@ -191,15 +200,17 @@ class GUI(QtWidgets.QMainWindow):
         return
 
     def clicked_get_labels(self):
+        """
+        Method for performing the getting of the labels according to the method selected for it.
+        """
         if self.get_label_option == 0:
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.INCORRECT_NO_LABEL_OPTION_SELECTED)
         else:
             if self.get_label_option == 1:
                 self.tm.import_labels()
-            elif self.get_label_option == 2:
-                self.get_labels_by_keywords_aux()
-            elif self.get_label_option == 3:
-                print("this is option 3")
+            elif self.get_label_option == 2 or self.get_label_option == 3:
+                self.tm.get_labels_by_keywords_gui(self.get_keywords_window.selectedKeywords,
+                                                   self.get_keywords_window.selectedTag)
             elif self.get_label_option == 4:
                 self.tm.get_labels_by_topics()
             else:
@@ -218,7 +229,3 @@ class GUI(QtWidgets.QMainWindow):
         self.get_labels_radio_buttons.setExclusive(True)
         self.get_label_option == 0
         return
-
-    def get_labels_by_keywords_aux(self):
-        self.tm.get_labels_by_keywords_gui(self.get_keywords_window.selectedKeywords,
-                                           self.get_keywords_window.selectedTag)
