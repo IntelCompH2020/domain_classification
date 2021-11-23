@@ -84,6 +84,13 @@
            <height>16777215</height>
           </size>
          </property>
+         <property name="styleSheet">
+          <string notr="true">QFrame { 
+  background-color: #CFCEC6;
+  border: 5px solid #CFCEC6
+} 
+</string>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -152,6 +159,13 @@ QWidget:focus {
            <width>10</width>
            <height>16777215</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QFrame { 
+  background-color: #CFCEC6;
+  border: 5px solid #CFCEC6
+} 
+</string>
          </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>

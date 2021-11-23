@@ -84,6 +84,13 @@
            <height>16777215</height>
           </size>
          </property>
+         <property name="styleSheet">
+          <string notr="true">QFrame { 
+  background-color: #CFCEC6;
+  border: 5px solid #CFCEC6
+} 
+</string>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -107,6 +114,13 @@
              <width>0</width>
              <height>20</height>
             </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QFrame { 
+  background-color: #CFCEC6;
+  border: 5px solid #CFCEC6
+} 
+</string>
            </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -221,6 +235,13 @@ QHeaderView::section:vertical
              <width>0</width>
              <height>20</height>
             </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QFrame { 
+  background-color: #CFCEC6;
+  border: 5px solid #CFCEC6
+} 
+</string>
            </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -493,6 +514,13 @@ QPushButton:pressed {
            <width>10</width>
            <height>16777215</height>
           </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QFrame { 
+  background-color: #CFCEC6;
+  border: 5px solid #CFCEC6
+} 
+</string>
          </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
