@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Class representing the window for controlling the getting of a subcorpus from a given list of keywords
+Class representing the window for controlling the getting of a subcorpus from a given list of topics
 
 @author: lcalv
 """
 
-from PyQt5 import uic, QtWidgets, QtCore
+from PyQt5 import uic, QtWidgets
 from PyQt5.QtGui import QIcon
 
 from Code.graphical_user_interface.Messages import Messages

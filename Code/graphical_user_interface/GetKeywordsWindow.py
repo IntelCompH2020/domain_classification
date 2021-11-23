@@ -5,7 +5,7 @@ Class representing the window for controlling the getting of a subcorpus from a 
 @author: lcalv
 """
 
-from PyQt5 import uic, QtWidgets, QtCore
+from PyQt5 import uic, QtWidgets
 from PyQt5.QtGui import QIcon
 
 from Code.graphical_user_interface.Messages import Messages

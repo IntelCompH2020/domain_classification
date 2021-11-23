@@ -6,7 +6,6 @@ Class representing the window for controlling the analysis of the presence of se
 """
 
 from PyQt5 import uic, QtWidgets
-from PyQt5.QtGui import QIcon
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
