@@ -11,6 +11,7 @@ import sys
 from PyQt5.QtWidgets import QDialog, QApplication, QFileDialog
 from PyQt5.uic import loadUi
 from pathlib import Path
+from PyQt5.QtGui import QPixmap
 
 from Code.graphical_user_interface.gui import *
 from Code.graphical_user_interface.Messages import Messages
@@ -33,6 +34,10 @@ class PreConfig(QDialog):
         # Variables for saving the project and source data folders
         self.projectFolder = ""
         self.sourceFolder = ""
+
+        # Update image
+        pixmap = QPixmap('Images/dc_logo2.png')
+        self.label.setPixmap(pixmap)
 
         self.selectProjectFolder.clicked.connect(self.getProjectFolder)
         self.selectSourceDataFolder.clicked.connect(self.getSourceDataFolder)

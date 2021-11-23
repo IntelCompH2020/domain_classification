@@ -12,7 +12,7 @@ from PyQt5 import uic, QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QButtonGroup
 from PyQt5.QtCore import QThreadPool
-import time
+from PyQt5.QtGui import QPixmap
 
 from Code.graphical_user_interface.AnalyzeKeywordsWindow import AnalyzeKeywordsWindow
 from Code.graphical_user_interface.GetKeywordsWindow import GetKeywordsWindow
@@ -32,6 +32,9 @@ class GUI(QtWidgets.QMainWindow):
         self.setGeometry(100, 60, 2000, 1600)
         self.centralwidget.setGeometry(100, 60, 2000, 1600)
         self.animation = QtCore.QPropertyAnimation(self.frame_left_menu, b"minimumWidth")
+        # Update image
+        pixmap = QPixmap('Images/dc_logo.png')
+        self.label_logo.setPixmap(pixmap)
 
         # ATTRIBUTES
         #######################################################################
