@@ -33,7 +33,7 @@ class GUI(QtWidgets.QMainWindow):
         self.centralwidget.setGeometry(100, 60, 2000, 1600)
         self.animation = QtCore.QPropertyAnimation(self.frame_left_menu, b"minimumWidth")
         # Update image
-        pixmap = QPixmap('Images/dc_logo.png')
+        pixmap = QPixmap('Images/dc_logo2.png')
         self.label_logo.setPixmap(pixmap)
 
         # ATTRIBUTES

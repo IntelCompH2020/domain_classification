@@ -36,7 +36,7 @@ class PreConfig(QDialog):
         self.sourceFolder = ""
 
         # Update image
-        pixmap = QPixmap('Images/dc_logo2.png')
+        pixmap = QPixmap('Images/dc_logo.png')
         self.label.setPixmap(pixmap)
 
         self.selectProjectFolder.clicked.connect(self.getProjectFolder)
