@@ -1258,7 +1258,7 @@ QToolTip {
                 <string/>
                </property>
                <property name="pixmap">
-                <pixmap>../Images/dc_logo.png</pixmap>
+                <pixmap>../Images/dc_logo2.png</pixmap>
                </property>
                <property name="scaledContents">
                 <bool>true</bool>
