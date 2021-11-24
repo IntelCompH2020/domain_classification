@@ -268,9 +268,15 @@ QHeaderView::section:vertical
                <height>35</height>
               </size>
              </property>
+             <property name="maximumSize">
+              <size>
+               <width>35</width>
+               <height>35</height>
+              </size>
+             </property>
              <property name="styleSheet">
               <string notr="true">QPushButton {
-	border: 5px solid #ABC2CB;
+	border: 2px solid #ABC2CB;
 	border-radius: 2px;	
 	background-color: #ABC2CB;
 	border-color:#576079;
@@ -364,9 +370,15 @@ QToolTip {
                <height>35</height>
               </size>
              </property>
+             <property name="maximumSize">
+              <size>
+               <width>35</width>
+               <height>35</height>
+              </size>
+             </property>
              <property name="styleSheet">
               <string notr="true">QPushButton {
-	border: 5px solid #ABC2CB;
+	border: 2px solid #ABC2CB;
 	border-radius: 2px;	
 	background-color: #ABC2CB;
 	border-color:#576079;

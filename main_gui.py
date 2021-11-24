@@ -11,7 +11,6 @@ import sys
 from PyQt5.QtWidgets import QDialog, QApplication, QFileDialog
 from PyQt5.uic import loadUi
 from pathlib import Path
-from PyQt5.QtGui import QPixmap
 
 from Code.graphical_user_interface.MainWindow import *
 from Code.graphical_user_interface.Messages import Messages
@@ -21,13 +20,8 @@ from Code.task_manager import TaskManager
 class PreConfig(QDialog):
     def __init__(self):
         super(PreConfig, self).__init__()
-
+        # Load UI
         loadUi("UIs/menuConfig.ui", self)
-
-        # font = QtGui.QFont('Arial')
-        # font.setStyleHint(QtGui.QFont.TypeWriter)
-        # font.setPixelSize(10)
-        # self.setFont(font)
 
         # Get home in any operating system
         self.home = str(Path.home())
@@ -43,6 +37,12 @@ class PreConfig(QDialog):
         self.selectProjectFolder.clicked.connect(self.getProjectFolder)
         self.selectSourceDataFolder.clicked.connect(self.getSourceDataFolder)
         self.start.clicked.connect(self.startApplication)
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def getProjectFolder(self):
         self.projectFolder = QFileDialog.getExistingDirectory(self, 'Create or select an an existing project',
@@ -89,7 +89,7 @@ if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
 ########################################################################
 # Configure font and style set
 default_font = QtGui.QFont('Arial', 10)
-default_font.setPixelSize(25)
+default_font.setPixelSize(20)  # 20 for Ubuntu 20.04.3; 25 for Windows
 QtWidgets.QApplication.setStyle("fusion")
 QtWidgets.QApplication.setFont(default_font)
 # Create application

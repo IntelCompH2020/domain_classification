@@ -6,6 +6,7 @@ Class representing the window for controlling the getting of a subcorpus from a 
 """
 
 from PyQt5 import uic, QtWidgets
+from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDesktopWidget
 
@@ -35,13 +36,16 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         ########################################################################
         self.info_button_topic_list.setIcon(QIcon('Images/help2.png'))
         self.info_button_topic_list.setToolTip(Messages.INFO_TOPIC_LIST)
+        self.info_button_topic_list.setIconSize(0.75 * QSize(self.info_button_topic_list.width(),
+                                                             self.info_button_topic_list.height()))
         self.info_button_selected_tag.setIcon(QIcon('Images/help2.png'))
+        self.info_button_selected_tag.setIconSize(0.75 * QSize(self.info_button_selected_tag.width(),
+                                                               self.info_button_selected_tag.height()))
         self.info_button_selected_tag.setToolTip(Messages.INFO_TAG)
 
         self.get_topic_list_push_button.clicked.connect(self.clicked_get_topic_list)
 
     def initUI(self):
-        self.setGeometry(100, 60, 2000, 1600)
         self.setWindowIcon(QIcon('Images/dc_logo.png'))
         self.setWindowTitle(Messages.WINDOW_TITLE)
         self.center()

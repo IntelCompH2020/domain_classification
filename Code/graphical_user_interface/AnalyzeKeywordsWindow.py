@@ -33,7 +33,6 @@ class AnalyzeKeywordsWindow(QtWidgets.QDialog):
         self.layoutPlot.addWidget(self.canvas)
 
     def initUI(self):
-        self.setGeometry(100, 60, 2000, 1600)
         self.setWindowIcon(QIcon('Images/dc_logo.png'))
         self.setWindowTitle(Messages.WINDOW_TITLE)
         self.center()

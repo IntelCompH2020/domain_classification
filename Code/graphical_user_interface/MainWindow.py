@@ -11,7 +11,7 @@ import pathlib
 from PyQt5 import uic, QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QButtonGroup, QDesktopWidget
-from PyQt5.QtCore import QThreadPool
+from PyQt5.QtCore import QThreadPool, QSize
 from PyQt5.QtGui import QPixmap
 
 from Code.graphical_user_interface.AnalyzeKeywordsWindow import AnalyzeKeywordsWindow
@@ -47,10 +47,16 @@ class MainWindow(QtWidgets.QMainWindow):
         # INFORMATION BUTTONS
         ########################################################################
         self.info_button_select_corpus.setIcon(QIcon('Images/help2.png'))
+        self.info_button_select_corpus.setIconSize(0.75 * QSize(self.info_button_select_corpus.width(),
+                                                                self.info_button_select_corpus.height()))
         self.info_button_select_corpus.setToolTip(Messages.INFO_SELECT_CORPUS)
         self.info_button_get_labels.setIcon(QIcon('Images/help2.png'))
+        self.info_button_get_labels.setIconSize(0.75 * QSize(self.info_button_get_labels.width(),
+                                                             self.info_button_get_labels.height()))
         self.info_button_get_labels.setToolTip(Messages.INFO_GET_LABELS)
         self.info_button_load_reset_labels.setIcon(QIcon('Images/help2.png'))
+        self.info_button_load_reset_labels.setIconSize(0.75 * QSize(self.info_button_load_reset_labels.width(),
+                                                                    self.info_button_load_reset_labels.height()))
         self.info_button_load_reset_labels.setToolTip(Messages.INFO_LOAD_RESET_LABELS)
 
         ########################################################################
@@ -101,25 +107,28 @@ class MainWindow(QtWidgets.QMainWindow):
         ########################################################################
         self.toggleButton.clicked.connect(lambda: toggleMenu(self, 250))
         self.toggleButton.setIcon(QIcon('Images/menu.png'))
+        self.toggleButton.setIconSize(0.75 * QSize(self.toggleButton.width(),
+                                                   self.toggleButton.height()))
 
         # PAGES
         ########################################################################
         # PAGE 1: Load corpus/ labels
         self.pushButtonLoad.clicked.connect(lambda: self.tabs.setCurrentWidget(self.page_load))
         self.pushButtonLoad.setIcon(QIcon('Images/settings.png'))
+        self.pushButtonLoad.setIconSize(0.75 * QSize(self.pushButtonLoad.width(), self.pushButtonLoad.height()))
         self.pushButtonLoad.setToolTip(Messages.INFO_LOAD_CORPUS_LABELS)
         # PAGE 2: Train classifier
         self.pushButtonTrain.clicked.connect(lambda: self.tabs.setCurrentWidget(self.page_train))
         self.pushButtonTrain.setIcon(QIcon('Images/training.png'))
+        self.pushButtonTrain.setIconSize(0.75 * QSize(self.pushButtonTrain.width(), self.pushButtonTrain.height()))
         self.pushButtonTrain.setToolTip(Messages.INFO_TRAIN_CLASSIFIER)
         # PAGE 3: Get relevance feedback
         self.pushButtonGetFeedback.clicked.connect(lambda: self.tabs.setCurrentWidget(self.page_feedback))
         self.pushButtonGetFeedback.setIcon(QIcon('Images/feedback.png'))
+        self.pushButtonGetFeedback.setIconSize(0.75 * QSize(self.pushButtonTrain.width(), self.pushButtonTrain.height()))
         self.pushButtonGetFeedback.setToolTip(Messages.INFO_GET_FEEDBACK)
 
     def initUI(self):
-        self.setGeometry(0, 0, 2480, 1360)
-        self.centralwidget.setGeometry(100, 60, 2480, 1360)
         # Update image
         pixmap = QPixmap('Images/dc_logo2.png')
         self.label_logo.setPixmap(pixmap)
