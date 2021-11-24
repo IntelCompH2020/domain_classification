@@ -10,7 +10,7 @@ import numpy as np
 import pathlib
 from PyQt5 import uic, QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QButtonGroup
+from PyQt5.QtWidgets import QButtonGroup, QDesktopWidget
 from PyQt5.QtCore import QThreadPool
 from PyQt5.QtGui import QPixmap
 
@@ -28,13 +28,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # Load UI and configure default geometry of the window
         ########################################################################
         uic.loadUi("UIS/DomainClassifier.ui", self)
-
-        self.setGeometry(100, 60, 2000, 1600)
-        self.centralwidget.setGeometry(100, 60, 2000, 1600)
+        self.initUI()
         self.animation = QtCore.QPropertyAnimation(self.frame_left_menu, b"minimumWidth")
-        # Update image
-        pixmap = QPixmap('Images/dc_logo2.png')
-        self.label_logo.setPixmap(pixmap)
 
         # ATTRIBUTES
         #######################################################################
@@ -121,6 +116,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButtonGetFeedback.clicked.connect(lambda: self.tabs.setCurrentWidget(self.page_feedback))
         self.pushButtonGetFeedback.setIcon(QIcon('Images/feedback.png'))
         self.pushButtonGetFeedback.setToolTip(Messages.INFO_GET_FEEDBACK)
+
+    def initUI(self):
+        self.setGeometry(0, 0, 2480, 1360)
+        self.centralwidget.setGeometry(100, 60, 2480, 1360)
+        # Update image
+        pixmap = QPixmap('Images/dc_logo2.png')
+        self.label_logo.setPixmap(pixmap)
+        self.setWindowIcon(QIcon('Images/dc_logo.png'))
+        self.setWindowTitle(Messages.WINDOW_TITLE)
+        self.resize(self.minimumSizeHint())
+        self.center()
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     ####################################################################################################################
     # LOAD CORPUS FUNCTIONS

@@ -21,8 +21,9 @@ from Code.task_manager import TaskManager
 class PreConfig(QDialog):
     def __init__(self):
         super(PreConfig, self).__init__()
+
         loadUi("UIs/menuConfig.ui", self)
-        self.setWindowTitle(Messages.WINDOW_TITLE)
+
         # font = QtGui.QFont('Arial')
         # font.setStyleHint(QtGui.QFont.TypeWriter)
         # font.setPixelSize(10)
@@ -73,7 +74,7 @@ class PreConfig(QDialog):
         mainWindow = MainWindow(self.projectFolder, self.sourceFolder, tm)
         widget.addWidget(mainWindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
-        widget.resize(2480, 1360)
+        # widget.resize(2480, 1360)
         return
 
 
@@ -104,7 +105,9 @@ print(width)
 # Create main menu window
 configWindow = PreConfig()
 widget.addWidget(configWindow)
-widget.resize(1540, 880)
+height = 2480  # 1540
+weight = 1360  # 880
+widget.resize(height, weight)
 widget.show()
 sys.exit(app.exec_())
 

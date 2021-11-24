@@ -7,6 +7,7 @@ Class representing the window for controlling the getting of a subcorpus from a 
 
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QDesktopWidget
 
 from Code.graphical_user_interface.Messages import Messages
 
@@ -18,10 +19,10 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         # Load UI and configure default geometry of the window
         ########################################################################
         uic.loadUi("UIS/get_labels_by_keywords.ui", self)
-
-        self.setGeometry(100, 60, 2000, 1600)
+        self.initUI()
 
         # ATTRIBUTES
+        #######################################################################
         self.tm = tm
         self.selectedKeywords = None
         self.selectedTag = None
@@ -34,6 +35,18 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         self.info_button_selected_tag.setToolTip(Messages.INFO_TAG)
 
         self.get_labels_push_button.clicked.connect(self.clicked_select_keywords)
+
+    def initUI(self):
+        self.setGeometry(100, 60, 2000, 1600)
+        self.setWindowIcon(QIcon('Images/dc_logo.png'))
+        self.setWindowTitle(Messages.WINDOW_TITLE)
+        self.center()
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
     def show_suggested_keywords(self):
         suggested_keywords = self.tm.get_suggested_keywords_gui()
