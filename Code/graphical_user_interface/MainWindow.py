@@ -21,9 +21,9 @@ from Code.graphical_user_interface.Messages import Messages
 from Code.graphical_user_interface.util import toggleMenu, execute_in_thread
 
 
-class GUI(QtWidgets.QMainWindow):
+class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, projectFolder, sourceFolder, tm):
-        super(GUI, self).__init__()
+        super(MainWindow, self).__init__()
 
         # Load UI and configure default geometry of the window
         ########################################################################
@@ -136,7 +136,7 @@ class GUI(QtWidgets.QMainWindow):
 
     def execute_load_corpus(self):
         """
-        Method to control the execution of the loading of a corpus on a secondary thread while the GUI execution
+        Method to control the execution of the loading of a corpus on a secondary thread while the MainWindow execution
         is maintained in the main thread.
         """
         self.tm.load_corpus(self.corpus_selected_name)

@@ -17,7 +17,7 @@ def toggleMenu(gui, maxWidth):
 
     Parameters:
     ----------
-    * gui       -  GUI object to which the toggle menu will be appended.
+    * gui       -  MainWindow object to which the toggle menu will be appended.
     * maxWidth  -  Maximum width to which the toggle menu is going to be
                    expanded.
     """
@@ -30,7 +30,7 @@ def toggleMenu(gui, maxWidth):
     if width == standard:
         widthExtended = maxExtend
         # SHOW TEXT INSTEAD OF ICON
-        gui.pushButtonLoad.setText('Load corpus')
+        gui.pushButtonLoad.setText('Corpus / labels')
         gui.pushButtonTrain.setText('Train classifier')
         gui.pushButtonGetFeedback.setText('Get feedback')
         gui.label_logo.setFixedSize(widthExtended, widthExtended)

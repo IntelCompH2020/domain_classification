@@ -196,7 +196,6 @@ class TaskManager(baseTaskManager):
         """
         Get a set of positive labels using keyword-based search
         """
-        # @TODO: Add in GUI
         if self.keywords is None:
             logging.info("-- No active keywords in this session.")
             self.keywords = self._ask_keywords()
@@ -272,7 +271,7 @@ class TaskManager(baseTaskManager):
 
     def get_labels_by_keywords_gui(self, keywords, _tag):
         """
-        Get a set of positive labels using keyword-based search through the GUI
+        Get a set of positive labels using keyword-based search through the MainWindow
         """
 
         # Weight of the title words
@@ -413,6 +412,7 @@ class TaskManager(baseTaskManager):
 
         # ##############
         # Classification
+
 
         logging.warning("THE FOLLOWING CODE IS UNDER CONSTRUCTION. BE AWARE "
                         "THAT IT ADDS LARGE FILES INTO THE CODE FOLDERS, THAT "

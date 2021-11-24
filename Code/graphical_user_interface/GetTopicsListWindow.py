@@ -57,9 +57,9 @@ class GetTopicsListWindow(QtWidgets.QDialog):
             item_topic_description = QtWidgets.QTableWidgetItem(str(topic_words[i]))
             self.table_widget_topic_list.setItem(i, 1, item_topic_description)
 
-        self.table_widget_topic_list.setSizeAdjustPolicy(
-            QtWidgets.QAbstractScrollArea.AdjustToContents)
-        self.table_widget_topic_list.resizeColumnsToContents()
+        # self.table_widget_topic_list.setSizeAdjustPolicy(
+        #    QtWidgets.QAbstractScrollArea.AdjustToContents)
+        # self.table_widget_topic_list.resizeColumnsToContents()
         return
 
     def clicked_get_topic_list(self):

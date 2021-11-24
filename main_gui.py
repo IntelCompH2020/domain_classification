@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Main class for the Domain Classification GUI. It starts the GUI application by first creating an starting window,
-which after the user has selected the required input parameters (i.e. project and source folder), redirects creates
-and redirects the user to the main window of the application.
+which after the user has selected the required input parameters (i.e. project and source folder), redirects the
+user to the main window of the application.
 
 @author: lcalv
 """
@@ -13,7 +13,7 @@ from PyQt5.uic import loadUi
 from pathlib import Path
 from PyQt5.QtGui import QPixmap
 
-from Code.graphical_user_interface.gui import *
+from Code.graphical_user_interface.MainWindow import *
 from Code.graphical_user_interface.Messages import Messages
 from Code.task_manager import TaskManager
 
@@ -23,10 +23,10 @@ class PreConfig(QDialog):
         super(PreConfig, self).__init__()
         loadUi("UIs/menuConfig.ui", self)
         self.setWindowTitle(Messages.WINDOW_TITLE)
-        font = QtGui.QFont('Arial')
-        font.setStyleHint(QtGui.QFont.TypeWriter)
-        font.setPixelSize(10)
-        self.setFont(font)
+        # font = QtGui.QFont('Arial')
+        # font.setStyleHint(QtGui.QFont.TypeWriter)
+        # font.setPixelSize(10)
+        # self.setFont(font)
 
         # Get home in any operating system
         self.home = str(Path.home())
@@ -70,7 +70,7 @@ class PreConfig(QDialog):
             tm.load()
 
         # We change to the main menu
-        mainWindow = GUI(self.projectFolder, self.sourceFolder, tm)
+        mainWindow = MainWindow(self.projectFolder, self.sourceFolder, tm)
         widget.addWidget(mainWindow)
         widget.setCurrentIndex(widget.currentIndex() + 1)
         widget.resize(2480, 1360)
@@ -83,17 +83,29 @@ if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
 if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, False)
 
+########################################################################
 # Main
+########################################################################
+# Configure font and style set
+default_font = QtGui.QFont('Arial', 10)
+default_font.setPixelSize(25)
+QtWidgets.QApplication.setStyle("fusion")
+QtWidgets.QApplication.setFont(default_font)
+# Create application
 app = QApplication(sys.argv)
 app.setWindowIcon(QIcon('Images/dc_logo.png'))
+app.setFont(default_font)
 widget = QtWidgets.QStackedWidget()
 widget.setWindowTitle(Messages.WINDOW_TITLE)
 width = widget.frameGeometry().width()
 height = widget.frameGeometry().height()
 print(height)
 print(width)
+# Create main menu window
 configWindow = PreConfig()
 widget.addWidget(configWindow)
 widget.resize(1540, 880)
 widget.show()
 sys.exit(app.exec_())
+
+
