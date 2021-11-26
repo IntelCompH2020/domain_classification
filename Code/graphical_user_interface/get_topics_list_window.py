@@ -80,7 +80,7 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         return
 
     def clicked_get_topic_list(self):
-        if self.line_topic_list.text() is None:
+        '''if self.line_topic_list.text() is None:
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.NO_TOPIC_LIST_SELECTED)
         else:
             topic_list = str(self.line_topic_list.text())
@@ -104,6 +104,6 @@ class GetTopicsListWindow(QtWidgets.QDialog):
 
         self.hide()
         self.line_topic_list.setText("")
-        self.line_edit_get_tag.setText("")
+        self.line_edit_get_tag.setText("")'''
         return
 

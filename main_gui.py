@@ -50,19 +50,17 @@ class PreConfig(QDialog):
         self.move(qr.topLeft())
 
     def getProjectFolder(self):
-        self.projectFolder = QFileDialog.getExistingDirectory(self, 'Create or select an an existing project',
-                                                              self.home)
+        self.projectFolder = args.p if args.p is not None else\
+            QFileDialog.getExistingDirectory(self, 'Create or select an an existing project',
+                                             self.home)
         self.showProjectFolder.setText(self.projectFolder)
 
     def getSourceDataFolder(self):
-        self.sourceFolder = QFileDialog.getExistingDirectory(self, 'Select the source data folder', self.home)
+        self.sourceFolder = args.source if args.source is not None else\
+            QFileDialog.getExistingDirectory(self, 'Select the source data folder', self.home)
         self.showSourceDataFolder.setText(self.sourceFolder)
 
     def startApplication(self):
-        # We save the project and source path if provided through the command line
-        self.projectFolder = args.p if args.p is not None else ""
-        self.sourceFolder = args.source if args.source is not None else ""
-
         # We show a warning message if one or  both folders have not selected
         if self.projectFolder == "" or self.sourceFolder == "":
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.INCORRECT_INPUT_PARAM_SELECTION)

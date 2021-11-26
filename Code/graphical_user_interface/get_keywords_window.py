@@ -57,10 +57,10 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         self.text_edit_show_keywords.setPlainText(suggested_keywords)
 
     def clicked_select_keywords(self):
-        if self.line_edit_get_keywords.text() is None:
+        if self.text_edit_get_keywords.toPlainText() is None:
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.NO_KEYWORDS_SELECTED)
         else:
-            keywords = self.line_edit_get_keywords.text()
+            keywords = self.text_edit_get_keywords.toPlainText()
             # Split by commas, removing leading and trailing spaces
             _keywords = [x.strip() for x in keywords.split(',')]
             # Remove multiple spaces
@@ -73,7 +73,7 @@ class GetKeywordsWindow(QtWidgets.QDialog):
             self.selectedTag = str(self.line_edit_get_tag.text())
         self.hide()
         self.text_edit_show_keywords.setPlainText("")
-        self.line_edit_get_keywords.setText("")
+        self.text_edit_get_keywords.setPlainText("")
         self.line_edit_get_tag.setText("")
         return
 

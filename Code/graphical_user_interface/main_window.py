@@ -219,15 +219,19 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.get_keywords_window.exec()
             elif self.get_labels_radio_buttons.checkedId() == 3:
                 print("Analyze the presence of selected keywords in the corpus")
-                self.get_label_option = 3
                 # Show the window for selecting the keywords in case they have not been selected yet
                 if self.tm.keywords is None:
+                    self.get_label_option = 3
                     QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE, Messages.INFO_NO_ACTIVE_KEYWORDS)
                     # Show the window for selecting the keywords
                     self.get_keywords_window.show_suggested_keywords()
                     self.get_keywords_window.exec()
                 else:
+                    self.get_label_option = - 1
                     QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE, Messages.INFO_ACTIVE_KEYWORDS)
+                    # Show the window for the analysis of the keywords
+                    self.analyze_keywords_window.do_analysis()
+                    self.analyze_keywords_window.exec()
 
             elif self.get_labels_radio_buttons.checkedId() == 4:
                 print("Get subcorpus from a topic selection function")
@@ -269,9 +273,12 @@ class MainWindow(QtWidgets.QMainWindow):
             elif self.get_label_option == 5:
                 df_labels, message_out = self.tm.get_labels_by_definitions()
 
-            if self.get_label_option != 1:
+            if self.get_label_option != 1 and self.get_label_option != -1:
                 self.message_out = message_out
                 self.do_after_import_labels()
+
+        # Load just gotten labels
+        self.show_labels()
 
         # Reset after loading labels
         self.get_labels_radio_buttons.setExclusive(False)
@@ -291,6 +298,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Method for showing the labels associated with the selected corpus.
         """
+        self.tree_view_load_labels.clear()
         if self.tm.corpus_name is None:
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.INCORRECT_NO_CORPUS_SELECTED)
         else:
@@ -324,6 +332,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Method for controlling the resetting of the current session's labels.
         """
+        item = self.tree_view_load_labels.currentItem()
+        self.labels_loaded = str(item.text())
         if self.tm.corpus_name is None:
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.INCORRECT_NO_CORPUS_SELECTED)
         else:

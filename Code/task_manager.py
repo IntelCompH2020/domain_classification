@@ -98,7 +98,6 @@ class TaskManager(baseTaskManager):
         """
         Returns the list of available corpus
         """
-        # @ TODO
         if self.corpus_name is None:
             logging.warning("\n")
             logging.warning(
@@ -239,7 +238,7 @@ class TaskManager(baseTaskManager):
 
         y = self.CorpusProc.score_by_keywords(self.keywords, wt=20)
 
-        return y
+        return y, df_stats, kf_stats
 
     def get_labels_by_keywords(self):
         """
