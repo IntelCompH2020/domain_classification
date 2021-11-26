@@ -8,6 +8,7 @@ user to the main window of the application.
 """
 
 import sys
+import argparse
 from PyQt5.QtWidgets import QDialog, QApplication, QFileDialog
 from PyQt5.uic import loadUi
 from pathlib import Path
@@ -34,6 +35,10 @@ class PreConfig(QDialog):
         pixmap = QPixmap('Images/dc_logo.png')
         self.label.setPixmap(pixmap)
 
+        # Update project and source folder in the GUI if provided through the command line
+        self.showProjectFolder.setText(args.p) if args.p is not None else print("p not provided")
+        self.showSourceDataFolder.setText(args.source) if args.source is not None else print("source not provided")
+
         self.selectProjectFolder.clicked.connect(self.getProjectFolder)
         self.selectSourceDataFolder.clicked.connect(self.getSourceDataFolder)
         self.start.clicked.connect(self.startApplication)
@@ -54,7 +59,11 @@ class PreConfig(QDialog):
         self.showSourceDataFolder.setText(self.sourceFolder)
 
     def startApplication(self):
-        # We show a warning message if both folders have not selected
+        # We save the project and source path if provided through the command line
+        self.projectFolder = args.p if args.p is not None else ""
+        self.sourceFolder = args.source if args.source is not None else ""
+
+        # We show a warning message if one or  both folders have not selected
         if self.projectFolder == "" or self.sourceFolder == "":
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.INCORRECT_INPUT_PARAM_SELECTION)
             return
@@ -87,9 +96,18 @@ if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
 ########################################################################
 # Main
 ########################################################################
+
+# Read input arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('--p', type=str, default=None,
+                    help="path to a new or an existing project")
+parser.add_argument('--source', type=str, default=None,
+                    help="path to the source data folder")
+args = parser.parse_args()
+
 # Configure font and style set
 default_font = QtGui.QFont('Arial', 10)
-default_font.setPixelSize(20)  # 20 for Ubuntu 20.04.3; 25 for Windows
+default_font.setPixelSize(25)  # 20 for Ubuntu 20.04.3; 25 for Windows
 QtWidgets.QApplication.setStyle("fusion")
 QtWidgets.QApplication.setFont(default_font)
 # Create application
