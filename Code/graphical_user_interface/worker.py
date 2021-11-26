@@ -5,7 +5,7 @@ Created on Tue Mar  2 13:19:34 2021
 @author: lcalv
 """
 
-from Code.graphical_user_interface.WorkerSignals import WorkerSignals
+from Code.graphical_user_interface.worker_signals import WorkerSignals
 from PyQt5 import QtCore
 import sys
 import traceback

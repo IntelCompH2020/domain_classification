@@ -13,8 +13,8 @@ from PyQt5.QtWidgets import QDialog, QApplication, QFileDialog
 from PyQt5.uic import loadUi
 from pathlib import Path
 
-from Code.graphical_user_interface.MainWindow import *
-from Code.graphical_user_interface.Messages import Messages
+from Code.graphical_user_interface.main_window import *
+from Code.graphical_user_interface.messages import Messages
 from Code.task_manager import TaskManager
 
 

@@ -14,10 +14,10 @@ from PyQt5.QtWidgets import QButtonGroup, QDesktopWidget
 from PyQt5.QtCore import QThreadPool, QSize
 from PyQt5.QtGui import QPixmap
 
-from Code.graphical_user_interface.AnalyzeKeywordsWindow import AnalyzeKeywordsWindow
-from Code.graphical_user_interface.GetKeywordsWindow import GetKeywordsWindow
-from Code.graphical_user_interface.GetTopicsListWindow import GetTopicsListWindow
-from Code.graphical_user_interface.Messages import Messages
+from Code.graphical_user_interface.analyze_keywords_window import AnalyzeKeywordsWindow
+from Code.graphical_user_interface.get_keywords_window import GetKeywordsWindow
+from Code.graphical_user_interface.get_topics_list_window import GetTopicsListWindow
+from Code.graphical_user_interface.messages import Messages
 from Code.graphical_user_interface.util import toggleMenu, execute_in_thread
 
 

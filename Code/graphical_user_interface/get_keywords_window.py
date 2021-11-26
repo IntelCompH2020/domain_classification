@@ -10,7 +10,7 @@ from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDesktopWidget
 
-from Code.graphical_user_interface.Messages import Messages
+from Code.graphical_user_interface.messages import Messages
 
 
 class GetKeywordsWindow(QtWidgets.QDialog):

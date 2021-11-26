@@ -11,7 +11,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDesktopWidget
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
-from Code.graphical_user_interface.Messages import Messages
+from Code.graphical_user_interface.messages import Messages
 
 
 class AnalyzeKeywordsWindow(QtWidgets.QDialog):

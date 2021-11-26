@@ -6,7 +6,7 @@ Class with a set of auxiliary functions for the GUI deployment.
 """
 import os
 from PyQt5 import QtCore
-from Code.graphical_user_interface.Worker import Worker
+from Code.graphical_user_interface.worker import Worker
 
 
 def toggleMenu(gui, maxWidth):
