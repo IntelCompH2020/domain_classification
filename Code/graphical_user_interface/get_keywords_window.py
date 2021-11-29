@@ -13,8 +13,6 @@ from PyQt5.QtWidgets import QDesktopWidget
 from Code.graphical_user_interface.messages import Messages
 
 
-# @TODO: Control of parameters configuration
-
 class GetKeywordsWindow(QtWidgets.QDialog):
     def __init__(self, tm):
         super(GetKeywordsWindow, self).__init__()
@@ -29,6 +27,17 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         self.tm = tm
         self.selectedKeywords = None
         self.selectedTag = None
+        # Weight of the title words
+        self.wt_default = 2
+        self.wt = self.wt_default
+        # Weight of the title words
+        self.n_max_default = 2000
+        self.n_max = self.n_max_default
+        # Significance threshold.
+        self.s_min_default = 0.2
+        self.s_min = self.s_min_default
+
+        self.init_params()
 
         # INFORMATION BUTTONS
         ########################################################################
@@ -42,6 +51,7 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         self.info_button_selected_tag.setToolTip(Messages.INFO_TAG)
 
         self.get_labels_push_button.clicked.connect(self.clicked_select_keywords)
+        self.table_params.cellChanged.connect(self.update_params)
 
     def initUI(self):
         self.setWindowIcon(QIcon('Images/dc_logo.png'))
@@ -53,6 +63,33 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
+
+    def init_params(self):
+        self.table_params.clearContents()
+        self.table_params.setRowCount(1)
+        self.table_params.setColumnCount(3)
+
+        self.table_params.setItem(0, 0, QtWidgets.QTableWidgetItem(str(self.wt)))
+        self.table_params.setItem(0, 1, QtWidgets.QTableWidgetItem(str(self.n_max)))
+        self.table_params.setItem(0, 2, QtWidgets.QTableWidgetItem(str(self.s_min)))
+
+    def update_params(self):
+        if self.table_params.item(0, 0) is not None:
+            self.wt = self.table_params.item(0, 0).text()
+        else:
+            self.s_min = self.wt_default
+
+        if self.table_params.item(0, 1) is not None:
+            self.n_max = self.table_params.item(0, 1).text()
+        else:
+            self.n_max = self.n_max_default
+
+        if self.table_params.item(0, 2) is not None:
+            self.s_min = self.table_params.item(0, 2).text()
+        else:
+            self.s_min = self.s_min_default
+
+        self.init_params()
 
     def show_suggested_keywords(self):
         suggested_keywords = self.tm.get_suggested_keywords_gui()

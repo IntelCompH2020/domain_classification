@@ -348,6 +348,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                                                             "current session.")
 
             self.label_labels_loaded_are.setText(str(" "))
+            self.show_labels()
         return
 
     ####################################################################################################################
