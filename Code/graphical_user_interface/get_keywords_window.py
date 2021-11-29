@@ -30,7 +30,7 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         # Weight of the title words
         self.wt_default = 2
         self.wt = self.wt_default
-        # Weight of the title words
+        # Maximum number of elements in the output list
         self.n_max_default = 2000
         self.n_max = self.n_max_default
         # Significance threshold.
@@ -50,6 +50,12 @@ class GetKeywordsWindow(QtWidgets.QDialog):
                                                                self.info_button_selected_tag.height()))
         self.info_button_selected_tag.setToolTip(Messages.INFO_TAG)
 
+        # TABLE TOOL TIPS
+        ########################################################################
+        self.table_params.setToolTip(Messages.INFO_TABLE_PARAMETERS_KEYWORDS)
+
+        # CONNECTION WITH HANDLER FUNCTIONS
+        ########################################################################
         self.get_labels_push_button.clicked.connect(self.clicked_select_keywords)
         self.table_params.cellChanged.connect(self.update_params)
 

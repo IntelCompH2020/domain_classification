@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Main class for the Domain Classification GUI. It starts the GUI application by first creating an starting window,
-which after the user has selected the required input parameters (i.e. project and source folder), redirects the
-user to the main window of the application.
+Main class for the Domain Classification GUI. It starts the GUI application by first creating a starting window,
+which after a correct selection of the input parameters (i.e. project and source folder), redirects the user to
+the main window of the application.
+It can be invoked in the following ways:
+1) python main_gui.py --p "path_to_project_folder" --source "path_to_source_folder"
+    ---> The project and source folder are automatically updated in the starting window, and the START button can
+         be directly clicked, without the necessity of further configurations.
+2) python main_gui.py
+    ---> The project and source folder need to be manually selected by clicking on their respective buttons.
 
 @author: lcalv
 """
@@ -39,6 +45,8 @@ class PreConfig(QDialog):
         self.showProjectFolder.setText(args.p) if args.p is not None else print("p not provided")
         self.showSourceDataFolder.setText(args.source) if args.source is not None else print("source not provided")
 
+        # CONNECTION WITH HANDLER FUNCTIONS
+        ########################################################################
         self.selectProjectFolder.clicked.connect(self.getProjectFolder)
         self.selectSourceDataFolder.clicked.connect(self.getSourceDataFolder)
         self.start.clicked.connect(self.startApplication)

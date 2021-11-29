@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>995</width>
-    <height>523</height>
+    <width>1990</width>
+    <height>1074</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -217,6 +217,11 @@ QHeaderView::section:horizontal
 QHeaderView::section:vertical
 {
     border: 1px solid #576079;
+}
+
+QToolTip {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
 }
 </string>
              </property>
@@ -441,7 +446,11 @@ QHeaderView::section:vertical
 {
     border: 1px solid #576079;
 }
-</string>
+
+QToolTip {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
              </property>
              <property name="editTriggers">
               <set>QAbstractItemView::CurrentChanged</set>

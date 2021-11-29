@@ -29,7 +29,7 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         self.tw = None
         self.T = None
         self.df_metadata = None
-        # Weight of the title words
+        # Maximum number of elements in the output list
         self.n_max_default = 2000
         self.n_max = self.n_max_default
         # Significance threshold.
@@ -49,6 +49,13 @@ class GetTopicsListWindow(QtWidgets.QDialog):
                                                                self.info_button_selected_tag.height()))
         self.info_button_selected_tag.setToolTip(Messages.INFO_TAG)
 
+        # TABLE TOOL TIPS
+        ########################################################################
+        self.table_widget_topics_weight.setToolTip(Messages.INFO_TABLE_WEIGHTS)
+        self.table_params.setToolTip(Messages.INFO_TABLE_PARAMETERS_TOPICS)
+
+        # CONNECTION WITH HANDLER FUNCTIONS
+        ########################################################################
         self.table_widget_topics_weight.cellChanged.connect(self.updated_topic_weighted_list)
         self.get_topic_list_push_button.clicked.connect(self.clicked_get_topic_list)
         self.table_params.cellChanged.connect(self.update_params)

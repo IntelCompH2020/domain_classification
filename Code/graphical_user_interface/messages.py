@@ -38,13 +38,29 @@ class Messages:
                       'the keywords that you want to use.'
     INFO_TYPE_KEYWORDS = 'Write your keywords (separated by commas, e.g.: "gradient descent, gibbs sampling") '
     NO_KEYWORDS_SELECTED = 'You must write a set of keywords in order to proceed.'
-    INFO_TAG = 'Write the tag to compose the label file name.'
+    INFO_TAG = 'Tag that is going to be used to compose the label file name.'
     NO_TAG_SELECTED = 'You must select a tag to compose the label file name'
     INFO_NO_ACTIVE_KEYWORDS = 'There are no active keywords in this session. Proceeding with its selection...'
     INFO_ACTIVE_KEYWORDS = 'Analyzing current list of active keywords....'
-    INFO_TOPIC_LIST = 'Introduce your weighted topic list: "id_0, weight_0, id_1, weight_1, ..."'
+    INFO_TOPIC_LIST = 'In this line the weighted topic list that is going to be used for the attainment of the\n'\
+                      'labels is going to be updated according to the weights that you are introducing on the top\n' \
+                      'left table of this view with the following format: "id_0, weight_0, id_1, weight_1, ...".'
     NO_TOPIC_LIST_SELECTED = 'You must introduce your weighted topic list with the form:\n'\
                              '"id_0, weight_0, id_1, weight_1, ..."'
+    INFO_TABLE_WEIGHTS = 'Insert the weight that you want to give for each of the associated topics located in the\n'\
+                         'right table.'
+    INFO_TABLE_PARAMETERS_KEYWORDS = 'These are the default values of the parameters needed for the labels import.\n' \
+                                     'You can change any of them by tipping a different value on its corresponding\n' \
+                                     'column. The parameters refer to:\n' \
+                                     '- wt: Weighting factor for the title components.\n' \
+                                     '- n_max: Maximum number of elements in the output list.\n' \
+                                     '- s_min: Minimum score. Only elements strictly above s_min are selected.'
+
+    INFO_TABLE_PARAMETERS_TOPICS = 'These are the default values of the parameters needed for the labels import.\n' \
+                                   'You can change any of them by tipping a different value on its corresponding\n' \
+                                   'column. The parameters refer to:\n' \
+                                   '- n_max: Maximum number of elements in the output list.\n' \
+                                   '- s_min: Minimum score. Only elements strictly above s_min are selected.'
 
     # Loading labels messages
     ####################################################################################################################
