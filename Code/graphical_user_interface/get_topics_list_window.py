@@ -13,9 +13,6 @@ from PyQt5.QtWidgets import QDesktopWidget
 from Code.graphical_user_interface.messages import Messages
 
 
-# @TODO: Include managements of topics inserted in the table
-# @TODO: Control of parameters configuration
-
 class GetTopicsListWindow(QtWidgets.QDialog):
     def __init__(self, tm):
         super(GetTopicsListWindow, self).__init__()
