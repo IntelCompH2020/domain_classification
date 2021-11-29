@@ -30,7 +30,7 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_3">
+    <layout class="QVBoxLayout" name="layout">
      <item>
       <widget class="QFrame" name="frame_top_btns">
        <property name="sizePolicy">
@@ -206,7 +206,7 @@ QHeaderView::section:vertical
 </string>
              </property>
              <property name="editTriggers">
-              <set>QAbstractItemView::NoEditTriggers</set>
+              <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::CurrentChanged|QAbstractItemView::EditKeyPressed</set>
              </property>
              <attribute name="horizontalHeaderStretchLastSection">
               <bool>true</bool>
@@ -359,7 +359,7 @@ QHeaderView::section:vertical
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
-            <widget class="QTableWidget" name="table_widget_topic_list_3">
+            <widget class="QTableWidget" name="table_params">
              <property name="minimumSize">
               <size>
                <width>550</width>
@@ -429,7 +429,7 @@ QHeaderView::section:vertical
 </string>
              </property>
              <property name="editTriggers">
-              <set>QAbstractItemView::NoEditTriggers</set>
+              <set>QAbstractItemView::CurrentChanged</set>
              </property>
              <attribute name="horizontalHeaderStretchLastSection">
               <bool>true</bool>

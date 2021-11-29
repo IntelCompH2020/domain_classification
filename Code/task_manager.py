@@ -330,12 +330,7 @@ class TaskManager(baseTaskManager):
 
         return message_out
 
-    def get_topic_words_gui(self):
-        # Weight of the title words
-        n_max = 2000
-        # Significance threshold.
-        s_min = 0.2
-
+    def get_topic_words_gui(self, n_max, s_min):
         # Load topics
         T, df_metadata, topic_words = self.DM.load_topics()
 
@@ -344,7 +339,7 @@ class TaskManager(baseTaskManager):
         T, df_metadata = self.CorpusProc.remove_docs_from_topics(
             T, df_metadata, col_id='corpusid')
 
-        return topic_words, T, df_metadata, n_max, s_min
+        return topic_words, T, df_metadata
 
     def get_labels_by_topics_gui(self, topic_weights, tag, T, df_metadata, n_max, s_min):
         # Filter documents by topics

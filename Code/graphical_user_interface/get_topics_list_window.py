@@ -4,7 +4,7 @@ Class representing the window for controlling the getting of a subcorpus from a 
 
 @author: lcalv
 """
-
+import numpy as np
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon
@@ -12,6 +12,9 @@ from PyQt5.QtWidgets import QDesktopWidget
 
 from Code.graphical_user_interface.messages import Messages
 
+
+# @TODO: Include managements of topics inserted in the table
+# @TODO: Control of parameters configuration
 
 class GetTopicsListWindow(QtWidgets.QDialog):
     def __init__(self, tm):
@@ -29,8 +32,14 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         self.tw = None
         self.T = None
         self.df_metadata = None
-        self.n_max = 0
-        self.s_min = 0
+        # Weight of the title words
+        self.n_max_default = 2000
+        self.n_max = self.n_max_default
+        # Significance threshold.
+        self.s_min_default = 0.2
+        self.s_min = self.s_min_default
+
+        self.init_params()
 
         # INFORMATION BUTTONS
         ########################################################################
@@ -43,7 +52,9 @@ class GetTopicsListWindow(QtWidgets.QDialog):
                                                                self.info_button_selected_tag.height()))
         self.info_button_selected_tag.setToolTip(Messages.INFO_TAG)
 
+        self.table_widget_topics_weight.cellChanged.connect(self.updated_topic_weighted_list)
         self.get_topic_list_push_button.clicked.connect(self.clicked_get_topic_list)
+        self.table_params.cellChanged.connect(self.update_params)
 
     def initUI(self):
         self.setWindowIcon(QIcon('Images/dc_logo.png'))
@@ -56,9 +67,34 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
+    def init_params(self):
+        self.table_params.clearContents()
+        self.table_params.setRowCount(1)
+        self.table_params.setColumnCount(2)
+
+        print(self.n_max)
+        print(self.s_min)
+        self.table_params.setItem(0, 0, QtWidgets.QTableWidgetItem(str(self.n_max)))
+        self.table_params.setItem(0, 1, QtWidgets.QTableWidgetItem(str(self.s_min)))
+
+    def update_params(self):
+        if self.table_params.item(0, 0) is not None:
+            self.n_max = self.table_params.item(0, 0).text()
+        else:
+            self.n_max = self.n_max_default
+
+        if self.table_params.item(0, 1) is not None:
+            self.s_min = self.table_params.item(0, 1).text()
+        else:
+            self.s_min = self.s_min_default
+
+        self.init_params()
+
     def show_topics(self):
-        topic_words, self.T, self.df_metadata, self.n_max, self.s_min = self.tm.get_topic_words_gui()
-        n_topics = len(topic_words)
+        self.tw, self.T, self.df_metadata = self.tm.get_topic_words_gui(self.n_max, self.s_min)
+        n_topics = len(self.tw)
+
+        # TABLE FOR SHOWING TOPIC ID AND CHEMICAL DESCRIPTION
         #####################
         # column 0 = topic nr
         # column 1 = weight - > the user introduces it
@@ -71,16 +107,31 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         for i in range(n_topics):
             item_topic_nr = QtWidgets.QTableWidgetItem(str(i))
             self.table_widget_topic_list.setItem(i, 0, item_topic_nr)
-            item_topic_description = QtWidgets.QTableWidgetItem(str(topic_words[i]))
+            item_topic_description = QtWidgets.QTableWidgetItem(str(self.tw[i]))
             self.table_widget_topic_list.setItem(i, 1, item_topic_description)
 
-        # self.table_widget_topic_list.setSizeAdjustPolicy(
-        #    QtWidgets.QAbstractScrollArea.AdjustToContents)
-        # self.table_widget_topic_list.resizeColumnsToContents()
+        # TABLE IN WHICH THE USER INTRODUCES THE WEIGHTS FOR THE TOPICS
+        #####################
+        # column 0 = weight introduced by the user
+        #####################
+        self.table_widget_topics_weight.clearContents()
+        self.table_widget_topics_weight.setRowCount(n_topics)
+        self.table_widget_topics_weight.setColumnCount(1)
         return
 
+    def updated_topic_weighted_list(self):
+        # Get names from the right table and show in the left one
+        topic_weighted_list = ""
+        for i in np.arange(0, self.table_widget_topics_weight.rowCount(), 1):
+            if self.table_widget_topics_weight.item(i, 0) is not None:
+                weight = self.table_widget_topics_weight.item(i, 0).text()
+                topic_weighted_list += str(i) + ", " + weight + ", "
+
+        topic_weighted_list = topic_weighted_list[:-2]
+        self.line_topic_list.setText(topic_weighted_list)
+
     def clicked_get_topic_list(self):
-        '''if self.line_topic_list.text() is None:
+        if self.line_topic_list.text() is None:
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.NO_TOPIC_LIST_SELECTED)
         else:
             topic_list = str(self.line_topic_list.text())
@@ -104,6 +155,5 @@ class GetTopicsListWindow(QtWidgets.QDialog):
 
         self.hide()
         self.line_topic_list.setText("")
-        self.line_edit_get_tag.setText("")'''
+        self.line_edit_get_tag.setText("")
         return
-

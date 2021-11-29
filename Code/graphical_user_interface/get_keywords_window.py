@@ -13,6 +13,8 @@ from PyQt5.QtWidgets import QDesktopWidget
 from Code.graphical_user_interface.messages import Messages
 
 
+# @TODO: Control of parameters configuration
+
 class GetKeywordsWindow(QtWidgets.QDialog):
     def __init__(self, tm):
         super(GetKeywordsWindow, self).__init__()
@@ -76,4 +78,3 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         self.text_edit_get_keywords.setPlainText("")
         self.line_edit_get_tag.setText("")
         return
-

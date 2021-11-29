@@ -15,6 +15,7 @@ from Code.graphical_user_interface.messages import Messages
 
 
 # @ TODO: Add wt as parameter configuration in GUI
+# @ TODO: Control of parameters configuration
 
 class AnalyzeKeywordsWindow(QtWidgets.QDialog):
     def __init__(self, tm):
