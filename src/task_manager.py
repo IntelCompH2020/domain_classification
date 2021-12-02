@@ -197,7 +197,12 @@ class TaskManager(baseTaskManager):
         Get a set of positive labels using keyword-based search
         """
 
-        wt = self.global_parameters['keywords']['wt']
+        # Get weight parameter (weight of title word wrt description words)
+        wt = self.QM.ask_value(
+            query=("Introduce the (integer) weight of the title words with "
+                   "respect to the description words "),
+            convert_to=int,
+            default=self.global_parameters['keywords']['wt'])
 
         if self.keywords is None:
             logging.info("-- No active keywords in this session.")
@@ -232,13 +237,30 @@ class TaskManager(baseTaskManager):
         Get a set of positive labels using keyword-based search
         """
 
-        # Weight of the title words
-        wt = self.global_parameters['keywords']['wt']
-        # Max number of returned documents
-        n_max = self.global_parameters['keywords']['n_max']
-        # Score threshold
-        s_min = self.global_parameters['keywords']['s_min']
+        # ##############
+        # Get parameters
 
+        # Get weight parameter (weight of title word wrt description words)
+        wt = self.QM.ask_value(
+            query="Set the (integer) weight of the title words with "
+                  "respect to the description words",
+            convert_to=int,
+            default=self.global_parameters['keywords']['wt'])
+
+        # Get weight parameter (weight of title word wrt description words)
+        n_max = self.QM.ask_value(
+            query=("Set maximum number of returned documents"),
+            convert_to=int,
+            default=self.global_parameters['keywords']['n_max'])
+
+        # Get score threshold
+        s_min = self.QM.ask_value(
+            query=("Set score_threshold"),
+            convert_to=float,
+            default=self.global_parameters['keywords']['s_min'])
+
+        # #######################
+        # Get keywords and labels
         self.keywords = self._ask_keywords()
         tag = self._ask_label_tag()
 
@@ -251,6 +273,7 @@ class TaskManager(baseTaskManager):
         # Create dataframe of positive labels from the list of ids
         self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
 
+        # ############
         # Save labels
         self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
                             tag=tag)
@@ -262,10 +285,23 @@ class TaskManager(baseTaskManager):
         Get a set of positive labels from a weighted list of topics
         """
 
-        # Max number of returned documents
-        n_max = self.global_parameters['topics']['n_max']
-        # Score threshold
-        s_min = self.global_parameters['topics']['s_min']
+        # ##############
+        # Get parameters
+
+        # Get weight parameter (weight of title word wrt description words)
+        n_max = self.QM.ask_value(
+            query=("Introduce maximum number of returned documents"),
+            convert_to=int,
+            default=self.global_parameters['topics']['n_max'])
+
+        # Get score threshold
+        s_min = self.QM.ask_value(
+            query=("Introduce score_threshold"),
+            convert_to=float,
+            default=self.global_parameters['topics']['s_min'])
+
+        # ############################
+        # Get topic weights and labels
 
         # Load topics
         T, df_metadata, topic_words = self.DM.load_topics()
@@ -288,6 +324,7 @@ class TaskManager(baseTaskManager):
         # Create dataframe of positive labels from the list of ids
         self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
 
+        # ###########
         # Save labels
         self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
                             tag=tag)

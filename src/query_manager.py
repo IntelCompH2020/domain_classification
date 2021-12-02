@@ -101,3 +101,37 @@ class QueryManager(object):
 
         return tw
 
+    def ask_value(self, query="Write value: ", convert_to=str, default=None):
+        """
+        Ask user for a value
+
+        Parameters
+        ----------
+        query: str, optional (default value="Write value: ")
+            Text to print
+        convert_to: function, optional (default=str)
+            A function to apply to the selected value. It can be used, for
+            instance, for type conversion.
+        default: optional (default=None)
+            Default value to return if an empty value is returned
+
+        Returns
+        -------
+        value:
+            The returned value is equal to conver_to(x), where x is the string
+            introduced by the user (if any) or the default value.
+        """
+
+        if default:
+            x = input(f"{query} [default: {default}]: ")
+        else:
+            x = input(query)
+
+        if x:
+            # Convert to
+            value = convert_to(x)
+        else:
+            value = default
+
+        return value
+
