@@ -14,8 +14,8 @@ import pathlib
 import argparse
 
 # Local imports
-from code.menu_navigator.menu_navigator import MenuNavigator
-from code.task_manager import TaskManager
+from src.menu_navigator.menu_navigator import MenuNavigator
+from src.task_manager import TaskManager
 
 # ########################
 # Main body of application

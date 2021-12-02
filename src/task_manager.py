@@ -55,6 +55,19 @@ class TaskManager(baseTaskManager):
             Path to the source data.
         """
 
+        # Attributes that will be initialized in the base class
+        self.path2project = None
+        self.path2metadata = None
+        self.path2config = None
+        self.path2source = None
+        self.metadata_fname = None
+        self.global_parameters = None
+        self.state = None
+        self.metadata = None
+        self.ready2setup = None
+        self.set_logs = None
+        self.logger = None
+
         super().__init__(path2project, path2source, config_fname=config_fname,
                          metadata_fname=metadata_fname, set_logs=set_logs)
 
@@ -79,6 +92,7 @@ class TaskManager(baseTaskManager):
         self.df_corpus = None      # Corpus dataframe
         self.df_labels = None      # Labels
         self.keywords = None
+        self.CorpusProc = None
 
         # Datamanager
         self.DM = DataManager(self.path2source, self.path2labels_out)
@@ -183,6 +197,8 @@ class TaskManager(baseTaskManager):
         Get a set of positive labels using keyword-based search
         """
 
+        wt = self.global_parameters['keywords']['wt']
+
         if self.keywords is None:
             logging.info("-- No active keywords in this session.")
             self.keywords = self._ask_keywords()
@@ -191,7 +207,6 @@ class TaskManager(baseTaskManager):
             logging.info("-- Analyzing current list of active keywords")
 
         # Weight of the title words
-        wt = 2
         logging.info(f'-- Selected keywords: {self.keywords}')
 
         df_stats, kf_stats = self.CorpusProc.compute_keyword_stats(
@@ -218,9 +233,11 @@ class TaskManager(baseTaskManager):
         """
 
         # Weight of the title words
-        wt = 2
-        n_max = 2000
-        s_min = 1
+        wt = self.global_parameters['keywords']['wt']
+        # Max number of returned documents
+        n_max = self.global_parameters['keywords']['n_max']
+        # Score threshold
+        s_min = self.global_parameters['keywords']['s_min']
 
         self.keywords = self._ask_keywords()
         tag = self._ask_label_tag()
@@ -241,11 +258,14 @@ class TaskManager(baseTaskManager):
         return
 
     def get_labels_by_topics(self):
+        """
+        Get a set of positive labels from a weighted list of topics
+        """
 
-        # Weight of the title words
-        n_max = 2000
-        # Significance threshold.
-        s_min = 0.2
+        # Max number of returned documents
+        n_max = self.global_parameters['topics']['n_max']
+        # Score threshold
+        s_min = self.global_parameters['topics']['s_min']
 
         # Load topics
         T, df_metadata, topic_words = self.DM.load_topics()
