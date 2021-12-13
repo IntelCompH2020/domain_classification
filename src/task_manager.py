@@ -187,10 +187,11 @@ class TaskManager(baseTaskManager):
         """
 
         ids_corpus = self.df_corpus['id']
-        self.df_labels = self.DM.import_labels(
+        self.df_labels, msg = self.DM.import_labels(
             corpus_name=self.corpus_name, ids_corpus=ids_corpus)
 
-        return
+        # self.df_labels and msg are returned for the GUI
+        return self.df_labels, msg
 
     def analyze_keywords(self):
         """

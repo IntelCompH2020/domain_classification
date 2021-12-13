@@ -249,8 +249,8 @@ class DataManager(object):
             List of ids of the documents in the corpus. Only the labels with
             ids in ids_corpus are imported and saved into the output file.
 
-        Return
-        ------
+        Returns
+        -------
         df_labels: pandas.DataFrame
             Dataframe of labels, with two columns: id and class.
             id identifies the document corresponding to the label.
@@ -305,9 +305,10 @@ class DataManager(object):
         # Saving id and class only
 
         tag = "imported"
-        self.save_labels(df_labels, corpus_name=corpus_name, tag=tag)
+        msg = self.save_labels(df_labels, corpus_name=corpus_name, tag=tag)
 
-        return df_labels
+        # The log message is returned to be shown in a GUI, if needed
+        return df_labels, msg
 
     def save_labels(self, df_labels, corpus_name="", tag=""):
 
@@ -318,7 +319,9 @@ class DataManager(object):
         path2labels_out = self.path2labels_out / labels_out_fname
         df_labels.to_csv(path2labels_out, index=False)
 
-        logging.info(f"-- File with {len(df_labels)} positive labels "
-                     f"imported and saved in {path2labels_out}")
+        msg = (f"-- File with {len(df_labels)} positive labels imported and "
+               f"saved in {path2labels_out}")
+        logging.info(msg)
 
-        return df_labels
+        # The log message is returned to be shown in a GUI, if needed
+        return msg
