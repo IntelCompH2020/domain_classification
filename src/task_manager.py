@@ -276,10 +276,10 @@ class TaskManager(baseTaskManager):
 
         # ############
         # Save labels
-        self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
-                            tag=tag)
+        msg = self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
+                                  tag=tag)
 
-        return
+        return msg
 
     def get_labels_by_topics(self):
         """
@@ -327,10 +327,10 @@ class TaskManager(baseTaskManager):
 
         # ###########
         # Save labels
-        self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
-                            tag=tag)
+        msg = self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
+                                  tag=tag)
 
-        return
+        return msg
 
     def get_labels_by_definitions(self):
 
@@ -408,3 +408,103 @@ class TaskManager(baseTaskManager):
     def update_model(self, param):
 
         return
+
+
+class TaskManagerGUI(TaskManager):
+    """
+    Provides extra functionality to the task manager, to be used by the
+    Graphical User Interface (GUI)
+    """
+
+    def get_suggested_keywords_gui(self):
+        """
+        Get the list of suggested keywords to showing it in the GUI.
+
+        Returns
+        -------
+        suggested_keywords : list of str
+            List of suggested keywords
+        """
+
+        # Read available list of AI keywords
+        kw_library = self.DM.get_keywords_list(self.corpus_name)
+        suggested_keywords = ', '.join(kw_library)
+        logging.info(
+            f"-- Suggested list of keywords: {', '.join(kw_library)}\n")
+
+        return suggested_keywords
+
+    def analyze_keywords_gui(self):
+        # Weight of the title words
+        wt = 2
+        logging.info(f'-- Selected keywords: {self.keywords}')
+
+        df_stats, kf_stats = self.CorpusProc.compute_keyword_stats(
+            self.keywords, wt)
+        plotter.plot_top_values(
+            df_stats, title="Document frequencies", xlabel="No. of docs")
+        plotter.plot_top_values(
+            kf_stats, title="Keyword frequencies", xlabel="No. of keywords")
+
+        y = self.CorpusProc.score_by_keywords(self.keywords, wt=20)
+
+        return y, df_stats, kf_stats
+
+    def get_labels_by_keywords_gui(self, keywords, _tag):
+        """
+        Get a set of positive labels using keyword-based search through the
+        MainWindow
+        """
+
+        # Weight of the title words
+        wt = 2
+        n_max = 2000
+        s_min = 1
+
+        self.keywords = keywords
+        tag = _tag
+
+        logging.info(f'-- Selected keywords: {self.keywords}')
+
+        # Find the documents with the highest scores given the keywords
+        ids = self.CorpusProc.filter_by_keywords(
+            self.keywords, wt=wt, n_max=n_max, s_min=s_min)
+
+        # Create dataframe of positive labels from the list of ids
+        self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
+
+        # Save labels
+        message_out = self.DM.save_labels(
+            self.df_labels, corpus_name=self.corpus_name, tag=tag)
+
+        return message_out
+
+    def get_topic_words_gui(self, n_max, s_min):
+
+        # Load topics
+        T, df_metadata, topic_words = self.DM.load_topics()
+
+        # Remove all documents (rows) from the topic matrix, that are not
+        # in self.df_corpus.
+        T, df_metadata = self.CorpusProc.remove_docs_from_topics(
+            T, df_metadata, col_id='corpusid')
+
+        return topic_words, T, df_metadata
+
+    def get_labels_by_topics_gui(
+            self, topic_weights, tag, T, df_metadata, n_max, s_min):
+
+        # Filter documents by topics
+        ids = self.CorpusProc.filter_by_topics(
+            T, df_metadata['corpusid'], topic_weights, n_max=n_max,
+            s_min=s_min)
+
+        # Create dataframe of positive labels from the list of ids
+        self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
+
+        # Save labels
+        message_out = self.DM.save_labels(
+            self.df_labels, corpus_name=self.corpus_name, tag=tag)
+
+        return message_out
+
