@@ -6,6 +6,7 @@ Class representing the main window of the application.
 """
 
 import numpy as np
+
 from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QButtonGroup, QDesktopWidget
@@ -301,24 +302,24 @@ class MainWindow(QtWidgets.QMainWindow):
                 execute_in_thread(self, self.execute_import_labels,
                                   self.do_after_import_labels, False)
             elif self.get_label_option == 2:
-                message_out = self.tm.get_labels_by_keywords_gui(
+                message_out = self.tm.get_labels_by_keywords(
                     self.get_keywords_window.selectedKeywords,
                     self.get_keywords_window.selectedTag)
             elif self.get_label_option == 3:
-                message_out = self.tm.get_labels_by_keywords_gui(
+                message_out = self.tm.get_labels_by_keywords(
                     self.get_keywords_window.selectedKeywords,
                     self.get_keywords_window.selectedTag)
                 # Show the window for the analysis of the keywords
                 self.analyze_keywords_window.do_analysis()
                 self.analyze_keywords_window.exec()
             elif self.get_label_option == 4:
-                message_out = self.tm.get_labels_by_topics_gui(
-                    self.get_topics_list_window.tw,
-                    self.get_topics_list_window.selectedTag,
-                    self.get_topics_list_window.T,
-                    self.get_topics_list_window.df_metadata,
-                    self.get_topics_list_window.n_max,
-                    self.get_topics_list_window.s_min)
+                message_out = self.tm.get_labels_by_topics(
+                    topic_weights=self.get_topics_list_window.tw,
+                    T=self.get_topics_list_window.T,
+                    df_metadata=self.get_topics_list_window.df_metadata,
+                    n_max=self.get_topics_list_window.n_max,
+                    s_min=self.get_topics_list_window.s_min,
+                    tag=self.get_topics_list_window.selectedTag)
             elif self.get_label_option == 5:
                 df_labels, message_out = self.tm.get_labels_by_definitions()
 

@@ -37,3 +37,15 @@ def plot_top_values(stats, n_top=25, title="", xlabel="", ylabel="",
     plt.show(block=False)
 
     return
+
+def plot_doc_scores(y):
+
+    # Plot sorted document scores
+    plt.figure()
+    plt.plot(sorted(y))
+    plt.title('Sorted document scores')
+    plt.xlabel('Document')
+    plt.ylabel('Score')
+    plt.show(block=False)
+
+    return

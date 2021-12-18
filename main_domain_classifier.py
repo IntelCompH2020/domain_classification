@@ -15,7 +15,7 @@ import argparse
 
 # Local imports
 from src.menu_navigator.menu_navigator import MenuNavigator
-from src.task_manager import TaskManager
+from src.task_manager import TaskManagerCMD
 
 # ########################
 # Main body of application
@@ -46,7 +46,7 @@ active_options = None
 query_needed = False
 
 # Create task manager object
-tm = TaskManager(project_path, path2source=args.source)
+tm = TaskManagerCMD(project_path, path2source=args.source)
 
 # ########################
 # Prepare user interaction

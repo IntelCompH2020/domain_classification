@@ -184,6 +184,9 @@ class CorpusDFProcessor(object):
         kf_stats : dict
             Dictionary of keyword frequencies
             df_stats[k] is the number of times keyword k appers in the corpus
+        wt : float, optional (default=2)
+            Weighting factor for the title components. Keyword matches with
+            title words are weighted by this factor
         """
 
         # We take the (closest) integer part only

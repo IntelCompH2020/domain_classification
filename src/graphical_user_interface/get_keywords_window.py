@@ -106,7 +106,7 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         self.init_params()
 
     def show_suggested_keywords(self):
-        suggested_keywords = self.tm.get_suggested_keywords_gui()
+        suggested_keywords = self.tm.get_suggested_keywords()
         self.text_edit_show_keywords.setPlainText(suggested_keywords)
 
     def clicked_select_keywords(self):

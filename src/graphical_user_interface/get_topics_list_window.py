@@ -102,7 +102,7 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         self.init_params()
 
     def show_topics(self):
-        self.tw, self.T, self.df_metadata = self.tm.get_topic_words_gui(
+        self.tw, self.T, self.df_metadata = self.tm.get_topic_words(
             self.n_max, self.s_min)
         n_topics = len(self.tw)
 

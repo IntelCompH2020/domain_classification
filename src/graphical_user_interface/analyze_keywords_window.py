@@ -47,7 +47,7 @@ class AnalyzeKeywordsWindow(QtWidgets.QDialog):
         self.move(qr.topLeft())
 
     def do_analysis(self):
-        y, df_stats, kf_stats = self.tm.analyze_keywords_gui()
+        y, df_stats, kf_stats = self.tm.analyze_keywords()
         n_top = 25
 
         # Plot sorted document scores
