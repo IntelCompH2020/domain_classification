@@ -63,7 +63,6 @@ class GetTopicsListWindow(QtWidgets.QDialog):
             self.updated_topic_weighted_list)
         self.get_topic_list_push_button.clicked.connect(
             self.clicked_get_topic_list)
-        self.table_params.cellChanged.connect(self.update_params)
 
     def initUI(self):
         self.setWindowIcon(QIcon('Images/dc_logo.png'))
@@ -90,12 +89,12 @@ class GetTopicsListWindow(QtWidgets.QDialog):
 
     def update_params(self):
         if self.table_params.item(0, 0) is not None:
-            self.n_max = self.table_params.item(0, 0).text()
+            self.n_max = int(self.table_params.item(0, 0).text())
         else:
             self.n_max = self.n_max_default
 
         if self.table_params.item(0, 1) is not None:
-            self.s_min = self.table_params.item(0, 1).text()
+            self.s_min = float(self.table_params.item(0, 1).text())
         else:
             self.s_min = self.s_min_default
 
@@ -145,6 +144,7 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         self.line_topic_list.setText(topic_weighted_list)
 
     def clicked_get_topic_list(self):
+        self.update_params()
         if self.line_topic_list.text() is None:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE, Messages.NO_TOPIC_LIST_SELECTED)

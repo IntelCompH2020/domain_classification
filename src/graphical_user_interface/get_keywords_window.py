@@ -62,7 +62,6 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         # #####################################################################
         self.get_labels_push_button.clicked.connect(
             self.clicked_select_keywords)
-        self.table_params.cellChanged.connect(self.update_params)
 
     def initUI(self):
         self.setWindowIcon(QIcon('Images/dc_logo.png'))
@@ -89,17 +88,17 @@ class GetKeywordsWindow(QtWidgets.QDialog):
 
     def update_params(self):
         if self.table_params.item(0, 0) is not None:
-            self.wt = self.table_params.item(0, 0).text()
+            self.wt = int(self.table_params.item(0, 0).text())
         else:
             self.s_min = self.wt_default
 
         if self.table_params.item(0, 1) is not None:
-            self.n_max = self.table_params.item(0, 1).text()
+            self.n_max = int(self.table_params.item(0, 1).text())
         else:
             self.n_max = self.n_max_default
 
         if self.table_params.item(0, 2) is not None:
-            self.s_min = self.table_params.item(0, 2).text()
+            self.s_min = float(self.table_params.item(0, 2).text())
         else:
             self.s_min = self.s_min_default
 
@@ -110,6 +109,7 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         self.text_edit_show_keywords.setPlainText(suggested_keywords)
 
     def clicked_select_keywords(self):
+        self.update_params()
         if self.text_edit_get_keywords.toPlainText() is None:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE, Messages.NO_KEYWORDS_SELECTED)
