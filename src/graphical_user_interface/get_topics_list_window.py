@@ -138,9 +138,10 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         for i in np.arange(0, self.table_widget_topics_weight.rowCount(), 1):
             if self.table_widget_topics_weight.item(i, 0) is not None:
                 weight = self.table_widget_topics_weight.item(i, 0).text()
-                topic_weighted_list += str(i) + ", " + weight + ", "
-
-        topic_weighted_list = topic_weighted_list[:-2]
+                topic_weighted_list += str(i) + "," + weight + ","
+        print(topic_weighted_list)
+        topic_weighted_list = topic_weighted_list[:-1]
+        print(topic_weighted_list)
         self.line_topic_list.setText(topic_weighted_list)
 
     def clicked_get_topic_list(self):

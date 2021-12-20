@@ -237,32 +237,32 @@ class TaskManager(baseTaskManager):
         # Get parameters
 
         # Get weight parameter (weight of title word wrt description words)
-        n_max = self.QM.ask_value(
-            query=("Introduce maximum number of returned documents"),
-            convert_to=int,
-            default=self.global_parameters['topics']['n_max'])
+        #n_max = self.QM.ask_value(
+        #    query=("Introduce maximum number of returned documents"),
+        #    convert_to=int,
+        #    default=self.global_parameters['topics']['n_max'])
 
         # Get score threshold
-        s_min = self.QM.ask_value(
-            query=("Introduce score_threshold"),
-            convert_to=float,
-            default=self.global_parameters['topics']['s_min'])
+        #s_min = self.QM.ask_value(
+        #    query=("Introduce score_threshold"),
+        #    convert_to=float,
+        #    default=self.global_parameters['topics']['s_min'])
 
         # ############################
         # Get topic weights and labels
 
         # Load topics
-        T, df_metadata, topic_words = self.DM.load_topics()
+        #T, df_metadata, topic_words = self.DM.load_topics()
 
         # Remove all documents (rows) from the topic matrix, that are not
         # in self.df_corpus.
-        T, df_metadata = self.CorpusProc.remove_docs_from_topics(
-            T, df_metadata, col_id='corpusid')
+        #T, df_metadata = self.CorpusProc.remove_docs_from_topics(
+        #    T, df_metadata, col_id='corpusid')
 
         # Ask for topic weights
-        topic_weights = self._ask_topics(topic_words)
+        #topic_weights = self._ask_topics(topic_words)
         # Ask tag for the label file
-        tag = self._ask_label_tag()
+        #tag = self._ask_label_tag()
 
         # Filter documents by topics
         ids = self.CorpusProc.filter_by_topics(
@@ -581,3 +581,11 @@ class TaskManagerGUI(TaskManager):
             T, df_metadata, col_id='corpusid')
 
         return topic_words, T, df_metadata
+
+    def get_labels_by_topics(self, topic_weights, T, df_metadata, n_max=2000,
+                             s_min=1, tag="tpcs"):
+        # ##########
+        # Get labels
+        msg = super().get_labels_by_topics(topic_weights, T, df_metadata,
+                                           n_max=n_max, s_min=s_min, tag=tag)
+        return msg

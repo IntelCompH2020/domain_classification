@@ -225,7 +225,7 @@ class MainWindow(QtWidgets.QMainWindow):
     # GET LABELS FUNCTIONS
     # #########################################################################
     def execute_import_labels(self):
-        df_labels, message_out = self.tm.import_labels()
+        message_out = self.tm.import_labels()
         self.message_out = message_out
         return "Done"
 
@@ -420,7 +420,7 @@ class MainWindow(QtWidgets.QMainWindow):
     # #########################################################################
     def clicked_train_classifier(self):
         # @TODO: '../yelp_review_polarity_csv/' -> Ask Jesús??
-        result, model_outputs, wrong_predictions = self.tm.train_models()
+        result, model_outputs, wrong_predictions = self.tm.train_model()
         if result is not None:
             QtWidgets.QMessageBox.information(
                 self, Messages.DC_MESSAGE,
