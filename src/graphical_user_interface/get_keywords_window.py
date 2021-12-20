@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Class representing the window for controlling the getting of a subcorpus from a given list of keywords
+Class representing the window for controlling the getting of a subcorpus from
+a given list of keywords
 
 @author: lcalv
 """
@@ -10,7 +11,7 @@ from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDesktopWidget
 
-from Code.graphical_user_interface.messages import Messages
+from src.graphical_user_interface.messages import Messages
 
 
 class GetKeywordsWindow(QtWidgets.QDialog):
@@ -18,12 +19,12 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         super(GetKeywordsWindow, self).__init__()
 
         # Load UI and configure default geometry of the window
-        ########################################################################
+        # #####################################################################
         uic.loadUi("UIS/get_labels_by_keywords.ui", self)
         self.initUI()
 
         # ATTRIBUTES
-        #######################################################################
+        # #####################################################################
         self.tm = tm
         self.selectedKeywords = None
         self.selectedTag = None
@@ -40,23 +41,27 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         self.init_params()
 
         # INFORMATION BUTTONS
-        ########################################################################
+        # #####################################################################
         self.info_button_selected_keywords.setIcon(QIcon('Images/help2.png'))
-        self.info_button_selected_keywords.setIconSize(0.75 * QSize(self.info_button_selected_keywords.width(),
-                                                                    self.info_button_selected_keywords.height()))
-        self.info_button_selected_keywords.setToolTip(Messages.INFO_TYPE_KEYWORDS)
+        self.info_button_selected_keywords.setIconSize(
+            0.75 * QSize(self.info_button_selected_keywords.width(),
+                         self.info_button_selected_keywords.height()))
+        self.info_button_selected_keywords.setToolTip(
+            Messages.INFO_TYPE_KEYWORDS)
         self.info_button_selected_tag.setIcon(QIcon('Images/help2.png'))
-        self.info_button_selected_tag.setIconSize(0.75 * QSize(self.info_button_selected_tag.width(),
-                                                               self.info_button_selected_tag.height()))
+        self.info_button_selected_tag.setIconSize(
+            0.75 * QSize(self.info_button_selected_tag.width(),
+                         self.info_button_selected_tag.height()))
         self.info_button_selected_tag.setToolTip(Messages.INFO_TAG)
 
         # TABLE TOOL TIPS
-        ########################################################################
+        # #####################################################################
         self.table_params.setToolTip(Messages.INFO_TABLE_PARAMETERS_KEYWORDS)
 
         # CONNECTION WITH HANDLER FUNCTIONS
-        ########################################################################
-        self.get_labels_push_button.clicked.connect(self.clicked_select_keywords)
+        # #####################################################################
+        self.get_labels_push_button.clicked.connect(
+            self.clicked_select_keywords)
         self.table_params.cellChanged.connect(self.update_params)
 
     def initUI(self):
@@ -75,9 +80,12 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         self.table_params.setRowCount(1)
         self.table_params.setColumnCount(3)
 
-        self.table_params.setItem(0, 0, QtWidgets.QTableWidgetItem(str(self.wt)))
-        self.table_params.setItem(0, 1, QtWidgets.QTableWidgetItem(str(self.n_max)))
-        self.table_params.setItem(0, 2, QtWidgets.QTableWidgetItem(str(self.s_min)))
+        self.table_params.setItem(
+            0, 0, QtWidgets.QTableWidgetItem(str(self.wt)))
+        self.table_params.setItem(
+            0, 1, QtWidgets.QTableWidgetItem(str(self.n_max)))
+        self.table_params.setItem(
+            0, 2, QtWidgets.QTableWidgetItem(str(self.s_min)))
 
     def update_params(self):
         if self.table_params.item(0, 0) is not None:
@@ -98,12 +106,13 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         self.init_params()
 
     def show_suggested_keywords(self):
-        suggested_keywords = self.tm.get_suggested_keywords_gui()
+        suggested_keywords = self.tm.get_suggested_keywords()
         self.text_edit_show_keywords.setPlainText(suggested_keywords)
 
     def clicked_select_keywords(self):
         if self.text_edit_get_keywords.toPlainText() is None:
-            QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.NO_KEYWORDS_SELECTED)
+            QtWidgets.QMessageBox.warning(
+                self, Messages.DC_MESSAGE, Messages.NO_KEYWORDS_SELECTED)
         else:
             keywords = self.text_edit_get_keywords.toPlainText()
             # Split by commas, removing leading and trailing spaces
@@ -113,7 +122,8 @@ class GetKeywordsWindow(QtWidgets.QDialog):
             self.selectedKeywords = _keywords
 
         if self.line_edit_get_tag.text() is None:
-            QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.NO_TAG_SELECTED)
+            QtWidgets.QMessageBox.warning(
+                self, Messages.DC_MESSAGE, Messages.NO_TAG_SELECTED)
         else:
             self.selectedTag = str(self.line_edit_get_tag.text())
         self.hide()

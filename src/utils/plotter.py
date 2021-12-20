@@ -6,6 +6,7 @@ def plot_top_values(stats, n_top=25, title="", xlabel="", ylabel="",
                     normalizer=1):
     """
     Barplots the top values in a given dictionary.
+
     Parameters
     ----------
     stats: dict
@@ -33,6 +34,18 @@ def plot_top_values(stats, n_top=25, title="", xlabel="", ylabel="",
     plt.yticks(y_pos, hot_tokens, fontsize='xx-small')
     plt.xlabel(xlabel)
     plt.title(title)
+    plt.show(block=False)
+
+    return
+
+def plot_doc_scores(y):
+
+    # Plot sorted document scores
+    plt.figure()
+    plt.plot(sorted(y))
+    plt.title('Sorted document scores')
+    plt.xlabel('Document')
+    plt.ylabel('Score')
     plt.show(block=False)
 
     return

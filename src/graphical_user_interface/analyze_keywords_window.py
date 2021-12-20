@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Class representing the window for controlling the analysis of the presence of selected keywords in the corpus
+Class representing the window for controlling the analysis of the presence of
+selected keywords in the corpus
 
 @author: lcalv
 """
@@ -11,7 +12,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDesktopWidget
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
-from Code.graphical_user_interface.messages import Messages
+from src.graphical_user_interface.messages import Messages
 
 
 # @ TODO: Add wt as parameter configuration in GUI?
@@ -21,12 +22,12 @@ class AnalyzeKeywordsWindow(QtWidgets.QDialog):
         super(AnalyzeKeywordsWindow, self).__init__()
 
         # Load UI and configure default geometry of the window
-        ########################################################################
+        # ####################################################################
         uic.loadUi("UIS/analyze_keywords.ui", self)
         self.initUI()
 
         # ATTRIBUTES
-        #######################################################################
+        # ####################################################################
         self.tm = tm
         self.figure = plt.figure()
         # this is the Canvas Widget that displays the 'figure'
@@ -46,7 +47,7 @@ class AnalyzeKeywordsWindow(QtWidgets.QDialog):
         self.move(qr.topLeft())
 
     def do_analysis(self):
-        y, df_stats, kf_stats = self.tm.analyze_keywords_gui()
+        y, df_stats, kf_stats = self.tm.analyze_keywords()
         n_top = 25
 
         # Plot sorted document scores

@@ -5,7 +5,9 @@ import pandas as pd
 class CorpusProcessor(object):
     """
     A container of corpus preprocessing methods
+
     It provides basic processing methods to a corpus of text documents
+
     The input corpus must be given by a list of strings (or a pandas series
     of strings)
     """
@@ -21,12 +23,15 @@ class CorpusProcessor(object):
         """
         Computes a score for every document in a given pandas dataframe
         according to the frequency of appearing some given keywords
+
         Parameters
         ----------
         corpus : list (or pandas.Series) of str
             Input corpus.
+
         keywords : list of str
             List of keywords
+
         Returns
         -------
         score : list of float
@@ -46,12 +51,15 @@ class CorpusProcessor(object):
     def compute_keyword_stats(self, corpus, keywords):
         """
         Computes keyword statistics
+
         Parameters
         ----------
         corpus : list (or pandas.Series) of str
             Input corpus.
+
         keywords : list of str
             List of keywords
+
         Returns
         -------
         df_stats : dict
@@ -78,6 +86,7 @@ class CorpusProcessor(object):
         """
         Select the elements from a given list of numbers that fulfill some
         conditions
+
         Parameters
         ----------
         n_max: int or None, optional (defaul=1e100)
@@ -127,6 +136,7 @@ class CorpusDFProcessor(object):
         """
         Removes, from a given topic-document matrix and its corresponding
         metadata dataframe, all documents that do not belong to the corpus
+
         Parameters
         ----------
         T: numpy.ndarray or scipy.sparse
@@ -135,6 +145,7 @@ class CorpusDFProcessor(object):
             Dataframe of metadata. It must include a column with document ids
         col_id: str, optional (default='id')
             Name of the column containing the document ids in df_metadata
+
         Returns
         -------
         T_out: numpy.ndarray or scipy.sparse
@@ -156,12 +167,15 @@ class CorpusDFProcessor(object):
     def compute_keyword_stats(self, keywords, wt=2):
         """
         Computes keyword statistics
+
         Parameters
         ----------
         corpus : dataframe
             Dataframe of corpus.
+
         keywords : list of str
             List of keywords
+
         Returns
         -------
         df_stats : dict
@@ -170,6 +184,9 @@ class CorpusDFProcessor(object):
         kf_stats : dict
             Dictionary of keyword frequencies
             df_stats[k] is the number of times keyword k appers in the corpus
+        wt : float, optional (default=2)
+            Weighting factor for the title components. Keyword matches with
+            title words are weighted by this factor
         """
 
         # We take the (closest) integer part only
@@ -186,6 +203,7 @@ class CorpusDFProcessor(object):
         """
         Computes a score for every document in a given pandas dataframe
         according to the frequency of appearing some given keywords
+
         Parameters
         ----------
         corpus : dataframe
@@ -195,6 +213,7 @@ class CorpusDFProcessor(object):
         wt : float, optional (default=2)
             Weighting factor for the title components. Keyword matches with
             title words are weighted by this factor
+
         Returns
         -------
         score : list of float
@@ -214,6 +233,7 @@ class CorpusDFProcessor(object):
         """
         Computes a score for every document in a given pandas dataframe
         according to the relevance of a weighted list of topics
+
         Parameters
         ----------
         T: numpy.ndarray or scipy.sparse
@@ -224,6 +244,7 @@ class CorpusDFProcessor(object):
         topic_weights: dict
             Dictionary {t_i: w_i}, where t_i is a topic index and w_i is the
             weight of the topic
+
         Returns
         -------
         score : list of float
@@ -253,6 +274,7 @@ class CorpusDFProcessor(object):
         """
         Select documents from the corpus whose score is strictly above a lower
         bound
+
         Parameters
         ----------
         scores: array-like of float
@@ -273,6 +295,7 @@ class CorpusDFProcessor(object):
     def filter_by_keywords(self, keywords, wt=2, n_max=1e100, s_min=0):
         """
         Select documnts with a significant presence of a given set of keywords
+
         Parameters
         ----------
         keywords : list of str
@@ -285,6 +308,7 @@ class CorpusDFProcessor(object):
             a huge number that, in practice, means there is no loimit
         s_min: float, optional (default=0)
             Minimum score. Only elements strictly above s_min are selected
+
         Returns
         -------
         ids : list
@@ -300,6 +324,7 @@ class CorpusDFProcessor(object):
                          s_min=0):
         """
         Select documents with a significant presence of a given set of keywords
+
         Parameters
         ----------
         T: numpy.ndarray or scipy.sparse
@@ -315,6 +340,7 @@ class CorpusDFProcessor(object):
             a huge number that, in practice, means there is no loimit
         s_min: float, optional (default=0)
             Minimum score. Only elements strictly above s_min are selected
+
         Returns
         -------
         ids : list
@@ -329,10 +355,12 @@ class CorpusDFProcessor(object):
     def make_pos_labels_df(self, ids):
         """
         Returns a dataframe with the given ids and a single, all-ones column
+
         Parameters
         ----------
         ids: array-like
             Values for the column 'ids'
+
         Returns
         -------
         df_labels: pandas.DataFrame

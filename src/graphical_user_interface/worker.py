@@ -5,7 +5,7 @@ Created on Tue Mar  2 13:19:34 2021
 @author: lcalv
 """
 
-from Code.graphical_user_interface.worker_signals import WorkerSignals
+from src.graphical_user_interface.worker_signals import WorkerSignals
 from PyQt5 import QtCore
 import sys
 import traceback
@@ -15,10 +15,12 @@ class Worker(QtCore.QRunnable):
     """
     Worker thread
 
-    Inherits from QRunnable to handler worker thread setup, signals and wrap-up.
+    Inherits from QRunnable to handler worker thread setup, signals and
+    wrap-up.
 
-    :param callback: The function callback to run on this worker thread. Supplied args and
-                     kwargs will be passed through to the runner.
+    :param callback: The function callback to run on this worker thread.
+                     Supplied args and kwargs will be passed through to the
+                     runner.
     :type callback: function
     :param args: Arguments to pass to the callback function
     :param kwargs: Keywords to pass to the callback function
@@ -26,6 +28,7 @@ class Worker(QtCore.QRunnable):
     """
 
     def __init__(self, fn, *args, **kwargs):
+
         super(Worker, self).__init__()
 
         # Store constructor arguments (re-used for processing)
@@ -35,7 +38,7 @@ class Worker(QtCore.QRunnable):
         self.signals = WorkerSignals()
 
         # Add the callback to our kwargs
-        #self.kwargs['progress_callback'] = self.signals.progress
+        # self.kwargs['progress_callback'] = self.signals.progress
 
     @QtCore.pyqtSlot()
     def run(self):
@@ -52,7 +55,9 @@ class Worker(QtCore.QRunnable):
             exctype, value = sys.exc_info()[:2]
             self.signals.error.emit((exctype, value, traceback.format_exc()))
         else:
-            self.signals.result.emit(result)  # Return the result of the processing
+            self.signals.result.emit(result)
+            # Return the result of the processing
+
         finally:
             print("final signal emitted")
             self.signals.finished.emit()  # Done

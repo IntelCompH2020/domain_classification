@@ -11,12 +11,14 @@ class DataManager(object):
     """
     This class contains all read / write functionalities required by the
     domain_classification project.
+
     It assumes that source and destination data will be stored in files.
     """
 
     def __init__(self, path2source, path2labels_out):
         """
         Initializes the data manager object
+
         Parameters
         ----------
         path2source: str or pathlib.Path
@@ -45,6 +47,7 @@ class DataManager(object):
     def get_labelset_list(self, corpus_name=None):
         """
         Returns the list of available labels
+
         Parameters
         ----------
         corpus_name: str or None, optional (default=None)
@@ -65,10 +68,12 @@ class DataManager(object):
     def get_keywords_list(self, corpus_name):
         """
         Returns a list of IA-related keywords
+
         Parameters
         ----------
         corpus_name: str or None
             Name of the corpus whose labels are requested.
+
         Returns
         -------
         keywords: list
@@ -86,6 +91,7 @@ class DataManager(object):
     def load_corpus(self, corpus_name):
         """
         Loads a dataframe of documents from a given corpus.
+
         Parameters
         ----------
         corpus_name : str
@@ -233,6 +239,7 @@ class DataManager(object):
     def import_labels(self, corpus_name="", ids_corpus=None):
         """
         Loads a subcorpus of positive labels from file.
+
         Parameters
         ----------
         corpus_name: str, optional (default="")
@@ -241,8 +248,9 @@ class DataManager(object):
         ids_corpus: list
             List of ids of the documents in the corpus. Only the labels with
             ids in ids_corpus are imported and saved into the output file.
-        Return
-        ------
+
+        Returns
+        -------
         df_labels: pandas.DataFrame
             Dataframe of labels, with two columns: id and class.
             id identifies the document corresponding to the label.
@@ -297,9 +305,10 @@ class DataManager(object):
         # Saving id and class only
 
         tag = "imported"
-        df_labels, message_out = self.save_labels(df_labels, corpus_name=corpus_name, tag=tag)
+        msg = self.save_labels(df_labels, corpus_name=corpus_name, tag=tag)
 
-        return df_labels, message_out
+        # The log message is returned to be shown in a GUI, if needed
+        return df_labels, msg
 
     def save_labels(self, df_labels, corpus_name="", tag=""):
 
@@ -309,10 +318,10 @@ class DataManager(object):
         labels_out_fname = f'labels_{corpus_name}_{tag}.csv'
         path2labels_out = self.path2labels_out / labels_out_fname
         df_labels.to_csv(path2labels_out, index=False)
-        message_out = "File with " + str(len(df_labels)) + " positive labels imported and saved in " +\
-                      str(path2labels_out)
 
-        logging.info(f"-- File with {len(df_labels)} positive labels "
-                     f"imported and saved in {path2labels_out}")
+        msg = (f"-- File with {len(df_labels)} positive labels imported and "
+               f"saved in {path2labels_out}")
+        logging.info(msg)
 
-        return df_labels, message_out
+        # The log message is returned to be shown in a GUI, if needed
+        return msg
