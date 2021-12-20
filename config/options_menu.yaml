@@ -47,12 +47,12 @@ root:
 #                 object>
 #     - path: name  
 #     <3: 'get_method': the possible values of the input argument are computed
-#                       by the specified method 'name' defined in the task
+#                       by the specified method 'name' defined in the task
 #                       TaskManager class>
-#     - get_method: name  
+#     - get_method: name
 #   post_opt: <Specify the list of options that will be activated after
 #              executing the selected task>
-#     - option  
+#     - option
 #     - option
 #     - option
 
@@ -62,12 +62,12 @@ root:
 # Note, also, that specific informacion can be provided about options that do
 # not appear in the root menu, but may be selected from the starting command
 # from the main script.
-create: 
+create:
   title: Create new project
   post_opts:
     - setup
 
-setup: 
+setup:
   title: Activate configuration file
 
 load:
@@ -176,5 +176,3 @@ get_labels_by_definitions:
 #   title: Reset the images
 #   options:
 #     - get_method: get_images
-
-
