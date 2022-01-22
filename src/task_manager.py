@@ -1,16 +1,13 @@
-import pandas as pd
 import logging
 
 # Local imports
-
 # You might need to update the location of the baseTaskManager class
 from .base_taskmanager import baseTaskManager
 from .data_manager import DataManager
 from .query_manager import QueryManager
 from .domain_classifier.preprocessor import CorpusDFProcessor
+from .domain_classifier.classifier import CorpusClassifier
 from .utils import plotter
-
-from simpletransformers.classification import ClassificationModel
 
 
 class TaskManager(baseTaskManager):
@@ -75,6 +72,7 @@ class TaskManager(baseTaskManager):
         # folders. Every time a new entry is found in this list, a new folder
         # is created automatically.
         self.f_struct = {'labels': 'labels',
+                         'transformers': 'transformers',
                          'output': 'output'}
 
         # Main paths
@@ -82,6 +80,8 @@ class TaskManager(baseTaskManager):
         self.path2corpus = None
         # Path to the folder with label files
         self.path2labels_out = self.path2project / self.f_struct['labels']
+        self.path2transformers = (
+            self.path2project / self.f_struct['transformers'])
 
         # Corpus dataframe
         self.corpus_name = None    # Name of the corpus
@@ -89,6 +89,10 @@ class TaskManager(baseTaskManager):
         self.df_labels = None      # Labels
         self.keywords = None
         self.CorpusProc = None
+
+        # Classifier results:
+        self.result = None
+        self.model_outputs = None
 
         # Datamanager
         self.DM = DataManager(self.path2source, self.path2labels_out)
@@ -233,37 +237,6 @@ class TaskManager(baseTaskManager):
             Name of the output label set.
         """
 
-        # ##############
-        # Get parameters
-
-        # Get weight parameter (weight of title word wrt description words)
-        #n_max = self.QM.ask_value(
-        #    query=("Introduce maximum number of returned documents"),
-        #    convert_to=int,
-        #    default=self.global_parameters['topics']['n_max'])
-
-        # Get score threshold
-        #s_min = self.QM.ask_value(
-        #    query=("Introduce score_threshold"),
-        #    convert_to=float,
-        #    default=self.global_parameters['topics']['s_min'])
-
-        # ############################
-        # Get topic weights and labels
-
-        # Load topics
-        #T, df_metadata, topic_words = self.DM.load_topics()
-
-        # Remove all documents (rows) from the topic matrix, that are not
-        # in self.df_corpus.
-        #T, df_metadata = self.CorpusProc.remove_docs_from_topics(
-        #    T, df_metadata, col_id='corpusid')
-
-        # Ask for topic weights
-        #topic_weights = self._ask_topics(topic_words)
-        # Ask tag for the label file
-        #tag = self._ask_label_tag()
-
         # Filter documents by topics
         ids = self.CorpusProc.filter_by_topics(
             T, df_metadata['corpusid'], topic_weights, n_max=n_max,
@@ -303,54 +276,40 @@ class TaskManager(baseTaskManager):
         return
 
     def train_model(self):
+        """
+        Train a domain classifiers
+        """
 
-        prefix = '../yelp_review_polarity_csv/'
+        logging.info("-- Loading PU dataset")
+        df_dataset = self.CorpusProc.make_PU_dataset(self.df_labels)
 
-        train_df = pd.read_csv(prefix + 'train.csv', header=None)
-        train_df.head()
+        dc = CorpusClassifier(path2transformers=self.path2transformers)
+        max_imbalance = 3
+        nmax = 400
 
-        eval_df = pd.read_csv(prefix + 'test.csv', header=None)
-        eval_df.head()
+        df_train, df_test = dc.train_test_split(
+            df_dataset, max_imbalance=max_imbalance, nmax=nmax)
 
-        train_df[0] = (train_df[0] == 2).astype(int)
-        eval_df[0] = (eval_df[0] == 2).astype(int)
+        self.result, self.model_outputs, wrong_predictions = dc.train_model(
+            df_train, df_test)
 
-        train_df = pd.DataFrame({
-            'text': train_df[1].replace(r'\n', ' ', regex=True),
-            'label': train_df[0]})
+        print("Stopping after training. You should go step by step here")
+        input("Press enter...")
 
-        print(train_df.head())
-
-        eval_df = pd.DataFrame({
-            'text': eval_df[1].replace(r'\n', ' ', regex=True),
-            'label': eval_df[0]})
-
-        print(eval_df.head())
-
-        # ##############
-        # Classification
-
-        logging.warning("THE FOLLOWING CODE IS UNDER CONSTRUCTION. BE AWARE "
-                        "THAT IT ADDS LARGE FILES INTO THE CODE FOLDERS, THAT "
-                        "PRODUCES ERRORS WHEN USING GIT")
-        breakpoint()
-
-        # Create a TransformerModel
-        model = ClassificationModel('roberta', 'roberta-base', use_cuda=False)
-
-        # Train the model
-        model.train_model(train_df)
-
-        # Evaluate the model
-        result, model_outputs, wrong_predictions = model.eval_model(eval_df)
-
-        a = 1
+        # Pretty print dictionary of results
+        logging.info(f"-- Classification results: {self.result}")
+        for r, v in self.result.items():
+            logging.info(f"-- -- {r}: {v}")
 
         return
 
     def get_feedback(self, image):
+        """
+        """
 
-        return
+        a = 1
+
+        return a
 
     def update_model(self, param):
 
@@ -581,11 +540,3 @@ class TaskManagerGUI(TaskManager):
             T, df_metadata, col_id='corpusid')
 
         return topic_words, T, df_metadata
-
-    def get_labels_by_topics(self, topic_weights, T, df_metadata, n_max=2000,
-                             s_min=1, tag="tpcs"):
-        # ##########
-        # Get labels
-        msg = super().get_labels_by_topics(topic_weights, T, df_metadata,
-                                           n_max=n_max, s_min=s_min, tag=tag)
-        return msg

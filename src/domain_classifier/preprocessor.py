@@ -113,7 +113,7 @@ class CorpusProcessor(object):
 class CorpusDFProcessor(object):
     """
     A container of corpus processing methods.
-    I assumes that a corpus is given by a dataframe of documents.
+    It assumes that a corpus is given by a dataframe of documents.
     Each dataframe must contain three columns:
         id: document identifiers
         title: document titles
@@ -128,6 +128,8 @@ class CorpusDFProcessor(object):
         self.df_corpus = df_corpus
 
         # This class uses methods from the corpus processor class.
+        # FIXME: Uset CorpusProcessor as a base class and inherit
+        #        CorpusDFProcessor from CorpusProcessor
         self.prep = CorpusProcessor()
 
         return
@@ -373,3 +375,38 @@ class CorpusDFProcessor(object):
         df_labels['class'] = 1
 
         return df_labels
+
+    def make_PU_dataset(self, df_labels):
+        """
+        Returns the labeled dataframe in the format required by the
+        CorpusClassifier class
+
+        Parameters
+        ----------
+        df_corpus: pandas.DataFrame
+            Text corpus, with at least three columns: id, title and description
+        df_labels: pandas.DataFrame
+            Dataframe of positive labels. It should contain column id. All
+            labels are assumed to be positive
+
+        Returns
+        -------
+        df_dataset: pandas.DataFrame
+            A pandas dataframe with three columns: id, text and labels.
+        """
+
+        # Copy relevant columns only
+        df_dataset = self.df_corpus[['id', 'title', 'description']]
+
+        # Joing title and description into a single column
+        df_dataset['text'] = (df_dataset['title'] + '.'
+                              + df_dataset['description'])
+        df_dataset.drop(columns=['description', 'title'], inplace=True)
+
+        # Default class is 0
+        df_dataset['labels'] = 0
+
+        # Add positive labels
+        df_dataset.loc[df_dataset.id.isin(df_labels.id), 'labels'] = 1
+
+        return df_dataset
