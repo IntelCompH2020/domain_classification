@@ -34,6 +34,7 @@ class CorpusClassifier(object):
         """
 
         self.path2transformers = pathlib.Path(path2transformers)
+        self.model = None
 
         return
 
@@ -101,10 +102,9 @@ class CorpusClassifier(object):
 
         return df_train, df_test
 
-    def train_model(self, df_train, df_test, toy_example=False):
+    def train_model(self, df_train, df_test):
         """
-        Train and evaluate binary text classification model based on
-        transformers
+        Train binary text classification model based on transformers
 
         Parameters
         ----------
@@ -119,30 +119,6 @@ class CorpusClassifier(object):
         https://towardsdatascience.com/simple-transformers-introducing-the-
         easiest-bert-roberta-xlnet-and-xlm-library-58bf8c59b2a3
         """
-
-        # ################
-        # Loading toy data
-
-        if toy_example:
-
-            prefix = '../yelp_review_polarity_csv/'
-            df_train = pd.read_csv(prefix + 'train.csv', header=None)
-            df_test = pd.read_csv(prefix + 'test.csv', header=None)
-            # Convert to integers
-            df_train[0] = (df_train[0] == 2).astype(int)
-            df_test[0] = (df_test[0] == 2).astype(int)
-
-            # Rename headers and remove carriage returns
-            df_train = pd.DataFrame({
-                'text': df_train[1].replace(r'\n', ' ', regex=True),
-                'labels': df_train[0]})
-            df_test = pd.DataFrame({
-                'text': df_test[1].replace(r'\n', ' ', regex=True),
-                'labels': df_test[0]})
-
-            # Reduce datasets for a quick test...
-            df_train = df_train.iloc[:1000]
-            df_test = df_test.iloc[:100]
 
         # ##############
         # Classification
@@ -162,21 +138,53 @@ class CorpusClassifier(object):
             'tensorboard_dir': str(self.path2transformers / "runs"),
             'overwrite_output_dir': True}
         os.environ["TOKENIZERS_PARALLELISM"] = "false"
-        model = ClassificationModel(
+
+        self.model = ClassificationModel(
             'roberta', 'roberta-base', use_cuda=cuda_available,
             args=model_args)
 
         # Train the model
         logging.info(f"-- -- Training model with {len(df_train)} documents...")
         t0 = time()
-        model.train_model(df_train)
-        breakpoint()
+        self.model.train_model(df_train)
         logging.info(f"-- -- Model trained in {time() - t0} seconds")
 
+        return
+
+    def eval_model(self, df_dataset):
+        """
+        Compute predictions of the classification model over the input dataset
+        and compute performance metrics.
+
+        Parameters
+        ----------
+        df_dataset: pandas.DataFrame
+            Dataset. It must contain columns 'text' and 'labels'
+
+        Notes
+        -----
+        The use of simpletransformers follows the example code in
+        https://towardsdatascience.com/simple-transformers-introducing-the-
+        easiest-bert-roberta-xlnet-and-xlm-library-58bf8c59b2a3
+        """
+
+        # #################################
+        # Check if a model has been trained
+
+        if self.model is None:
+            logging.error("-- -- A model must be trained before evalation")
+            return
+
+        # ##############
+        # Classification
+
         # Evaluate the model
-        logging.info(f"-- -- Testing model with {len(df_test)} documents...")
+        logging.info(
+            f"-- -- Testing model with {len(df_dataset)} documents...")
         t0 = time()
-        result, model_outputs, wrong_predictions = model.eval_model(df_test)
+        result, model_outputs, wrong_predictions = self.model.eval_model(
+            df_dataset)
+
         logging.info(f"-- -- Model tested in {time() - t0} seconds")
 
         return result, model_outputs, wrong_predictions

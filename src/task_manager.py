@@ -290,11 +290,10 @@ class TaskManager(baseTaskManager):
         df_train, df_test = dc.train_test_split(
             df_dataset, max_imbalance=max_imbalance, nmax=nmax)
 
-        self.result, self.model_outputs, wrong_predictions = dc.train_model(
-            df_train, df_test)
+        dc.train_model(df_train, df_test)
 
-        print("Stopping after training. You should go step by step here")
-        input("Press enter...")
+        self.result, self.model_outputs, wrong_predictions = dc.eval_model(
+            df_train, df_test)
 
         # Pretty print dictionary of results
         logging.info(f"-- Classification results: {self.result}")
