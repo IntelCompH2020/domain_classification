@@ -404,9 +404,9 @@ class CorpusDFProcessor(object):
         df_dataset.drop(columns=['description', 'title'], inplace=True)
 
         # Default class is 0
-        df_dataset['labels'] = 0
+        df_dataset['PUlabels'] = 0
 
         # Add positive labels
-        df_dataset.loc[df_dataset.id.isin(df_labels.id), 'labels'] = 1
+        df_dataset.loc[df_dataset.id.isin(df_labels.id), 'PUlabels'] = 1
 
         return df_dataset

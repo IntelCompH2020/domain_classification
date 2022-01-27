@@ -27,8 +27,8 @@ class TaskManager(baseTaskManager):
     """
 
     def __init__(self, path2project, path2source=None,
-                 config_fname='parameters.yaml', metadata_fname='metadata.pkl',
-                 set_logs=True):
+                 config_fname='parameters.yaml',
+                 metadata_fname='metadata.yaml', set_logs=True):
         """
         Opens a task manager object.
 
@@ -60,6 +60,7 @@ class TaskManager(baseTaskManager):
         self.ready2setup = None
         self.set_logs = None
         self.logger = None
+        self.dc = None
 
         super().__init__(path2project, path2source, config_fname=config_fname,
                          metadata_fname=metadata_fname, set_logs=set_logs)
@@ -72,6 +73,7 @@ class TaskManager(baseTaskManager):
         # folders. Every time a new entry is found in this list, a new folder
         # is created automatically.
         self.f_struct = {'labels': 'labels',
+                         'datasets': 'datasets',
                          'transformers': 'transformers',
                          'output': 'output'}
 
@@ -79,23 +81,31 @@ class TaskManager(baseTaskManager):
         # Path to the folder with the corpus files
         self.path2corpus = None
         # Path to the folder with label files
-        self.path2labels_out = self.path2project / self.f_struct['labels']
+        self.path2labels = self.path2project / self.f_struct['labels']
+        self.path2dataset = self.path2project / self.f_struct['datasets']
         self.path2transformers = (
             self.path2project / self.f_struct['transformers'])
 
         # Corpus dataframe
-        self.corpus_name = None    # Name of the corpus
         self.df_corpus = None      # Corpus dataframe
         self.df_labels = None      # Labels
         self.keywords = None
         self.CorpusProc = None
 
         # Classifier results:
+        self.df_dataset = None
         self.result = None
         self.model_outputs = None
 
+        # Extend base variables (defined in the base class) for state and
+        # metadata with additional fields
+        self.state['selected_corpus'] = False  # True if corpus was selected
+        self.state['trained_model'] = False    # True if model was trained
+        self.metadata['corpus_name'] = None
+
         # Datamanager
-        self.DM = DataManager(self.path2source, self.path2labels_out)
+        self.DM = DataManager(
+            self.path2source, self.path2labels, self.path2dataset)
 
         return
 
@@ -111,15 +121,46 @@ class TaskManager(baseTaskManager):
         Returns the list of available corpus
         """
 
-        if self.corpus_name is None:
+        # Just to abbreviate
+        corpus_name = self.metadata['corpus_name']
+
+        if corpus_name is None:
             logging.warning("\n")
             logging.warning(
                 "-- No corpus loaded. You must load a corpus first")
             labelset_list = []
         else:
-            labelset_list = self.DM.get_labelset_list(self.corpus_name)
+            labelset_list = self.DM.get_labelset_list(corpus_name)
 
         return labelset_list
+
+    def load(self):
+        """
+        Extends the load method from the parent class to load the project
+        corpus and the dataset (if any)
+        """
+
+        super().load()
+        msg = ""
+
+        # Just to abbreviate
+        corpus_name = self.metadata['corpus_name']
+
+        # Restore context from the last execution of the project
+        if self.state['selected_corpus']:
+            # Load corpus of the project
+            self.load_corpus(corpus_name)
+
+            if self.state['trained_model']:
+                # Load dataset from the last trained model
+                self.df_dataset, msg = self.DM.load_dataset(corpus_name)
+
+                logging.info("-- Loading classification model")
+                self.dc = CorpusClassifier(
+                    self.df_dataset, path2transformers=self.path2transformers)
+                self.dc.load_model()
+
+        return msg
 
     def load_corpus(self, corpus_name):
         """
@@ -132,13 +173,25 @@ class TaskManager(baseTaskManager):
             self.path2source
         """
 
-        # Store the name of the corpus an object attribute because later
-        # tasks will be referred to this corpus
-        self.corpus_name = corpus_name
+        # The corpus cannot be changed inside the same project. If a corpus
+        # was used before we must keep the same one.
+        current_corpus = self.metadata['corpus_name']
+        if (self.state['selected_corpus'] and corpus_name != current_corpus):
+            logging.error(
+                f"-- The corpus of this project is {current_corpus}. "
+                f"Run another project to use {corpus_name}")
+            return
 
         # Load corpus in a dataframe.
-        self.df_corpus = self.DM.load_corpus(self.corpus_name)
+        self.df_corpus = self.DM.load_corpus(corpus_name)
         self.CorpusProc = CorpusDFProcessor(self.df_corpus)
+
+        if not self.state['selected_corpus']:
+            # Store the name of the corpus an object attribute because later
+            # tasks will be referred to this corpus
+            self.metadata['corpus_name'] = corpus_name
+            self.state['selected_corpus'] = True
+            self._save_metadata()
 
         return
 
@@ -149,7 +202,8 @@ class TaskManager(baseTaskManager):
 
         ids_corpus = self.df_corpus['id']
         self.df_labels, msg = self.DM.import_labels(
-            corpus_name=self.corpus_name, ids_corpus=ids_corpus)
+            corpus_name=self.metadata['corpus_name'],
+            ids_corpus=ids_corpus)
 
         return msg
 
@@ -210,8 +264,8 @@ class TaskManager(baseTaskManager):
 
         # ############
         # Save labels
-        msg = self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
-                                  tag=tag)
+        msg = self.DM.save_labels(
+            self.df_labels, corpus_name=self.metadata['corpus_name'], tag=tag)
 
         return msg
 
@@ -247,8 +301,8 @@ class TaskManager(baseTaskManager):
 
         # ###########
         # Save labels
-        msg = self.DM.save_labels(self.df_labels, corpus_name=self.corpus_name,
-                                  tag=tag)
+        msg = self.DM.save_labels(
+            self.df_labels, corpus_name=self.metadata['corpus_name'], tag=tag)
 
         return msg
 
@@ -269,46 +323,98 @@ class TaskManager(baseTaskManager):
         Reset a given set of labels
         """
 
-        path2labelset = self.path2labels_out / labelset
+        path2labelset = self.path2labels / labelset
         path2labelset.unlink()
-        print(f"-- -- Labelset {labelset} removed")
+        logging.info(f"-- -- Labelset {labelset} removed")
 
         return
 
-    def train_model(self):
+    def train_PUmodel(self):
         """
         Train a domain classifiers
         """
 
         logging.info("-- Loading PU dataset")
-        df_dataset = self.CorpusProc.make_PU_dataset(self.df_labels)
+        self.df_dataset = self.CorpusProc.make_PU_dataset(self.df_labels)
 
-        dc = CorpusClassifier(path2transformers=self.path2transformers)
+        # Labels from the PU dataset are stored in column "PUlabels". We must
+        # copy them to column "labels" which is the name required by
+        # simpletransformers
+        self.df_dataset[['labels']] = self.df_dataset[['PUlabels']]
+
+        self.dc = CorpusClassifier(
+            self.df_dataset, path2transformers=self.path2transformers)
+
+        # Select data for training and testing
         max_imbalance = 3
         nmax = 400
+        self.dc.train_test_split(max_imbalance=max_imbalance, nmax=nmax)
 
-        df_train, df_test = dc.train_test_split(
-            df_dataset, max_imbalance=max_imbalance, nmax=nmax)
+        # Train the model using simpletransformers
+        self.dc.train_model()
 
-        dc.train_model(df_train, df_test)
+        # Update dataset.
+        # This is a bit weird, because the dataset is an attribute of self
+        # and self.dc. The following command makes sure they are both equal
+        self.df_dataset = self.dc.df_dataset
 
-        self.result, self.model_outputs, wrong_predictions = dc.eval_model(
-            df_train, df_test)
-
-        # Pretty print dictionary of results
-        logging.info(f"-- Classification results: {self.result}")
-        for r, v in self.result.items():
-            logging.info(f"-- -- {r}: {v}")
+        # Update status.
+        # Since training takes much time, we store the classification results
+        # in files
+        self.DM.save_dataset(
+            self.df_dataset, corpus_name=self.metadata['corpus_name'],
+            save_csv=True)
+        self.state['trained_model'] = True
+        self._save_metadata()
 
         return
+
+    def evaluate_PUmodel(self):
+        """
+        Evaluate a domain classifiers
+        """
+
+        # Evaluate the model over the test set
+        result, wrong_predictions = self.dc.eval_model(tag_score='PUscore')
+
+        # Pretty print dictionary of results
+        logging.info(f"-- Classification results: {result}")
+        for r, v in result.items():
+            logging.info(f"-- -- {r}: {v}")
+
+        # Update dataset.
+        # This is a bit weird, because the dataset is an attribute of self
+        # and self.dc. The following command makes sure they are both equal
+        self.df_dataset = self.dc.df_dataset
+
+        # Update dataset file to include scores
+        self.DM.save_dataset(
+            self.df_dataset, corpus_name=self.metadata['corpus_name'],
+            save_csv=True)
+
+        return result
 
     def get_feedback(self, image):
         """
         """
 
-        a = 1
+        # STEP 1: Select bunch of documents at random
+        n_max = 5
+        selected_docs = self.df_dataset.sample(n=n_max)
 
-        return a
+        # STEP 2: Show documents and
+        print("--Selected docs:")
+        print(selected_docs)
+
+        # STEP 3: Request labels
+        labels = input("Provide a sequence of labels in the same order than "
+                       "they are shown")
+
+        # STEP 4: Save feedback
+        self.df_dataset[['annotations']] = -1
+        self.df_dataset.loc[selected_docs.index, 'annotations'] = labels
+
+        return
 
     def update_model(self, param):
 
@@ -322,8 +428,8 @@ class TaskManagerCMD(TaskManager):
     """
 
     def __init__(self, path2project, path2source=None,
-                 config_fname='parameters.yaml', metadata_fname='metadata.pkl',
-                 set_logs=True):
+                 config_fname='parameters.yaml',
+                 metadata_fname='metadata.yaml', set_logs=True):
         """
         Opens a task manager object.
 
@@ -360,7 +466,7 @@ class TaskManagerCMD(TaskManager):
         """
 
         # Read available list of AI keywords
-        kw_library = self.DM.get_keywords_list(self.corpus_name)
+        kw_library = self.DM.get_keywords_list(self.metadata['corpus_name'])
         # Ask keywords through the query manager
         keywords = self.QM.ask_keywords(kw_library)
 
@@ -444,7 +550,9 @@ class TaskManagerCMD(TaskManager):
         msg = super().get_labels_by_keywords(
             wt=wt, n_max=n_max, s_min=s_min, tag=tag)
 
-        return msg
+        logging.info(msg)
+
+        return
 
     def get_labels_by_topics(self):
         """
@@ -507,7 +615,7 @@ class TaskManagerGUI(TaskManager):
         """
 
         # Read available list of AI keywords
-        kw_library = self.DM.get_keywords_list(self.corpus_name)
+        kw_library = self.DM.get_keywords_list(self.metadata['corpus_name'])
         suggested_keywords = ', '.join(kw_library)
         logging.info(
             f"-- Suggested list of keywords: {', '.join(kw_library)}\n")

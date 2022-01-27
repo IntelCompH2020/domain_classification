@@ -17,6 +17,7 @@ import argparse
 from src.menu_navigator.menu_navigator import MenuNavigator
 from src.task_manager import TaskManagerCMD
 
+
 # ########################
 # Main body of application
 # ########################
@@ -63,6 +64,7 @@ def main():
     menu = MenuNavigator(tm, path2menu, paths2data)
     menu.front_page(title="An Application example using menuNavigator")
     menu.navigate(option, active_options)
+
 
 # ############
 # Execute main

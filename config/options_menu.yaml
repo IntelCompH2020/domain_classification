@@ -13,7 +13,7 @@ root:
     - get_labels
     - load_labels
     - reset_labels
-    - train_model
+    - PU_learning
     - get_feedback
     - update_model
 
@@ -74,7 +74,7 @@ load:
   title: Load existing project
 
 load_corpus:
-  title: Load corpus (this will reset any previous corpus in the project)
+  title: Load corpus (to be done only once. Corpus cannot be changed)
   options:
     - get_method: _get_corpus_list
 
@@ -97,11 +97,14 @@ reset_labels:
   options:
     - get_method: _get_labelset_list
 
-train_model:
-  title: Train classifier model with the available labels
+PU_learning:
+  title: PU learning
+  options:
+    - train_PUmodel
+    - evaluate_PUmodel
 
 get_feedback:
-  title: Launch the GUI to get relevance feedback from user
+  title: Get relevance feedback from user
 
 update_model:
   title: Update the classifier model with the latest relevance feedback
@@ -123,10 +126,19 @@ get_labels_by_topics:
 get_labels_by_definitions:
     title: Get subcorpus from documents defining categories
 
+# #######################
+# Options for PU_learning
+
+train_PUmodel:
+  title: Train PU classifier model with the available labels
+
+load_PUmodel:
+  title: Load PU classifier model with the available labels
+
+evaluate_PUmodel:
+  title: Evaluate PU classifier model with the available labels
 
 
-
-# ####################
 # ####################
 # ####################
 # ####################

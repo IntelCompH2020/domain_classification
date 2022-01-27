@@ -15,7 +15,7 @@ class DataManager(object):
     It assumes that source and destination data will be stored in files.
     """
 
-    def __init__(self, path2source, path2labels_out):
+    def __init__(self, path2source, path2labels, path2dataset):
         """
         Initializes the data manager object
 
@@ -23,12 +23,13 @@ class DataManager(object):
         ----------
         path2source: str or pathlib.Path
             Path to the folder containing all external source data
-        path2labels_out: str or pathlib.Pahd
+        path2labels: str or pathlib.Pahd
             Path to the folder containing sets of labels
         """
 
         self.path2source = pathlib.Path(path2source)
-        self.path2labels_out = pathlib.Path(path2labels_out)
+        self.path2labels = pathlib.Path(path2labels)
+        self.path2dataset = pathlib.Path(path2dataset)
         # The path to the corpus is given when calling the load_corpus method
         self.path2corpus = None
 
@@ -56,10 +57,10 @@ class DataManager(object):
         """
 
         if corpus_name is None:
-            labelset_list = [e.name for e in self.path2labels_out.iterdir()
+            labelset_list = [e.name for e in self.path2labels.iterdir()
                              if e.is_file()]
         else:
-            labelset_list = [e.name for e in self.path2labels_out.iterdir()
+            labelset_list = [e.name for e in self.path2labels.iterdir()
                              if e.is_file() and e.stem.startswith(
                                  f"labels_{corpus_name}")]
 
@@ -236,6 +237,35 @@ class DataManager(object):
 
         return T, df_metadata, topic_words
 
+    def load_dataset(self, corpus_name="", tag=""):
+        """
+        Loads a labeled dataset of documents in the format required by the
+        classifier modules
+        """
+
+        logging.info("-- Loading dataset")
+
+        feather_fname = f'dataset_{corpus_name}_{tag}.feather'
+        csv_fname = f'dataset_{corpus_name}_{tag}.csv'
+
+        # If there is a feather file, load it
+        t0 = time()
+        path2dataset = self.path2dataset / feather_fname
+        if path2dataset.is_file():
+            df_dataset = pd.read_feather(path2dataset)
+        else:
+            # Rename path to load a csv file.
+            path2dataset = self.path2dataset / csv_fname
+            df_dataset = pd.read_csv(path2dataset)
+
+        msg = (f"-- -- Dataset with {len(df_dataset)} samples loaded from "
+               f"{path2dataset} in {time() - t0} secs.")
+
+        logging.info(msg)
+
+        # The log message is returned to be shown in a GUI, if needed
+        return df_dataset, msg
+
     def import_labels(self, corpus_name="", ids_corpus=None):
         """
         Loads a subcorpus of positive labels from file.
@@ -316,11 +346,47 @@ class DataManager(object):
         # Saving id and class only
 
         labels_out_fname = f'labels_{corpus_name}_{tag}.csv'
-        path2labels_out = self.path2labels_out / labels_out_fname
-        df_labels.to_csv(path2labels_out, index=False)
+        path2labels = self.path2labels / labels_out_fname
+        df_labels.to_csv(path2labels, index=False)
 
-        msg = (f"-- File with {len(df_labels)} positive labels imported and "
-               f"saved in {path2labels_out}")
+        msg = (f"-- File with {len(df_labels)} positive labels saved in "
+               f"{path2labels}")
+        logging.info(msg)
+
+        # The log message is returned to be shown in a GUI, if needed
+        return msg
+
+    def save_dataset(self, df_dataset, corpus_name="", tag="", save_csv=False):
+        """
+        Save dataset in input dataframe in a feather file.
+
+        Parameters
+        ----------
+        df_dataset : pandas.DataFrame
+            Dataset to save
+        corpus_name : str, optional (default="")
+            Name of the corpus. It will be used to compose the name of the
+            output file
+        tag : str, optional (default="")
+            Optional string to add to the output file name.
+        save_csv : boolean, optional (default=False)
+            If True, the dataset is saved in csv format too
+        """
+
+        # ########################
+        # Saving id and class only
+
+        dataset_fname = f'dataset_{corpus_name}_{tag}.feather'
+        path2dataset = self.path2dataset / dataset_fname
+        df_dataset.to_feather(path2dataset)
+        msg = (f"-- File with {len(df_dataset)} samples saved in "
+               f"{path2dataset}")
+
+        if save_csv:
+            dataset_fname = f'dataset_{corpus_name}_{tag}.csv'
+            path2dataset = self.path2dataset / dataset_fname
+            df_dataset.to_csv(path2dataset)
+
         logging.info(msg)
 
         # The log message is returned to be shown in a GUI, if needed
