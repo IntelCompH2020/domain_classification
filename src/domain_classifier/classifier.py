@@ -193,7 +193,7 @@ class CorpusClassifier(object):
             'overwrite_output_dir': True}
         os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-        # FIXME: Base model 'roberta' should be configuratle. Move it to
+        # FIXME: Base model 'roberta' should be configurable. Move it to
         #        the config file (parameters.default.yaml)
         self.model = ClassificationModel(
             'roberta', 'roberta-base', use_cuda=cuda_available,
@@ -258,5 +258,62 @@ class CorpusClassifier(object):
             self.df_dataset['train_test'] == TEST,
             [f"{tag_score}_0", f"{tag_score}_1"]] = model_outputs
 
+        # FIXME: Compute class predictions
+        # FIXME: Add predictions to a new column in self.df_dataset.
+        # FIXME: Map scores to probabilities.
+
         return result, wrong_predictions
 
+    def sample(self, n_samples=5):
+        """
+        Returns a given number of samples for relevance feedback
+
+        Parameters
+        ----------
+        n_samples : int, optional (default=5)
+            Number of samples to return
+
+        Returns
+        -------
+        df_out : pandas.dataFrame
+            Selected samples
+        """
+
+        selected_docs = self.df_dataset.sample(n_samples)
+        # FIXME: Try intelligent sample selection based on scores.
+
+        return selected_docs
+
+    def retrain_model(self):
+        """
+        Re-train the classifier model using annotations
+        """
+
+        # #################
+        # Get training data
+
+        # FIXME: Implement the data collection here:
+        # He we should combine two colums from self.df_dataset
+        #   - "labels", with the original labels used to train the first model
+        #   - "annotations", with the new annotations
+        # Notes:
+        # Take into account that the annotation process could take place
+        # iteratively, so this method could be called several times, each time
+        # with some already used annotations and the new ones gathered from the
+        # late human-annotation iteration. To help with this, you might use two
+        # complementary columns from self.df_dataset
+        #   - column 'date', with the annotation date
+        #   - column 'used', marking with 1 those labels already used in
+        #                    previous retrainings
+
+        # ################
+        # Model retraining
+        # FIXME: Retrain the current model in self.model with the new labels
+
+        # ################
+        # Mark used labels
+        if 'used' not in self.df_dataset:
+            self.dataset[['used']] = 0
+        # FIXME: Mark newly used labels with value 1 in column 'used'
+
+        return

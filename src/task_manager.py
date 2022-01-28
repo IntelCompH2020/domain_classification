@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 # Local imports
 # You might need to update the location of the baseTaskManager class
@@ -133,6 +134,21 @@ class TaskManager(baseTaskManager):
             labelset_list = self.DM.get_labelset_list(corpus_name)
 
         return labelset_list
+
+    def _save_dataset(self):
+        """
+        Saves the dataset.
+        The task is done by the self.DM clas. This method is just a caller to
+        self.DM, used to simplify (just a bit) the code of methods saving the
+        dataset.
+        """
+
+        # Update status.
+        # Since training takes much time, we store the classification results
+        # in files
+        self.DM.save_dataset(
+            self.df_dataset, corpus_name=self.metadata['corpus_name'],
+            save_csv=True)
 
     def load(self):
         """
@@ -361,9 +377,7 @@ class TaskManager(baseTaskManager):
         # Update status.
         # Since training takes much time, we store the classification results
         # in files
-        self.DM.save_dataset(
-            self.df_dataset, corpus_name=self.metadata['corpus_name'],
-            save_csv=True)
+        self._save_dataset()
         self.state['trained_model'] = True
         self._save_metadata()
 
@@ -386,37 +400,75 @@ class TaskManager(baseTaskManager):
         # This is a bit weird, because the dataset is an attribute of self
         # and self.dc. The following command makes sure they are both equal
         self.df_dataset = self.dc.df_dataset
-
         # Update dataset file to include scores
-        self.DM.save_dataset(
-            self.df_dataset, corpus_name=self.metadata['corpus_name'],
-            save_csv=True)
+        self._save_dataset()
 
         return result
 
-    def get_feedback(self, image):
+    def get_feedback(self):
         """
+        Gets some labels from a user for a selected subset of documents
         """
 
         # STEP 1: Select bunch of documents at random
-        n_max = 5
-        selected_docs = self.df_dataset.sample(n=n_max)
+        n_docs = 5
+        selected_docs = self.dc.sample(n_samples=n_docs)
 
-        # STEP 2: Show documents and
-        print("--Selected docs:")
-        print(selected_docs)
+        # STEP 2: Request labels
+        labels = self.get_labels_from_docs(selected_docs)
 
-        # STEP 3: Request labels
-        labels = input("Provide a sequence of labels in the same order than "
-                       "they are shown")
+        # STEP 3: Annotation date
+        #
 
         # STEP 4: Save feedback
-        self.df_dataset[['annotations']] = -1
+        if 'annotations' not in self.df_dataset:
+            self.df_dataset[['annotations']] = -1
         self.df_dataset.loc[selected_docs.index, 'annotations'] = labels
+
+        # Add date to the dataframe
+        now = datetime.now()
+        date_str = now.strftime("%d/%m/%Y %H:%M:%S")
+        self.df_dataset.loc[selected_docs.index, 'date'] = date_str
+        print("now =", now)
+        print("date and time =", date_str)
+        breakpoint()
+
+        # Update dataset file to include new labels
+        self._save_dataset()
 
         return
 
-    def update_model(self, param):
+    def get_labels_from_docs(self, n_docs):
+        """
+        Requests feedback about the class of given documents.
+
+        Parameters
+        ----------
+        selected_docs : pands.DataFrame
+            Selected documents
+
+        Returns
+        -------
+        labels : list of boolean
+            Labels for the given documents, in the same order than the
+            documents in the input dataframe
+        """
+
+        raise NotImplementedError(
+            "Please Implement this method in your inherited class")
+
+        return
+
+    def update_model(self):
+        """
+        Improves classifier performance using the labels provided by users
+        """
+
+        # Add updated dataset with the latest annotations
+        self.dc.df_dataset = self.df_dataset
+
+        # Retrain model using the new labels
+        self.dc.retrain_model()
 
         return
 
@@ -597,6 +649,28 @@ class TaskManagerCMD(TaskManager):
 
         return msg
 
+    def get_labels_from_docs(self, selected_docs):
+        """
+        Requests feedback about the class of given documents.
+
+        Parameters
+        ----------
+        selected_docs : pands.DataFrame
+            Selected documents
+
+        Returns
+        -------
+        labels : list of boolean
+            Labels for the given documents, in the same order than the
+            documents in the input dataframe
+        """
+
+        print("--Selected docs:")
+        print(selected_docs)
+        labels = self.QM.ask_labels()
+
+        return labels
+
 
 class TaskManagerGUI(TaskManager):
     """
@@ -647,3 +721,24 @@ class TaskManagerGUI(TaskManager):
             T, df_metadata, col_id='corpusid')
 
         return topic_words, T, df_metadata
+
+    def get_labels_from_docs(self, selected_docs):
+        """
+        Requests feedback about the class of given documents.
+
+        Parameters
+        ----------
+        selected_docs : pands.DataFrame
+            Selected documents
+
+        Returns
+        -------
+        labels : list of boolean
+            Labels for the given documents, in the same order than the
+            documents in the input dataframe
+        """
+
+        # FIXME: Implement this method
+        labels = []
+
+        return labels

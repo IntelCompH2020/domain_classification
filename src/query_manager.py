@@ -135,3 +135,28 @@ class QueryManager(object):
 
         return value
 
+    def ask_labels(self):
+        """
+        Ask the user for a weighted list of labels related to some documents
+
+        Parameters
+        ----------
+        topic_words: list of str
+            List of the main words from each topic
+
+        Returns
+        -------
+        tw: dict
+            Dictionary of topics: weights
+        """
+
+        logging.info("")
+        logging.info("-- Provide a sequence of labels for the given documents "
+                     " in the same order: ")
+        topic_weights_str = input(": ")
+
+        # Split and convert to integers
+        labels = topic_weights_str.split(',')
+        labels = [int(k) for k in labels]
+
+        return labels
