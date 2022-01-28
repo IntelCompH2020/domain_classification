@@ -429,9 +429,6 @@ class TaskManager(baseTaskManager):
         now = datetime.now()
         date_str = now.strftime("%d/%m/%Y %H:%M:%S")
         self.df_dataset.loc[selected_docs.index, 'date'] = date_str
-        print("now =", now)
-        print("date and time =", date_str)
-        breakpoint()
 
         # Update dataset file to include new labels
         self._save_dataset()
