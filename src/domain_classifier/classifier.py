@@ -13,7 +13,9 @@ from sklearn import model_selection
 # Mnemonics for values in column 'train_test'
 TRAIN = 0
 TEST = 1
-UNUSED = -1
+# Equivalent to NaN for the integer columns in self.df_dataset:
+# (nan is not used because it converts the whole column to float)
+UNUSED = -99
 
 
 class CorpusClassifier(object):
@@ -66,7 +68,7 @@ class CorpusClassifier(object):
         max_imbalance : int or None, optional (default=None)
             Maximum ratio negative vs positive samples. If the ratio in
             df_dataset is higher, the negative class is subsampled
-            If None, the original proortions are preserved
+            If None, the original proportions are preserved
         nmax : int or None (defautl=None)
             Maximum size of the whole (train+test) dataset
         train_size : float or int (default=0.6)
@@ -249,24 +251,30 @@ class CorpusClassifier(object):
             df_test)
         logging.info(f"-- -- Model tested in {time() - t0} seconds")
 
-        # Add score columns if not available
-        if f"{tag_score}_0" not in self.df_dataset:
-            self.df_dataset[[f"{tag_score}_0", f"{tag_score}_1"]] = np.nan
-
-        # Fill scores for the evaluated data
+        # SCORES: Fill scores for the evaluated data
         self.df_dataset.loc[
             self.df_dataset['train_test'] == TEST,
             [f"{tag_score}_0", f"{tag_score}_1"]] = model_outputs
 
-        # FIXME: Compute class predictions
-        # FIXME: Add predictions to a new column in self.df_dataset.
-        # FIXME: Map scores to probabilities.
+        # PREDICTIONS: Fill predictions for the evaluated data
+        delta = model_outputs[:, 1] - model_outputs[:, 0]
+
+        self.df_dataset[f"prediction"] = UNUSED
+        self.df_dataset.loc[self.df_dataset['train_test'] == TEST,
+                            f"prediction"] = (delta > 0).astype(int)
+
+        # Fill probabilistic predictions for the evaluated data
+        # Scores are mapped to probabilities thoudh a logistic function.
+        # FIXME: Check training loss in simpletransformers documentation or
+        #        code, to see if logistic loss is appropriate here.
+        self.df_dataset.loc[self.df_dataset['train_test'] == TEST,
+                            f"prob_pred"] = 1 / (1 + np.exp(-delta))
 
         return result, wrong_predictions
 
-    def sample(self, n_samples=5):
+    def AL_sample(self, n_samples=5):
         """
-        Returns a given number of samples for relevance feedback
+        Returns a given number of samples for active learning (AL)
 
         Parameters
         ----------
@@ -280,7 +288,9 @@ class CorpusClassifier(object):
         """
 
         selected_docs = self.df_dataset.sample(n_samples)
-        # FIXME: Try intelligent sample selection based on scores.
+
+        # FIXME: Try intelligent sample selection based on the scores or the
+        #        probabilistic predictions in the self.df_dataset.
 
         return selected_docs
 

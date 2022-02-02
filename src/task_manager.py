@@ -147,7 +147,7 @@ class TaskManager(baseTaskManager):
         # Since training takes much time, we store the classification results
         # in files
         self.DM.save_dataset(
-            self.df_dataset, corpus_name=self.metadata['corpus_name'],
+            self.dc.df_dataset, corpus_name=self.metadata['corpus_name'],
             save_csv=True)
 
     def load(self):
@@ -169,11 +169,11 @@ class TaskManager(baseTaskManager):
 
             if self.state['trained_model']:
                 # Load dataset from the last trained model
-                self.df_dataset, msg = self.DM.load_dataset(corpus_name)
+                df_dataset, msg = self.DM.load_dataset(corpus_name)
 
                 logging.info("-- Loading classification model")
                 self.dc = CorpusClassifier(
-                    self.df_dataset, path2transformers=self.path2transformers)
+                    df_dataset, path2transformers=self.path2transformers)
                 self.dc.load_model()
 
         return msg
@@ -351,28 +351,23 @@ class TaskManager(baseTaskManager):
         """
 
         logging.info("-- Loading PU dataset")
-        self.df_dataset = self.CorpusProc.make_PU_dataset(self.df_labels)
+        df_dataset = self.CorpusProc.make_PU_dataset(self.df_labels)
 
         # Labels from the PU dataset are stored in column "PUlabels". We must
         # copy them to column "labels" which is the name required by
         # simpletransformers
-        self.df_dataset[['labels']] = self.df_dataset[['PUlabels']]
+        df_dataset[['labels']] = df_dataset[['PUlabels']]
 
         self.dc = CorpusClassifier(
-            self.df_dataset, path2transformers=self.path2transformers)
+            df_dataset, path2transformers=self.path2transformers)
 
         # Select data for training and testing
-        max_imbalance = 3
-        nmax = 400
+        max_imbalance = self.global_parameters['classifier']['nmax']
+        nmax = self.global_parameters['classifier']['nmax']
         self.dc.train_test_split(max_imbalance=max_imbalance, nmax=nmax)
 
         # Train the model using simpletransformers
         self.dc.train_model()
-
-        # Update dataset.
-        # This is a bit weird, because the dataset is an attribute of self
-        # and self.dc. The following command makes sure they are both equal
-        self.df_dataset = self.dc.df_dataset
 
         # Update status.
         # Since training takes much time, we store the classification results
@@ -396,10 +391,6 @@ class TaskManager(baseTaskManager):
         for r, v in result.items():
             logging.info(f"-- -- {r}: {v}")
 
-        # Update dataset.
-        # This is a bit weird, because the dataset is an attribute of self
-        # and self.dc. The following command makes sure they are both equal
-        self.df_dataset = self.dc.df_dataset
         # Update dataset file to include scores
         self._save_dataset()
 
@@ -411,8 +402,8 @@ class TaskManager(baseTaskManager):
         """
 
         # STEP 1: Select bunch of documents at random
-        n_docs = 5
-        selected_docs = self.dc.sample(n_samples=n_docs)
+        n_docs = self.global_parameters['active_learning']['n_docs']
+        selected_docs = self.dc.AL_sample(n_samples=n_docs)
 
         # STEP 2: Request labels
         labels = self.get_labels_from_docs(selected_docs)
@@ -421,8 +412,8 @@ class TaskManager(baseTaskManager):
         #
 
         # STEP 4: Save feedback
-        if 'annotations' not in self.df_dataset:
-            self.df_dataset[['annotations']] = -1
+        if 'annotations' not in self.dc.df_dataset:
+            self.dc.df_dataset[['annotations']] = -1
         self.df_dataset.loc[selected_docs.index, 'annotations'] = labels
 
         # Add date to the dataframe
@@ -460,9 +451,6 @@ class TaskManager(baseTaskManager):
         """
         Improves classifier performance using the labels provided by users
         """
-
-        # Add updated dataset with the latest annotations
-        self.dc.df_dataset = self.df_dataset
 
         # Retrain model using the new labels
         self.dc.retrain_model()
