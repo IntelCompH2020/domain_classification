@@ -135,28 +135,62 @@ class QueryManager(object):
 
         return value
 
+    def ask_label(self):
+        """
+        Ask the user for a single binary label
+
+        Returns
+        -------
+        label: int
+            Binary value read from the standard input
+        """
+
+        logging.info("")
+        logging.info(
+            "-- Class of the document (1 for positive class, 0 for negative)")
+        label = input(": ")
+
+        while label not in {'0', '1'}:
+            logging.info("-- Try it again: the label must be 0 or 1")
+            label = input(": ")
+
+        # Split and convert to integers
+        label = int(label)
+
+        return label
+
     def ask_labels(self):
         """
         Ask the user for a weighted list of labels related to some documents
 
-        Parameters
-        ----------
-        topic_words: list of str
-            List of the main words from each topic
-
         Returns
         -------
-        tw: dict
-            Dictionary of topics: weights
+        labels: list of int
+            List of labels
         """
 
         logging.info("")
         logging.info("-- Provide a sequence of labels for the given documents "
                      " in the same order: ")
-        topic_weights_str = input(": ")
+        labels_str = input(": ")
 
         # Split and convert to integers
-        labels = topic_weights_str.split(',')
-        labels = [int(k) for k in labels]
+        labels = [int(k) for k in labels_str.split(',')]
 
         return labels
+
+    def confirm(self):
+        """
+        Ask the user for confirmation
+
+        Returns
+        -------
+        True if the user inputs 'y', False otherwise
+        """
+
+        logging.info("")
+        label = input("-- Press 'y' to confirm the anotation. Otherwise all "
+                      "labels in this session will be removed: ")
+
+        return label == 'y'
+

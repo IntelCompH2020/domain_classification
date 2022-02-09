@@ -94,7 +94,6 @@ class TaskManager(baseTaskManager):
         self.CorpusProc = None
 
         # Classifier results:
-        self.df_dataset = None
         self.result = None
         self.model_outputs = None
 
@@ -404,22 +403,14 @@ class TaskManager(baseTaskManager):
         # STEP 1: Select bunch of documents at random
         n_docs = self.global_parameters['active_learning']['n_docs']
         selected_docs = self.dc.AL_sample(n_samples=n_docs)
+        # Indices of the selected docs
+        idx = selected_docs.index
 
         # STEP 2: Request labels
         labels = self.get_labels_from_docs(selected_docs)
 
-        # STEP 3: Annotation date
-        #
-
-        # STEP 4: Save feedback
-        if 'annotations' not in self.dc.df_dataset:
-            self.dc.df_dataset[['annotations']] = -1
-        self.df_dataset.loc[selected_docs.index, 'annotations'] = labels
-
-        # Add date to the dataframe
-        now = datetime.now()
-        date_str = now.strftime("%d/%m/%Y %H:%M:%S")
-        self.df_dataset.loc[selected_docs.index, 'date'] = date_str
+        # STEP 3: Annotate
+        self.dc.annotate(idx, labels)
 
         # Update dataset file to include new labels
         self._save_dataset()
@@ -650,9 +641,40 @@ class TaskManagerCMD(TaskManager):
             documents in the input dataframe
         """
 
-        print("--Selected docs:")
-        print(selected_docs)
-        labels = self.QM.ask_labels()
+        labels = []
+        width = 80
+
+        print(width * "=")
+        print("-- SAMPLED DOCUMENTS FOR LABELING:")
+
+        print(width * "=")
+        for i, doc in selected_docs.iterrows():
+            print(f"ID: {doc.id}")
+            if self.metadata['corpus_name'] == 'EU_projects':
+                # Locate document in corpus
+                doc_corpus = self.df_corpus[self.df_corpus['id'] == doc.id]
+                # Get and print title
+                title = doc_corpus.iloc[0].title
+                print(f"TITLE: {title}")
+                # Get and print description
+                descr = doc_corpus.iloc[0].description
+                print(f"DESCRIPTION: {descr}")
+            else:
+                # Get and print text
+                text = doc.text
+                print(f"TEXT: {text}")
+            # Get and print prediction
+            if 'prediction' in doc:
+                print(f"PREDICTED CLASS: {doc.prediction}")
+
+            labels.append(self.QM.ask_label())
+            print(width * "=")
+
+        # Label confirmation: this is to confirm that the labeler did not make
+        # (conciously) a mistake.
+        if not self.QM.confirm():
+            logging.info("-- Canceling: new labels removed.")
+            labels = []
 
         return labels
 

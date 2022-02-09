@@ -3,6 +3,7 @@ import pathlib
 import sys
 import os
 from time import time
+from datetime import datetime
 
 import pandas as pd
 import numpy as np
@@ -287,12 +288,48 @@ class CorpusClassifier(object):
             Selected samples
         """
 
-        selected_docs = self.df_dataset.sample(n_samples)
+        # Sample documents from the subset with predictions
+        selected_docs = self.df_dataset.loc[
+            self.df_dataset.prediction != UNUSED]
+
+        if len(selected_docs) >= n_samples:
+            selected_docs = selected_docs.sample(n_samples)
+        else:
+            logging.warning(
+                "-- Not enough documents with predictions in the dataset")
 
         # FIXME: Try intelligent sample selection based on the scores or the
         #        probabilistic predictions in the self.df_dataset.
 
         return selected_docs
+
+    def annotate(self, idx, labels, col='annotations'):
+        """
+        Annotate the given labels in the given positions
+
+        Parameters
+        ----------
+        idx: list of int
+            Rows to locate the labels.
+        labels: list of int
+            Labels to annotate
+        col: str, optional (default = 'annotations')
+            Column in the dataframe where the labels will be annotated. If it
+            does not exist, it is created.
+        """
+
+        if col not in self.df_dataset:
+            logging.info(
+                f"-- -- Column {col} does not exist in dataframe. Added.")
+            self.df_dataset[[col]] = UNUSED
+        self.df_dataset.loc[idx, col] = labels
+
+        # Add date to the dataframe
+        now = datetime.now()
+        date_str = now.strftime("%d/%m/%Y %H:%M:%S")
+        self.df_dataset.loc[idx, 'date'] = date_str
+
+        return
 
     def retrain_model(self):
         """
@@ -327,3 +364,4 @@ class CorpusClassifier(object):
         # FIXME: Mark newly used labels with value 1 in column 'used'
 
         return
+
