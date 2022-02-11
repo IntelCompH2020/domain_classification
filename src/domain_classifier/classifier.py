@@ -318,11 +318,20 @@ class CorpusClassifier(object):
             does not exist, it is created.
         """
 
+        # Create annotation colum if it does not exist
         if col not in self.df_dataset:
             logging.info(
                 f"-- -- Column {col} does not exist in dataframe. Added.")
             self.df_dataset[[col]] = UNUSED
+        # Add labels to annotation columns
         self.df_dataset.loc[idx, col] = labels
+
+        # Create colum of used labels if it does not exist
+        if 'learned' not in self.df_dataset:
+            self.dataset[['learned']] = UNUSED
+        # Mark new labels as 'not learned' (i.e. not used by the learning
+        # algorithm, yet.
+        self.df_dataset.loc[idx, 'learned'] = 0
 
         # Add date to the dataframe
         now = datetime.now()
@@ -350,7 +359,7 @@ class CorpusClassifier(object):
         # late human-annotation iteration. To help with this, you might use two
         # complementary columns from self.df_dataset
         #   - column 'date', with the annotation date
-        #   - column 'used', marking with 1 those labels already used in
+        #   - column 'learned', marking with 1 those labels already used in
         #                    previous retrainings
 
         # ################
