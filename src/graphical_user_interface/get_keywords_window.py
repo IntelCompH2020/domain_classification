@@ -21,7 +21,7 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         # Load UI and configure default geometry of the window
         # #####################################################################
         uic.loadUi("UIS/get_labels_by_keywords.ui", self)
-        self.initUI()
+        self.init_ui()
 
         # ATTRIBUTES
         # #####################################################################
@@ -63,7 +63,7 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         self.get_labels_push_button.clicked.connect(
             self.clicked_select_keywords)
 
-    def initUI(self):
+    def init_ui(self):
         self.setWindowIcon(QIcon('Images/dc_logo.png'))
         self.setWindowTitle(Messages.WINDOW_TITLE)
         self.center()

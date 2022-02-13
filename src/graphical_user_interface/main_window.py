@@ -21,23 +21,27 @@ from src.graphical_user_interface.get_topics_list_window import (
 from src.graphical_user_interface.messages import Messages
 from src.graphical_user_interface.util import toggleMenu, execute_in_thread
 
+# CONSTANTS
+BUTTONS_SCALE = 0.75
+
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, projectFolder, sourceFolder, tm):
+    def __init__(self, project_folder, source_folder, tm, widget):
         super(MainWindow, self).__init__()
 
         # Load UI and configure default geometry of the window
         #######################################################################
         uic.loadUi("UIS/DomainClassifier.ui", self)
-        self.initUI()
+        self.init_ui()
         self.animation = QtCore.QPropertyAnimation(self.frame_left_menu,
                                                    b"minimumWidth")
 
         # ATTRIBUTES
         #######################################################################
-        self.source_folder = sourceFolder
-        self.project_folder = projectFolder
+        self.source_folder = source_folder
+        self.project_folder = project_folder
         self.tm = tm
+        self.widget = widget
         self.corpus_selected_name = ""
         self.labels_loaded = None
         self.get_label_option = 0
@@ -50,18 +54,18 @@ class MainWindow(QtWidgets.QMainWindow):
         # #####################################################################
         self.info_button_select_corpus.setIcon(QIcon('Images/help2.png'))
         self.info_button_select_corpus.setIconSize(
-            0.75 * QSize(self.info_button_select_corpus.width(),
-                         self.info_button_select_corpus.height()))
+            BUTTONS_SCALE * QSize(self.info_button_select_corpus.width(),
+                                  self.info_button_select_corpus.height()))
         self.info_button_select_corpus.setToolTip(Messages.INFO_SELECT_CORPUS)
         self.info_button_get_labels.setIcon(QIcon('Images/help2.png'))
         self.info_button_get_labels.setIconSize(
-            0.75 * QSize(self.info_button_get_labels.width(),
-                         self.info_button_get_labels.height()))
+            BUTTONS_SCALE * QSize(self.info_button_get_labels.width(),
+                                  self.info_button_get_labels.height()))
         self.info_button_get_labels.setToolTip(Messages.INFO_GET_LABELS)
         self.info_button_load_reset_labels.setIcon(QIcon('Images/help2.png'))
         self.info_button_load_reset_labels.setIconSize(
-            0.75 * QSize(self.info_button_load_reset_labels.width(),
-                         self.info_button_load_reset_labels.height()))
+            BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
+                                  self.info_button_load_reset_labels.height()))
         self.info_button_load_reset_labels.setToolTip(
             Messages.INFO_LOAD_RESET_LABELS)
 
@@ -119,8 +123,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # #####################################################################
         self.toggleButton.clicked.connect(lambda: toggleMenu(self, 250))
         self.toggleButton.setIcon(QIcon('Images/menu.png'))
-        self.toggleButton.setIconSize(0.75 * QSize(self.toggleButton.width(),
-                                                   self.toggleButton.height()))
+        self.toggleButton.setIconSize(BUTTONS_SCALE * QSize(self.toggleButton.width(),
+                                                            self.toggleButton.height()))
 
         # PAGES
         # #####################################################################
@@ -129,27 +133,27 @@ class MainWindow(QtWidgets.QMainWindow):
             lambda: self.tabs.setCurrentWidget(self.page_load))
         self.pushButtonLoad.setIcon(QIcon('Images/settings.png'))
         self.pushButtonLoad.setIconSize(
-            0.75 * QSize(self.pushButtonLoad.width(),
-                         self.pushButtonLoad.height()))
+            BUTTONS_SCALE * QSize(self.pushButtonLoad.width(),
+                                  self.pushButtonLoad.height()))
         self.pushButtonLoad.setToolTip(Messages.INFO_LOAD_CORPUS_LABELS)
         # PAGE 2: Train classifier
         self.pushButtonTrain.clicked.connect(
             lambda: self.tabs.setCurrentWidget(self.page_train))
         self.pushButtonTrain.setIcon(QIcon('Images/training.png'))
         self.pushButtonTrain.setIconSize(
-            0.75 * QSize(self.pushButtonTrain.width(),
-                         self.pushButtonTrain.height()))
+            BUTTONS_SCALE * QSize(self.pushButtonTrain.width(),
+                                  self.pushButtonTrain.height()))
         self.pushButtonTrain.setToolTip(Messages.INFO_TRAIN_CLASSIFIER)
         # PAGE 3: Get relevance feedback
         self.pushButtonGetFeedback.clicked.connect(
             lambda: self.tabs.setCurrentWidget(self.page_feedback))
         self.pushButtonGetFeedback.setIcon(QIcon('Images/feedback.png'))
         self.pushButtonGetFeedback.setIconSize(
-            0.75 * QSize(self.pushButtonTrain.width(),
-                         self.pushButtonTrain.height()))
+            BUTTONS_SCALE * QSize(self.pushButtonTrain.width(),
+                                  self.pushButtonTrain.height()))
         self.pushButtonGetFeedback.setToolTip(Messages.INFO_GET_FEEDBACK)
 
-    def initUI(self):
+    def init_ui(self):
         # Update image
         pixmap = QPixmap('Images/dc_logo2.png')
         self.label_logo.setPixmap(pixmap)
@@ -199,22 +203,36 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.information(
             self, Messages.DC_MESSAGE,
             "The corpus '" + self.corpus_selected_name + "' has been "
-            "loaded in the current session.")
+                                                         "loaded in the current session.")
 
         self.label_corpus_selected_is.setText(str(self.corpus_selected_name))
         self.show_labels()
 
     def clicked_load_corpus(self):
         """
-        Method to control the selection of a new corpus by double clicking
+        Method to control the selection of a new corpus by double-clicking
         into one of the items of the corpus list
         within the selected source folder, as well as its loading as dataframe
         into the TaskManager object.
+        Important is that the corpus cannot be changed inside the same project,
+        so if a corpus was used before me must keep the same one.
         """
         item = self.tree_view_select_corpus.currentItem()
-        self.corpus_selected_name = str(item.text())
+        corpus_name = str(item.text())
+        current_corpus = self.tm.metadata['corpus_name']
 
-        # Loading corpus into the TaskManager object as dataframe
+        # Go back to the main window of the application so the user can select a different project folder in case he
+        # chooses a different corpus for an already existing project
+        if self.tm.state['selected_corpus'] and corpus_name != current_corpus:
+            warning = "The corpus of this project is " + current_corpus + \
+                      ". Run another project to use " + corpus_name + "."
+            QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, warning)
+            self.widget.removeWidget(self.widget.currentWidget())
+            return
+
+        self.corpus_selected_name = corpus_name
+
+        # Load corpus into the TaskManager object as dataframe
         self.statusBar().showMessage(
             "'The corpus " + self.corpus_selected_name + "' is being loaded.",
             3000)
@@ -239,7 +257,7 @@ class MainWindow(QtWidgets.QMainWindow):
         each of the QRadioButtons associated with the labels' getting.
         Only one QRadioButton can be selected at a time.
         """
-        if self.tm.corpus_name is None:
+        if self.corpus_selected_name is None:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
                 Messages.INCORRECT_INPUT_PARAM_SELECTION)
@@ -349,12 +367,12 @@ class MainWindow(QtWidgets.QMainWindow):
         Method for showing the labels associated with the selected corpus.
         """
         self.tree_view_load_labels.clear()
-        if self.tm.corpus_name is None:
+        if self.corpus_selected_name is None:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
                 Messages.INCORRECT_NO_CORPUS_SELECTED)
         else:
-            labelset_list = self.tm.DM.get_labelset_list(self.tm.corpus_name)
+            labelset_list = self.tm.DM.get_labelset_list(self.corpus_selected_name)
             for labelset_nr in np.arange(0, len(labelset_list), 1):
                 self.tree_view_load_labels.insertItem(
                     labelset_nr, labelset_list[labelset_nr])
@@ -365,7 +383,7 @@ class MainWindow(QtWidgets.QMainWindow):
         It is equivalent to the "_get_labelset_list" method from the
         TaskManager class
         """
-        if self.tm.corpus_name is None:
+        if self.corpus_selected_name is None:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
                 Messages.INCORRECT_NO_CORPUS_SELECTED)
@@ -381,7 +399,7 @@ class MainWindow(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.information(
                 self, Messages.DC_MESSAGE,
                 "The labels '" + self.labels_loaded + "' have been loaded"
-                " in the current session.")
+                                                      " in the current session.")
 
             self.label_labels_loaded_are.setText(str(self.labels_loaded))
 
@@ -393,7 +411,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         item = self.tree_view_load_labels.currentItem()
         self.labels_loaded = str(item.text())
-        if self.tm.corpus_name is None:
+        if self.tm.CorpusProc is None:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
                 Messages.INCORRECT_NO_CORPUS_SELECTED)
@@ -409,7 +427,7 @@ class MainWindow(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.information(
                 self, Messages.DC_MESSAGE,
                 "The labels '" + aux_labels + "' have been removed from the "
-                "current session.")
+                                              "current session.")
 
             self.label_labels_loaded_are.setText(str(" "))
             self.show_labels()
@@ -418,16 +436,34 @@ class MainWindow(QtWidgets.QMainWindow):
     # #########################################################################
     # TRAIN CLASSIFIER FUNCTIONS
     # #########################################################################
+    def execute_train_classifier(self):
+        """
+        Method to control the execution of the training of a classifier on a
+        secondary thread while the MainWindow execution is maintained in the
+        main thread.
+        """
+        self.tm.train_PUmodel()
+        return "Done."
+
+    def do_after_train_classifier(self):
+        """
+        Method to be executed after the training of the classifier has been
+        completed.
+        """
+        # Showing messages in the status bar, pop up window, and corpus label
+
+        QtWidgets.QMessageBox.information(
+            self, Messages.DC_MESSAGE,
+            "The classifier was trained.")
+
+        self.label_corpus_selected_is.setText(str(self.corpus_selected_name))
+        self.show_labels()
+
     def clicked_train_classifier(self):
-        # @TODO: '../yelp_review_polarity_csv/' -> Ask Jesús??
-        result, model_outputs, wrong_predictions = self.tm.train_model()
-        if result is not None:
-            QtWidgets.QMessageBox.information(
-                self, Messages.DC_MESSAGE,
-                Messages.INCORRECT_NO_CORPUS_SELECTED)
-            print(result)
-            print(model_outputs)
-            print(wrong_predictions)
+        print(self.tm.df_labels)
+        execute_in_thread(
+            self, self.execute_train_classifier, self.do_after_train_classifier, False)
+
         return
 
     # #########################################################################

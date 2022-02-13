@@ -2,30 +2,21 @@
 <ui version="4.0">
  <class>Dialog</class>
  <widget class="QDialog" name="Dialog">
-  <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1990</width>
-    <height>1074</height>
+    <width>921</width>
+    <height>619</height>
    </rect>
   </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
   <property name="windowTitle">
-   <string>MusicalSpoon</string>
+   <string>DomainClassifier</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: #CFCEC6;</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QHBoxLayout" name="horizontalLayout_8">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -157,6 +148,7 @@
 	border-radius: 5px;
 	gridline-color: #FFFFFF;
 	border-bottom: 1px solid #FFFFFF;
+	color:black;
 }
 
  QScrollBar:vertical {
@@ -257,6 +249,22 @@ QToolTip {
             </widget>
            </item>
            <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>10</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QLabel" name="label_selected_keywords">
              <property name="minimumSize">
               <size>
@@ -275,6 +283,9 @@ QToolTip {
                <weight>75</weight>
                <bold>true</bold>
               </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color:black;</string>
              </property>
              <property name="text">
               <string>  Selected keywords and parameters configuration:</string>
@@ -335,6 +346,7 @@ QToolTip {
 	border-radius: 5px;
 	gridline-color: #FFFFFF;
 	border-bottom: 1px solid #FFFFFF;
+	color:black;
 }
 
  QScrollBar:vertical {
@@ -400,6 +412,7 @@ QToolTip {
 	border-radius: 5px;
 	gridline-color: #DFE6ED;
 	border-bottom: 1px solid #DFE6ED;
+	color:black;
 }
 QTableWidget::item{
 	border-color: #DFE6ED;
@@ -451,6 +464,7 @@ QHeaderView::section:vertical
 QToolTip {	
 	background-color: #ABC2CB;
 	border: 2px solid #ABC2CB;
+	color:black;
 }</string>
              </property>
              <property name="editTriggers">
@@ -584,6 +598,22 @@ QToolTip {
             </widget>
            </item>
            <item>
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>10</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QLabel" name="label_selected_tag">
              <property name="maximumSize">
               <size>
@@ -596,6 +626,9 @@ QToolTip {
                <weight>75</weight>
                <bold>true</bold>
               </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color:black;</string>
              </property>
              <property name="text">
               <string>  Tag: </string>
@@ -622,6 +655,7 @@ QToolTip {
 	border-radius: 5px;
 	gridline-color: #FFFFFF;
 	border-bottom: 1px solid #FFFFFF;
+	color:black;
 }</string>
              </property>
             </widget>
@@ -692,6 +726,7 @@ QToolTip {
 	border: 5px solid #ABC2CB;
 	border-radius: 5px;	
 	background-color: #ABC2CB;
+	color:black;
 }
 QPushButton:hover {
 	background-color: #ABC2CB;

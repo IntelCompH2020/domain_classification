@@ -30,7 +30,6 @@ class Messages:
     INCORRECT_NO_CORPUS_SELECTED = 'You need to select a corpus first in order to proceed.'
     INFO_SELECT_CORPUS = 'Click on one of the corpus below listed and in the LOAD CORPUS button in order to load\n ' \
                          'an specific corpus into the application.'
-
     # Getting labels messages
     ###########################################################################
     INCORRECT_NO_LABEL_OPTION_SELECTED = 'You must first choose how you want to load the subcorpus.'
