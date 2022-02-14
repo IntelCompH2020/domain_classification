@@ -19,7 +19,7 @@ from src.graphical_user_interface.get_keywords_window import GetKeywordsWindow
 from src.graphical_user_interface.get_topics_list_window import (
     GetTopicsListWindow)
 from src.graphical_user_interface.messages import Messages
-from src.graphical_user_interface.util import toggleMenu, execute_in_thread
+from src.graphical_user_interface.util import toggle_menu, execute_in_thread
 
 # CONSTANTS
 BUTTONS_SCALE = 0.75
@@ -121,7 +121,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # TOGGLE MENU
         # #####################################################################
-        self.toggleButton.clicked.connect(lambda: toggleMenu(self, 250))
+        self.toggleButton.clicked.connect(lambda: toggle_menu(self, 250))
         self.toggleButton.setIcon(QIcon('Images/menu.png'))
         self.toggleButton.setIconSize(BUTTONS_SCALE * QSize(self.toggleButton.width(),
                                                             self.toggleButton.height()))
