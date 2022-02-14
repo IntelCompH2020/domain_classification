@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1249</width>
-    <height>760</height>
+    <width>1079</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -1606,7 +1606,7 @@ QPushButton:pressed {
                         <property name="minimumSize">
                          <size>
                           <width>1000</width>
-                          <height>20</height>
+                          <height>25</height>
                          </size>
                         </property>
                         <property name="maximumSize">
@@ -1624,6 +1624,30 @@ QPushButton:pressed {
                         <property name="frameShadow">
                          <enum>QFrame::Raised</enum>
                         </property>
+                        <widget class="QProgressBar" name="progress_bar_first_window">
+                         <property name="geometry">
+                          <rect>
+                           <x>330</x>
+                           <y>0</y>
+                           <width>331</width>
+                           <height>23</height>
+                          </rect>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">QProgressBar {
+    border: 2px solid grey;
+    border-radius: 5px;
+}
+
+QProgressBar::chunk {
+    background-color: rgb(98, 114, 164);
+    width: 20px;
+}</string>
+                         </property>
+                         <property name="value">
+                          <number>24</number>
+                         </property>
+                        </widget>
                        </widget>
                       </item>
                       <item>
@@ -2165,7 +2189,7 @@ QPushButton:pressed {
                    </layout>
                   </widget>
                   <widget class="QWidget" name="page_train">
-                   <layout class="QVBoxLayout" name="verticalLayout_7">
+                   <layout class="QVBoxLayout" name="verticalLayout_13">
                     <item>
                      <layout class="QVBoxLayout" name="verticalLayout_6">
                       <item>
@@ -2184,7 +2208,7 @@ QPushButton:pressed {
                          </spacer>
                         </item>
                         <item>
-                         <widget class="QPushButton" name="train_classifier_push_button">
+                         <widget class="QPushButton" name="train_pu_model_push_button">
                           <property name="maximumSize">
                            <size>
                             <width>16777215</width>
@@ -2207,7 +2231,7 @@ QPushButton:pressed {
 }</string>
                           </property>
                           <property name="text">
-                           <string>Train classifier</string>
+                           <string>Train PU model</string>
                           </property>
                          </widget>
                         </item>
@@ -2227,13 +2251,154 @@ QPushButton:pressed {
                        </layout>
                       </item>
                       <item>
-                       <widget class="QTextEdit" name="text_edit_result_training">
+                       <layout class="QHBoxLayout" name="horizontalLayout">
+                        <item>
+                         <spacer name="horizontalSpacer_3">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeType">
+                           <enum>QSizePolicy::Fixed</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>200</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <widget class="QProgressBar" name="progress_bar_train">
+                          <property name="styleSheet">
+                           <string notr="true">QProgressBar {
+    border: 2px solid grey;
+    border-radius: 5px;
+}
+
+QProgressBar::chunk {
+    background-color: rgb(98, 114, 164);
+    width: 20px;
+}</string>
+                          </property>
+                          <property name="value">
+                           <number>24</number>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <spacer name="horizontalSpacer_4">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeType">
+                           <enum>QSizePolicy::Fixed</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>200</width>
+                            <height>0</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <widget class="QTextEdit" name="text_edit_logs_training">
                         <property name="styleSheet">
                          <string notr="true">QTextEdit {	
 	background-color: #FFFFFF;
 	border-radius: 5px;
 	gridline-color: #FFFFFF;
 	border-bottom: 1px solid #FFFFFF;
+	color:black;
+}
+
+ QScrollBar:vertical {
+	border: none;
+    background: #ABC2CB;
+    width: 14px;
+    margin: 21px 0 21px 0;
+	border-radius: 0px;
+ }</string>
+                        </property>
+                        <property name="readOnly">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_7">
+                      <item>
+                       <layout class="QHBoxLayout" name="horizontalLayout_7">
+                        <item>
+                         <spacer name="horizontalSpacer_17">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>40</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="evaluate_pu_model_push_button">
+                          <property name="maximumSize">
+                           <size>
+                            <width>16777215</width>
+                            <height>16777215</height>
+                           </size>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                          </property>
+                          <property name="text">
+                           <string>Evaluate PU model</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <spacer name="horizontalSpacer_18">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>40</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <widget class="QTextEdit" name="text_edit_results_evaluation">
+                        <property name="styleSheet">
+                         <string notr="true">QTextEdit {	
+	background-color: #FFFFFF;
+	border-radius: 5px;
+	gridline-color: #FFFFFF;
+	border-bottom: 1px solid #FFFFFF;
+	color:black;
 }
 
  QScrollBar:vertical {

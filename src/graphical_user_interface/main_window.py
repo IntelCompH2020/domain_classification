@@ -19,7 +19,7 @@ from src.graphical_user_interface.get_keywords_window import GetKeywordsWindow
 from src.graphical_user_interface.get_topics_list_window import (
     GetTopicsListWindow)
 from src.graphical_user_interface.messages import Messages
-from src.graphical_user_interface.util import toggle_menu, execute_in_thread
+from src.graphical_user_interface.util import toggle_menu, execute_in_thread, follow
 
 # CONSTANTS
 BUTTONS_SCALE = 0.75
@@ -73,6 +73,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # CONFIGURE ELEMENTS IN THE "LOAD CORPUS VIEW"
         # #####################################################################
 
+        self.progress_bar_first_window.setVisible(False)
+        self.progress_bar_first_window.setValue(0)
+
         # LOAD CORPUS WIDGETS
         # #####################################################################
         self.load_corpus_push_button.clicked.connect(self.clicked_load_corpus)
@@ -96,15 +99,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.reset_labels_push_button.clicked.connect(
             self.clicked_reset_labels)
 
-        # TRAIN CLASSIFIER WIDGETS
+        # TRAIN AND EVALUATE PU MODEL WIDGETS
         # #####################################################################
-        self.train_classifier_push_button.clicked.connect(
-            self.clicked_train_classifier)
+        self.train_pu_model_push_button.clicked.connect(
+            self.clicked_train_PU_model)
+        self.progress_bar_train.setVisible(False)
+        self.progress_bar_train.setValue(0)
+
+        self.evaluate_pu_model_push_button.clicked.connect(
+            self.clicked_evaluate_PU_model)
 
         # GET FEEDBACK WIDGETS
         # #####################################################################
-        self.train_classifier_push_button.clicked.connect(
-            self.clicked_train_classifier)
+        # @ TODO: Change
+        self.train_pu_model_push_button.clicked.connect(
+            self.clicked_train_PU_model)
 
         # GET FEEDBACK WIDGETS
         # #####################################################################
@@ -196,6 +205,10 @@ class MainWindow(QtWidgets.QMainWindow):
         Method to be executed after the loading of the corpus has been
         completed.
         """
+
+        # Hide progress bar
+        self.progress_bar_first_window.setVisible(False)
+
         # Showing messages in the status bar, pop up window, and corpus label
         self.statusBar().showMessage(
             "'" + self.corpus_selected_name + "' was selected as corpus.",
@@ -237,7 +250,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "'The corpus " + self.corpus_selected_name + "' is being loaded.",
             3000)
         execute_in_thread(
-            self, self.execute_load_corpus, self.do_after_load_corpus, False)
+            self, self.execute_load_corpus, self.do_after_load_corpus, self.progress_bar_first_window)
 
     # #########################################################################
     # GET LABELS FUNCTIONS
@@ -248,6 +261,9 @@ class MainWindow(QtWidgets.QMainWindow):
         return "Done"
 
     def do_after_import_labels(self):
+        # Hide progress bar
+        self.progress_bar_first_window.setVisible(False)
+
         QtWidgets.QMessageBox.information(
             self, Messages.DC_MESSAGE, self.message_out)
 
@@ -318,7 +334,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.statusBar().showMessage(
                     "Labels are being loaded from source file.", 5000)
                 execute_in_thread(self, self.execute_import_labels,
-                                  self.do_after_import_labels, False)
+                                  self.do_after_import_labels, self.progress_bar_first_window)
             elif self.get_label_option == 2:
                 message_out = self.tm.get_labels_by_keywords(
                     self.get_keywords_window.selectedKeywords,
@@ -450,8 +466,17 @@ class MainWindow(QtWidgets.QMainWindow):
         Method to be executed after the training of the classifier has been
         completed.
         """
-        # Showing messages in the status bar, pop up window, and corpus label
+        # Hide progress bar
+        self.progress_bar_train.setVisible(False)
 
+        # Show logs in the QTextEdit
+        logs_training = follow(self)
+        for log in logs_training:
+            while "-- Loading PU dataset" not in log:
+                continue
+            self.text_edit_logs_training.setText(log)
+
+        # Showing messages in the status bar, pop up window, and corpus label
         QtWidgets.QMessageBox.information(
             self, Messages.DC_MESSAGE,
             "The classifier was trained.")
@@ -459,12 +484,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.label_corpus_selected_is.setText(str(self.corpus_selected_name))
         self.show_labels()
 
-    def clicked_train_classifier(self):
-        print(self.tm.df_labels)
+    def clicked_train_PU_model(self):
         execute_in_thread(
-            self, self.execute_train_classifier, self.do_after_train_classifier, False)
+            self, self.execute_train_classifier, self.do_after_train_classifier, self.progress_bar_train)
 
         return
+
+    def clicked_evaluate_PU_model(self):
+        print("TODO")
 
     # #########################################################################
     # GET FEEDBACK FUNCTIONS

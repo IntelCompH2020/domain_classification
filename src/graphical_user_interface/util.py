@@ -7,6 +7,8 @@ Class with a set of auxiliary functions for the GUI deployment.
 
 from PyQt5 import QtCore
 import time
+from timeloop import Timeloop
+from datetime import timedelta
 from src.graphical_user_interface.worker import Worker
 
 
@@ -53,7 +55,7 @@ def toggle_menu(gui, max_width):
     gui.animation.start()
 
 
-def execute_in_thread(gui, function, function_output, animation):
+def execute_in_thread(gui, function, function_output, progress_bar):
     """ Method to execute a function in the secondary thread, while showing
     an animation at the time the function is being executed if animation is
     set to true. When finished, it forces the execution of the method to be
@@ -63,27 +65,36 @@ def execute_in_thread(gui, function, function_output, animation):
     ----------
     * function         - Function to be executed in thread
     * function_output  - Function to be executed af te the thread
-    * animation        - If true, it shows a loading bar when the function
-                         in thread is being executed.
+    * progress_bar     - If a QProgressBar object is provided,
+    it shows a progress bar in the secondary thread while the main task is been carried out in the main thread
     """
 
     # Pass the function to execute
     gui.worker = Worker(function)
     # Any other args, kwargs are passed to the run function
 
-    # if animation:
-    #    self.worker.signals.started.connect(gui.start_animation)
+    if progress_bar is not None:
+        signal_accept(progress_bar)
+
     gui.worker.signals.finished.connect(function_output)
 
     # Execute
     gui.thread_pool.start(gui.worker)
 
 
-def follow(file_to_follow):
-    file_to_follow.seek(0, 2)
+def follow(window):
+    p = window.tm.global_parameters['logformat']
+    file_to_follow = window.tm.path2project / p['filename']
+    logfile = open(file_to_follow, "r")
+    logfile.seek(0, 2)
     while True:
-        line = file_to_follow.readline()
+        line = logfile.readline()
         if not line:
             time.sleep(0.1)
             continue
         yield line
+
+def signal_accept(progress_bar):
+    progress_bar.setVisible(True)
+    progress_bar.setMaximum(0)
+    progress_bar.setMinimum(0)
