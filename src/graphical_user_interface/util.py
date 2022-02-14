@@ -34,7 +34,7 @@ def toggle_menu(gui, max_width):
         width_extended = max_extend
         # SHOW TEXT INSTEAD OF ICON
         gui.pushButtonLoad.setText('Corpus / labels')
-        gui.pushButtonTrain.setText('Train classifier')
+        gui.pushButtonTrain.setText('Train PU model')
         gui.pushButtonGetFeedback.setText('Get feedback')
         gui.label_logo.setFixedSize(width_extended, width_extended)
 
@@ -66,7 +66,9 @@ def execute_in_thread(gui, function, function_output, progress_bar):
     * function         - Function to be executed in thread
     * function_output  - Function to be executed af te the thread
     * progress_bar     - If a QProgressBar object is provided,
-    it shows a progress bar in the secondary thread while the main task is been carried out in the main thread
+                         it shows a progress bar in the main thread
+                         while the main task is being carried out in
+                         a secondary thread
     """
 
     # Pass the function to execute
@@ -81,18 +83,6 @@ def execute_in_thread(gui, function, function_output, progress_bar):
     # Execute
     gui.thread_pool.start(gui.worker)
 
-
-def follow(window):
-    p = window.tm.global_parameters['logformat']
-    file_to_follow = window.tm.path2project / p['filename']
-    logfile = open(file_to_follow, "r")
-    logfile.seek(0, 2)
-    while True:
-        line = logfile.readline()
-        if not line:
-            time.sleep(0.1)
-            continue
-        yield line
 
 def signal_accept(progress_bar):
     progress_bar.setVisible(True)

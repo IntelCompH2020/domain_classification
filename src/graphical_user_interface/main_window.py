@@ -9,7 +9,7 @@ import numpy as np
 
 from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QButtonGroup, QDesktopWidget
+from PyQt5.QtWidgets import QButtonGroup, QDesktopWidget, QTextEdit
 from PyQt5.QtCore import QThreadPool, QSize
 from PyQt5.QtGui import QPixmap
 
@@ -19,10 +19,10 @@ from src.graphical_user_interface.get_keywords_window import GetKeywordsWindow
 from src.graphical_user_interface.get_topics_list_window import (
     GetTopicsListWindow)
 from src.graphical_user_interface.messages import Messages
-from src.graphical_user_interface.util import toggle_menu, execute_in_thread, follow
+from src.graphical_user_interface.util import toggle_menu, execute_in_thread
 
 # CONSTANTS
-BUTTONS_SCALE = 0.75
+BUTTONS_SCALE = 0.7
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -49,6 +49,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.get_keywords_window = GetKeywordsWindow(tm)
         self.analyze_keywords_window = AnalyzeKeywordsWindow(tm)
         self.get_topics_list_window = GetTopicsListWindow(tm)
+        self.result_evaluation_pu_model = None
+        self.text_to_print_train = []
 
         # INFORMATION BUTTONS
         # #####################################################################
@@ -68,13 +70,21 @@ class MainWindow(QtWidgets.QMainWindow):
                                   self.info_button_load_reset_labels.height()))
         self.info_button_load_reset_labels.setToolTip(
             Messages.INFO_LOAD_RESET_LABELS)
+        self.info_button_train_PU_model.setIcon(QIcon('Images/help2.png'))
+        self.info_button_train_PU_model.setIconSize(
+            BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
+                                  self.info_button_load_reset_labels.height()))
+        self.info_button_evaluate_pu_model.setIcon(QIcon('Images/help2.png'))
+        self.info_button_evaluate_pu_model.setIconSize(
+            BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
+                                  self.info_button_load_reset_labels.height()))
 
         # #####################################################################
         # CONFIGURE ELEMENTS IN THE "LOAD CORPUS VIEW"
         # #####################################################################
 
-        self.progress_bar_first_window.setVisible(False)
-        self.progress_bar_first_window.setValue(0)
+        self.progress_bar_first_tab.setVisible(False)
+        self.progress_bar_first_tab.setValue(0)
 
         # LOAD CORPUS WIDGETS
         # #####################################################################
@@ -111,14 +121,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # GET FEEDBACK WIDGETS
         # #####################################################################
-        # @ TODO: Change
-        self.train_pu_model_push_button.clicked.connect(
-            self.clicked_train_PU_model)
-
-        # GET FEEDBACK WIDGETS
-        # #####################################################################
         self.update_model_push_button.clicked.connect(
             self.clicked_update_model)
+        self.table_labels_feedback.cellChanged.connect(
+            self.clicked_labels_from_docs_updated)
 
         # THREADS FOR EXECUTING IN PARALLEL
         # #####################################################################
@@ -207,7 +213,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
 
         # Hide progress bar
-        self.progress_bar_first_window.setVisible(False)
+        self.progress_bar_first_tab.setVisible(False)
 
         # Showing messages in the status bar, pop up window, and corpus label
         self.statusBar().showMessage(
@@ -250,7 +256,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "'The corpus " + self.corpus_selected_name + "' is being loaded.",
             3000)
         execute_in_thread(
-            self, self.execute_load_corpus, self.do_after_load_corpus, self.progress_bar_first_window)
+            self, self.execute_load_corpus, self.do_after_load_corpus, self.progress_bar_first_tab)
 
     # #########################################################################
     # GET LABELS FUNCTIONS
@@ -262,7 +268,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def do_after_import_labels(self):
         # Hide progress bar
-        self.progress_bar_first_window.setVisible(False)
+        self.progress_bar_first_tab.setVisible(False)
 
         QtWidgets.QMessageBox.information(
             self, Messages.DC_MESSAGE, self.message_out)
@@ -334,7 +340,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.statusBar().showMessage(
                     "Labels are being loaded from source file.", 5000)
                 execute_in_thread(self, self.execute_import_labels,
-                                  self.do_after_import_labels, self.progress_bar_first_window)
+                                  self.do_after_import_labels, self.progress_bar_first_tab)
             elif self.get_label_option == 2:
                 message_out = self.tm.get_labels_by_keywords(
                     self.get_keywords_window.selectedKeywords,
@@ -459,6 +465,16 @@ class MainWindow(QtWidgets.QMainWindow):
         main thread.
         """
         self.tm.train_PUmodel()
+
+        p = self.tm.global_parameters['logformat']
+        file_to_follow = self.tm.path2project / p['filename']
+        self.text_to_print_train = "<li/>"
+        with open(file_to_follow) as file:
+            # loop to read iterate
+            # last n lines and print it
+            for line in (file.readlines()[-3:]):
+                self.text_to_print_train += line[:-1] + "</li><li/>"
+        self.text_to_print_train = self.text_to_print_train[:-5]
         return "Done."
 
     def do_after_train_classifier(self):
@@ -470,32 +486,140 @@ class MainWindow(QtWidgets.QMainWindow):
         self.progress_bar_train.setVisible(False)
 
         # Show logs in the QTextEdit
-        logs_training = follow(self)
-        for log in logs_training:
-            while "-- Loading PU dataset" not in log:
-                continue
-            self.text_edit_logs_training.setText(log)
+        self.text_edit_logs_training.setHtml(self.text_to_print_train)
 
-        # Showing messages in the status bar, pop up window, and corpus label
+        # Showing message in pop up window
         QtWidgets.QMessageBox.information(
             self, Messages.DC_MESSAGE,
-            "The classifier was trained.")
-
-        self.label_corpus_selected_is.setText(str(self.corpus_selected_name))
-        self.show_labels()
+            "The PU model has been trained.")
 
     def clicked_train_PU_model(self):
         execute_in_thread(
             self, self.execute_train_classifier, self.do_after_train_classifier, self.progress_bar_train)
-
         return
 
+    # #########################################################################
+    # EVALUATE PU MODEL FUNCTIONS
+    # #########################################################################
+    def execute_evaluate_pu_model(self):
+        """
+        Method to control the execution of the training of a classifier on a
+        secondary thread while the MainWindow execution is maintained in the
+        main thread.
+        """
+        self.result_evaluation_pu_model = self.tm.evaluate_PUmodel()
+        return "Done."
+
+    def do_after_evaluate_pu_model(self):
+        """
+        Method to be executed after the evaluation of the PU model has been
+        completed.
+        """
+        # Hide progress bar
+        self.progress_bar_train.setVisible(False)
+
+        # Show results in the QTextEdit
+        if self.result_evaluation_pu_model is not None:
+            self.text_edit_results_evaluation.setText("Classification results:")
+            for r, v in self.result_evaluation_pu_model.items():
+                self.text_edit_results_evaluation.setText(r)
+                print(r, v)
+
+        # Showing message in pop up window
+        QtWidgets.QMessageBox.information(
+            self, Messages.DC_MESSAGE,
+            "The evaluation of the PU model has been completed.")
+
     def clicked_evaluate_PU_model(self):
-        print("TODO")
+        execute_in_thread(
+            self, self.execute_evaluate_pu_model, self.do_after_evaluate_pu_model, self.progress_bar_train)
+        return
 
     # #########################################################################
     # GET FEEDBACK FUNCTIONS
     # #########################################################################
+    def show_sampled_docs_for_labeling(self):
+        n_docs = self.tm.global_parameters['active_learning']['n_docs']
+        selected_docs = self.tm.dc.AL_sample(n_samples=n_docs)
+        # Indices of the selected docs
+        idx = selected_docs.index
+        # Add necessary widgets to represent each of the sampled docs in case more than 5 needs to be displayed
+        if len(selected_docs) > 5:
+            widgets_to_add = 5 - len(selected_docs)
+            label = 5
+            for i in np.arange(widgets_to_add):
+                new_show_doc = QTextEdit()
+                new_show_doc_name = "show_doc_" + str(label + i)
+                new_show_doc.setObjectName(new_show_doc_name)
+                self.grid_layout_docs_feedback.addWidget(new_show_doc)
+
+        # Fill QTextWidgets with the corresponding text
+        for i, doc in selected_docs.iterrows():
+            if self.metadata['corpus_name'] == 'EU_projects':
+                # Locate document in corpus
+                doc_corpus = self.df_corpus[self.df_corpus['id'] == doc.id]
+                # Get title
+                title = doc_corpus.iloc[0].title
+                # Get description
+                descr = doc_corpus.iloc[0].description
+
+                text_widget_name = "show_doc_" + str(i + 1)
+                text_widget = self.ui.findChild(QTextEdit, text_widget_name)
+                text = \
+                    "<h1 style='color: #5e9ca0;'> ID" + str(doc.id) + ": " + str(title) \
+                    + "</h1>\n<p>" + str(descr) + "</p>"
+            else:
+                descr = doc.text
+                text_widget_name = "show_doc_" + str(i + 1)
+                text_widget = self.ui.findChild(QTextEdit, text_widget_name)
+                text = \
+                    "<h1 style='color: #5e9ca0;'> ID" + str(doc.id) + ": " \
+                    + "</h1>\n<p>" + str(descr) + "</p>"
+            if 'prediction' in doc:
+                text += "\n<h1 style='color: #5e9ca0;'> PREDICTED CLASS:" + str(doc.predition)
+            text_widget.setHtml(text)
+
+        self.table_labels_feedback.clearContents()
+        self.table_labels_feedback.setRowCount(len(selected_docs))
+        self.table_labels_feedback.setColumnCount(2)
+        for i in np.arange(len(selected_docs)):
+            self.table_labels_feedback.setItem(
+                i, 0, QtWidgets.QTableWidgetItem(str(i)))
+
+    def clicked_labels_from_docs_updated(self):
+        labels = []
+        for i in np.arange(self.table_labels_feedback.rowCount()):
+            if self.table_labels_feedback.item(i,1) is not None:
+                labels_doc = list(self.table_labels_feedback.item(i, 0).text().split(","))
+                labels.append(labels_doc)
+        print(labels)
+        return labels
+
+    def execute_give_feedback(self):
+        """
+        Method to control the execution of the training of a classifier on a
+        secondary thread while the MainWindow execution is maintained in the
+        main thread.
+        """
+        self.result_evaluation_pu_model = self.tm.evaluate_PUmodel()
+        return "Done."
+
+    def do_after_give_feedback(self):
+        """
+        Method to be executed after the evaluation of the PU model has been
+        completed.
+        """
+        # Hide progress bar
+        self.progress_bar_train.setVisible(False)
+
+        # Showing message in pop up window
+        QtWidgets.QMessageBox.information(
+            self, Messages.DC_MESSAGE,
+            "The evaluation of the PU model has been completed.")
+
     def clicked_update_model(self):
         # @TODO
+        # execute_in_thread(
+        #    self, self.execute_give_feedback, self.do_after_give_feedback, self.progress_bar_train)
+        self.show_sampled_docs_for_labeling()
         return

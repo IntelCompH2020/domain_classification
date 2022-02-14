@@ -729,23 +729,47 @@ class TaskManagerGUI(TaskManager):
 
         return topic_words, T, df_metadata
 
-    def get_labels_from_docs(self, selected_docs):
+    # def get_labels_from_docs(self, selected_docs):
+    #     """
+    #     Requests feedback about the class of given documents.
+    #
+    #     Parameters
+    #     ----------
+    #     selected_docs : pands.DataFrame
+    #         Selected documents
+    #
+    #     Returns
+    #     -------
+    #     labels : list of boolean
+    #         Labels for the given documents, in the same order than the
+    #         documents in the input dataframe
+    #     """
+    #
+    #     # FIXME: Implement this method
+    #     labels = []
+    #
+    #
+    #     return labels
+
+    def get_feedback(self):
         """
-        Requests feedback about the class of given documents.
-
-        Parameters
-        ----------
-        selected_docs : pands.DataFrame
-            Selected documents
-
-        Returns
-        -------
-        labels : list of boolean
-            Labels for the given documents, in the same order than the
-            documents in the input dataframe
+        Gets some labels from a user for a selected subset of documents
         """
 
-        # FIXME: Implement this method
-        labels = []
+        # STEP 1: Select bunch of documents at random
+        n_docs = self.global_parameters['active_learning']['n_docs']
+        selected_docs = self.dc.AL_sample(n_samples=n_docs)
+        # Indices of the selected docs
+        idx = selected_docs.index
 
-        return labels
+        # STEP 2: Request labels
+        labels = self.get_labels_from_docs(selected_docs)
+
+        # STEP 3: Annotate
+        self.dc.annotate(idx, labels)
+
+        # Update dataset file to include new labels
+        self._save_dataset()
+
+        return
+
