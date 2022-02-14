@@ -13,7 +13,7 @@ root:
     - get_labels
     - load_labels
     - reset_labels
-    - train_model
+    - PU_learning
     - get_feedback
     - update_model
 
@@ -31,7 +31,7 @@ root:
 #      further list of options>
 #     <Alternatively, options may contain a list of single-key dicts. This
 #      happens when the task has been already selected, but some input
-#      arguments are needed. 
+#      arguments are needed.
 #      The single key of each dictionary specifes the way to get the input
 #      arguments. There are thres possible ways: >
 #     <1: 'parameter': in that case, the options are defined in another
@@ -45,7 +45,7 @@ root:
 #                 in the path specified in paths2data[name], where paths2data
 #                 is one the dictionaries required to create a MenuNavigator
 #                 object>
-#     - path: name  
+#     - path: name
 #     <3: 'get_method': the possible values of the input argument are computed
 #                       by the specified method 'name' defined in the task
 #                       TaskManager class>
@@ -74,7 +74,7 @@ load:
   title: Load existing project
 
 load_corpus:
-  title: Load corpus (this will reset any previous corpus in the project)
+  title: Load corpus (to be done only once. Corpus cannot be changed)
   options:
     - get_method: _get_corpus_list
 
@@ -97,11 +97,14 @@ reset_labels:
   options:
     - get_method: _get_labelset_list
 
-train_model:
-  title: Train classifier model with the available labels
+PU_learning:
+  title: PU learning
+  options:
+    - train_PUmodel
+    - evaluate_PUmodel
 
 get_feedback:
-  title: Launch the GUI to get relevance feedback from user
+  title: Get relevance feedback from user
 
 update_model:
   title: Update the classifier model with the latest relevance feedback
@@ -123,10 +126,19 @@ get_labels_by_topics:
 get_labels_by_definitions:
     title: Get subcorpus from documents defining categories
 
+# #######################
+# Options for PU_learning
+
+train_PUmodel:
+  title: Train PU classifier model with the available labels
+
+load_PUmodel:
+  title: Load PU classifier model with the available labels
+
+evaluate_PUmodel:
+  title: Evaluate PU classifier model with the available labels
 
 
-
-# ####################
 # ####################
 # ####################
 # ####################

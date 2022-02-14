@@ -1,5 +1,4 @@
 import shutil
-import _pickle as pickle
 import yaml
 
 import pathlib
@@ -22,7 +21,7 @@ class baseTaskManager(object):
 
     def __init__(self, path2project, path2source=None,
                  config_fname='parameters.yaml',
-                 metadata_fname='metadata.pkl', set_logs=True):
+                 metadata_fname='metadata.yaml', set_logs=True):
         """
         Sets the main attributes to manage tasks over a specific application
         project.
@@ -36,9 +35,8 @@ class baseTaskManager(object):
             If none, no source data is used.
         config_fname : str, optional (default='parameters.yaml')
             Name of the configuration file
-        metadata_fname : str or None, optional (default=None)
+        metadata_fname : str or None, optional (default='metadata.yaml')
             Name of the project metadata file.
-            If None, no metadata file is used.
         set_logs : bool, optional (default=True)
             If True logger objects are created according to the parameters
             specified in the configuration file
@@ -151,14 +149,14 @@ class baseTaskManager(object):
         """
 
         # Save metadata
-        with open(self.path2metadata, 'wb') as f:
-            pickle.dump(self.metadata, f)
+        with open(self.path2metadata, 'w') as f:
+            yaml.dump(self.metadata, f, default_flow_style=False)
 
         return
 
     def _load_metadata(self):
         """
-        Load metadata from a pickle file
+        Loads metadata file
 
         Returns
         -------
@@ -168,8 +166,8 @@ class baseTaskManager(object):
 
         # Save metadata
         print('-- Loading metadata file...')
-        with open(self.path2metadata, 'rb') as f:
-            metadata = pickle.load(f)
+        with open(self.path2metadata, 'r', encoding='utf8') as f:
+            metadata = yaml.safe_load(f)
 
         return metadata
 

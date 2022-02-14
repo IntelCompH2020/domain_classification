@@ -3,7 +3,7 @@
 # Parameters for the dataset selection
 dataset:
   # Source file name
-  path2source: '../../P2018_Cubelize/EntregaDatos/ISLA/ISLAxxxx_2018-12-01_gtrl_da.csv'
+  path2source: '../datasets'
 
 # Specify format for the log outputs
 logformat:
@@ -18,7 +18,7 @@ logformat:
 keywords:
   # Weight of the title. A word in the title is equivalent to wt repetitions
   # of the word in the description.
-  wt:    2 
+  wt: 2
   # Maximum number of documents to be selected.
   n_max: 2000
   # Minimum score. Only docs scored strictly above s_min are selected
@@ -30,3 +30,15 @@ topics:
   n_max: 2000
   # Minimum score. Only docs scored strictly above s_min are selected
   s_min: 0.2
+
+# Parameters for the classifier
+classifier:
+  # Maximum ratio negative vs positive samples in the training set
+  max_imbalance: 3
+  # Maxumum number of documents in the training set.
+  nmax: 400
+
+# Parameters for the active learning (AL)
+active_learning:
+  # Number of docs to show each AL round
+  n_docs: 5
