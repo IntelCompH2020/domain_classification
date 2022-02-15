@@ -47,11 +47,10 @@ class Worker(QtCore.QRunnable):
         self.kwargs = kwargs
         self.signals = WorkerSignals()
 
-
     @QtCore.pyqtSlot()
     def run(self):
         """Initialises the runner function with passed args, kwargs.
-        """        
+        """
 
         # Retrieve args/kwargs here; and fire processing using them
         try:

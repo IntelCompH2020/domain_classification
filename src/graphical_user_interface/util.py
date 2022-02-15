@@ -90,7 +90,8 @@ def execute_in_thread(gui, function, function_output, progress_bar):
     if progress_bar is not None:
         signal_accept(progress_bar)
 
-    # Connect functuion that is going to be executed when the task being carrying out in the secondary thread has been completed
+    # Connect function that is going to be executed when the task being carrying out in the secondary thread has
+    # been completed
     gui.worker.signals.finished.connect(function_output)
 
     # Execute

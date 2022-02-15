@@ -154,14 +154,14 @@
              </property>
              <property name="styleSheet">
               <string notr="true">QTableWidget {	
-	background-color: #ABC2CB;
 	padding: 10px;
 	border-radius: 5px;
 	gridline-color: #DFE6ED;
-	border-bottom: 1px solid #DFE6ED;
 	color:black;
+
 }
 QTableWidget::item{
+	background-color: #ABC2CB;
 	border-color: #DFE6ED;
 	padding-left: 5px;
 	padding-right: 5px;
@@ -212,8 +212,7 @@ QToolTip {
 	background-color: #ABC2CB;
 	border: 2px solid #ABC2CB;
 	color:black;
-}
-</string>
+}</string>
              </property>
              <property name="editTriggers">
               <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::CurrentChanged|QAbstractItemView::EditKeyPressed</set>
@@ -223,6 +222,9 @@ QToolTip {
              </attribute>
              <attribute name="verticalHeaderVisible">
               <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderStretchLastSection">
+              <bool>true</bool>
              </attribute>
              <column>
               <property name="text">
@@ -257,14 +259,14 @@ QToolTip {
             <widget class="QTableWidget" name="table_widget_topic_list">
              <property name="styleSheet">
               <string notr="true">QTableWidget {	
-	background-color: #ABC2CB;
 	padding: 10px;
 	border-radius: 5px;
 	gridline-color: #DFE6ED;
-	border-bottom: 1px solid #DFE6ED;
 	color:black;
+
 }
 QTableWidget::item{
+	background-color: #ABC2CB;
 	border-color: #DFE6ED;
 	padding-left: 5px;
 	padding-right: 5px;
@@ -310,7 +312,12 @@ QHeaderView::section:vertical
 {
     border: 1px solid #576079;
 }
-</string>
+
+QToolTip {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+	color:black;
+}</string>
              </property>
              <property name="editTriggers">
               <set>QAbstractItemView::NoEditTriggers</set>
@@ -320,6 +327,9 @@ QHeaderView::section:vertical
              </attribute>
              <attribute name="verticalHeaderVisible">
               <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderStretchLastSection">
+              <bool>true</bool>
              </attribute>
              <column>
               <property name="text">
@@ -401,14 +411,14 @@ QHeaderView::section:vertical
              </property>
              <property name="styleSheet">
               <string notr="true">QTableWidget {	
-	background-color: #ABC2CB;
 	padding: 10px;
 	border-radius: 5px;
 	gridline-color: #DFE6ED;
-	border-bottom: 1px solid #DFE6ED;
 	color:black;
+
 }
 QTableWidget::item{
+	background-color: #ABC2CB;
 	border-color: #DFE6ED;
 	padding-left: 5px;
 	padding-right: 5px;
@@ -469,6 +479,9 @@ QToolTip {
              </attribute>
              <attribute name="verticalHeaderVisible">
               <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderStretchLastSection">
+              <bool>true</bool>
              </attribute>
              <column>
               <property name="text">

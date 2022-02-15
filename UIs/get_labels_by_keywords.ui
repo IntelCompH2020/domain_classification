@@ -407,14 +407,14 @@ QToolTip {
              </property>
              <property name="styleSheet">
               <string notr="true">QTableWidget {	
-	background-color: #ABC2CB;
 	padding: 10px;
 	border-radius: 5px;
 	gridline-color: #DFE6ED;
-	border-bottom: 1px solid #DFE6ED;
 	color:black;
+
 }
 QTableWidget::item{
+	background-color: #ABC2CB;
 	border-color: #DFE6ED;
 	padding-left: 5px;
 	padding-right: 5px;
@@ -475,6 +475,9 @@ QToolTip {
              </attribute>
              <attribute name="verticalHeaderVisible">
               <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderStretchLastSection">
+              <bool>true</bool>
              </attribute>
              <column>
               <property name="text">

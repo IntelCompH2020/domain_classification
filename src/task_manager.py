@@ -85,11 +85,11 @@ class TaskManager(baseTaskManager):
         self.path2labels = self.path2project / self.f_struct['labels']
         self.path2dataset = self.path2project / self.f_struct['datasets']
         self.path2transformers = (
-            self.path2project / self.f_struct['transformers'])
+                self.path2project / self.f_struct['transformers'])
 
         # Corpus dataframe
-        self.df_corpus = None      # Corpus dataframe
-        self.df_labels = None      # Labels
+        self.df_corpus = None  # Corpus dataframe
+        self.df_labels = None  # Labels
         self.keywords = None
         self.CorpusProc = None
 
@@ -100,7 +100,7 @@ class TaskManager(baseTaskManager):
         # Extend base variables (defined in the base class) for state and
         # metadata with additional fields
         self.state['selected_corpus'] = False  # True if corpus was selected
-        self.state['trained_model'] = False    # True if model was trained
+        self.state['trained_model'] = False  # True if model was trained
         self.metadata['corpus_name'] = None
 
         # Datamanager
@@ -718,7 +718,6 @@ class TaskManagerGUI(TaskManager):
         return msg
 
     def get_topic_words(self, n_max, s_min):
-
         # Load topics
         T, df_metadata, topic_words = self.DM.load_topics()
 
@@ -729,41 +728,12 @@ class TaskManagerGUI(TaskManager):
 
         return topic_words, T, df_metadata
 
-    # def get_labels_from_docs(self, selected_docs):
-    #     """
-    #     Requests feedback about the class of given documents.
-    #
-    #     Parameters
-    #     ----------
-    #     selected_docs : pands.DataFrame
-    #         Selected documents
-    #
-    #     Returns
-    #     -------
-    #     labels : list of boolean
-    #         Labels for the given documents, in the same order than the
-    #         documents in the input dataframe
-    #     """
-    #
-    #     # FIXME: Implement this method
-    #     labels = []
-    #
-    #
-    #     return labels
-
-    def get_feedback(self):
+    def get_feedback(self, idx, labels):
         """
         Gets some labels from a user for a selected subset of documents
         """
-
-        # STEP 1: Select bunch of documents at random
-        n_docs = self.global_parameters['active_learning']['n_docs']
-        selected_docs = self.dc.AL_sample(n_samples=n_docs)
-        # Indices of the selected docs
-        idx = selected_docs.index
-
-        # STEP 2: Request labels
-        labels = self.get_labels_from_docs(selected_docs)
+        # In comparison to the "get_feedback" function from the parent, STEPS 1 and 2 are carried out directly through
+        # the GUI
 
         # STEP 3: Annotate
         self.dc.annotate(idx, labels)
@@ -772,4 +742,3 @@ class TaskManagerGUI(TaskManager):
         self._save_dataset()
 
         return
-

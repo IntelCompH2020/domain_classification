@@ -20,7 +20,8 @@ from PyQt5.QtWidgets import QDesktopWidget
 
 # Local imports
 from src.graphical_user_interface.messages import Messages
-from src.graphical_user_interface.main_window import BUTTONS_SCALE
+from src.graphical_user_interface.constants import Constants
+
 
 class GetTopicsListWindow(QtWidgets.QDialog):
     def __init__(self, tm):
@@ -53,12 +54,12 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         self.info_button_topic_list.setIcon(QIcon('Images/help2.png'))
         self.info_button_topic_list.setToolTip(Messages.INFO_TOPIC_LIST)
         self.info_button_topic_list.setIconSize(
-            BUTTONS_SCALE * QSize(self.info_button_topic_list.width(),
-                         self.info_button_topic_list.height()))
+            Constants.BUTTONS_SCALE * QSize(self.info_button_topic_list.width(),
+                                            self.info_button_topic_list.height()))
         self.info_button_selected_tag.setIcon(QIcon('Images/help2.png'))
         self.info_button_selected_tag.setIconSize(
-            BUTTONS_SCALE * QSize(self.info_button_selected_tag.width(),
-                         self.info_button_selected_tag.height()))
+            Constants.BUTTONS_SCALE * QSize(self.info_button_selected_tag.width(),
+                                            self.info_button_selected_tag.height()))
         self.info_button_selected_tag.setToolTip(Messages.INFO_TAG)
 
         # TABLE TOOL TIPS
@@ -74,7 +75,8 @@ class GetTopicsListWindow(QtWidgets.QDialog):
             self.clicked_get_topic_list)
 
     def initUI(self):
-        """Configures the elements of the GUI window that are not configured in the UI, i.e. icon of the application, the application's title, and the position of the window at its opening.
+        """Configures the elements of the GUI window that are not configured in the UI, i.e. icon of the application,
+        the application's title, and the position of the window at its opening.
         """
         self.setWindowIcon(QIcon('Images/dc_logo.png'))
         self.setWindowTitle(Messages.WINDOW_TITLE)
@@ -89,8 +91,10 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         self.move(qr.topLeft())
 
     def init_params(self):
-        """Initializes the topics parameters in the parameters table within the GUI's "Get topic list" window, i.e. n_max and s_min. The default configuration of these parameters is read from the configuration file '/config/parameters.default.yaml'.
-        """ 
+        """Initializes the topics parameters in the parameters' table within the GUI's "Get topic list" window,
+        i.e. n_max and s_min. The default configuration of these parameters is read from the configuration file
+        '/config/parameters.default.yaml'.
+        """
         self.table_params.clearContents()
         self.table_params.setRowCount(1)
         self.table_params.setColumnCount(2)
@@ -101,8 +105,9 @@ class GetTopicsListWindow(QtWidgets.QDialog):
             0, 1, QtWidgets.QTableWidgetItem(str(self.s_min)))
 
     def update_params(self):
-        """Updates the topics parameters that are going to be used in the getting of the keywords based on the values read from the table within the GUI's "Get topic list" window that has been specified by the user.
-        """        
+        """Updates the topics parameters that are going to be used in the getting of the keywords based on the values
+        read from the table within the GUI's "Get topic list" window that have been specified by the user.
+        """
         if self.table_params.item(0, 0) is not None:
             self.n_max = int(self.table_params.item(0, 0).text())
         else:
@@ -116,8 +121,10 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         self.init_params()
 
     def show_topics(self):
-        """Configures the "table_widget_topic_list" and "table_widget_topics_weight" tables to have the appropriate number of columns and rows based on the available topics, and fills out the "table_widget_topic_list" table with the id and corresponding chemical description of each of the topics.
-        """ 
+        """Configures the "table_widget_topic_list" and "table_widget_topics_weight" tables to have the appropriate
+        number of columns and rows based on the available topics, and fills out the "table_widget_topic_list" table
+        with the id and corresponding chemical description of each of the topics.
+        """
         # Get topic words       
         self.tw, self.T, self.df_metadata = self.tm.get_topic_words(
             self.n_max, self.s_min)
@@ -141,7 +148,7 @@ class GetTopicsListWindow(QtWidgets.QDialog):
             item_topic_description = QtWidgets.QTableWidgetItem(
                 str(self.tw[i]))
             self.table_widget_topic_list.setItem(i, 1, item_topic_description)
-        
+
         # Configure "table_widget_topics_weight" table (positioned at the top left)
         # TABLE IN WHICH THE USER INTRODUCES THE WEIGHTS FOR THE TOPICS
         #################################################################
@@ -154,8 +161,8 @@ class GetTopicsListWindow(QtWidgets.QDialog):
 
     def updated_topic_weighted_list(self):
         """Generated the topic weighted list based on the weights that the user has introduced on the "table_widget_topics_weight" table
-        """        
-        # Get weigths from the left table
+        """
+        # Get weights from the left table
         topic_weighted_list = ""
         for i in np.arange(0, self.table_widget_topics_weight.rowCount(), 1):
             if self.table_widget_topics_weight.item(i, 0) is not None:
@@ -166,12 +173,15 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         self.line_topic_list.setText(topic_weighted_list)
 
     def clicked_get_topic_list(self):
-        """Method to control the actions that are carried out at the time the "Select weighted topic list" button of the "Get topics window" is pressed by the user.
-        """     
-        # Call function to update configuration parameters to take into account the changes that the user could have introduced   
+        """Method to control the actions that are carried out at the time the "Select weighted topic list" button of
+        the "Get topics window" is pressed by the user.
+        """
+        # Update configuration parameters to take into account the changes that the user could have
+        # introduced
         self.update_params()
 
-        # Show warning message in case the user clicks on the "Select weighted topic lists" button without having previously written the weights that the user wants to use for the generation of the weighted topic list
+        # Show warning message in case the user clicks on the "Select weighted topic lists" button without having
+        # previously written the weights that the user wants to use for the generation of the weighted topic list
         if self.line_topic_list.text() is None:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE, Messages.NO_TOPIC_LIST_SELECTED)
@@ -191,15 +201,16 @@ class GetTopicsListWindow(QtWidgets.QDialog):
 
             # Store in dictionary
             self.tw = dict(zip(keys, weights))
-        
-        # Show warning message in case no tag for the file in which the subcorpus conformed based on the selected topics is going to be saved has been selected
+
+        # Show warning message in case no tag for the file in which the subcorpus conformed based on the selected
+        # topics is going to be saved has been selected
         if self.line_edit_get_tag.text() is None:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE, Messages.NO_TAG_SELECTED)
         else:
             # Get selected tag
             self.selectedTag = str(self.line_edit_get_tag.text())
-            
+
         # Hide window
         self.hide()
         # Clear QLineEdits
