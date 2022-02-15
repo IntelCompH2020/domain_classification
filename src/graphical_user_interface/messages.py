@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """
+@author: lcalv
+******************************************************************************
+***                           CLASS MESSAGES                              ***
+******************************************************************************
 Class containing the majority of the messages utilized in the GUI so as to
 facilitate the readability of the code.
-
-@author: lcalv
 """
 
 
@@ -72,8 +74,3 @@ class Messages:
 
     # Getting relevance feedback messages
     ###########################################################################
-
-
-
-
-

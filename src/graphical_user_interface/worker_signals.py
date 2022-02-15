@@ -1,29 +1,36 @@
-# -*- coding: utf-8 -*-
+
 """
 Created on Tue Mar  2 13:15:57 2021
-
 @author: lcalv
+******************************************************************************
+***                        CLASS WORKER SIGNALS                            ***
+******************************************************************************
+Module that defines the signals that are available from a running
+worker thread, the supported signals being “finished” (there is no more data to process), “error”, “result” (object data returned from processing) and “progress” (a
+numerical indicator of the progress that has been achieved at a particular moment).
+It has been created based on the analogous class provided by:
+https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/
 """
-
+##############################################################################
+#                                IMPORTS                                     #
+##############################################################################
 from PyQt5 import QtCore
 
 
 class WorkerSignals(QtCore.QObject):
-    """
-    Defines the signals available from a running worker thread.
+    """ Defines the signals available from a running worker thread.
+    The supported signals are:
 
-    Supported signals are:
-
-    finished
+    * finished:
         No data
 
-    error
+    * error:
         tuple (exctype, value, traceback.format_exc() )
 
-    result
+    * result:
         object data returned from processing, anything
 
-    progress
+    * progress:
         int indicating % progress
 
     """
