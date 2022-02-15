@@ -1,10 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-Class representing the window for controlling the analysis of the presence of
-selected keywords in the corpus
-
 @author: lcalv
+******************************************************************************
+***                   CLASS ANALYZE KEYWORDS WINDOW                        ***
+******************************************************************************
+Class representing the window that is used for the analysis of the presence of
+selected keywords in the corpus
 """
+
+##############################################################################
+#                                IMPORTS                                     #
+##############################################################################
+# General imports
 import numpy as np
 from PyQt5 import uic, QtWidgets
 import matplotlib.pyplot as plt
@@ -12,10 +19,9 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDesktopWidget
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
+# Local imports
 from src.graphical_user_interface.messages import Messages
 
-
-# @ TODO: Add wt as parameter configuration in GUI?
 
 class AnalyzeKeywordsWindow(QtWidgets.QDialog):
     def __init__(self, tm):
@@ -30,23 +36,29 @@ class AnalyzeKeywordsWindow(QtWidgets.QDialog):
         # ####################################################################
         self.tm = tm
         self.figure = plt.figure()
-        # this is the Canvas Widget that displays the 'figure'
+        # This is the Canvas Widget that displays the 'figure'
         # It takes the 'figure' instance as a parameter to __init__
         self.canvas = FigureCanvas(self.figure)
         self.layoutPlot.addWidget(self.canvas)
 
     def initUI(self):
+        """Configures the elements of the GUI window that are not configured in the UI, i.e. icon of the application, the application's title, and the position of the window at its opening.
+        """
         self.setWindowIcon(QIcon('Images/dc_logo.png'))
         self.setWindowTitle(Messages.WINDOW_TITLE)
         self.center()
 
     def center(self):
+        """Centers the window at the middle of the screen at which the application is being executed.
+        """
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
     def do_analysis(self):
+        """Performs the analysis of the keywords based by showing the "Sorted document scores", "Document frequencies" and "Keyword frequencies" graphs.
+        """        
         y, df_stats, kf_stats = self.tm.analyze_keywords()
         n_top = 25
 
