@@ -108,6 +108,9 @@ get_feedback:
 
 update_model:
   title: Update the classifier model with the latest relevance feedback
+  options:
+    - retrain_model
+    - reevaluate_model
 
 # ######################
 # Options for get_labels
@@ -132,12 +135,19 @@ get_labels_by_definitions:
 train_PUmodel:
   title: Train PU classifier model with the available labels
 
-load_PUmodel:
-  title: Load PU classifier model with the available labels
+predict_PU:
+  title: Compute predictions based on the PU model
 
 evaluate_PUmodel:
   title: Evaluate PU classifier model with the available labels
 
+# ########################
+# Options for update_model
+retrain_model:
+  title: Retrain model with manual annotations
+
+reevaluate_model:
+  title: Evaluate retrained model.
 
 # ####################
 # ####################

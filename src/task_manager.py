@@ -282,6 +282,18 @@ class TaskManager(baseTaskManager):
         msg = self.DM.save_labels(
             self.df_labels, corpus_name=self.metadata['corpus_name'], tag=tag)
 
+        # ################################
+        # Save parameters in metadata file
+        key = 'keyword_based_label_parameters'
+        if key not in self.metadata:
+            self.metadata[key] = {}
+        self.metadata[key][tag] = {
+            'wt': wt,
+            'n_max': n_max,
+            's_min': s_min,
+            'keywords': self.keywords}
+        self._save_metadata()
+
         return msg
 
     def get_labels_by_topics(self, topic_weights, T, df_metadata, n_max=2000,
@@ -318,6 +330,17 @@ class TaskManager(baseTaskManager):
         # Save labels
         msg = self.DM.save_labels(
             self.df_labels, corpus_name=self.metadata['corpus_name'], tag=tag)
+
+        # ################################
+        # Save parameters in metadata file
+        key = 'topic_based_label_parameters'
+        if key not in self.metadata:
+            self.metadata[key] = {}
+        self.metadata[key][tag] = {
+            'topic_weights': topic_weights,
+            'n_max': n_max,
+            's_min': s_min}
+        self._save_metadata()
 
         return msg
 
@@ -393,7 +416,7 @@ class TaskManager(baseTaskManager):
         # Update dataset file to include scores
         self._save_dataset()
 
-        return result
+        return result # return
 
     def get_feedback(self):
         """
@@ -438,7 +461,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def update_model(self):
+    def retrain_model(self):
         """
         Improves classifier performance using the labels provided by users
         """
@@ -446,8 +469,36 @@ class TaskManager(baseTaskManager):
         # Retrain model using the new labels
         self.dc.retrain_model()
 
+        # Update status.
+        # Since training takes much time, we store the classification results
+        # in files
+        self._save_dataset()
+        self.state['trained_model'] = True
+        self._save_metadata()
+
         return
 
+    def reevaluate_model(self):
+        """
+        Evaluate a domain classifier
+        """
+
+        # FIXME: this code is equal to evaluate_model() but using a different
+        #        tagscore. It should be modified to provide evaluation metrics
+        #        computed from the annotated labels.
+
+        # Evaluate the model over the test set
+        result, wrong_predictions = self.dc.eval_model(tag_score='PNscore')
+
+        # Pretty print dictionary of results
+        logging.info(f"-- Classification results: {result}")
+        for r, v in result.items():
+            logging.info(f"-- -- {r}: {v}")
+
+        # Update dataset file to include scores
+        self._save_dataset()
+
+        return
 
 class TaskManagerCMD(TaskManager):
     """

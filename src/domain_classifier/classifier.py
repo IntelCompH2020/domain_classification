@@ -27,16 +27,19 @@ class CorpusClassifier(object):
     def __init__(self, df_dataset, path2transformers="."):
         """
         Initializes a preprocessor object
+
         Parameters
         ----------
         df_dataset : pandas.DataFrame
             Dataset with text and labels. It must contain at least two columns
             with names "text" and "labels", with the input and the target
             labels for classification.
+
         path2transformers : pathlib.Path or str, optional (default=".")
             Path to the folder that will store all files produced by the
             simpletransformers library.
             Default value is ".".
+
         Notes
         -----
         Be aware that the simpletransformers library produces several folders,
@@ -47,6 +50,13 @@ class CorpusClassifier(object):
         self.path2transformers = pathlib.Path(path2transformers)
         self.model = None
         self.df_dataset = df_dataset
+
+        # Check if GPU is available
+        self.cuda_available = torch.cuda.is_available()
+        if self.cuda_available:
+            logging.info(f"Cuda available: GPU will be used")
+        else:
+            logging.info(f"Cuda unavailable: training model without GPU")
 
         if 'labels' not in self.df_dataset:
             logging.error(f"-- -- Column 'labels' does not exist in the input "
@@ -60,6 +70,7 @@ class CorpusClassifier(object):
         """
         Split dataframe dataset into train an test datasets, undersampling
         the negative class
+
         Parameters
         ----------
         max_imbalance : int or None, optional (default=None)
@@ -76,6 +87,7 @@ class CorpusClassifier(object):
         random_state : int or None (default=None)
             Controls the shuffling applied to the data before splitting.
             Pass an int for reproducible output across multiple function calls.
+
         Returns
         -------
         No variables are returned. The dataset dataframe in self.df_dataset is
@@ -121,6 +133,7 @@ class CorpusClassifier(object):
     def load_model(self):
         """
         Loads an existing classification model
+
         Returns
         -------
         The loaded model is store in attribute self.model
@@ -150,6 +163,7 @@ class CorpusClassifier(object):
     def train_model(self):
         """
         Train binary text classification model based on transformers
+
         Notes
         -----
         The use of simpletransformers follows the example code in
@@ -174,12 +188,6 @@ class CorpusClassifier(object):
         # Classification
 
         # Create a TransformerModel
-        cuda_available = torch.cuda.is_available()
-        if cuda_available:
-            logging.info(f"Cuda available: GPU will be used")
-        else:
-            logging.info(f"Cuda unavailable: training model without GPU")
-
         model_args = {
             'cache_dir': str(self.path2transformers / "cache_dir"),
             'output_dir': str(self.path2transformers / "outputs"),
@@ -192,7 +200,7 @@ class CorpusClassifier(object):
         # FIXME: Base model 'roberta' should be configurable. Move it to
         #        the config file (parameters.default.yaml)
         self.model = ClassificationModel(
-            'roberta', 'roberta-base', use_cuda=cuda_available,
+            'roberta', 'roberta-base', use_cuda=self.cuda_available,
             args=model_args)
 
         # Train the model
@@ -207,12 +215,14 @@ class CorpusClassifier(object):
         """
         Compute predictions of the classification model over the input dataset
         and compute performance metrics.
+
         Parameters
         ----------
         tag_score: str
             Prefix of the score names.
             The scores will be save in the columns of self.df_dataset
             containing these scores.
+
         Notes
         -----
         The use of simpletransformers follows the example code in
@@ -267,10 +277,12 @@ class CorpusClassifier(object):
     def AL_sample(self, n_samples=5):
         """
         Returns a given number of samples for active learning (AL)
+
         Parameters
         ----------
         n_samples : int, optional (default=5)
             Number of samples to return
+
         Returns
         -------
         df_out : pandas.dataFrame
@@ -295,6 +307,7 @@ class CorpusClassifier(object):
     def annotate(self, idx, labels, col='annotations'):
         """
         Annotate the given labels in the given positions
+
         Parameters
         ----------
         idx: list of int
@@ -316,7 +329,7 @@ class CorpusClassifier(object):
 
         # Create colum of used labels if it does not exist
         if 'learned' not in self.df_dataset:
-            self.dataset[['learned']] = UNUSED
+            self.df_dataset[['learned']] = UNUSED
         # Mark new labels as 'not learned' (i.e. not used by the learning
         # algorithm, yet.
         self.df_dataset.loc[idx, 'learned'] = 0
@@ -350,14 +363,58 @@ class CorpusClassifier(object):
         #   - column 'learned', marking with 1 those labels already used in
         #                    previous retrainings
 
-        # ################
-        # Model retraining
-        # FIXME: Retrain the current model in self.model with the new labels
+        # ####################
+        # Get PU training data
+        # Note that we select the columns required for training only
+        # Note, also, that we exclude from the PU data the annotated labels
+        df_train_PU = self.df_dataset[
+            (self.df_dataset.train_test == TRAIN)
+            & (self.df_dataset.learned == UNUSED)][['text', 'labels']]
+
+        #  Get annotated samples already used for retraining
+        df_clean_used = self.df_dataset[
+            self.df_dataset.learned == 1][['text', 'labels']]
+
+        #  Get new annotated samples, not used for retraining yet
+        df_clean_new = self.df_dataset[
+            self.df_dataset.learned == 0][['text', 'labels']]
+
+        # ##################
+        # Integrate datasets
+
+        # FIXME: Change this by a more clever integration
+        df_train = pd.concat([df_train_PU, df_clean_used, df_clean_new])
+
+        # ##############
+        # Classification
+
+        # FIXME: replace by a more clever training
+        # Create a TransformerModel
+        model_args = {
+            'cache_dir': str(self.path2transformers / "cache_dir"),
+            'output_dir': str(self.path2transformers / "outputs"),
+            'best_model_dir': str(self.path2transformers / "outputs"
+                                  / "best_model"),
+            'tensorboard_dir': str(self.path2transformers / "runs"),
+            'overwrite_output_dir': True}
+        os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+        # FIXME: Base model 'roberta' should be configurable. Move it to
+        #        the config file (parameters.default.yaml)
+        self.model = ClassificationModel(
+            'roberta', 'roberta-base', use_cuda=self.cuda_available,
+            args=model_args)
+
+        # Train the model
+        t0 = time()
+        logging.info(f"-- -- Training model with {len(df_train)} documents...")
+        self.model.train_model(df_train)
+        logging.info(f"-- -- Model trained in {time() - t0} seconds")
 
         # ################
-        # Mark used labels
-        if 'used' not in self.df_dataset:
-            self.dataset[['used']] = 0
-        # FIXME: Mark newly used labels with value 1 in column 'used'
+        # Update dataframe
+
+        # Mark new annotations as used
+        self.df_dataset.loc[self.df_dataset.learned == 0, 'learned'] = 1
 
         return
