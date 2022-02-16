@@ -319,6 +319,10 @@ class CorpusClassifier(object):
             does not exist, it is created.
         """
 
+        print("idx", idx, len(idx))
+        print("col", col, len(col))
+        print("labels", labels)
+
         # Create annotation colum if it does not exist
         if col not in self.df_dataset:
             logging.info(

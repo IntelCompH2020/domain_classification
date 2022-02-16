@@ -3256,7 +3256,7 @@ QPushButton:pressed {
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QProgressBar" name="progress_bar_feedback">
+                       <widget class="QProgressBar" name="progress_bar_feedback_update">
                         <property name="styleSheet">
                          <string notr="true">QProgressBar {
     border: 2px solid grey;
@@ -3448,42 +3448,14 @@ QToolTip {
                         </property>
                         <property name="sizeHint" stdset="0">
                          <size>
-                          <width>320</width>
+                          <width>200</width>
                           <height>23</height>
                          </size>
                         </property>
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="update_model_push_button">
-                        <property name="maximumSize">
-                         <size>
-                          <width>16777215</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="styleSheet">
-                         <string notr="true">QPushButton {
-	border: 5px solid #ABC2CB;
-	border-radius: 5px;	
-	background-color: #ABC2CB;
-}
-QPushButton:hover {
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}
-QPushButton:pressed {	
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}</string>
-                        </property>
-                        <property name="text">
-                         <string>Update model based on feedback</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="clear_feedback_push_button">
+                       <widget class="QPushButton" name="clear_feedback_table_push_button">
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                           <horstretch>0</horstretch>
@@ -3518,7 +3490,91 @@ QPushButton:pressed {
 }</string>
                         </property>
                         <property name="text">
-                         <string>Clear</string>
+                         <string>Clear table feedback</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="give_feedback_push_button">
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="styleSheet">
+                         <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                        </property>
+                        <property name="text">
+                         <string>Give feedback</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="retrain_model_push_button">
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="styleSheet">
+                         <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                        </property>
+                        <property name="text">
+                         <string>Retrain model </string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="reevaluate_model_push_button">
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="styleSheet">
+                         <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                        </property>
+                        <property name="text">
+                         <string>Reevaluate model</string>
                         </property>
                        </widget>
                       </item>
@@ -3529,7 +3585,7 @@ QPushButton:pressed {
                         </property>
                         <property name="sizeHint" stdset="0">
                          <size>
-                          <width>153</width>
+                          <width>200</width>
                           <height>23</height>
                          </size>
                         </property>

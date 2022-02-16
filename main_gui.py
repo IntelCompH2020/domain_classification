@@ -49,8 +49,8 @@ class PreConfig(QDialog):
         self.home = str(Path.home())
 
         # Variables for saving the project and source data folders
-        self.projectFolder = "/Users/lbartolome/Documents/Intelcomp/project_folder"  # TODO: Change back to "" after testing
-        self.sourceFolder = "/Users/lbartolome/Documents/Intelcomp/datasets"
+        self.sourceFolder = self.args.source if self.args.source is not None else ""
+        self.projectFolder = self.args.p if self.args.p is not None else ""
 
         # Update image
         pixmap = QPixmap('Images/dc_logo.png')
@@ -77,25 +77,25 @@ class PreConfig(QDialog):
         self.move(qr.topLeft())
 
     def get_project_folder(self):
-        self.projectFolder = self.args.p if self.args.p is not None else \
+        print(self.args.p)
+        self.projectFolder =  \
             QFileDialog.getExistingDirectory(
                 self, 'Create or select an an existing project', self.home)
         self.showProjectFolder.setText(self.projectFolder)
 
     def get_source_data_folder(self):
-        self.sourceFolder = self.args.source if self.args.source is not None else \
+        self.sourceFolder =  \
             QFileDialog.getExistingDirectory(
                 self, 'Select the source data folder', self.home)
         self.showSourceDataFolder.setText(self.sourceFolder)
 
     def start_application(self):
-        # @ TODO: Remove after testing
         # We show a warning message if one or  both folders have not selected
-        # if self.projectFolder == "" or self.sourceFolder == "":
-        #     QtWidgets.QMessageBox.warning(
-        #         self, Messages.DC_MESSAGE,
-        #         Messages.INCORRECT_INPUT_PARAM_SELECTION)
-        #     return
+        if self.projectFolder == "" or self.sourceFolder == "":
+            QtWidgets.QMessageBox.warning(
+             self, Messages.DC_MESSAGE,
+             Messages.INCORRECT_INPUT_PARAM_SELECTION)
+            return
 
         # Create the TaskManager object
         tm = TaskManagerGUI(self.projectFolder, path2source=self.sourceFolder)
@@ -128,7 +128,6 @@ class PreConfig(QDialog):
 ########################################################################
 # Main
 ########################################################################
-
 def main():
     # Read input arguments
     parser = argparse.ArgumentParser()
@@ -147,6 +146,8 @@ def main():
     # Create application
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon('Images/dc_logo.png'))
+
+    # Configure widgets
     # app.setFont(default_font)
     widget = QtWidgets.QStackedWidget()
     widget.setWindowTitle(Messages.WINDOW_TITLE)

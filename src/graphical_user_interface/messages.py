@@ -96,8 +96,9 @@ class Messages:
                     'as specified in the parameter "n_docs", which you can configure at the right of this view, ' \
                     'will be displayed in the white spaces below, together with the prediction associated with each ' \
                     'of the documents, if it is available. Then, you must  write the labels that you want to use ' \
-                    'for updating the model on the right column of the bottom table, and click on the button "Update ' \
-                    'model based on feedback." '
+                    'for updating the model on the right column of the bottom table, and click on the button "Give ' \
+                    'feedback." Once this is done, you can retrain the model using your manual annotations by ' \
+                    'clicking on "Retrain model", and reevaluate it by clicking on "Reevaluate model". '
     INFO_N_DOCS_AL = 'This parameter determines the number of documents to show each Active Learning round.\n By ' \
                      'default, it is configured to 5, but a different value can be assigned to it by inserting\n an ' \
                      'alternative number on the label located at the right. '

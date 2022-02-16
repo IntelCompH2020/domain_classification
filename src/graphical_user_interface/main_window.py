@@ -157,17 +157,21 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # GET FEEDBACK WIDGETS
         # #####################################################################
-        self.update_model_push_button.clicked.connect(
-            self.clicked_update_model)
+        self.give_feedback_push_button.clicked.connect(
+            self.clicked_give_feedback)
         self.table_labels_feedback.cellChanged.connect(
             self.clicked_labels_from_docs_updated)
         self.update_ndocs_al_push_button.clicked.connect(self.clicked_update_ndocs_al)
-        self.clear_feedback_push_button.clicked.connect(self.clicked_clear_feedback)
+        self.clear_feedback_table_push_button.clicked.connect(self.clicked_clear_feedback)
         self.get_docs_to_annotate_push_button.clicked.connect(
             self.show_sampled_docs_for_labeling)
+        self.retrain_model_push_button.clicked.connect(
+            self.clicked_retrain_model)
+        self.reevaluate_model_push_button.clicked.connect(
+            self.clicked_reevaluate_model)
 
-        self.progress_bar_feedback.setVisible(False)
-        self.progress_bar_feedback.setValue(0)
+        self.progress_bar_feedback_update.setVisible(False)
+        self.progress_bar_feedback_update.setValue(0)
 
         self.init_ndocs_al()
         self.init_feedback_table(False)
@@ -599,7 +603,7 @@ class MainWindow(QtWidgets.QMainWindow):
     # EVALUATE PU MODEL FUNCTIONS
     # #########################################################################
     def execute_evaluate_pu_model(self):
-        """Method to control the execution of the training of a classifier on a
+        """Method to control the execution of the evaluation of a classifier on a
         secondary thread while the MainWindow execution is maintained in the
         main thread.
         """
@@ -641,7 +645,7 @@ class MainWindow(QtWidgets.QMainWindow):
         return
 
     # #########################################################################
-    # GET FEEDBACK FUNCTIONS
+    # GIVE FEEDBACK FUNCTIONS
     # #########################################################################
     def init_ndocs_al(self):
         """Initializes the AL parameter in the text edit within the third tab of the main GUI
@@ -656,7 +660,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Update ndocs if possible
         if self.text_edit_ndocs_al.text():
             selected_docs = self.tm.dc.df_dataset.loc[
-                self.df_dataset.prediction != Constants.UNUSED]
+                self.tm.dc.df_dataset.prediction != Constants.UNUSED]
             # Check condition for updating ndocs
             if len(selected_docs) < int(self.text_edit_ndocs_al.text()):
                 message = "The number of documents to show at each AL round must be smaller than " + str(len(selected_docs))
@@ -738,7 +742,7 @@ class MainWindow(QtWidgets.QMainWindow):
         for i in np.arange(self.table_labels_feedback.rowCount()):
             if self.table_labels_feedback.item(i, 1) is not None:
                 labels_doc = str(
-                    self.table_labels_feedback.item(i, 0).text())
+                    self.table_labels_feedback.item(i, 1).text())
                 labels.append(labels_doc)
         print(labels)
         self.labels_docs_to_annotate = labels
@@ -751,26 +755,26 @@ class MainWindow(QtWidgets.QMainWindow):
         return "Done."
 
     def do_after_give_feedback(self):
-        """ Method to be executed after the updating of the model based on the feedback of the user has been completed.
+        """ Method to be executed after annotating the labels given by the user in their corresponding positions
         """
         # Hide progress bar
-        self.progress_bar_feedback.setVisible(False)
+        self.progress_bar_feedback_update.setVisible(False)
 
         # Showing message in pop up window
         QtWidgets.QMessageBox.information(
             self, Messages.DC_MESSAGE,
-            "The classifier model has been updated with the latest relevance feedback.")
+            "The labels have been annotated based on your latest feedback.")
 
-    def clicked_update_model(self):
-        """Method that control the actions that are carried out when the button "update_model_push_button" is
+    def clicked_give_feedback(self):
+        """Method that control the actions that are carried out when the button "give_feedback_push_button" is
         clicked by the user.
         """
         execute_in_thread(
-            self, self.execute_give_feedback, self.do_after_give_feedback, self.progress_bar_feedback)
+            self, self.execute_give_feedback, self.do_after_give_feedback, self.progress_bar_feedback_update)
         return
 
     def clicked_clear_feedback(self):
-        """Method that control the actions that are carried out when the button "clear_feedback_push_button" is
+        """Method that control the actions that are carried out when the button "clear_feedback_table_push_button" is
         clicked by the user.
         """
         self.init_feedback_table(True)
@@ -780,3 +784,66 @@ class MainWindow(QtWidgets.QMainWindow):
             self.table_labels_feedback.setItem(
                 id_row, 0, QtWidgets.QTableWidgetItem(str(doc.id)))
             id_row += 1
+
+    # #########################################################################
+    # RETRAIN MODEL FUNCTIONS
+    # #########################################################################
+    def execute_retrain_model(self):
+        """Method to control the execution of the retraining of a classifier on a
+        secondary thread while the MainWindow execution is maintained in the
+        main thread.
+        """
+        # Retrain the PU model by invoking the task manager method
+        self.tm.retrain_model()
+
+        # @ TODO: Ver si imprimir logs como en el train
+
+    def do_after_retrain_model(self):
+        """ Method to be executed once the retraining of the model based on the feedback of the user has been completed.
+        """
+        # Hide progress bar
+        self.progress_bar_feedback_update.setVisible(False)
+
+        # Showing message in pop up window
+        QtWidgets.QMessageBox.information(
+            self, Messages.DC_MESSAGE,
+            "The performance of the classifier model has been improved using the labels you provided.")
+
+    def clicked_retrain_model(self):
+        """Method that control the actions that are carried out when the button "retrain_model_push_button" is
+        clicked by the user.
+        """
+        execute_in_thread(
+            self, self.execute_retrain_model, self.do_after_retrain_model, self.progress_bar_feedback_update)
+
+    # #########################################################################
+    # REEVALUATE MODEL FUNCTIONS
+    # #########################################################################
+    def execute_reevaluate_model(self):
+        """Method to control the execution of the reevaluation of a classifier on a
+        secondary thread while the MainWindow execution is maintained in the
+        main thread.
+        """
+        self.tm.reevaluate_model()
+
+        # @ TODO: Ver si imprimir logs como en el evaluate
+        return "Done."
+
+    def do_after_reevaluate_model(self):
+        """ Method to be executed once the reevaluation of the model based on the feedback of the user has been completed.
+        """
+        # Hide progress bar
+        self.progress_bar_feedback_update.setVisible(False)
+
+        # Showing message in pop up window
+        QtWidgets.QMessageBox.information(
+            self, Messages.DC_MESSAGE,
+            "The reevaluation of the classifier model has been completed.")
+
+    def clicked_reevaluate_model(self):
+        """Method that control the actions that are carried out when the button "retrain_model_push_button" is
+        clicked by the user.
+        """
+        execute_in_thread(
+            self, self.execute_reevaluate_model, self.do_after_reevaluate_model, self.progress_bar_feedback_update)
+
