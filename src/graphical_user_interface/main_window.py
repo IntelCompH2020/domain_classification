@@ -15,7 +15,7 @@ Class representing the main window of the application.
 import numpy as np
 from PyQt5 import uic, QtWidgets, QtCore
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QButtonGroup, QDesktopWidget, QTextEdit
+from PyQt5.QtWidgets import QButtonGroup, QDesktopWidget, QTextEdit, QGridLayout
 from PyQt5.QtCore import QThreadPool, QSize
 from PyQt5.QtGui import QPixmap
 
@@ -159,8 +159,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # #####################################################################
         self.give_feedback_push_button.clicked.connect(
             self.clicked_give_feedback)
-        self.table_labels_feedback.cellChanged.connect(
-            self.clicked_labels_from_docs_updated)
         self.update_ndocs_al_push_button.clicked.connect(self.clicked_update_ndocs_al)
         self.clear_feedback_table_push_button.clicked.connect(self.clicked_clear_feedback)
         self.get_docs_to_annotate_push_button.clicked.connect(
@@ -594,7 +592,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.corpus_selected_name is not None:
             # Execute the PU model training in the secondary thread
             execute_in_thread(
-                self, self.execute_train_classifier, self.do_after_train_classifier, self.progress_bar_train_evaluate_pu)
+                self, self.execute_train_classifier, self.do_after_train_classifier,
+                self.progress_bar_train_evaluate_pu)
         else:
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.WARNING_TRAINING)
         return
@@ -639,7 +638,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.corpus_selected_name is not None:
             # Execute the PU model evaluation in the secondary thread
             execute_in_thread(
-                self, self.execute_evaluate_pu_model, self.do_after_evaluate_pu_model, self.progress_bar_train_evaluate_pu)
+                self, self.execute_evaluate_pu_model, self.do_after_evaluate_pu_model,
+                self.progress_bar_train_evaluate_pu)
         else:
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.WARNING_EVALUATION)
         return
@@ -659,20 +659,62 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         # Update ndocs if possible
         if self.text_edit_ndocs_al.text():
+            # Sample documents from the subset with predictions
             selected_docs = self.tm.dc.df_dataset.loc[
                 self.tm.dc.df_dataset.prediction != Constants.UNUSED]
-            # Check condition for updating ndocs
+            # Check condition for updating ndocs: there needs to be enough documents with predictions in the dataset
+            print("len of selected docs", len(selected_docs))
             if len(selected_docs) < int(self.text_edit_ndocs_al.text()):
-                message = "The number of documents to show at each AL round must be smaller than " + str(len(selected_docs))
+                message = "The number of documents to show at each AL round must be smaller than " + str(
+                    len(selected_docs))
                 QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, message)
                 return
             else:
+                # Update ndocs
                 self.n_docs_al = int(self.text_edit_ndocs_al.text())
                 # Show informative message with the changes
                 QtWidgets.QMessageBox.information(
                     self, Messages.DC_MESSAGE,
                     "The number of documents to show at each AL round has been set to '" + str(self.n_docs_al) + \
                     "' for the current session.")
+
+                # Add necessary widgets to represent each of the sampled docs
+                # Remove previous widget to avoid having more documents to annotate than the ones currently
+                # selected
+                for i in reversed(range(self.grid_layout_docs_feedback.count())):
+                    self.grid_layout_docs_feedback.itemAt(i).widget().setParent(None)
+                row = 0
+                col = 0
+                for i in np.arange(self.n_docs_al):
+                    # Create new QTextEdit widget
+                    new_show_doc = QTextEdit()
+                    new_show_doc_name = "show_doc_" + str(i + 1)
+                    new_show_doc.setObjectName(new_show_doc_name)
+                    new_show_doc.setReadOnly(True)
+                    # Set style set to new widget
+                    new_show_doc.setStyleSheet("""
+                        QTextEdit {	
+                            background-color: #FFFFFF;
+                            border-radius: 5px;
+                            gridline-color: #FFFFFF;
+                            border-bottom: 1px solid #FFFFFF;
+                        }
+                        QScrollBar:vertical {
+                            border: none;
+                            background: #ABC2CB;
+                            width: 14px;
+                            margin: 21px 0 21px 0;
+                            border-radius: 0px;
+                        }
+                    """)
+                    # Add widget to its corresponding layout
+                    self.grid_layout_docs_feedback.addWidget(new_show_doc, row, col)
+                    # Increment column counter
+                    col += 1
+                    # Increment row counter if four widgets have already been located in a row and reset column counter
+                    if col != 0 and (col % 4) == 0:
+                        row += 1
+                        col = 0
 
     def init_feedback_table(self, visibility):
         """Sets the initial settings of table "table_labels_feedback" in which the user is going to specify the
@@ -690,16 +732,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.selected_docs_to_annotate = self.tm.dc.AL_sample(n_samples=n_docs)
         # Indices of the selected docs
         self.idx_docs_to_annotate = self.selected_docs_to_annotate.index
-
-        # Add necessary widgets to represent each of the sampled docs in case more than N_DOCS needs to be displayed
-        if len(self.selected_docs_to_annotate) > int(Constants.N_DOCS):
-            widgets_to_add = Constants.N_DOCS - len(self.selected_docs_to_annotate)
-            label = int(Constants.N_DOCS)
-            for i in np.arange(widgets_to_add):
-                new_show_doc = QTextEdit()
-                new_show_doc_name = "show_doc_" + str(label + i)
-                new_show_doc.setObjectName(new_show_doc_name)
-                self.grid_layout_docs_feedback.addWidget(new_show_doc)
 
         # Fill QTextWidgets with the corresponding text
         id_widget = 0
@@ -735,22 +767,20 @@ class MainWindow(QtWidgets.QMainWindow):
         # Configure "table_labels_feedback" with one row per "selected_doc" and make it visible
         self.clicked_clear_feedback()
 
-    def clicked_labels_from_docs_updated(self):
-        """Gets labels that are going to be used for the updating of the model.
-        """
-        labels = []
-        for i in np.arange(self.table_labels_feedback.rowCount()):
-            if self.table_labels_feedback.item(i, 1) is not None:
-                labels_doc = str(
-                    self.table_labels_feedback.item(i, 1).text())
-                labels.append(labels_doc)
-        print(labels)
-        self.labels_docs_to_annotate = labels
-
     def execute_give_feedback(self):
         """Method to control the annotation of a selected subset of documents based on the labels introduced by the
         user on a secondary thread while the MainWindow execution is maintained in the main thread.
         """
+        # Get labels from the table "table_labels_feedback"
+        labels = []
+        for i in np.arange(self.table_labels_feedback.rowCount()):
+            if self.table_labels_feedback.item(i, 1) is not None:
+                labels_doc = int(
+                    self.table_labels_feedback.item(i, 1).text())
+                labels.append(labels_doc)
+        self.labels_docs_to_annotate = labels
+
+        # Call the TM function to proceed with the annotation
         self.tm.get_feedback(self.idx_docs_to_annotate, self.labels_docs_to_annotate)
         return "Done."
 
@@ -846,4 +876,3 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         execute_in_thread(
             self, self.execute_reevaluate_model, self.do_after_reevaluate_model, self.progress_bar_feedback_update)
-
