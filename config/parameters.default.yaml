@@ -41,4 +41,4 @@ classifier:
 # Parameters for the active learning (AL)
 active_learning:
   # Number of docs to show each AL round
-  n_docs: 5
+  n_docs: 4
