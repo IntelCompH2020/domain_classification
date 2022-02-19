@@ -2921,6 +2921,138 @@ QToolTip {
                          </layout>
                         </item>
                         <item>
+                         <spacer name="horizontalSpacer_39">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>40</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_36">
+                          <item>
+                           <layout class="QHBoxLayout" name="horizontalLayout_30">
+                            <item>
+                             <widget class="QFrame" name="frame_grip_3">
+                              <property name="enabled">
+                               <bool>true</bool>
+                              </property>
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Fixed" vsizetype="Maximum">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="minimumSize">
+                               <size>
+                                <width>30</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>30</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">background-color: #DACADF;</string>
+                              </property>
+                              <property name="frameShape">
+                               <enum>QFrame::NoFrame</enum>
+                              </property>
+                              <property name="frameShadow">
+                               <enum>QFrame::Raised</enum>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QLabel" name="label_give_feedback_2">
+                              <property name="font">
+                               <font>
+                                <weight>75</weight>
+                                <bold>true</bold>
+                               </font>
+                              </property>
+                              <property name="text">
+                               <string>Predicted class = 1</string>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <layout class="QHBoxLayout" name="horizontalLayout_31">
+                            <item>
+                             <widget class="QFrame" name="frame_grip_4">
+                              <property name="enabled">
+                               <bool>true</bool>
+                              </property>
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Fixed" vsizetype="Maximum">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="minimumSize">
+                               <size>
+                                <width>30</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>30</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">background-color: #C5D8C0;</string>
+                              </property>
+                              <property name="frameShape">
+                               <enum>QFrame::NoFrame</enum>
+                              </property>
+                              <property name="frameShadow">
+                               <enum>QFrame::Raised</enum>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QLabel" name="label_give_feedback_3">
+                              <property name="font">
+                               <font>
+                                <weight>75</weight>
+                                <bold>true</bold>
+                               </font>
+                              </property>
+                              <property name="text">
+                               <string>Predicted class = 0</string>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <spacer name="horizontalSpacer_40">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>40</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
                          <layout class="QHBoxLayout" name="horizontalLayout_6">
                           <item>
                            <widget class="QPushButton" name="info_button_ndocs_al">
@@ -3094,6 +3226,11 @@ QPushButton:pressed {
                             </item>
                             <item>
                              <widget class="QCheckBox" name="prediction_doc_1">
+                              <property name="styleSheet">
+                               <string notr="true"> QCheckBox::indicator:unchecked {
+background-color: white;
+}</string>
+                              </property>
                               <property name="text">
                                <string/>
                               </property>
@@ -3894,46 +4031,6 @@ QProgressBar::chunk {
                                </size>
                               </property>
                              </spacer>
-                            </item>
-                            <item>
-                             <widget class="QPushButton" name="clear_feedback_table_push_button">
-                              <property name="sizePolicy">
-                               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                               </sizepolicy>
-                              </property>
-                              <property name="minimumSize">
-                               <size>
-                                <width>100</width>
-                                <height>0</height>
-                               </size>
-                              </property>
-                              <property name="maximumSize">
-                               <size>
-                                <width>16777215</width>
-                                <height>16777215</height>
-                               </size>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true">QPushButton {
-	border: 5px solid #ABC2CB;
-	border-radius: 5px;	
-	background-color: #ABC2CB;
-}
-QPushButton:hover {
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}
-QPushButton:pressed {	
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}</string>
-                              </property>
-                              <property name="text">
-                               <string>Clear feedback</string>
-                              </property>
-                             </widget>
                             </item>
                             <item>
                              <widget class="QPushButton" name="give_feedback_push_button">

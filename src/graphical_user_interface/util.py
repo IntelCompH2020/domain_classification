@@ -8,7 +8,6 @@ Class with a set of auxiliary functions for the GUI deployment.
 
 """
 
-
 ##############################################################################
 #                                IMPORTS                                     #
 ##############################################################################
@@ -109,3 +108,55 @@ def signal_accept(progress_bar):
     progress_bar.setVisible(True)
     progress_bar.setMaximum(0)
     progress_bar.setMinimum(0)
+
+
+def change_background_color_text_edit(text_edit, prediction):
+    if prediction == 1:
+        text_edit.setStyleSheet("""
+            QTextEdit {	
+                background-color: #FFFFFF;
+                border-radius: 5px;
+                gridline-color: #FFFFFF;
+                border-bottom: 1px solid #FFFFFF;
+                border: 7px solid #DACADF;
+            }
+            QScrollBar:vertical {
+                border: none;
+                background: #DACADF;
+                width: 2px;
+                margin: 21px 0 21px 0;
+                border-radius: 0px;
+            }
+        """)
+    elif prediction == 0:
+        text_edit.setStyleSheet("""
+            QTextEdit {	
+                background-color: #FFFFFF;
+                border-radius: 5px;
+                gridline-color: #FFFFFF;
+                border-bottom: 1px solid #FFFFFF;
+                border: 7px solid #C5D8C0;
+            }
+            QScrollBar:vertical {
+                border: none;
+                background: #C5D8C0;
+                width: 2px;
+                margin: 21px 0 21px 0;
+                border-radius: 0px;
+            }
+        """)
+
+
+def change_background_color_checkbox(checkbox, prediction):
+    if prediction == 1:
+        checkbox.setStyleSheet("""
+            QCheckBox::indicator {
+                background-color: #DACADF;
+            }
+        """)
+    elif prediction == 0:
+        checkbox.setStyleSheet("""
+            QCheckBox::indicator {
+                background-color: #C5D8C0;
+            }
+        """)

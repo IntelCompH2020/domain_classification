@@ -19,6 +19,7 @@ from PyQt5.QtWidgets import QButtonGroup, QDesktopWidget, QTextEdit, QGridLayout
     QSizePolicy, QHBoxLayout, QWidgetItem
 from PyQt5.QtCore import QThreadPool, QSize
 from PyQt5.QtGui import QPixmap
+from functools import partial
 
 # Local imports
 from src.graphical_user_interface.analyze_keywords_window import (
@@ -27,7 +28,8 @@ from src.graphical_user_interface.get_keywords_window import GetKeywordsWindow
 from src.graphical_user_interface.get_topics_list_window import (
     GetTopicsListWindow)
 from src.graphical_user_interface.messages import Messages
-from src.graphical_user_interface.util import toggle_menu, execute_in_thread
+from src.graphical_user_interface.util import toggle_menu, execute_in_thread, change_background_color_text_edit, \
+    change_background_color_checkbox
 from src.graphical_user_interface.constants import Constants
 
 
@@ -161,11 +163,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.give_feedback_push_button.clicked.connect(
             self.clicked_give_feedback)
         self.update_ndocs_al_push_button.clicked.connect(self.clicked_update_ndocs_al)
-        # self.clear_feedback_table_push_button.clicked.connect(self.clicked_clear_feedback) # @ TODO: Set checkboxes to default
         self.retrain_model_push_button.clicked.connect(
             self.clicked_retrain_model)
         self.reevaluate_model_push_button.clicked.connect(
             self.clicked_reevaluate_model)
+
+        checkboxes_predictions = []
+        for id_checkbox in np.arange(Constants.MAX_N_DOCS):
+            doc_checkbox_name = "prediction_doc_" + str(id_checkbox + 1)
+            doc_checkbox_widget = self.findChild(QCheckBox, doc_checkbox_name)
+            checkboxes_predictions.append(doc_checkbox_widget)
+
+        #lambda state, checkbox=checkbox_pred: self.clicked_change_predicted_class(state, checkbox_pred)
+        for checkbox_pred in checkboxes_predictions:
+            checkbox_pred.stateChanged.connect(partial(self.clicked_change_predicted_class, checkbox_pred))
 
         self.progress_bar_feedback_update.setVisible(False)
         self.progress_bar_feedback_update.setValue(0)
@@ -720,23 +731,38 @@ class MainWindow(QtWidgets.QMainWindow):
                 text_widget_name = "show_doc_" + str(id_widget + 1)
                 text_widget = self.findChild(QTextEdit, text_widget_name)
                 text += \
-                    "<h3 style='color: #5e9ca0;'> ID" + str(doc.id) + ": " + str(title) \
-                    + "</h3>\n<p>" + str(descr) + "</p>"
+                    "<h4 style='color: #5e9ca0;'> ID" + str(doc.id) + ": " + str(title) \
+                    + "</h4>\n<p>" + str(descr) + "</p>"
             else:
                 descr = doc.text
                 text_widget_name = "show_doc_" + str(id_widget + 1)
                 text_widget = self.findChild(QTextEdit, text_widget_name)
                 text += \
-                    "<h3 style='color: #5e9ca0;'> ID" + str(doc.id) + ": " \
-                    + "</h3>\n<p>" + str(descr) + "</p>"
+                    "<h4 style='color: #5e9ca0;'> ID" + str(doc.id) + ": " \
+                    + "</h4>\n<p>" + str(descr) + "</p>"
             if 'prediction' in doc:
                 text += "<p> <b>PREDICTED CLASS: </b>" + str(doc.prediction) + "</p>"
                 doc_checkbox_name = "prediction_doc_" + str(id_widget + 1)
                 doc_checkbox_widget = self.findChild(QCheckBox, doc_checkbox_name)
                 if int(doc.prediction) == 1:
                     doc_checkbox_widget.setChecked(True)
+                change_background_color_text_edit(text_widget, int(doc.prediction))
+                #change_background_color_checkbox(doc_checkbox_widget, int(doc.prediction))
             text_widget.setHtml(text)
             id_widget += 1
+
+    def clicked_change_predicted_class(self, checkbox):
+        doc_checkbox_widget_name = checkbox.objectName()
+        print(doc_checkbox_widget_name)
+        text_widget_name = "show_doc_" + doc_checkbox_widget_name.split("_")[2]
+        print(text_widget_name)
+        text_widget = self.findChild(QTextEdit, text_widget_name)
+        if checkbox.isChecked():
+            change_background_color_text_edit(text_widget, 1)
+            #change_background_color_checkbox(checkbox, 1)
+        else:
+            change_background_color_text_edit(text_widget, 0)
+            #change_background_color_checkbox(checkbox, 0)
 
     def execute_give_feedback(self):
         """Method to control the annotation of a selected subset of documents based on the labels introduced by the
