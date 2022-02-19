@@ -35,7 +35,7 @@ topics:
 classifier:
   # Maximum ratio negative vs positive samples in the training set
   max_imbalance: 3
-  # Maxumum number of documents in the training set.
+  # Maximum number of documents in the training set.
   nmax: 400
 
 # Parameters for the active learning (AL)

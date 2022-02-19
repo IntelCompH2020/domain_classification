@@ -366,7 +366,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def train_PUmodel(self):
+    def train_PUmodel(self, max_imbalance=3, nmax=400):
         """
         Train a domain classifiers
         """
@@ -383,8 +383,6 @@ class TaskManager(baseTaskManager):
             df_dataset, path2transformers=self.path2transformers)
 
         # Select data for training and testing
-        max_imbalance = self.global_parameters['classifier']['nmax']
-        nmax = self.global_parameters['classifier']['nmax']
         self.dc.train_test_split(max_imbalance=max_imbalance, nmax=nmax)
 
         # Train the model using simpletransformers
@@ -415,7 +413,7 @@ class TaskManager(baseTaskManager):
         # Update dataset file to include scores
         self._save_dataset()
 
-        return
+        return result
 
     def get_feedback(self):
         """
@@ -728,6 +726,28 @@ class TaskManagerCMD(TaskManager):
             labels = []
 
         return labels
+
+    def train_PUmodel(self):
+        """
+        Train a domain classifier
+        """
+
+        # Get weight parameter (weight of title word wrt description words)
+        max_imbalance = self.QM.ask_value(
+            query=("Introduce the maximum ratio negative vs positive samples "
+                   "in the training set"),
+            convert_to=float,
+            default=self.global_parameters['classifier']['max_imbalance'])
+
+        # Get score threshold
+        nmax = self.QM.ask_value(
+            query=("Maximum number of documents in the training set."),
+            convert_to=int,
+            default=self.global_parameters['classifier']['nmax'])
+
+        super().train_PUmodel(max_imbalance, nmax)
+
+        return
 
 
 class TaskManagerGUI(TaskManager):
