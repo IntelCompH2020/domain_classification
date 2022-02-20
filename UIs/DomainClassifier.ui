@@ -1332,7 +1332,7 @@ border:2px #676A6E;</string>
                    <string notr="true">background-color: #CFCEC6;</string>
                   </property>
                   <property name="currentIndex">
-                   <number>2</number>
+                   <number>0</number>
                   </property>
                   <widget class="QWidget" name="page_load">
                    <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -2545,7 +2545,7 @@ QPushButton:pressed {
                               </property>
                               <property name="sizeHint" stdset="0">
                                <size>
-                                <width>200</width>
+                                <width>250</width>
                                 <height>20</height>
                                </size>
                               </property>
@@ -2589,7 +2589,7 @@ QPushButton:pressed {
                               </property>
                               <property name="sizeHint" stdset="0">
                                <size>
-                                <width>200</width>
+                                <width>250</width>
                                 <height>20</height>
                                </size>
                               </property>
@@ -2961,7 +2961,8 @@ QToolTip {
                                </size>
                               </property>
                               <property name="styleSheet">
-                               <string notr="true">background-color: #DACADF;</string>
+                               <string notr="true">background-color: #6A7288;
+border: 1px solid black;</string>
                               </property>
                               <property name="frameShape">
                                <enum>QFrame::NoFrame</enum>
@@ -3012,7 +3013,8 @@ QToolTip {
                                </size>
                               </property>
                               <property name="styleSheet">
-                               <string notr="true">background-color: #C5D8C0;</string>
+                               <string notr="true">background-color: #DB8678;
+border: 1px solid black;</string>
                               </property>
                               <property name="frameShape">
                                <enum>QFrame::NoFrame</enum>
@@ -3116,7 +3118,7 @@ QToolTip {
                           <item>
                            <widget class="QLineEdit" name="text_edit_ndocs_al">
                             <property name="sizePolicy">
-                             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                               <horstretch>0</horstretch>
                               <verstretch>0</verstretch>
                              </sizepolicy>
@@ -3229,7 +3231,9 @@ QPushButton:pressed {
                               <property name="styleSheet">
                                <string notr="true"> QCheckBox::indicator:unchecked {
 background-color: white;
-}</string>
+}
+
+</string>
                               </property>
                               <property name="text">
                                <string/>
@@ -3295,6 +3299,13 @@ background-color: white;
                             </item>
                             <item>
                              <widget class="QCheckBox" name="prediction_doc_2">
+                              <property name="styleSheet">
+                               <string notr="true"> QCheckBox::indicator:unchecked {
+background-color: white;
+}
+
+</string>
+                              </property>
                               <property name="text">
                                <string/>
                               </property>
@@ -3359,6 +3370,13 @@ background-color: white;
                             </item>
                             <item>
                              <widget class="QCheckBox" name="prediction_doc_3">
+                              <property name="styleSheet">
+                               <string notr="true"> QCheckBox::indicator:unchecked {
+background-color: white;
+}
+
+</string>
+                              </property>
                               <property name="text">
                                <string/>
                               </property>
@@ -3423,6 +3441,13 @@ background-color: white;
                             </item>
                             <item>
                              <widget class="QCheckBox" name="prediction_doc_4">
+                              <property name="styleSheet">
+                               <string notr="true"> QCheckBox::indicator:unchecked {
+background-color: white;
+}
+
+</string>
+                              </property>
                               <property name="text">
                                <string/>
                               </property>
@@ -3487,6 +3512,13 @@ background-color: white;
                             </item>
                             <item>
                              <widget class="QCheckBox" name="prediction_doc_5">
+                              <property name="styleSheet">
+                               <string notr="true"> QCheckBox::indicator:unchecked {
+background-color: white;
+}
+
+</string>
+                              </property>
                               <property name="text">
                                <string/>
                               </property>
@@ -3551,6 +3583,13 @@ background-color: white;
                             </item>
                             <item>
                              <widget class="QCheckBox" name="prediction_doc_6">
+                              <property name="styleSheet">
+                               <string notr="true"> QCheckBox::indicator:unchecked {
+background-color: white;
+}
+
+</string>
+                              </property>
                               <property name="text">
                                <string/>
                               </property>
@@ -3615,6 +3654,13 @@ background-color: white;
                             </item>
                             <item>
                              <widget class="QCheckBox" name="prediction_doc_7">
+                              <property name="styleSheet">
+                               <string notr="true"> QCheckBox::indicator:unchecked {
+background-color: white;
+}
+
+</string>
+                              </property>
                               <property name="text">
                                <string/>
                               </property>
@@ -3679,6 +3725,13 @@ background-color: white;
                             </item>
                             <item>
                              <widget class="QCheckBox" name="prediction_doc_8">
+                              <property name="styleSheet">
+                               <string notr="true"> QCheckBox::indicator:unchecked {
+background-color: white;
+}
+
+</string>
+                              </property>
                               <property name="text">
                                <string/>
                               </property>
@@ -3743,6 +3796,13 @@ background-color: white;
                             </item>
                             <item>
                              <widget class="QCheckBox" name="prediction_doc_9">
+                              <property name="styleSheet">
+                               <string notr="true"> QCheckBox::indicator:unchecked {
+background-color: white;
+}
+
+</string>
+                              </property>
                               <property name="text">
                                <string/>
                               </property>
@@ -3807,6 +3867,13 @@ background-color: white;
                             </item>
                             <item>
                              <widget class="QCheckBox" name="prediction_doc_10">
+                              <property name="styleSheet">
+                               <string notr="true"> QCheckBox::indicator:unchecked {
+background-color: white;
+}
+
+</string>
+                              </property>
                               <property name="text">
                                <string/>
                               </property>
@@ -3871,6 +3938,13 @@ background-color: white;
                             </item>
                             <item>
                              <widget class="QCheckBox" name="prediction_doc_11">
+                              <property name="styleSheet">
+                               <string notr="true"> QCheckBox::indicator:unchecked {
+background-color: white;
+}
+
+</string>
+                              </property>
                               <property name="text">
                                <string/>
                               </property>
@@ -3935,6 +4009,13 @@ background-color: white;
                             </item>
                             <item>
                              <widget class="QCheckBox" name="prediction_doc_12">
+                              <property name="styleSheet">
+                               <string notr="true"> QCheckBox::indicator:unchecked {
+background-color: white;
+}
+
+</string>
+                              </property>
                               <property name="text">
                                <string/>
                               </property>

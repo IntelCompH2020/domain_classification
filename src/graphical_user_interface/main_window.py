@@ -28,8 +28,7 @@ from src.graphical_user_interface.get_keywords_window import GetKeywordsWindow
 from src.graphical_user_interface.get_topics_list_window import (
     GetTopicsListWindow)
 from src.graphical_user_interface.messages import Messages
-from src.graphical_user_interface.util import toggle_menu, execute_in_thread, change_background_color_text_edit, \
-    change_background_color_checkbox
+from src.graphical_user_interface.util import toggle_menu, execute_in_thread, change_background_color_text_edit
 from src.graphical_user_interface.constants import Constants
 
 
@@ -68,6 +67,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.n_docs_al = self.n_docs_al_dft
         self.selected_docs_to_annotate = None
         self.idx_docs_to_annotate = None
+        self.labels_docs_to_annotate_dict = {}
         self.labels_docs_to_annotate = []
 
         # INFORMATION BUTTONS: Set image, size and tooltip
@@ -89,6 +89,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                             self.info_button_load_reset_labels.height()))
         self.info_button_load_reset_labels.setToolTip(
             Messages.INFO_LOAD_RESET_LABELS)
+
         # TAB TRAINING-EVALUATION
         self.info_button_train_model.setIcon(QIcon('Images/help2.png'))
         self.info_button_train_model.setIconSize(
@@ -100,6 +101,7 @@ class MainWindow(QtWidgets.QMainWindow):
             Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
                                             self.info_button_load_reset_labels.height()))
         self.info_button_eval_model.setToolTip(Messages.INFO_EVALUATE_PU_MODEL)
+
         # TAB FEEDBACK
         self.info_button_give_feedback.setIcon(QIcon('Images/help2.png'))
         self.info_button_give_feedback.setIconSize(
@@ -173,8 +175,9 @@ class MainWindow(QtWidgets.QMainWindow):
             doc_checkbox_name = "prediction_doc_" + str(id_checkbox + 1)
             doc_checkbox_widget = self.findChild(QCheckBox, doc_checkbox_name)
             checkboxes_predictions.append(doc_checkbox_widget)
+            # Initialize all predictions as belonging to the negative class
+            self.labels_docs_to_annotate_dict[doc_checkbox_name] = 0
 
-        #lambda state, checkbox=checkbox_pred: self.clicked_change_predicted_class(state, checkbox_pred)
         for checkbox_pred in checkboxes_predictions:
             checkbox_pred.stateChanged.connect(partial(self.clicked_change_predicted_class, checkbox_pred))
 
@@ -705,6 +708,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     doc_checkbox_name = "prediction_doc_" + str(i + 1)
                     doc_checkbox_widget = self.findChild(QCheckBox, doc_checkbox_name)
                     doc_checkbox_widget.setVisible(True)
+                    doc_checkbox_widget.setChecked(False)
         # Visualize the documents
         self.init_feedback_elements()
 
@@ -747,7 +751,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if int(doc.prediction) == 1:
                     doc_checkbox_widget.setChecked(True)
                 change_background_color_text_edit(text_widget, int(doc.prediction))
-                #change_background_color_checkbox(doc_checkbox_widget, int(doc.prediction))
+                self.labels_docs_to_annotate_dict[doc_checkbox_name] = int(doc.prediction)
             text_widget.setHtml(text)
             id_widget += 1
 
@@ -759,19 +763,19 @@ class MainWindow(QtWidgets.QMainWindow):
         text_widget = self.findChild(QTextEdit, text_widget_name)
         if checkbox.isChecked():
             change_background_color_text_edit(text_widget, 1)
-            #change_background_color_checkbox(checkbox, 1)
+            self.labels_docs_to_annotate_dict[doc_checkbox_widget_name] = 1
         else:
             change_background_color_text_edit(text_widget, 0)
-            #change_background_color_checkbox(checkbox, 0)
+            self.labels_docs_to_annotate_dict[doc_checkbox_widget_name] = 0
 
     def execute_give_feedback(self):
         """Method to control the annotation of a selected subset of documents based on the labels introduced by the
         user on a secondary thread while the MainWindow execution is maintained in the main thread.
         """
         # Get labels from current checkboxes
-        labels = []
-        self.labels_docs_to_annotate = labels
-
+        all_labels = list(self.labels_docs_to_annotate_dict.values())
+        self.labels_docs_to_annotate = all_labels[0:self.n_docs_al]
+        print(self.labels_docs_to_annotate)
         # Call the TM function to proceed with the annotation
         self.tm.get_feedback(self.idx_docs_to_annotate, self.labels_docs_to_annotate)
         return "Done."

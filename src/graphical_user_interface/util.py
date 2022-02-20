@@ -118,11 +118,11 @@ def change_background_color_text_edit(text_edit, prediction):
                 border-radius: 5px;
                 gridline-color: #FFFFFF;
                 border-bottom: 1px solid #FFFFFF;
-                border: 7px solid #DACADF;
+                border: 6px solid #6A7288;
             }
             QScrollBar:vertical {
                 border: none;
-                background: #DACADF;
+                background: #6A7288;
                 width: 2px;
                 margin: 21px 0 21px 0;
                 border-radius: 0px;
@@ -135,28 +135,13 @@ def change_background_color_text_edit(text_edit, prediction):
                 border-radius: 5px;
                 gridline-color: #FFFFFF;
                 border-bottom: 1px solid #FFFFFF;
-                border: 7px solid #C5D8C0;
+                border: 6px solid #DB8678;
             }
             QScrollBar:vertical {
                 border: none;
-                background: #C5D8C0;
+                background: #DB8678;
                 width: 2px;
                 margin: 21px 0 21px 0;
                 border-radius: 0px;
-            }
-        """)
-
-
-def change_background_color_checkbox(checkbox, prediction):
-    if prediction == 1:
-        checkbox.setStyleSheet("""
-            QCheckBox::indicator {
-                background-color: #DACADF;
-            }
-        """)
-    elif prediction == 0:
-        checkbox.setStyleSheet("""
-            QCheckBox::indicator {
-                background-color: #C5D8C0;
             }
         """)
