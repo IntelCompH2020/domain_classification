@@ -51,8 +51,9 @@ class Messages:
         "determine the approach for selecting a preliminary subcorpus from the\n" \
         "positive class."
     INFO_GET_LABELS = \
-        "elect the option through which you want to select a preliminary subcorpus\n" \
-        "from the positive class and then click the button 'Get subcorpus'."
+        "Choose one of the options to select a preliminary subcorpus\n" \
+        "from the positive class and then click the button 'Get labels'."
+
     INFO_TYPE_KEYWORDS =\
         'Write your keywords (separated by commas, e.g.:\n"gradient descent, gibbs sampling, etc.") '
     NO_KEYWORDS_SELECTED = \

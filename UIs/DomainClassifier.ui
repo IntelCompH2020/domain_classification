@@ -3154,12 +3154,6 @@ QPushButton:pressed {
                               <height>0</height>
                              </size>
                             </property>
-                            <property name="maximumSize">
-                             <size>
-                              <width>16777215</width>
-                              <height>16777215</height>
-                             </size>
-                            </property>
                             <property name="styleSheet">
                              <string notr="true">QTableWidget {	
 	padding: 10px;
@@ -3223,29 +3217,11 @@ QToolTip {
 	color:black;
 }</string>
                             </property>
-                            <property name="editTriggers">
-                             <set>QAbstractItemView::NoEditTriggers</set>
-                            </property>
                             <attribute name="horizontalHeaderVisible">
-                             <bool>false</bool>
-                            </attribute>
-                            <attribute name="horizontalHeaderCascadingSectionResizes">
                              <bool>false</bool>
                             </attribute>
                             <attribute name="horizontalHeaderStretchLastSection">
                              <bool>true</bool>
-                            </attribute>
-                            <attribute name="verticalHeaderVisible">
-                             <bool>false</bool>
-                            </attribute>
-                            <attribute name="verticalHeaderCascadingSectionResizes">
-                             <bool>true</bool>
-                            </attribute>
-                            <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-                             <bool>false</bool>
-                            </attribute>
-                            <attribute name="verticalHeaderStretchLastSection">
-                             <bool>false</bool>
                             </attribute>
                             <row>
                              <property name="text">
@@ -3293,7 +3269,7 @@ QToolTip {
                             </row>
                             <row>
                              <property name="text">
-                              <string>Auroc</string>
+                              <string>AUROC</string>
                              </property>
                              <property name="font">
                               <font>
@@ -3304,7 +3280,7 @@ QToolTip {
                             </row>
                             <row>
                              <property name="text">
-                              <string>Auprc</string>
+                              <string>AUPRC</string>
                              </property>
                              <property name="font">
                               <font>
@@ -3329,41 +3305,6 @@ QToolTip {
                               <string/>
                              </property>
                             </column>
-                            <item row="0" column="0">
-                             <property name="text">
-                              <string>0</string>
-                             </property>
-                            </item>
-                            <item row="1" column="0">
-                             <property name="text">
-                              <string>0</string>
-                             </property>
-                            </item>
-                            <item row="2" column="0">
-                             <property name="text">
-                              <string>0</string>
-                             </property>
-                            </item>
-                            <item row="3" column="0">
-                             <property name="text">
-                              <string>0</string>
-                             </property>
-                            </item>
-                            <item row="4" column="0">
-                             <property name="text">
-                              <string>0</string>
-                             </property>
-                            </item>
-                            <item row="5" column="0">
-                             <property name="text">
-                              <string>0</string>
-                             </property>
-                            </item>
-                            <item row="6" column="0">
-                             <property name="text">
-                              <string>0</string>
-                             </property>
-                            </item>
                            </widget>
                           </item>
                          </layout>
@@ -4914,12 +4855,6 @@ QToolTip {
                                   <height>0</height>
                                  </size>
                                 </property>
-                                <property name="maximumSize">
-                                 <size>
-                                  <width>16777215</width>
-                                  <height>16777215</height>
-                                 </size>
-                                </property>
                                 <property name="styleSheet">
                                  <string notr="true">QTableWidget {	
 	padding: 10px;
@@ -4983,23 +4918,11 @@ QToolTip {
 	color:black;
 }</string>
                                 </property>
-                                <property name="editTriggers">
-                                 <set>QAbstractItemView::NoEditTriggers</set>
-                                </property>
                                 <attribute name="horizontalHeaderVisible">
-                                 <bool>false</bool>
-                                </attribute>
-                                <attribute name="horizontalHeaderCascadingSectionResizes">
                                  <bool>false</bool>
                                 </attribute>
                                 <attribute name="horizontalHeaderStretchLastSection">
                                  <bool>true</bool>
-                                </attribute>
-                                <attribute name="verticalHeaderVisible">
-                                 <bool>false</bool>
-                                </attribute>
-                                <attribute name="verticalHeaderCascadingSectionResizes">
-                                 <bool>false</bool>
                                 </attribute>
                                 <row>
                                  <property name="text">
@@ -5047,7 +4970,7 @@ QToolTip {
                                 </row>
                                 <row>
                                  <property name="text">
-                                  <string>Auroc</string>
+                                  <string>AUROC</string>
                                  </property>
                                  <property name="font">
                                   <font>
@@ -5058,7 +4981,7 @@ QToolTip {
                                 </row>
                                 <row>
                                  <property name="text">
-                                  <string>Auprc</string>
+                                  <string>AUPRC</string>
                                  </property>
                                  <property name="font">
                                   <font>
@@ -5078,6 +5001,11 @@ QToolTip {
                                   </font>
                                  </property>
                                 </row>
+                                <column>
+                                 <property name="text">
+                                  <string/>
+                                 </property>
+                                </column>
                                </widget>
                               </item>
                              </layout>

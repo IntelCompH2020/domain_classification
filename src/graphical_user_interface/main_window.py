@@ -180,7 +180,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.progress_bar_train_evaluate.setValue(0)
 
         self.init_params_train_pu_model()
-        self.init_train_results_table()
 
         # GET FEEDBACK WIDGETS
         # #####################################################################
@@ -208,7 +207,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.init_ndocs_al()
         self.init_feedback_elements()
-        #self.init_retrain_results_table()
 
         # THREADS FOR EXECUTING IN PARALLEL
         # #####################################################################
@@ -726,11 +724,6 @@ class MainWindow(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.WARNING_EVALUATION)
         return
 
-    def init_train_results_table(self):
-        """
-        """
-        self.table_pu_classification_results.setRowCount(7)
-        self.table_pu_classification_results.setColumnCount(1)
 
     # #########################################################################
     # GIVE FEEDBACK FUNCTIONS
@@ -953,8 +946,3 @@ class MainWindow(QtWidgets.QMainWindow):
         execute_in_thread(
             self, self.execute_reevaluate_model, self.do_after_reevaluate_model, self.progress_bar_feedback_update)
 
-    def init_retrain_results_table(self):
-        """
-        """
-        self.table_pu_reclassification_results.setRowCount(7)
-        self.table_pu_reclassification_results.setColumnCount(1)
