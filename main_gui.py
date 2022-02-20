@@ -34,7 +34,7 @@ from PyQt5 import QtGui
 from src.graphical_user_interface.main_window import *
 from src.graphical_user_interface.messages import Messages
 from src.task_manager import TaskManagerGUI
-
+from src.graphical_user_interface.stream_out import OutputWrapper
 
 class PreConfig(QDialog):
     def __init__(self, widget, args):
@@ -44,6 +44,10 @@ class PreConfig(QDialog):
 
         self.widget = widget
         self.args = args
+
+        # Redirect stdout and stderr
+        self.stdout = OutputWrapper(self, True)
+        self.stderr = OutputWrapper(self, False)
 
         # Get home in any operating system
         self.home = str(Path.home())
@@ -111,7 +115,7 @@ class PreConfig(QDialog):
             tm.load()
 
         # Change to the main menu
-        main_window = MainWindow(self.projectFolder, self.sourceFolder, tm, self.widget)
+        main_window = MainWindow(self.projectFolder, self.sourceFolder, tm, self.widget, self.stdout, self.stderr)
         self.widget.addWidget(main_window)
         self.widget.setCurrentIndex(self.widget.currentIndex() + 1)
         # widget.resize(2480, 1360)

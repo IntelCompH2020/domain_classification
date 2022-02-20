@@ -1988,7 +1988,7 @@ QToolTip {
                                </font>
                               </property>
                               <property name="text">
-                               <string>Select an option to load a preliminary subcorpus from the positive class:</string>
+                               <string>Load / reset labels</string>
                               </property>
                              </widget>
                             </item>
@@ -2221,31 +2221,35 @@ QPushButton:pressed {
                   <widget class="QWidget" name="page_train">
                    <layout class="QVBoxLayout" name="verticalLayout_10">
                     <item>
-                     <layout class="QVBoxLayout" name="verticalLayout_28">
+                     <layout class="QVBoxLayout" name="verticalLayout_39">
                       <item>
-                       <layout class="QHBoxLayout" name="horizontalLayout_49">
+                       <layout class="QVBoxLayout" name="verticalLayout_42">
                         <item>
-                         <widget class="QPushButton" name="info_button_train_model">
-                          <property name="sizePolicy">
-                           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                           </sizepolicy>
-                          </property>
-                          <property name="minimumSize">
-                           <size>
-                            <width>35</width>
-                            <height>35</height>
-                           </size>
-                          </property>
-                          <property name="maximumSize">
-                           <size>
-                            <width>35</width>
-                            <height>35</height>
-                           </size>
-                          </property>
-                          <property name="styleSheet">
-                           <string notr="true">QPushButton {
+                         <layout class="QHBoxLayout" name="horizontalLayout_52">
+                          <item>
+                           <layout class="QHBoxLayout" name="horizontalLayout_53">
+                            <item>
+                             <widget class="QPushButton" name="info_button_params_classifier">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="minimumSize">
+                               <size>
+                                <width>35</width>
+                                <height>35</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>35</width>
+                                <height>35</height>
+                               </size>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">QPushButton {
 	border: 2px solid #ABC2CB;
 	border-radius: 2px;	
 	background-color: #ABC2CB;
@@ -2264,55 +2268,148 @@ QToolTip {
 	background-color: #ABC2CB;
 	border: 2px solid #ABC2CB;
 }</string>
-                          </property>
-                          <property name="text">
-                           <string/>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QLabel" name="label_select_dataset_15">
-                          <property name="font">
-                           <font>
-                            <weight>75</weight>
-                            <bold>true</bold>
-                           </font>
-                          </property>
-                          <property name="text">
-                           <string>Train PU classifier model with the available labels</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
-                      </item>
-                      <item>
-                       <layout class="QHBoxLayout" name="horizontalLayout_50">
-                        <item>
-                         <layout class="QVBoxLayout" name="verticalLayout_29">
-                          <item>
-                           <layout class="QVBoxLayout" name="verticalLayout_31">
+                              </property>
+                              <property name="text">
+                               <string/>
+                              </property>
+                             </widget>
+                            </item>
                             <item>
-                             <widget class="QTableWidget" name="table_params_train_model_pu">
+                             <widget class="QLabel" name="label_select_dataset_18">
+                              <property name="font">
+                               <font>
+                                <weight>75</weight>
+                                <bold>true</bold>
+                               </font>
+                              </property>
+                              <property name="text">
+                               <string>Classifier parameters</string>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <layout class="QHBoxLayout" name="horizontalLayout_40">
+                            <item>
+                             <widget class="QPushButton" name="info_button_train_pu_model">
                               <property name="sizePolicy">
-                               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                                 <horstretch>0</horstretch>
                                 <verstretch>0</verstretch>
                                </sizepolicy>
                               </property>
                               <property name="minimumSize">
                                <size>
-                                <width>250</width>
-                                <height>0</height>
+                                <width>35</width>
+                                <height>35</height>
                                </size>
                               </property>
                               <property name="maximumSize">
                                <size>
-                                <width>550</width>
-                                <height>150</height>
+                                <width>35</width>
+                                <height>35</height>
                                </size>
                               </property>
                               <property name="styleSheet">
-                               <string notr="true">QTableWidget {	
+                               <string notr="true">QPushButton {
+	border: 2px solid #ABC2CB;
+	border-radius: 2px;	
+	background-color: #ABC2CB;
+	border-color:#576079;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+
+QToolTip {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                              </property>
+                              <property name="text">
+                               <string/>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <widget class="QLabel" name="label_select_dataset_21">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>16777215</width>
+                                <height>16777215</height>
+                               </size>
+                              </property>
+                              <property name="font">
+                               <font>
+                                <weight>75</weight>
+                                <bold>true</bold>
+                               </font>
+                              </property>
+                              <property name="text">
+                               <string>Train PU classifier model with the available labels</string>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_41">
+                          <item>
+                           <layout class="QVBoxLayout" name="verticalLayout_43">
+                            <item>
+                             <layout class="QHBoxLayout" name="horizontalLayout_54">
+                              <item>
+                               <spacer name="horizontalSpacer_78">
+                                <property name="orientation">
+                                 <enum>Qt::Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                 <enum>QSizePolicy::Fixed</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>40</width>
+                                  <height>20</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                              <item>
+                               <widget class="QTableWidget" name="table_train_pu_model_params">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>250</width>
+                                  <height>0</height>
+                                 </size>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>550</width>
+                                  <height>100</height>
+                                 </size>
+                                </property>
+                                <property name="styleSheet">
+                                 <string notr="true">QTableWidget {	
 	padding: 10px;
 	border-radius: 5px;
 	gridline-color: #DFE6ED;
@@ -2373,92 +2470,244 @@ QToolTip {
 	border: 2px solid #ABC2CB;
 	color:black;
 }</string>
-                              </property>
-                              <property name="editTriggers">
-                               <set>QAbstractItemView::CurrentChanged</set>
-                              </property>
-                              <attribute name="horizontalHeaderCascadingSectionResizes">
-                               <bool>false</bool>
-                              </attribute>
-                              <attribute name="horizontalHeaderStretchLastSection">
-                               <bool>true</bool>
-                              </attribute>
-                              <attribute name="verticalHeaderVisible">
-                               <bool>false</bool>
-                              </attribute>
-                              <attribute name="verticalHeaderCascadingSectionResizes">
-                               <bool>true</bool>
-                              </attribute>
-                              <attribute name="verticalHeaderStretchLastSection">
-                               <bool>true</bool>
-                              </attribute>
-                              <column>
-                               <property name="text">
-                                <string>max_imbalance</string>
-                               </property>
-                               <property name="font">
-                                <font>
-                                 <weight>75</weight>
-                                 <bold>true</bold>
-                                </font>
-                               </property>
-                               <property name="background">
-                                <color>
-                                 <red>255</red>
-                                 <green>255</green>
-                                 <blue>255</blue>
-                                </color>
-                               </property>
-                              </column>
-                              <column>
-                               <property name="text">
-                                <string>nmax</string>
-                               </property>
-                               <property name="font">
-                                <font>
-                                 <weight>75</weight>
-                                 <bold>true</bold>
-                                </font>
-                               </property>
-                              </column>
-                             </widget>
-                            </item>
-                           </layout>
-                          </item>
-                          <item>
-                           <layout class="QHBoxLayout" name="horizontalLayout_53">
-                            <item>
-                             <spacer name="horizontalSpacer_71">
-                              <property name="orientation">
-                               <enum>Qt::Horizontal</enum>
-                              </property>
-                              <property name="sizeType">
-                               <enum>QSizePolicy::Fixed</enum>
-                              </property>
-                              <property name="sizeHint" stdset="0">
-                               <size>
-                                <width>100</width>
-                                <height>20</height>
-                               </size>
-                              </property>
-                             </spacer>
+                                </property>
+                                <property name="editTriggers">
+                                 <set>QAbstractItemView::CurrentChanged</set>
+                                </property>
+                                <attribute name="horizontalHeaderCascadingSectionResizes">
+                                 <bool>false</bool>
+                                </attribute>
+                                <attribute name="horizontalHeaderStretchLastSection">
+                                 <bool>true</bool>
+                                </attribute>
+                                <attribute name="verticalHeaderVisible">
+                                 <bool>false</bool>
+                                </attribute>
+                                <attribute name="verticalHeaderCascadingSectionResizes">
+                                 <bool>true</bool>
+                                </attribute>
+                                <attribute name="verticalHeaderStretchLastSection">
+                                 <bool>true</bool>
+                                </attribute>
+                                <column>
+                                 <property name="text">
+                                  <string>max_imbalance</string>
+                                 </property>
+                                 <property name="font">
+                                  <font>
+                                   <weight>75</weight>
+                                   <bold>true</bold>
+                                  </font>
+                                 </property>
+                                 <property name="background">
+                                  <color>
+                                   <red>255</red>
+                                   <green>255</green>
+                                   <blue>255</blue>
+                                  </color>
+                                 </property>
+                                </column>
+                                <column>
+                                 <property name="text">
+                                  <string>nmax</string>
+                                 </property>
+                                 <property name="font">
+                                  <font>
+                                   <weight>75</weight>
+                                   <bold>true</bold>
+                                  </font>
+                                 </property>
+                                </column>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="horizontalSpacer_79">
+                                <property name="orientation">
+                                 <enum>Qt::Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                 <enum>QSizePolicy::Fixed</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>40</width>
+                                  <height>20</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
                             </item>
                             <item>
-                             <widget class="QPushButton" name="reset_params_training_model_push_button">
+                             <layout class="QHBoxLayout" name="horizontalLayout_55">
+                              <item>
+                               <spacer name="horizontalSpacer_80">
+                                <property name="orientation">
+                                 <enum>Qt::Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                 <enum>QSizePolicy::Fixed</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>40</width>
+                                  <height>20</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="update_param_pu_model_push_button">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>16777215</width>
+                                  <height>16777215</height>
+                                 </size>
+                                </property>
+                                <property name="styleSheet">
+                                 <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                                </property>
+                                <property name="text">
+                                 <string>Update parameters</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="reset_param_training_pu_model_push_button">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>16777215</width>
+                                  <height>16777215</height>
+                                 </size>
+                                </property>
+                                <property name="styleSheet">
+                                 <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                                </property>
+                                <property name="text">
+                                 <string>Reset parameters</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="horizontalSpacer_81">
+                                <property name="orientation">
+                                 <enum>Qt::Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                 <enum>QSizePolicy::Fixed</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>40</width>
+                                  <height>20</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </item>
+                            <item>
+                             <widget class="QFrame" name="frame_grip_10">
+                              <property name="enabled">
+                               <bool>true</bool>
+                              </property>
                               <property name="sizePolicy">
-                               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                               <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
                                 <horstretch>0</horstretch>
                                 <verstretch>0</verstretch>
                                </sizepolicy>
                               </property>
+                              <property name="minimumSize">
+                               <size>
+                                <width>650</width>
+                                <height>30</height>
+                               </size>
+                              </property>
                               <property name="maximumSize">
                                <size>
-                                <width>16777215</width>
-                                <height>16777215</height>
+                                <width>500</width>
+                                <height>20</height>
                                </size>
                               </property>
                               <property name="styleSheet">
-                               <string notr="true">QPushButton {
+                               <string notr="true">background-color: #CFCEC6;</string>
+                              </property>
+                              <property name="frameShape">
+                               <enum>QFrame::NoFrame</enum>
+                              </property>
+                              <property name="frameShadow">
+                               <enum>QFrame::Raised</enum>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <layout class="QVBoxLayout" name="verticalLayout_47">
+                            <item>
+                             <layout class="QHBoxLayout" name="horizontalLayout_56">
+                              <item>
+                               <spacer name="horizontalSpacer_67">
+                                <property name="orientation">
+                                 <enum>Qt::Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                 <enum>QSizePolicy::Fixed</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>190</width>
+                                  <height>20</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="train_pu_model_push_button">
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>120</width>
+                                  <height>16777215</height>
+                                 </size>
+                                </property>
+                                <property name="styleSheet">
+                                 <string notr="true">QPushButton {
 	border: 5px solid #ABC2CB;
 	border-radius: 5px;	
 	background-color: #ABC2CB;
@@ -2471,142 +2720,52 @@ QPushButton:pressed {
 	background-color: #ABC2CB;
 	border: 2px solid #ABC2CB;
 }</string>
-                              </property>
-                              <property name="text">
-                               <string>Reset parameters</string>
-                              </property>
-                             </widget>
+                                </property>
+                                <property name="text">
+                                 <string>Train PU model</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="horizontalSpacer_68">
+                                <property name="orientation">
+                                 <enum>Qt::Horizontal</enum>
+                                </property>
+                                <property name="sizeType">
+                                 <enum>QSizePolicy::Fixed</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>190</width>
+                                  <height>20</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
                             </item>
                             <item>
-                             <widget class="QPushButton" name="update_params_model_push_button">
+                             <widget class="QTextEdit" name="text_logs_train_pu_model">
                               <property name="sizePolicy">
-                               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                               <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                                 <horstretch>0</horstretch>
                                 <verstretch>0</verstretch>
                                </sizepolicy>
                               </property>
+                              <property name="minimumSize">
+                               <size>
+                                <width>650</width>
+                                <height>0</height>
+                               </size>
+                              </property>
                               <property name="maximumSize">
                                <size>
-                                <width>16777215</width>
+                                <width>500</width>
                                 <height>16777215</height>
                                </size>
                               </property>
                               <property name="styleSheet">
-                               <string notr="true">QPushButton {
-	border: 5px solid #ABC2CB;
-	border-radius: 5px;	
-	background-color: #ABC2CB;
-}
-QPushButton:hover {
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}
-QPushButton:pressed {	
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}</string>
-                              </property>
-                              <property name="text">
-                               <string>Update parameters</string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
-                             <spacer name="horizontalSpacer_73">
-                              <property name="orientation">
-                               <enum>Qt::Horizontal</enum>
-                              </property>
-                              <property name="sizeType">
-                               <enum>QSizePolicy::Fixed</enum>
-                              </property>
-                              <property name="sizeHint" stdset="0">
-                               <size>
-                                <width>100</width>
-                                <height>20</height>
-                               </size>
-                              </property>
-                             </spacer>
-                            </item>
-                           </layout>
-                          </item>
-                         </layout>
-                        </item>
-                        <item>
-                         <layout class="QVBoxLayout" name="verticalLayout_33">
-                          <item>
-                           <layout class="QHBoxLayout" name="horizontalLayout_57">
-                            <item>
-                             <spacer name="horizontalSpacer_65">
-                              <property name="orientation">
-                               <enum>Qt::Horizontal</enum>
-                              </property>
-                              <property name="sizeType">
-                               <enum>QSizePolicy::Fixed</enum>
-                              </property>
-                              <property name="sizeHint" stdset="0">
-                               <size>
-                                <width>250</width>
-                                <height>20</height>
-                               </size>
-                              </property>
-                             </spacer>
-                            </item>
-                            <item>
-                             <widget class="QPushButton" name="train_model_push_button">
-                              <property name="maximumSize">
-                               <size>
-                                <width>16777215</width>
-                                <height>16777215</height>
-                               </size>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true">QPushButton {
-	border: 5px solid #ABC2CB;
-	border-radius: 5px;	
-	background-color: #ABC2CB;
-}
-QPushButton:hover {
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}
-QPushButton:pressed {	
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}</string>
-                              </property>
-                              <property name="text">
-                               <string>Train PU model</string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
-                             <spacer name="horizontalSpacer_66">
-                              <property name="orientation">
-                               <enum>Qt::Horizontal</enum>
-                              </property>
-                              <property name="sizeType">
-                               <enum>QSizePolicy::Fixed</enum>
-                              </property>
-                              <property name="sizeHint" stdset="0">
-                               <size>
-                                <width>250</width>
-                                <height>20</height>
-                               </size>
-                              </property>
-                             </spacer>
-                            </item>
-                           </layout>
-                          </item>
-                          <item>
-                           <widget class="QTextEdit" name="text_logs_training">
-                            <property name="minimumSize">
-                             <size>
-                              <width>300</width>
-                              <height>0</height>
-                             </size>
-                            </property>
-                            <property name="styleSheet">
-                             <string notr="true">QTextEdit {	
+                               <string notr="true">QTextEdit {	
 	background-color: #FFFFFF;
 	border-radius: 5px;
 	gridline-color: #FFFFFF;
@@ -2621,20 +2780,22 @@ QPushButton:pressed {
     margin: 21px 0 21px 0;
 	border-radius: 0px;
  }</string>
-                            </property>
-                            <property name="readOnly">
-                             <bool>true</bool>
-                            </property>
-                           </widget>
+                              </property>
+                              <property name="readOnly">
+                               <bool>true</bool>
+                              </property>
+                             </widget>
+                            </item>
+                           </layout>
                           </item>
                          </layout>
                         </item>
                        </layout>
                       </item>
                       <item>
-                       <layout class="QHBoxLayout" name="horizontalLayout_54">
+                       <layout class="QHBoxLayout" name="horizontalLayout_46">
                         <item>
-                         <spacer name="horizontalSpacer_61">
+                         <spacer name="horizontalSpacer_69">
                           <property name="orientation">
                            <enum>Qt::Horizontal</enum>
                           </property>
@@ -2643,14 +2804,14 @@ QPushButton:pressed {
                           </property>
                           <property name="sizeHint" stdset="0">
                            <size>
-                            <width>200</width>
-                            <height>13</height>
+                            <width>197</width>
+                            <height>17</height>
                            </size>
                           </property>
                          </spacer>
                         </item>
                         <item>
-                         <widget class="QProgressBar" name="progress_bar_train_evaluate_pu">
+                         <widget class="QProgressBar" name="progress_bar_train_evaluate">
                           <property name="styleSheet">
                            <string notr="true">QProgressBar {
     border: 2px solid grey;
@@ -2668,7 +2829,7 @@ QProgressBar::chunk {
                          </widget>
                         </item>
                         <item>
-                         <spacer name="horizontalSpacer_62">
+                         <spacer name="horizontalSpacer_70">
                           <property name="orientation">
                            <enum>Qt::Horizontal</enum>
                           </property>
@@ -2677,20 +2838,24 @@ QProgressBar::chunk {
                           </property>
                           <property name="sizeHint" stdset="0">
                            <size>
-                            <width>200</width>
-                            <height>20</height>
+                            <width>197</width>
+                            <height>17</height>
                            </size>
                           </property>
                          </spacer>
                         </item>
                        </layout>
                       </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_51">
                       <item>
-                       <layout class="QVBoxLayout" name="verticalLayout_30">
+                       <layout class="QHBoxLayout" name="horizontalLayout_74">
                         <item>
-                         <layout class="QHBoxLayout" name="horizontalLayout_55">
+                         <layout class="QHBoxLayout" name="horizontalLayout_75">
                           <item>
-                           <widget class="QPushButton" name="info_button_eval_model">
+                           <widget class="QPushButton" name="info_button_eval_pu_classifier">
                             <property name="sizePolicy">
                              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                               <horstretch>0</horstretch>
@@ -2736,7 +2901,19 @@ QToolTip {
                            </widget>
                           </item>
                           <item>
-                           <widget class="QLabel" name="label_select_dataset_16">
+                           <widget class="QLabel" name="label_select_dataset_30">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>16777215</width>
+                              <height>16777215</height>
+                             </size>
+                            </property>
                             <property name="font">
                              <font>
                               <weight>75</weight>
@@ -2751,30 +2928,120 @@ QToolTip {
                          </layout>
                         </item>
                         <item>
-                         <layout class="QHBoxLayout" name="horizontalLayout_56">
+                         <layout class="QHBoxLayout" name="horizontalLayout_76">
                           <item>
-                           <spacer name="horizontalSpacer_63">
-                            <property name="orientation">
-                             <enum>Qt::Horizontal</enum>
+                           <widget class="QPushButton" name="info_button_pu_classification_results">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
                             </property>
-                            <property name="sizeHint" stdset="0">
+                            <property name="minimumSize">
                              <size>
-                              <width>40</width>
-                              <height>20</height>
+                              <width>35</width>
+                              <height>35</height>
                              </size>
                             </property>
-                           </spacer>
+                            <property name="maximumSize">
+                             <size>
+                              <width>35</width>
+                              <height>35</height>
+                             </size>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">QPushButton {
+	border: 2px solid #ABC2CB;
+	border-radius: 2px;	
+	background-color: #ABC2CB;
+	border-color:#576079;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+
+QToolTip {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                            </property>
+                            <property name="text">
+                             <string/>
+                            </property>
+                           </widget>
                           </item>
                           <item>
-                           <widget class="QPushButton" name="eval_model_push_button">
+                           <widget class="QLabel" name="label_select_dataset_31">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
                             <property name="maximumSize">
                              <size>
                               <width>16777215</width>
                               <height>16777215</height>
                              </size>
                             </property>
-                            <property name="styleSheet">
-                             <string notr="true">QPushButton {
+                            <property name="font">
+                             <font>
+                              <weight>75</weight>
+                              <bold>true</bold>
+                             </font>
+                            </property>
+                            <property name="text">
+                             <string>CLASSIFICATION RESULTS</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <layout class="QHBoxLayout" name="horizontalLayout_77">
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_52">
+                          <item>
+                           <layout class="QHBoxLayout" name="horizontalLayout_78">
+                            <item>
+                             <spacer name="horizontalSpacer_86">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeType">
+                               <enum>QSizePolicy::Fixed</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>175</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                            <item>
+                             <widget class="QPushButton" name="eval_pu_classifier_push_button">
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>150</width>
+                                <height>16777215</height>
+                               </size>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">QPushButton {
 	border: 5px solid #ABC2CB;
 	border-radius: 5px;	
 	background-color: #ABC2CB;
@@ -2787,31 +3054,52 @@ QPushButton:pressed {
 	background-color: #ABC2CB;
 	border: 2px solid #ABC2CB;
 }</string>
-                            </property>
-                            <property name="text">
-                             <string>Evaluate PU model</string>
-                            </property>
-                           </widget>
+                              </property>
+                              <property name="text">
+                               <string>Evaluate PU model</string>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
+                             <spacer name="horizontalSpacer_87">
+                              <property name="orientation">
+                               <enum>Qt::Horizontal</enum>
+                              </property>
+                              <property name="sizeType">
+                               <enum>QSizePolicy::Fixed</enum>
+                              </property>
+                              <property name="sizeHint" stdset="0">
+                               <size>
+                                <width>175</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                             </spacer>
+                            </item>
+                           </layout>
                           </item>
                           <item>
-                           <spacer name="horizontalSpacer_64">
-                            <property name="orientation">
-                             <enum>Qt::Horizontal</enum>
+                           <widget class="QTextEdit" name="text_edit_results_eval_pu_classifier">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
                             </property>
-                            <property name="sizeHint" stdset="0">
+                            <property name="minimumSize">
                              <size>
-                              <width>40</width>
-                              <height>20</height>
+                              <width>650</width>
+                              <height>0</height>
                              </size>
                             </property>
-                           </spacer>
-                          </item>
-                         </layout>
-                        </item>
-                        <item>
-                         <widget class="QTextEdit" name="text_edit_results_eval_model">
-                          <property name="styleSheet">
-                           <string notr="true">QTextEdit {	
+                            <property name="maximumSize">
+                             <size>
+                              <width>16777215</width>
+                              <height>16777215</height>
+                             </size>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">QTextEdit {	
 	background-color: #FFFFFF;
 	border-radius: 5px;
 	gridline-color: #FFFFFF;
@@ -2826,11 +3114,259 @@ QPushButton:pressed {
     margin: 21px 0 21px 0;
 	border-radius: 0px;
  }</string>
-                          </property>
-                          <property name="readOnly">
-                           <bool>true</bool>
-                          </property>
-                         </widget>
+                            </property>
+                            <property name="readOnly">
+                             <bool>true</bool>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_56">
+                          <item>
+                           <spacer name="verticalSpacer_4">
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
+                            </property>
+                            <property name="sizeType">
+                             <enum>QSizePolicy::Fixed</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>20</width>
+                              <height>30</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                          <item>
+                           <widget class="QTableWidget" name="table_pu_classification_results">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                             <size>
+                              <width>650</width>
+                              <height>0</height>
+                             </size>
+                            </property>
+                            <property name="maximumSize">
+                             <size>
+                              <width>16777215</width>
+                              <height>16777215</height>
+                             </size>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">QTableWidget {	
+	padding: 10px;
+	border-radius: 5px;
+	gridline-color: #DFE6ED;
+	color:black;
+
+}
+QTableWidget::item{
+	background-color: #ABC2CB;
+	border-color: #DFE6ED;
+	padding-left: 5px;
+	padding-right: 5px;
+	gridline-color: #DFE6ED;
+}
+QTableWidget::item:selected{
+	background-color: #C7CDDA;
+}
+QScrollBar:horizontal {
+    border: none;
+    background: #A3A8AD;
+    height: 14px;
+    margin: 0px 21px 0 21px;
+	border-radius: 0px;
+}
+ QScrollBar:vertical {
+	border: none;
+    background: #A3A8AD;
+    width: 14px;
+    margin: 21px 0 21px 0;
+	border-radius: 0px;
+ }
+QHeaderView::section{
+	Background-color: #576079;
+	max-width: 30px;
+	border: 1px solid #576079;
+	border-style: none;
+    border-bottom: 1px solid #576079;
+    border-right: 1px solid #576079;
+	color:white;
+}
+QTableWidget::horizontalHeader {	
+	background-color: #576079;
+}
+QHeaderView::section:horizontal
+{
+    border: 1px solid #DFE6ED;
+	background-color: #576079;
+	padding: 3px;
+	border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+}
+QHeaderView::section:vertical
+{
+    border: 1px solid #576079;
+}
+
+QToolTip {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+	color:black;
+}</string>
+                            </property>
+                            <property name="editTriggers">
+                             <set>QAbstractItemView::NoEditTriggers</set>
+                            </property>
+                            <attribute name="horizontalHeaderVisible">
+                             <bool>false</bool>
+                            </attribute>
+                            <attribute name="horizontalHeaderCascadingSectionResizes">
+                             <bool>false</bool>
+                            </attribute>
+                            <attribute name="horizontalHeaderStretchLastSection">
+                             <bool>true</bool>
+                            </attribute>
+                            <attribute name="verticalHeaderVisible">
+                             <bool>false</bool>
+                            </attribute>
+                            <attribute name="verticalHeaderCascadingSectionResizes">
+                             <bool>true</bool>
+                            </attribute>
+                            <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+                             <bool>false</bool>
+                            </attribute>
+                            <attribute name="verticalHeaderStretchLastSection">
+                             <bool>false</bool>
+                            </attribute>
+                            <row>
+                             <property name="text">
+                              <string>TP</string>
+                             </property>
+                             <property name="font">
+                              <font>
+                               <weight>75</weight>
+                               <bold>true</bold>
+                              </font>
+                             </property>
+                            </row>
+                            <row>
+                             <property name="text">
+                              <string>TN</string>
+                             </property>
+                             <property name="font">
+                              <font>
+                               <weight>75</weight>
+                               <bold>true</bold>
+                              </font>
+                             </property>
+                            </row>
+                            <row>
+                             <property name="text">
+                              <string>FP</string>
+                             </property>
+                             <property name="font">
+                              <font>
+                               <weight>75</weight>
+                               <bold>true</bold>
+                              </font>
+                             </property>
+                            </row>
+                            <row>
+                             <property name="text">
+                              <string>FN</string>
+                             </property>
+                             <property name="font">
+                              <font>
+                               <weight>75</weight>
+                               <bold>true</bold>
+                              </font>
+                             </property>
+                            </row>
+                            <row>
+                             <property name="text">
+                              <string>Auroc</string>
+                             </property>
+                             <property name="font">
+                              <font>
+                               <weight>75</weight>
+                               <bold>true</bold>
+                              </font>
+                             </property>
+                            </row>
+                            <row>
+                             <property name="text">
+                              <string>Auprc</string>
+                             </property>
+                             <property name="font">
+                              <font>
+                               <weight>75</weight>
+                               <bold>true</bold>
+                              </font>
+                             </property>
+                            </row>
+                            <row>
+                             <property name="text">
+                              <string>Evaluation loss</string>
+                             </property>
+                             <property name="font">
+                              <font>
+                               <weight>75</weight>
+                               <bold>true</bold>
+                              </font>
+                             </property>
+                            </row>
+                            <column>
+                             <property name="text">
+                              <string/>
+                             </property>
+                            </column>
+                            <item row="0" column="0">
+                             <property name="text">
+                              <string>0</string>
+                             </property>
+                            </item>
+                            <item row="1" column="0">
+                             <property name="text">
+                              <string>0</string>
+                             </property>
+                            </item>
+                            <item row="2" column="0">
+                             <property name="text">
+                              <string>0</string>
+                             </property>
+                            </item>
+                            <item row="3" column="0">
+                             <property name="text">
+                              <string>0</string>
+                             </property>
+                            </item>
+                            <item row="4" column="0">
+                             <property name="text">
+                              <string>0</string>
+                             </property>
+                            </item>
+                            <item row="5" column="0">
+                             <property name="text">
+                              <string>0</string>
+                             </property>
+                            </item>
+                            <item row="6" column="0">
+                             <property name="text">
+                              <string>0</string>
+                             </property>
+                            </item>
+                           </widget>
+                          </item>
+                         </layout>
                         </item>
                        </layout>
                       </item>
@@ -4099,141 +4635,251 @@ QProgressBar::chunk {
                         <item>
                          <layout class="QVBoxLayout" name="verticalLayout_12">
                           <item>
-                           <layout class="QHBoxLayout" name="horizontalLayout_10">
-                            <item>
-                             <spacer name="horizontalSpacer_15">
-                              <property name="orientation">
-                               <enum>Qt::Horizontal</enum>
-                              </property>
-                              <property name="sizeHint" stdset="0">
-                               <size>
-                                <width>200</width>
-                                <height>23</height>
-                               </size>
-                              </property>
-                             </spacer>
-                            </item>
-                            <item>
-                             <widget class="QPushButton" name="give_feedback_push_button">
-                              <property name="maximumSize">
-                               <size>
-                                <width>16777215</width>
-                                <height>16777215</height>
-                               </size>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true">QPushButton {
-	border: 5px solid #ABC2CB;
-	border-radius: 5px;	
-	background-color: #ABC2CB;
-}
-QPushButton:hover {
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}
-QPushButton:pressed {	
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}</string>
-                              </property>
-                              <property name="text">
-                               <string>Give feedback</string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
-                             <widget class="QPushButton" name="retrain_model_push_button">
-                              <property name="maximumSize">
-                               <size>
-                                <width>16777215</width>
-                                <height>16777215</height>
-                               </size>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true">QPushButton {
-	border: 5px solid #ABC2CB;
-	border-radius: 5px;	
-	background-color: #ABC2CB;
-}
-QPushButton:hover {
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}
-QPushButton:pressed {	
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}</string>
-                              </property>
-                              <property name="text">
-                               <string>Retrain model </string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
-                             <widget class="QPushButton" name="reevaluate_model_push_button">
-                              <property name="maximumSize">
-                               <size>
-                                <width>16777215</width>
-                                <height>16777215</height>
-                               </size>
-                              </property>
-                              <property name="styleSheet">
-                               <string notr="true">QPushButton {
-	border: 5px solid #ABC2CB;
-	border-radius: 5px;	
-	background-color: #ABC2CB;
-}
-QPushButton:hover {
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}
-QPushButton:pressed {	
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-}</string>
-                              </property>
-                              <property name="text">
-                               <string>Reevaluate model</string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
-                             <spacer name="horizontalSpacer_16">
-                              <property name="orientation">
-                               <enum>Qt::Horizontal</enum>
-                              </property>
-                              <property name="sizeHint" stdset="0">
-                               <size>
-                                <width>200</width>
-                                <height>23</height>
-                               </size>
-                              </property>
-                             </spacer>
-                            </item>
-                           </layout>
+                           <layout class="QHBoxLayout" name="horizontalLayout_10"/>
                           </item>
                           <item>
-                           <widget class="QTextEdit" name="text_edit_results_eval_model_2">
-                            <property name="sizePolicy">
-                             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                              <horstretch>0</horstretch>
-                              <verstretch>0</verstretch>
-                             </sizepolicy>
-                            </property>
-                            <property name="minimumSize">
-                             <size>
-                              <width>0</width>
-                              <height>100</height>
-                             </size>
-                            </property>
-                            <property name="maximumSize">
-                             <size>
-                              <width>16777215</width>
-                              <height>16777215</height>
-                             </size>
-                            </property>
-                            <property name="styleSheet">
-                             <string notr="true">QTextEdit {	
+                           <layout class="QVBoxLayout" name="verticalLayout_57">
+                            <item>
+                             <layout class="QHBoxLayout" name="horizontalLayout_79">
+                              <item>
+                               <layout class="QHBoxLayout" name="horizontalLayout_80">
+                                <item>
+                                 <spacer name="horizontalSpacer_48">
+                                  <property name="orientation">
+                                   <enum>Qt::Horizontal</enum>
+                                  </property>
+                                  <property name="sizeType">
+                                   <enum>QSizePolicy::Fixed</enum>
+                                  </property>
+                                  <property name="sizeHint" stdset="0">
+                                   <size>
+                                    <width>100</width>
+                                    <height>20</height>
+                                   </size>
+                                  </property>
+                                 </spacer>
+                                </item>
+                                <item>
+                                 <widget class="QPushButton" name="give_feedback_user_push_button">
+                                  <property name="sizePolicy">
+                                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                   </sizepolicy>
+                                  </property>
+                                  <property name="maximumSize">
+                                   <size>
+                                    <width>150</width>
+                                    <height>16777215</height>
+                                   </size>
+                                  </property>
+                                  <property name="styleSheet">
+                                   <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                                  </property>
+                                  <property name="text">
+                                   <string>Give feedback</string>
+                                  </property>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QPushButton" name="retrain_pu_model_push_button">
+                                  <property name="sizePolicy">
+                                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                   </sizepolicy>
+                                  </property>
+                                  <property name="maximumSize">
+                                   <size>
+                                    <width>150</width>
+                                    <height>16777215</height>
+                                   </size>
+                                  </property>
+                                  <property name="styleSheet">
+                                   <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                                  </property>
+                                  <property name="text">
+                                   <string>Retrain model </string>
+                                  </property>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QPushButton" name="reevaluate_pu_model_push_button">
+                                  <property name="sizePolicy">
+                                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                   </sizepolicy>
+                                  </property>
+                                  <property name="maximumSize">
+                                   <size>
+                                    <width>150</width>
+                                    <height>16777215</height>
+                                   </size>
+                                  </property>
+                                  <property name="styleSheet">
+                                   <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                                  </property>
+                                  <property name="text">
+                                   <string>Reevaluate model</string>
+                                  </property>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <spacer name="horizontalSpacer_49">
+                                  <property name="orientation">
+                                   <enum>Qt::Horizontal</enum>
+                                  </property>
+                                  <property name="sizeType">
+                                   <enum>QSizePolicy::Fixed</enum>
+                                  </property>
+                                  <property name="sizeHint" stdset="0">
+                                   <size>
+                                    <width>100</width>
+                                    <height>20</height>
+                                   </size>
+                                  </property>
+                                 </spacer>
+                                </item>
+                               </layout>
+                              </item>
+                              <item>
+                               <layout class="QHBoxLayout" name="horizontalLayout_81">
+                                <item>
+                                 <widget class="QPushButton" name="info_button_pu_reclassification_results">
+                                  <property name="sizePolicy">
+                                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                   </sizepolicy>
+                                  </property>
+                                  <property name="minimumSize">
+                                   <size>
+                                    <width>35</width>
+                                    <height>35</height>
+                                   </size>
+                                  </property>
+                                  <property name="maximumSize">
+                                   <size>
+                                    <width>35</width>
+                                    <height>35</height>
+                                   </size>
+                                  </property>
+                                  <property name="styleSheet">
+                                   <string notr="true">QPushButton {
+	border: 2px solid #ABC2CB;
+	border-radius: 2px;	
+	background-color: #ABC2CB;
+	border-color:#576079;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+
+QToolTip {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+                                  </property>
+                                  <property name="text">
+                                   <string/>
+                                  </property>
+                                 </widget>
+                                </item>
+                                <item>
+                                 <widget class="QLabel" name="label_select_dataset_32">
+                                  <property name="sizePolicy">
+                                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                   </sizepolicy>
+                                  </property>
+                                  <property name="maximumSize">
+                                   <size>
+                                    <width>16777215</width>
+                                    <height>16777215</height>
+                                   </size>
+                                  </property>
+                                  <property name="font">
+                                   <font>
+                                    <weight>75</weight>
+                                    <bold>true</bold>
+                                   </font>
+                                  </property>
+                                  <property name="text">
+                                   <string>RECLASSIFICATION RESULTS</string>
+                                  </property>
+                                 </widget>
+                                </item>
+                               </layout>
+                              </item>
+                             </layout>
+                            </item>
+                            <item>
+                             <layout class="QHBoxLayout" name="horizontalLayout_82">
+                              <item>
+                               <widget class="QTextEdit" name="text_edit_results_reval_retrain_pu_model">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>650</width>
+                                  <height>100</height>
+                                 </size>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>16777215</width>
+                                  <height>16777215</height>
+                                 </size>
+                                </property>
+                                <property name="styleSheet">
+                                 <string notr="true">QTextEdit {	
 	background-color: #FFFFFF;
 	border-radius: 5px;
 	gridline-color: #FFFFFF;
@@ -4248,11 +4894,195 @@ QPushButton:pressed {
     margin: 21px 0 21px 0;
 	border-radius: 0px;
  }</string>
-                            </property>
-                            <property name="readOnly">
-                             <bool>true</bool>
-                            </property>
-                           </widget>
+                                </property>
+                                <property name="readOnly">
+                                 <bool>true</bool>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QTableWidget" name="table_pu_reclassification_results">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>650</width>
+                                  <height>0</height>
+                                 </size>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>16777215</width>
+                                  <height>16777215</height>
+                                 </size>
+                                </property>
+                                <property name="styleSheet">
+                                 <string notr="true">QTableWidget {	
+	padding: 10px;
+	border-radius: 5px;
+	gridline-color: #DFE6ED;
+	color:black;
+
+}
+QTableWidget::item{
+	background-color: #ABC2CB;
+	border-color: #DFE6ED;
+	padding-left: 5px;
+	padding-right: 5px;
+	gridline-color: #DFE6ED;
+}
+QTableWidget::item:selected{
+	background-color: #C7CDDA;
+}
+QScrollBar:horizontal {
+    border: none;
+    background: #A3A8AD;
+    height: 14px;
+    margin: 0px 21px 0 21px;
+	border-radius: 0px;
+}
+ QScrollBar:vertical {
+	border: none;
+    background: #A3A8AD;
+    width: 14px;
+    margin: 21px 0 21px 0;
+	border-radius: 0px;
+ }
+QHeaderView::section{
+	Background-color: #576079;
+	max-width: 30px;
+	border: 1px solid #576079;
+	border-style: none;
+    border-bottom: 1px solid #576079;
+    border-right: 1px solid #576079;
+	color:white;
+}
+QTableWidget::horizontalHeader {	
+	background-color: #576079;
+}
+QHeaderView::section:horizontal
+{
+    border: 1px solid #DFE6ED;
+	background-color: #576079;
+	padding: 3px;
+	border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+}
+QHeaderView::section:vertical
+{
+    border: 1px solid #576079;
+}
+
+QToolTip {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+	color:black;
+}</string>
+                                </property>
+                                <property name="editTriggers">
+                                 <set>QAbstractItemView::NoEditTriggers</set>
+                                </property>
+                                <attribute name="horizontalHeaderVisible">
+                                 <bool>false</bool>
+                                </attribute>
+                                <attribute name="horizontalHeaderCascadingSectionResizes">
+                                 <bool>false</bool>
+                                </attribute>
+                                <attribute name="horizontalHeaderStretchLastSection">
+                                 <bool>true</bool>
+                                </attribute>
+                                <attribute name="verticalHeaderVisible">
+                                 <bool>false</bool>
+                                </attribute>
+                                <attribute name="verticalHeaderCascadingSectionResizes">
+                                 <bool>false</bool>
+                                </attribute>
+                                <row>
+                                 <property name="text">
+                                  <string>TP</string>
+                                 </property>
+                                 <property name="font">
+                                  <font>
+                                   <weight>75</weight>
+                                   <bold>true</bold>
+                                  </font>
+                                 </property>
+                                </row>
+                                <row>
+                                 <property name="text">
+                                  <string>TN</string>
+                                 </property>
+                                 <property name="font">
+                                  <font>
+                                   <weight>75</weight>
+                                   <bold>true</bold>
+                                  </font>
+                                 </property>
+                                </row>
+                                <row>
+                                 <property name="text">
+                                  <string>FP</string>
+                                 </property>
+                                 <property name="font">
+                                  <font>
+                                   <weight>75</weight>
+                                   <bold>true</bold>
+                                  </font>
+                                 </property>
+                                </row>
+                                <row>
+                                 <property name="text">
+                                  <string>FN</string>
+                                 </property>
+                                 <property name="font">
+                                  <font>
+                                   <weight>75</weight>
+                                   <bold>true</bold>
+                                  </font>
+                                 </property>
+                                </row>
+                                <row>
+                                 <property name="text">
+                                  <string>Auroc</string>
+                                 </property>
+                                 <property name="font">
+                                  <font>
+                                   <weight>75</weight>
+                                   <bold>true</bold>
+                                  </font>
+                                 </property>
+                                </row>
+                                <row>
+                                 <property name="text">
+                                  <string>Auprc</string>
+                                 </property>
+                                 <property name="font">
+                                  <font>
+                                   <weight>75</weight>
+                                   <bold>true</bold>
+                                  </font>
+                                 </property>
+                                </row>
+                                <row>
+                                 <property name="text">
+                                  <string>Evaluation loss</string>
+                                 </property>
+                                 <property name="font">
+                                  <font>
+                                   <weight>75</weight>
+                                   <bold>true</bold>
+                                  </font>
+                                 </property>
+                                </row>
+                               </widget>
+                              </item>
+                             </layout>
+                            </item>
+                           </layout>
                           </item>
                          </layout>
                         </item>

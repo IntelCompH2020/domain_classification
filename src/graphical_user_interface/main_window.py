@@ -12,13 +12,15 @@ Class representing the main window of the application.
 #                                IMPORTS                                     #
 ##############################################################################
 # General imports
+import sys
+
 import numpy as np
 from PyQt5 import uic, QtWidgets, QtCore
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QButtonGroup, QDesktopWidget, QTextEdit, QGridLayout, QCheckBox, QVBoxLayout, QSpacerItem, \
-    QSizePolicy, QHBoxLayout, QWidgetItem
-from PyQt5.QtCore import QThreadPool, QSize
+from PyQt5.QtGui import QIcon, QTextCursor
+from PyQt5.QtWidgets import QButtonGroup, QDesktopWidget, QTextEdit, QCheckBox
+from PyQt5.QtCore import QThreadPool, QSize, pyqtSlot
 from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
 from functools import partial
 
 # Local imports
@@ -33,7 +35,7 @@ from src.graphical_user_interface.constants import Constants
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, project_folder, source_folder, tm, widget):
+    def __init__(self, project_folder, source_folder, tm, widget, stdout, stderr):
         super(MainWindow, self).__init__()
 
         # Load UI and configure default geometry of the window
@@ -63,7 +65,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.result_evaluation_pu_model = None
         self.text_to_print_train = ""
         self.text_to_print_eval = ""
-        self.n_docs_al_dft = 4 # self.tm.global_parameters['active_learning']['n_docs'] @TODO: Change when commit
+        self.n_docs_al_dft = 4  # self.tm.global_parameters['active_learning']['n_docs'] @TODO: Change when commit
         self.n_docs_al = self.n_docs_al_dft
         self.selected_docs_to_annotate = None
         self.idx_docs_to_annotate = None
@@ -78,11 +80,13 @@ class MainWindow(QtWidgets.QMainWindow):
             Constants.BUTTONS_SCALE * QSize(self.info_button_select_corpus.width(),
                                             self.info_button_select_corpus.height()))
         self.info_button_select_corpus.setToolTip(Messages.INFO_SELECT_CORPUS)
+
         self.info_button_get_labels.setIcon(QIcon('Images/help2.png'))
         self.info_button_get_labels.setIconSize(
             Constants.BUTTONS_SCALE * QSize(self.info_button_get_labels.width(),
                                             self.info_button_get_labels.height()))
         self.info_button_get_labels.setToolTip(Messages.INFO_GET_LABELS)
+
         self.info_button_load_reset_labels.setIcon(QIcon('Images/help2.png'))
         self.info_button_load_reset_labels.setIconSize(
             Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
@@ -91,16 +95,28 @@ class MainWindow(QtWidgets.QMainWindow):
             Messages.INFO_LOAD_RESET_LABELS)
 
         # TAB TRAINING-EVALUATION
-        self.info_button_train_model.setIcon(QIcon('Images/help2.png'))
-        self.info_button_train_model.setIconSize(
+        self.info_button_train_pu_model.setIcon(QIcon('Images/help2.png'))
+        self.info_button_train_pu_model.setIconSize(
             Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
                                             self.info_button_load_reset_labels.height()))
-        self.info_button_train_model.setToolTip(Messages.INFO_TRAIN_PU_MODEL)
-        self.info_button_eval_model.setIcon(QIcon('Images/help2.png'))
-        self.info_button_eval_model.setIconSize(
+        self.info_button_train_pu_model.setToolTip(Messages.INFO_TRAIN_PU_MODEL)
+
+        self.info_button_eval_pu_classifier.setIcon(QIcon('Images/help2.png'))
+        self.info_button_eval_pu_classifier.setIconSize(
             Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
                                             self.info_button_load_reset_labels.height()))
-        self.info_button_eval_model.setToolTip(Messages.INFO_EVALUATE_PU_MODEL)
+        self.info_button_eval_pu_classifier.setToolTip(Messages.INFO_EVALUATE_PU_MODEL)
+
+        self.info_button_params_classifier.setIcon(QIcon('Images/help2.png'))
+        self.info_button_params_classifier.setIconSize(
+            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
+                                            self.info_button_load_reset_labels.height()))
+        self.info_button_params_classifier.setToolTip(Messages.INFO_TABLE_TRAIN_PU_MODEL)
+
+        self.info_button_pu_classification_results.setIcon(QIcon('Images/help2.png'))
+        self.info_button_pu_classification_results.setIconSize(
+            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
+                                            self.info_button_load_reset_labels.height()))
 
         # TAB FEEDBACK
         self.info_button_give_feedback.setIcon(QIcon('Images/help2.png'))
@@ -108,11 +124,17 @@ class MainWindow(QtWidgets.QMainWindow):
             Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
                                             self.info_button_load_reset_labels.height()))
         self.info_button_give_feedback.setToolTip(Messages.INFO_FEEDBACK)
+
         self.info_button_ndocs_al.setIcon(QIcon('Images/help2.png'))
         self.info_button_ndocs_al.setIconSize(
             Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
                                             self.info_button_load_reset_labels.height()))
         self.info_button_ndocs_al.setToolTip(Messages.INFO_N_DOCS_AL)
+
+        self.info_button_pu_reclassification_results.setIcon(QIcon('Images/help2.png'))
+        self.info_button_pu_reclassification_results.setIconSize(
+            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
+                                            self.info_button_load_reset_labels.height()))
 
         # #####################################################################
         # CONFIGURE ELEMENTS IN THE "LOAD CORPUS VIEW"
@@ -145,29 +167,29 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # TRAIN AND EVALUATE PU MODEL WIDGETS
         # #####################################################################
-        self.train_model_push_button.clicked.connect(
+        self.train_pu_model_push_button.clicked.connect(
             self.clicked_train_PU_model)
-        self.progress_bar_train_evaluate_pu.setVisible(False)
-        self.progress_bar_train_evaluate_pu.setValue(0)
-        self.eval_model_push_button.clicked.connect(
+        self.progress_bar_train_evaluate.setVisible(False)
+        self.progress_bar_train_evaluate.setValue(0)
+        self.eval_pu_classifier_push_button.clicked.connect(
             self.clicked_evaluate_PU_model)
-        self.update_params_model_push_button.clicked.connect(
+        self.update_param_pu_model_push_button.clicked.connect(
             self.update_params_train_pu_model)
-        self.table_params_train_model_pu.setToolTip(Messages.INFO_TABLE_TRAIN_PU_MODEL)
 
-        self.progress_bar_train_evaluate_pu.setVisible(False)
-        self.progress_bar_train_evaluate_pu.setValue(0)
+        self.progress_bar_train_evaluate.setVisible(False)
+        self.progress_bar_train_evaluate.setValue(0)
 
         self.init_params_train_pu_model()
+        self.init_train_results_table()
 
         # GET FEEDBACK WIDGETS
         # #####################################################################
-        self.give_feedback_push_button.clicked.connect(
+        self.give_feedback_user_push_button.clicked.connect(
             self.clicked_give_feedback)
         self.update_ndocs_al_push_button.clicked.connect(self.clicked_update_ndocs_al)
-        self.retrain_model_push_button.clicked.connect(
+        self.retrain_pu_model_push_button.clicked.connect(
             self.clicked_retrain_model)
-        self.reevaluate_model_push_button.clicked.connect(
+        self.reevaluate_pu_model_push_button.clicked.connect(
             self.clicked_reevaluate_model)
 
         checkboxes_predictions = []
@@ -185,7 +207,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.progress_bar_feedback_update.setValue(0)
 
         self.init_ndocs_al()
-        self.init_feedback_elements() #@ TODO: call this function after training model
+        self.init_feedback_elements()
+        #self.init_retrain_results_table()
 
         # THREADS FOR EXECUTING IN PARALLEL
         # #####################################################################
@@ -194,6 +217,10 @@ class MainWindow(QtWidgets.QMainWindow):
               " %d threads" % self.thread_pool.maxThreadCount())
         self.worker = None
         self.loading_window = None
+
+        # Attributes to redirect stdout and stderr
+        self.stdout = stdout
+        self.stderr = stderr
 
         # TOGGLE MENU
         # #####################################################################
@@ -252,17 +279,27 @@ class MainWindow(QtWidgets.QMainWindow):
     # LOAD CORPUS FUNCTIONS
     # #################################################################################################################
     def show_corpora(self):
-        """ List all corpora contained in the source folder selected by the user.
+        """
+        List all corpora contained in the source folder selected by the user.
         """
         corpus_list = self.tm.DM.get_corpus_list()
         for corpus_nr in np.arange(0, len(corpus_list), 1):
             self.tree_view_select_corpus.insertItem(
                 corpus_nr, corpus_list[corpus_nr])
 
+        # If a corpus was already loaded in the current project, show such a corpus as selected corpus
+        if self.tm.state['selected_corpus']:
+            current_corpus = self.tm.metadata['corpus_name']
+            informative = "The corpus of this project is " + current_corpus + "."
+            QtWidgets.QMessageBox.information(self, Messages.DC_MESSAGE, informative)
+            self.label_corpus_selected_is.setText(str(current_corpus))
+            self.show_labels()
+
         return
 
     def execute_load_corpus(self):
-        """ Method to control the execution of the loading of a corpus on a
+        """
+        Method to control the execution of the loading of a corpus on a
         secondary thread while the MainWindow execution is maintained in the
         main thread.
         """
@@ -270,7 +307,8 @@ class MainWindow(QtWidgets.QMainWindow):
         return "Done."
 
     def do_after_load_corpus(self):
-        """ Method to be executed after the loading of the corpus has been
+        """
+        Method to be executed after the loading of the corpus has been
         completed.
         """
         # Hide progress bar
@@ -289,7 +327,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show_labels()
 
     def clicked_load_corpus(self):
-        """ Method to control the selection of a new corpus by double-clicking
+        """
+        Method to control the selection of a new corpus by double-clicking
         into one of the items of the corpus list
         within the selected source folder, as well as its loading as dataframe
         into the TaskManager object.
@@ -319,7 +358,8 @@ class MainWindow(QtWidgets.QMainWindow):
     # GET LABELS FUNCTIONS
     # #########################################################################
     def execute_import_labels(self):
-        """Imports the labels by invoking the corresponding method in the Task Manager object associated with the GUI.
+        """
+        Imports the labels by invoking the corresponding method in the Task Manager object associated with the GUI.
         """
         # Get labels
         if self.get_label_option == 1:
@@ -527,18 +567,23 @@ class MainWindow(QtWidgets.QMainWindow):
     # #########################################################################
     # TRAIN PU MODEL FUNCTIONS
     # #########################################################################
+    @pyqtSlot(str)
+    def append_text_train(self, text):
+        self.text_logs_train_pu_model.moveCursor(QTextCursor.End)
+        self.text_logs_train_pu_model.insertPlainText(text)
+
     def init_params_train_pu_model(self):
         """Initializes the classifier parameters in the parameters' table within the second tab of the main GUI
         window, i.e. max_imbalance and nmax. The default configuration of these parameters is read from the
         configuration file '/config/parameters.default.yaml'.
         """
-        self.table_params_train_model_pu.clearContents()
-        self.table_params_train_model_pu.setRowCount(1)
-        self.table_params_train_model_pu.setColumnCount(2)
+        self.table_train_pu_model_params.clearContents()
+        self.table_train_pu_model_params.setRowCount(1)
+        self.table_train_pu_model_params.setColumnCount(2)
 
-        self.table_params_train_model_pu.setItem(
+        self.table_train_pu_model_params.setItem(
             0, 0, QtWidgets.QTableWidgetItem(str(self.class_max_imbalance)))
-        self.table_params_train_model_pu.setItem(
+        self.table_train_pu_model_params.setItem(
             0, 1, QtWidgets.QTableWidgetItem(str(self.class_nmax)))
 
     def update_params_train_pu_model(self):
@@ -546,13 +591,13 @@ class MainWindow(QtWidgets.QMainWindow):
         values read from the table within the second tab of the main GUI
         window that have been specified by the user.
         """
-        if self.table_params_train_model_pu.item(0, 0) is not None:
-            self.class_max_imbalance = int(self.table_params_train_model_pu.item(0, 0).text())
+        if self.table_train_pu_model_params.item(0, 0) is not None:
+            self.class_max_imbalance = int(self.table_train_pu_model_params.item(0, 0).text())
         else:
             self.class_max_imbalance = self.class_max_imbalance_dft
 
-        if self.table_params_train_model_pu.item(0, 1) is not None:
-            self.class_nmax = int(self.table_params_train_model_pu.item(0, 1).text())
+        if self.table_train_pu_model_params.item(0, 1) is not None:
+            self.class_nmax = int(self.table_train_pu_model_params.item(0, 1).text())
         else:
             self.class_nmax = self.class_nmax_dft
 
@@ -569,6 +614,9 @@ class MainWindow(QtWidgets.QMainWindow):
         secondary thread while the MainWindow execution is maintained in the
         main thread.
         """
+        self.stdout.outputWritten.connect(self.append_text_train)
+        self.stderr.outputWritten.connect(self.append_text_train)
+
         # Train the PU model by invoking the task manager method
         self.tm.train_PUmodel()
 
@@ -587,10 +635,11 @@ class MainWindow(QtWidgets.QMainWindow):
         completed.
         """
         # Hide progress bar
-        self.progress_bar_train_evaluate_pu.setVisible(False)
+        self.progress_bar_train_evaluate.setVisible(False)
 
-        # Show logs in the QTextEdit
-        self.text_logs_training.setHtml(self.text_to_print_train)
+        # Disconnect from stdout and stderr
+        self.stdout.outputWritten.disconnect()
+        self.stderr.outputWritten.disconnect()
 
         # Showing message in pop up window
         QtWidgets.QMessageBox.information(
@@ -598,15 +647,15 @@ class MainWindow(QtWidgets.QMainWindow):
             "The PU model has been trained.")
 
     def clicked_train_PU_model(self):
-        """ Method that control the actions that are carried out when the button "train_model_push_button" is
+        """ Method that control the actions that are carried out when the button "train_pu_model_push_button" is
         clicked by the user.
         """
         # Check if a corpus has been selected. Otherwise, the training cannot be carried out
-        if self.corpus_selected_name is not None:
+        if self.corpus_selected_name is not None and self.labels_loaded is not None:
             # Execute the PU model training in the secondary thread
             execute_in_thread(
                 self, self.execute_train_classifier, self.do_after_train_classifier,
-                self.progress_bar_train_evaluate_pu)
+                self.progress_bar_train_evaluate)
         else:
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.WARNING_TRAINING)
         return
@@ -614,11 +663,20 @@ class MainWindow(QtWidgets.QMainWindow):
     # #########################################################################
     # EVALUATE PU MODEL FUNCTIONS
     # #########################################################################
+    @pyqtSlot(str)
+    def append_text_evaluate(self, text):
+        self.text_edit_results_eval_pu_classifier.moveCursor(QTextCursor.End)
+        self.text_edit_results_eval_pu_classifier.insertPlainText(text)
+
     def execute_evaluate_pu_model(self):
         """Method to control the execution of the evaluation of a classifier on a
         secondary thread while the MainWindow execution is maintained in the
         main thread.
         """
+
+        self.stdout.outputWritten.connect(self.append_text_evaluate)
+        self.stderr.outputWritten.connect(self.append_text_evaluate)
+
         self.result_evaluation_pu_model = self.tm.evaluate_PUmodel()
         return "Done."
 
@@ -628,23 +686,34 @@ class MainWindow(QtWidgets.QMainWindow):
         completed.
         """
         # Hide progress bar
-        self.progress_bar_train_evaluate_pu.setVisible(False)
+        self.progress_bar_train_evaluate.setVisible(False)
 
-        # Show results in the QTextEdit
+        # Disconnect from stdout and stderr
+        self.stdout.outputWritten.disconnect()
+        self.stderr.outputWritten.disconnect()
+
+        # Show results in the "table_pu_classification_results" table
         if self.result_evaluation_pu_model is not None:
             self.text_to_print_eval = "<h1 style='color:#5e9ca0;'> CLASSIFICATION RESULTS: </h1><ul>"
+            row = 0
             for r, v in self.result_evaluation_pu_model.items():
-                self.text_to_print_eval += "<li><b>" + str(r) + ":</b> " + str(v) + "</li>"
-            self.text_to_print_eval += "</ul>"
-            self.text_edit_results_eval_model.setText(self.text_to_print_eval)
+                # self.table_pu_classification_results.setItem(
+                #    row, 0, QtWidgets.QTableWidgetItem(str(r)))
+
+                self.table_pu_classification_results.setItem(
+                    row, 1, QtWidgets.QTableWidgetItem(str(v)))
+                row += 1
 
         # Show informative message in pop up window
         QtWidgets.QMessageBox.information(
             self, Messages.DC_MESSAGE,
             "The evaluation of the PU model has been completed.")
 
+        # Show documents to annotate in 'Feedback' tab
+        self.init_feedback_elements()
+
     def clicked_evaluate_PU_model(self):
-        """ Method that control the actions that are carried out when the button "eval_model_push_button" is
+        """ Method that control the actions that are carried out when the button "eval_pu_classifier_push_button" is
         clicked by the user.
         """
         # Check if a corpus has been selected. Otherwise, the evaluation cannot be carried out
@@ -652,10 +721,16 @@ class MainWindow(QtWidgets.QMainWindow):
             # Execute the PU model evaluation in the secondary thread
             execute_in_thread(
                 self, self.execute_evaluate_pu_model, self.do_after_evaluate_pu_model,
-                self.progress_bar_train_evaluate_pu)
+                self.progress_bar_train_evaluate)
         else:
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.WARNING_EVALUATION)
         return
+
+    def init_train_results_table(self):
+        """
+        """
+        self.table_pu_classification_results.setRowCount(7)
+        self.table_pu_classification_results.setColumnCount(1)
 
     # #########################################################################
     # GIVE FEEDBACK FUNCTIONS
@@ -669,7 +744,7 @@ class MainWindow(QtWidgets.QMainWindow):
             doc_checkbox_widget = self.findChild(QCheckBox, doc_checkbox_name)
             doc_checkbox_widget.setVisible(False)
 
-        if self.tm.state['selected_corpus'] and self.tm.state['trained_model']:
+        if self.tm.state['selected_corpus'] and self.tm.state['trained_model'] and self.tm.state['evaluated_model']:
             self.show_sampled_docs_for_labeling()
 
     def init_ndocs_al(self):
@@ -757,9 +832,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def clicked_change_predicted_class(self, checkbox):
         doc_checkbox_widget_name = checkbox.objectName()
-        print(doc_checkbox_widget_name)
         text_widget_name = "show_doc_" + doc_checkbox_widget_name.split("_")[2]
-        print(text_widget_name)
         text_widget = self.findChild(QTextEdit, text_widget_name)
         if checkbox.isChecked():
             change_background_color_text_edit(text_widget, 1)
@@ -775,7 +848,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # Get labels from current checkboxes
         all_labels = list(self.labels_docs_to_annotate_dict.values())
         self.labels_docs_to_annotate = all_labels[0:self.n_docs_al]
-        print(self.labels_docs_to_annotate)
         # Call the TM function to proceed with the annotation
         self.tm.get_feedback(self.idx_docs_to_annotate, self.labels_docs_to_annotate)
         return "Done."
@@ -792,7 +864,7 @@ class MainWindow(QtWidgets.QMainWindow):
             "The labels have been annotated based on your latest feedback.")
 
     def clicked_give_feedback(self):
-        """Method that control the actions that are carried out when the button "give_feedback_push_button" is
+        """Method that control the actions that are carried out when the button "give_feedback_user_push_button" is
         clicked by the user.
         """
         execute_in_thread(
@@ -802,15 +874,23 @@ class MainWindow(QtWidgets.QMainWindow):
     # #########################################################################
     # RETRAIN MODEL FUNCTIONS
     # #########################################################################
+    @pyqtSlot(str)
+    def append_text_retrain_reval(self, text):
+        self.text_edit_results_reval_retrain_pu_model.moveCursor(QTextCursor.End)
+        self.text_edit_results_reval_retrain_pu_model.insertPlainText(text)
+
     def execute_retrain_model(self):
         """Method to control the execution of the retraining of a classifier on a
         secondary thread while the MainWindow execution is maintained in the
         main thread.
         """
+
+        # Connect to stdout and stderr
+        self.stdout.outputWritten.connect(self.append_text_retrain_reval)
+        self.stderr.outputWritten.connect(self.append_text_retrain_reval)
+
         # Retrain the PU model by invoking the task manager method
         self.tm.retrain_model()
-
-        # @ TODO: Ver si imprimir logs como en el train
 
     def do_after_retrain_model(self):
         """ Method to be executed once the retraining of the model based on the feedback of the user has been completed.
@@ -818,13 +898,17 @@ class MainWindow(QtWidgets.QMainWindow):
         # Hide progress bar
         self.progress_bar_feedback_update.setVisible(False)
 
+        # Disconnect from stdout and stderr
+        self.stdout.outputWritten.disconnect()
+        self.stderr.outputWritten.disconnect()
+
         # Showing message in pop up window
         QtWidgets.QMessageBox.information(
             self, Messages.DC_MESSAGE,
             "The performance of the classifier model has been improved using the labels you provided.")
 
     def clicked_retrain_model(self):
-        """Method that control the actions that are carried out when the button "retrain_model_push_button" is
+        """Method that control the actions that are carried out when the button "retrain_pu_model_push_button" is
         clicked by the user.
         """
         execute_in_thread(
@@ -838,9 +922,13 @@ class MainWindow(QtWidgets.QMainWindow):
         secondary thread while the MainWindow execution is maintained in the
         main thread.
         """
+
+        # Connect to stdout and stderr
+        self.stdout.outputWritten.connect(self.append_text_retrain_reval)
+        self.stderr.outputWritten.connect(self.append_text_retrain_reval)
+
         self.tm.reevaluate_model()
 
-        # @ TODO: Ver si imprimir logs como en el evaluate
         return "Done."
 
     def do_after_reevaluate_model(self):
@@ -849,14 +937,24 @@ class MainWindow(QtWidgets.QMainWindow):
         # Hide progress bar
         self.progress_bar_feedback_update.setVisible(False)
 
+        # Disconnect from stdout and stderr
+        self.stdout.outputWritten.disconnect()
+        self.stderr.outputWritten.disconnect()
+
         # Showing message in pop up window
         QtWidgets.QMessageBox.information(
             self, Messages.DC_MESSAGE,
             "The reevaluation of the classifier model has been completed.")
 
     def clicked_reevaluate_model(self):
-        """Method that control the actions that are carried out when the button "retrain_model_push_button" is
+        """Method that control the actions that are carried out when the button "retrain_pu_model_push_button" is
         clicked by the user.
         """
         execute_in_thread(
             self, self.execute_reevaluate_model, self.do_after_reevaluate_model, self.progress_bar_feedback_update)
+
+    def init_retrain_results_table(self):
+        """
+        """
+        self.table_pu_reclassification_results.setRowCount(7)
+        self.table_pu_reclassification_results.setColumnCount(1)

@@ -63,5 +63,4 @@ class Worker(QtCore.QRunnable):
         else:
             self.signals.result.emit(result)
         finally:
-            print("final signal emitted")
             self.signals.finished.emit()  # Done

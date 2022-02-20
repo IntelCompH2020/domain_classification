@@ -2,7 +2,7 @@
 """
 @author: lcalv
 ******************************************************************************
-***                       UTIL(AUXILIARY FUNTIONS)                         ***
+***                       UTIL(AUXILIARY FUNCTIONS)                         ***
 ******************************************************************************
 Class with a set of auxiliary functions for the GUI deployment.
 
@@ -13,9 +13,6 @@ Class with a set of auxiliary functions for the GUI deployment.
 ##############################################################################
 # General imports
 from PyQt5 import QtCore
-import time
-from timeloop import Timeloop
-from datetime import timedelta
 
 # Local imports
 from src.graphical_user_interface.worker import Worker
@@ -69,7 +66,8 @@ def toggle_menu(gui, max_width):
 
 def execute_in_thread(gui, function, function_output, progress_bar):
     """ Method to execute a function in the secondary thread while showing
-    a progress bar at the time the function is being executed if a progress bar object is provided. When finished, it forces the execution of the method to be
+    a progress bar at the time the function is being executed if a progress bar object is provided.
+    When finished, it forces the execution of the method to be
     executed after the function executing in a thread is completed.
     Based on the functions provided in the manual available at:
     https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/
@@ -77,7 +75,7 @@ def execute_in_thread(gui, function, function_output, progress_bar):
     Parameters:
     ----------
     * function (UDF)              - Function to be executed in thread
-    * function_output (UDF)       - Function to be executed af te the thread
+    * function_output (UDF)       - Function to be executed at the end of the thread
     * progress_bar (QProgressBar) - If a QProgressBar object is provided, it shows a progress 
                                     bar in the main thread while the main task is being carried out in a secondary thread
     """
@@ -98,7 +96,8 @@ def execute_in_thread(gui, function, function_output, progress_bar):
 
 
 def signal_accept(progress_bar):
-    """Makes the progress bar passed as an argument visible and configures it for an event whose duration is unknown by setting both its minimum and maximum both to 0, thus the bar shows a busy indicator instead of a percentage of steps.
+    """Makes the progress bar passed as an argument visible and configures it for an event whose duration is unknown by
+    setting both its minimum and maximum both to 0, thus the bar shows a busy indicator instead of a percentage of steps.
 
     Parameters:
     ----------

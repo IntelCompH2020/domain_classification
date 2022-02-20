@@ -101,6 +101,7 @@ class TaskManager(baseTaskManager):
         # metadata with additional fields
         self.state['selected_corpus'] = False  # True if corpus was selected
         self.state['trained_model'] = False  # True if model was trained
+        self.state['evaluated_model'] = False # True if model was evaluated
         self.metadata['corpus_name'] = None
 
         # Datamanager
@@ -415,6 +416,7 @@ class TaskManager(baseTaskManager):
 
         # Update dataset file to include scores
         self._save_dataset()
+        self.state['evaluated_model'] = True
 
         return result # return
 
