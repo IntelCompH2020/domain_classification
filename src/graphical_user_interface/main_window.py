@@ -163,6 +163,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.clicked_evaluate_PU_model)
         self.update_param_pu_model_push_button.clicked.connect(
             self.update_params_train_pu_model)
+        self.reset_param_training_pu_model_push_button.clicked.connect(
+            self.reset_params_train_pu_model)
 
         self.progress_bar_train.setVisible(False)
         self.progress_bar_train.setValue(0)
@@ -593,6 +595,20 @@ class MainWindow(QtWidgets.QMainWindow):
             self, Messages.DC_MESSAGE,
             "The parameters of classifier has been set to '" + str(self.class_max_imbalance) + "' and '" + \
             str(self.class_nmax) + "' for the current session.")
+
+    def reset_params_train_pu_model(self):
+        """
+        """
+
+        self.class_max_imbalance = self.class_max_imbalance_dft
+        self.class_nmax = self.class_nmax_dft
+
+        self.init_params_train_pu_model()
+
+        # Show informative message with the changes
+        QtWidgets.QMessageBox.information(
+            self, Messages.DC_MESSAGE,
+            "The parameters of classifier has been set to its default value.")
 
     def execute_train_classifier(self):
         """Method to control the execution of the training of a classifier on a
