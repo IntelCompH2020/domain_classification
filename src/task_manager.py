@@ -435,6 +435,10 @@ class TaskManager(baseTaskManager):
         # STEP 1: Select bunch of documents at random
         n_docs = self.global_parameters['active_learning']['n_docs']
         selected_docs = self.dc.AL_sample(n_samples=n_docs)
+
+        if selected_docs is None:
+            return
+
         # Indices of the selected docs
         idx = selected_docs.index
 
