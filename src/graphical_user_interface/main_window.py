@@ -706,8 +706,9 @@ class MainWindow(QtWidgets.QMainWindow):
         """ Method that control the actions that are carried out when the button "eval_pu_classifier_push_button" is
         clicked by the user.
         """
-        # Check if a corpus has been selected. Otherwise, the evaluation cannot be carried out
-        if self.corpus_selected_name is not None:
+        # Check if a corpus and a set of labels have been selected and a model trained.
+        # Otherwise, the evaluation cannot be carried out
+        if self.corpus_selected_name is not None and self.tm.df_labels is not None and self.tm.state['trained_model']:
             # Execute the PU model evaluation in the secondary thread
             execute_in_thread(
                 self, self.execute_evaluate_pu_model, self.do_after_evaluate_pu_model,

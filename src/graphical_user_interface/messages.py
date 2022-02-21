@@ -64,7 +64,8 @@ class Messages:
     WARNING_TRAINING = \
         'A corpus and a set of labels must be selected first in order to proceed with the training.'
     WARNING_EVALUATION = \
-        'A corpus and a set of labels must be selected first in order to proceed with the evaluation.'
+        'A corpus and a set of labels must have been selected and a PU model trained first in order to ' \
+        'proceed with its evaluation. '
 
     # Getting relevance feedback messages
     ###########################################################################
