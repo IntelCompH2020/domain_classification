@@ -52,7 +52,6 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         # INFORMATION BUTTONS
         #######################################################################
         self.info_button_topic_list.setIcon(QIcon('Images/help2.png'))
-        self.info_button_topic_list.setToolTip(Messages.INFO_TOPIC_LIST)
         self.info_button_topic_list.setIconSize(
             Constants.BUTTONS_SCALE * QSize(self.info_button_topic_list.width(),
                                             self.info_button_topic_list.height()))
@@ -60,12 +59,14 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         self.info_button_selected_tag.setIconSize(
             Constants.BUTTONS_SCALE * QSize(self.info_button_selected_tag.width(),
                                             self.info_button_selected_tag.height()))
-        self.info_button_selected_tag.setToolTip(Messages.INFO_TAG)
-
-        # TABLE TOOL TIPS
-        #######################################################################
-        self.table_widget_topics_weight.setToolTip(Messages.INFO_TABLE_WEIGHTS)
-        self.table_params.setToolTip(Messages.INFO_TABLE_PARAMETERS_TOPICS)
+        self.info_button_introduce_weights.setIcon(QIcon('Images/help2.png'))
+        self.info_button_introduce_weights.setIconSize(
+            Constants.BUTTONS_SCALE * QSize(self.info_button_selected_tag.width(),
+                                            self.info_button_selected_tag.height()))
+        self.info_button_get_labels_by_topics_parameters.setIcon(QIcon('Images/help2.png'))
+        self.info_button_get_labels_by_topics_parameters.setIconSize(
+            Constants.BUTTONS_SCALE * QSize(self.info_button_selected_tag.width(),
+                                            self.info_button_selected_tag.height()))
 
         # CONNECTION WITH HANDLER FUNCTIONS
         #######################################################################

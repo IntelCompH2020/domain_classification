@@ -34,7 +34,7 @@ from PyQt5 import QtGui
 from src.graphical_user_interface.main_window import *
 from src.graphical_user_interface.messages import Messages
 from src.task_manager import TaskManagerGUI
-from src.graphical_user_interface.stream_out import OutputWrapper
+from src.graphical_user_interface.output_wrapper import OutputWrapper
 
 class PreConfig(QDialog):
     def __init__(self, widget, args):

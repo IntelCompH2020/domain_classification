@@ -55,17 +55,10 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         self.info_button_selected_keywords.setIconSize(
             Constants.BUTTONS_SCALE * QSize(self.info_button_selected_keywords.width(),
                                             self.info_button_selected_keywords.height()))
-        self.info_button_selected_keywords.setToolTip(
-            Messages.INFO_TYPE_KEYWORDS)
         self.info_button_selected_tag.setIcon(QIcon('Images/help2.png'))
         self.info_button_selected_tag.setIconSize(
             Constants.BUTTONS_SCALE * QSize(self.info_button_selected_tag.width(),
                                             self.info_button_selected_tag.height()))
-        self.info_button_selected_tag.setToolTip(Messages.INFO_TAG)
-
-        # TABLE TOOL TIPS
-        # #####################################################################
-        self.table_params.setToolTip(Messages.INFO_TABLE_PARAMETERS_KEYWORDS)
 
         # CONNECTION WITH HANDLER FUNCTIONS
         # #####################################################################

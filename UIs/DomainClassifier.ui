@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1079</width>
-    <height>720</height>
+    <width>1159</width>
+    <height>753</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -993,6 +993,9 @@ QPushButton:pressed {
                     <height>60</height>
                    </size>
                   </property>
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Load a corpus, select a preliminary subcorpus from the positive class, and load or reset labels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton {
         background-image: ICON_REPLACE;
@@ -1038,6 +1041,9 @@ QPushButton:pressed {
                     <height>60</height>
                    </size>
                   </property>
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Train and evaluate a PU classifier model with the available labels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton {
         background-image: ICON_REPLACE;
@@ -1082,6 +1088,9 @@ QToolTip {
                     <width>60</width>
                     <height>60</height>
                    </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Get relevance feedback from the user and update the classifier model with the latest relevance feedback.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="styleSheet">
                    <string notr="true">QPushButton {
@@ -1362,6 +1371,9 @@ border:2px #676A6E;</string>
                               <height>35</height>
                              </size>
                             </property>
+                            <property name="toolTip">
+                             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Select one of the corpora listed below and clicked the &amp;quot;Load corpus&amp;quot; button to load a specific corpus into the application.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                            </property>
                             <property name="styleSheet">
                              <string notr="true">QPushButton {
 	border: 2px solid #ABC2CB;
@@ -1606,7 +1618,7 @@ QPushButton:pressed {
                         <property name="minimumSize">
                          <size>
                           <width>1000</width>
-                          <height>25</height>
+                          <height>20</height>
                          </size>
                         </property>
                         <property name="maximumSize">
@@ -1718,6 +1730,9 @@ QProgressBar::chunk {
                                 <width>35</width>
                                 <height>35</height>
                                </size>
+                              </property>
+                              <property name="toolTip">
+                               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Choose one of the options to select a preliminary subcorpus from the positive class and then click the &amp;quot;Get labels&amp;quot; button.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                               </property>
                               <property name="styleSheet">
                                <string notr="true">QPushButton {
@@ -1952,6 +1967,9 @@ QPushButton:pressed {
                                 <width>35</width>
                                 <height>35</height>
                                </size>
+                              </property>
+                              <property name="toolTip">
+                               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Select a set of labels and click the &amp;quot;Load labels&amp;quot; button for loading it into the current session. Alternatively, click the &amp;quot;Reset labels&amp;quot; button to remove the previously selected labels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                               </property>
                               <property name="styleSheet">
                                <string notr="true">QPushButton {
@@ -2248,6 +2266,9 @@ QPushButton:pressed {
                                 <height>35</height>
                                </size>
                               </property>
+                              <property name="toolTip">
+                               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;With this table you can update the parameters of the classifier, namely:&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600; color:#0e101a; background-color:transparent;&quot;&gt;- max_imbalance:&lt;/span&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt; Maximum ratio negative vs positive samples in the training set.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600; color:#0e101a; background-color:transparent;&quot;&gt;- nmax&lt;/span&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;: Maximum number of documents in the training set.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;The values shown are the default parameters; by inserting a new value and clicking the &amp;quot;Update parameters&amp;quot; button, the parameters are updated; they can also be restored to their default value by clicking the &amp;quot;Reset parameters&amp;quot; button. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                              </property>
                               <property name="styleSheet">
                                <string notr="true">QPushButton {
 	border: 2px solid #ABC2CB;
@@ -2310,6 +2331,9 @@ QToolTip {
                                 <width>35</width>
                                 <height>35</height>
                                </size>
+                              </property>
+                              <property name="toolTip">
+                               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;The table at the top left shows the values of the parameters used for the PU model training; they can be updated or set to their default value by inserting a new value and clicking the &amp;quot;Update parameters&amp;quot; button or directly clicking the &amp;quot;Rest parameters&amp;quot; button. To train the model (i.e.train a binary text classification model based on transformers) the &amp;quot;Train PU model&amp;quot; button must be clicked; the training will start and until it is completed a loading bar and its associated logs will be displayed in the white space under the &amp;quot;Train PU model&amp;quot; button.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                               </property>
                               <property name="styleSheet">
                                <string notr="true">QPushButton {
@@ -2472,7 +2496,7 @@ QToolTip {
 }</string>
                                 </property>
                                 <property name="editTriggers">
-                                 <set>QAbstractItemView::CurrentChanged</set>
+                                 <set>QAbstractItemView::CurrentChanged|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
                                 </property>
                                 <attribute name="horizontalHeaderCascadingSectionResizes">
                                  <bool>false</bool>
@@ -2764,6 +2788,11 @@ QPushButton:pressed {
                                 <height>16777215</height>
                                </size>
                               </property>
+                              <property name="font">
+                               <font>
+                                <pointsize>11</pointsize>
+                               </font>
+                              </property>
                               <property name="styleSheet">
                                <string notr="true">QTextEdit {	
 	background-color: #FFFFFF;
@@ -2776,7 +2805,7 @@ QPushButton:pressed {
  QScrollBar:vertical {
 	border: none;
     background: #ABC2CB;
-    width: 14px;
+    width: 2px;
     margin: 21px 0 21px 0;
 	border-radius: 0px;
  }</string>
@@ -2811,7 +2840,7 @@ QPushButton:pressed {
                          </spacer>
                         </item>
                         <item>
-                         <widget class="QProgressBar" name="progress_bar_train_evaluate">
+                         <widget class="QProgressBar" name="progress_bar_train">
                           <property name="styleSheet">
                            <string notr="true">QProgressBar {
     border: 2px solid grey;
@@ -2849,6 +2878,94 @@ QProgressBar::chunk {
                      </layout>
                     </item>
                     <item>
+                     <widget class="QFrame" name="frame_grip_11">
+                      <property name="enabled">
+                       <bool>true</bool>
+                      </property>
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>1000</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true">background-color: #ABC2CB;</string>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::NoFrame</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <layout class="QHBoxLayout" name="horizontalLayout_32">
+                      <item>
+                       <spacer name="horizontalSpacer_71">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                         <enum>QSizePolicy::Fixed</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>197</width>
+                          <height>17</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item>
+                       <widget class="QProgressBar" name="progress_bar_evaluate">
+                        <property name="styleSheet">
+                         <string notr="true">QProgressBar {
+    border: 2px solid grey;
+    border-radius: 5px;
+}
+
+QProgressBar::chunk {
+    background-color: rgb(98, 114, 164);
+    width: 20px;
+}</string>
+                        </property>
+                        <property name="value">
+                         <number>24</number>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_72">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                         <enum>QSizePolicy::Fixed</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>197</width>
+                          <height>17</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
                      <layout class="QVBoxLayout" name="verticalLayout_51">
                       <item>
                        <layout class="QHBoxLayout" name="horizontalLayout_74">
@@ -2873,6 +2990,9 @@ QProgressBar::chunk {
                               <width>35</width>
                               <height>35</height>
                              </size>
+                            </property>
+                            <property name="toolTip">
+                             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;By clicking on the &amp;quot;Evaluate PU model&amp;quot; button the predictions of the classification model over the input dataset and performance metrics are computed. Once completed, the results are shown under the CLASSIFICATION RESULTS label (at the bottom right table).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                             </property>
                             <property name="styleSheet">
                              <string notr="true">QPushButton {
@@ -2948,6 +3068,9 @@ QToolTip {
                               <width>35</width>
                               <height>35</height>
                              </size>
+                            </property>
+                            <property name="toolTip">
+                             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;This table will show the PU model classification results, once it has been trained and evaluated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                             </property>
                             <property name="styleSheet">
                              <string notr="true">QPushButton {
@@ -3098,6 +3221,11 @@ QPushButton:pressed {
                               <height>16777215</height>
                              </size>
                             </property>
+                            <property name="font">
+                             <font>
+                              <pointsize>11</pointsize>
+                             </font>
+                            </property>
                             <property name="styleSheet">
                              <string notr="true">QTextEdit {	
 	background-color: #FFFFFF;
@@ -3110,7 +3238,7 @@ QPushButton:pressed {
  QScrollBar:vertical {
 	border: none;
     background: #ABC2CB;
-    width: 14px;
+    width: 2px;
     margin: 21px 0 21px 0;
 	border-radius: 0px;
  }</string>
@@ -3135,7 +3263,7 @@ QPushButton:pressed {
                             <property name="sizeHint" stdset="0">
                              <size>
                               <width>20</width>
-                              <height>30</height>
+                              <height>25</height>
                              </size>
                             </property>
                            </spacer>
@@ -3143,7 +3271,7 @@ QPushButton:pressed {
                           <item>
                            <widget class="QTableWidget" name="table_pu_classification_results">
                             <property name="sizePolicy">
-                             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                               <horstretch>0</horstretch>
                               <verstretch>0</verstretch>
                              </sizepolicy>
@@ -3151,8 +3279,13 @@ QPushButton:pressed {
                             <property name="minimumSize">
                              <size>
                               <width>650</width>
-                              <height>0</height>
+                              <height>220</height>
                              </size>
+                            </property>
+                            <property name="font">
+                             <font>
+                              <pointsize>13</pointsize>
+                             </font>
                             </property>
                             <property name="styleSheet">
                              <string notr="true">QTableWidget {	
@@ -3175,14 +3308,14 @@ QTableWidget::item:selected{
 QScrollBar:horizontal {
     border: none;
     background: #A3A8AD;
-    height: 14px;
+    height: 2px;
     margin: 0px 21px 0 21px;
 	border-radius: 0px;
 }
  QScrollBar:vertical {
 	border: none;
     background: #A3A8AD;
-    width: 14px;
+    width: 2px;
     margin: 21px 0 21px 0;
 	border-radius: 0px;
  }
@@ -3217,12 +3350,26 @@ QToolTip {
 	color:black;
 }</string>
                             </property>
+                            <property name="editTriggers">
+                             <set>QAbstractItemView::NoEditTriggers</set>
+                            </property>
                             <attribute name="horizontalHeaderVisible">
                              <bool>false</bool>
                             </attribute>
                             <attribute name="horizontalHeaderStretchLastSection">
                              <bool>true</bool>
                             </attribute>
+                            <row>
+                             <property name="text">
+                              <string>MCC</string>
+                             </property>
+                             <property name="font">
+                              <font>
+                               <weight>75</weight>
+                               <bold>true</bold>
+                              </font>
+                             </property>
+                            </row>
                             <row>
                              <property name="text">
                               <string>TP</string>
@@ -3342,6 +3489,13 @@ QToolTip {
                               <width>35</width>
                               <height>35</height>
                              </size>
+                            </property>
+                            <property name="toolTip">
+                             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;From this view, you can give feedback about the trained model. As many documents as specified in the parameter 'n_docs' will be displayed, together with its associated prediction, if it is available. Documents that initially belong to the positive class (1) are highlighted in purple, those that belong to the negative one (0), in red. To annotate a document as belonging to the positive class, the checkbox that is located under such a document must be checked. Once the documents' annotations have been completed, the button 'Give feedback' must be clicked on. Once this is done, the model can be retrained using the manual annotations by clicking the 'Retrain model' button, and then reevaluated by clicking on 'Reevaluate model'.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                             </property>
                             <property name="styleSheet">
                              <string notr="true">QPushButton {
@@ -3552,6 +3706,9 @@ border: 1px solid black;</string>
                               <width>35</width>
                               <height>35</height>
                              </size>
+                            </property>
+                            <property name="toolTip">
+                             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;This parameter determines the number of documents to show each Active Learning round. By default, it is configured to 4, but a different value can be assigned to it by inserting an alternative number on the label located at the right. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                             </property>
                             <property name="styleSheet">
                              <string notr="true">QPushButton {
@@ -4742,6 +4899,9 @@ QPushButton:pressed {
                                     <height>35</height>
                                    </size>
                                   </property>
+                                  <property name="toolTip">
+                                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;This table will show the PU model classification results, once it has been retrained and revaluated based on the given feedback.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                                  </property>
                                   <property name="styleSheet">
                                    <string notr="true">QPushButton {
 	border: 2px solid #ABC2CB;
@@ -4819,6 +4979,11 @@ QToolTip {
                                   <height>16777215</height>
                                  </size>
                                 </property>
+                                <property name="font">
+                                 <font>
+                                  <pointsize>11</pointsize>
+                                 </font>
+                                </property>
                                 <property name="styleSheet">
                                  <string notr="true">QTextEdit {	
 	background-color: #FFFFFF;
@@ -4831,7 +4996,7 @@ QToolTip {
  QScrollBar:vertical {
 	border: none;
     background: #ABC2CB;
-    width: 14px;
+    width: 2px;
     margin: 21px 0 21px 0;
 	border-radius: 0px;
  }</string>
@@ -4876,14 +5041,14 @@ QTableWidget::item:selected{
 QScrollBar:horizontal {
     border: none;
     background: #A3A8AD;
-    height: 14px;
+    height: 2px;
     margin: 0px 21px 0 21px;
 	border-radius: 0px;
 }
  QScrollBar:vertical {
 	border: none;
     background: #A3A8AD;
-    width: 14px;
+    width: 2px;
     margin: 21px 0 21px 0;
 	border-radius: 0px;
  }
@@ -4918,12 +5083,26 @@ QToolTip {
 	color:black;
 }</string>
                                 </property>
+                                <property name="editTriggers">
+                                 <set>QAbstractItemView::NoEditTriggers</set>
+                                </property>
                                 <attribute name="horizontalHeaderVisible">
                                  <bool>false</bool>
                                 </attribute>
                                 <attribute name="horizontalHeaderStretchLastSection">
                                  <bool>true</bool>
                                 </attribute>
+                                <row>
+                                 <property name="text">
+                                  <string>MCC</string>
+                                 </property>
+                                 <property name="font">
+                                  <font>
+                                   <weight>75</weight>
+                                   <bold>true</bold>
+                                  </font>
+                                 </property>
+                                </row>
                                 <row>
                                  <property name="text">
                                   <string>TP</string>

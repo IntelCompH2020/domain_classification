@@ -73,7 +73,7 @@ class CorpusClassifier(object):
 
         Parameters
         ----------
-        max_imbalance : int or None, optional (default=None)
+        max_imbalance : int or float or None, optional (default=None)
             Maximum ratio negative vs positive samples. If the ratio in
             df_dataset is higher, the negative class is subsampled
             If None, the original proportions are preserved
@@ -111,7 +111,7 @@ class CorpusClassifier(object):
             df0 = df_subset[df_subset['labels'] == 0]
             df1 = df_subset[df_subset['labels'] == 1]
             # Undersample majority class
-            df0 = df0.sample(n=max_imbalance * l1)
+            df0 = df0.sample(n=int(max_imbalance * l1))
             # Re-join dataframes
             df_subset = pd.concat((df0, df1))
 

@@ -222,6 +222,9 @@
                <height>35</height>
               </size>
              </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Write your keywords separated by commas e.g.: gradient descent, Gibbs sampling, etc. on the left white box and configure the parameters needed for the labels import with the right table. To update them, tip a different value on its corresponding column. Each parameter refers to:&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600; color:#0e101a; background-color:transparent;&quot;&gt;- wt: &lt;/span&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Weighting factor for the title components.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600; color:#0e101a; background-color:transparent;&quot;&gt;- n_max:&lt;/span&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt; Maximum number of elements in the output list.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600; color:#0e101a; background-color:transparent;&quot;&gt;- s_min: &lt;/span&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Minimum score. Only elements strictly above s_min are selected.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="styleSheet">
               <string notr="true">QPushButton {
 	border: 2px solid #ABC2CB;
@@ -573,6 +576,9 @@ QToolTip {
                <width>35</width>
                <height>35</height>
               </size>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Write the tag to be used to compose the label file name.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="styleSheet">
               <string notr="true">QPushButton {
