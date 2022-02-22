@@ -364,12 +364,21 @@ class TaskManager(baseTaskManager):
 
     def reset_labels(self, labelset):
         """
-        Reset a given set of labels
+        Reset all labels and models associated to a given category
+
+        Parameter
+        ---------
+        labelset: str
+            Name of the category to be removed.
         """
 
-        path2labelset = self.path2labels / labelset
-        path2labelset.unlink()
-        logging.info(f"-- -- Labelset {labelset} removed")
+        # Remove files
+        self.DM.reset_labels(tag=labelset)
+
+        # Remove label info from metadata, it it exist
+        self.metadata['keyword_based_label_parameters'].pop(labelset, None)
+        self.metadata['topic_based_label_parameters'].pop(labelset, None)
+        self._save_metadata()
 
         return
 

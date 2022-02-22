@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import scipy.sparse as scp
 import logging
+import shutil
+
 from time import time
 from sklearn.preprocessing import normalize
 
@@ -309,6 +311,33 @@ class DataManager(object):
 
         # The log message is returned to be shown in a GUI, if needed
         return df_labels, msg
+
+    def reset_labels(self, tag=""):
+        """
+        Delete all files related to a given class
+
+        Parameters
+        ----------
+        tag : str, optional (default="")
+            Name of the class to be removed
+        """
+
+        # Remove csv file
+        fname = f"labels_{self.corpus_name}_{tag}.csv"
+        path2labelset = self.path2labels / fname
+        path2labelset.unlink()
+
+        # Remove dataset
+        fstem = f"dataset_{self.corpus_name}_{tag}"
+        for p in self.path2datasets.glob(f"{fstem}.*"):
+            p.unlink()
+
+        # Remove model
+        path2model = self.path2models / tag
+        if path2model.is_dir():
+            shutil.rmtree(self.path2models / tag)
+
+        logging.info(f"-- -- Labelset {tag} removed")
 
     def import_labels(self, ids_corpus=None, tag="imported"):
         """
