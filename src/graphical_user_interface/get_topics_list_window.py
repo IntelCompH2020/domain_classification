@@ -161,7 +161,7 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         return
 
     def updated_topic_weighted_list(self):
-        """Generated the topic weighted list based on the weights that the user has introduced on the "table_widget_topics_weight" table
+        """Generates the topic weighted list based on the weights that the user has introduced on the "table_widget_topics_weight" table
         """
         # Get weights from the left table
         topic_weighted_list = ""

@@ -62,9 +62,16 @@ class Messages:
     # Train and evaluate PU model
     ###########################################################################
     WARNING_TRAINING = \
-        'To proceed with evaluation: first select a corpus and set of labels.'
+        'To proceed with training: first select a corpus and set of labels.'
     WARNING_EVALUATION = \
         'To proceed with evaluation: first select a corpus and set of labels, and train a PU model'
 
     # Getting relevance feedback messages
     ###########################################################################
+
+    # Train and revaluate PU model
+    ###########################################################################
+    WARNING_RETRAINING = \
+        'To proceed with retraining: first select a corpus and set of labels.'
+    WARNING_REEVALUATION = \
+        'To proceed with reevaluation: first select a corpus and set of labels, and train a PU model'

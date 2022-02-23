@@ -129,7 +129,7 @@ class TaskManager(baseTaskManager):
                 "-- No corpus loaded. You must load a corpus first")
             labelset_list = []
         else:
-            labelset_list = self.DM.get_labelset_list(corpus_name)
+            labelset_list = self.DM.get_labelset_list()
 
         return labelset_list
 
@@ -809,6 +809,9 @@ class TaskManagerGUI(TaskManager):
         return msg
 
     def get_topic_words(self, n_max, s_min):
+        """
+        Get a set of positive labels from a weighted list of topics
+        """
 
         # Load topics
         T, df_metadata, topic_words = self.DM.load_topics()
