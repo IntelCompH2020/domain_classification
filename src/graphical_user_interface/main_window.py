@@ -446,6 +446,21 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.information(
             self, Messages.DC_MESSAGE, self.message_out)
 
+        if self.get_label_option == 3:
+            # Show the window for the analysis of the keywords
+            self.analyze_keywords_window.do_analysis()
+            self.analyze_keywords_window.exec()
+
+        # Reset after loading labels
+        self.get_labels_radio_buttons.setExclusive(False)
+        self.get_labels_option1.setChecked(False)
+        self.get_labels_option2.setChecked(False)
+        self.get_labels_option3.setChecked(False)
+        self.get_labels_option4.setChecked(False)
+        self.get_labels_option5.setChecked(False)
+        self.get_labels_radio_buttons.setExclusive(True)
+        self.get_label_option == 0
+
         # Load just gotten labels
         self.show_labels()
 
@@ -515,35 +530,10 @@ class MainWindow(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
                 Messages.INCORRECT_NO_LABEL_OPTION_SELECTED)
-        else:
-            if self.get_label_option == 1:
-                execute_in_thread(self, self.execute_import_labels,
-                                  self.do_after_import_labels, self.progress_bar_first_tab)
-            elif self.get_label_option == 2:
-                execute_in_thread(self, self.execute_import_labels,
-                                  self.do_after_import_labels, self.progress_bar_first_tab)
-            elif self.get_label_option == 3:
-                execute_in_thread(self, self.execute_import_labels,
-                                  self.do_after_import_labels, self.progress_bar_first_tab)
-                # Show the window for the analysis of the keywords
-                self.analyze_keywords_window.do_analysis()
-                self.analyze_keywords_window.exec()
-            elif self.get_label_option == 4:
-                execute_in_thread(self, self.execute_import_labels,
-                                  self.do_after_import_labels, self.progress_bar_first_tab)
-            elif self.get_label_option == 5:
-                execute_in_thread(self, self.execute_import_labels,
-                                  self.do_after_import_labels, self.progress_bar_first_tab)
+            return
 
-        # Reset after loading labels
-        self.get_labels_radio_buttons.setExclusive(False)
-        self.get_labels_option1.setChecked(False)
-        self.get_labels_option2.setChecked(False)
-        self.get_labels_option3.setChecked(False)
-        self.get_labels_option4.setChecked(False)
-        self.get_labels_option5.setChecked(False)
-        self.get_labels_radio_buttons.setExclusive(True)
-        self.get_label_option == 0
+        execute_in_thread(self, self.execute_import_labels,
+                          self.do_after_import_labels, self.progress_bar_first_tab)
 
         return
 
