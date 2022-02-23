@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import scipy.sparse as scp
 import logging
+import shutil
+
 from time import time
 from sklearn.preprocessing import normalize
 
@@ -15,7 +17,7 @@ class DataManager(object):
     It assumes that source and destination data will be stored in files.
     """
 
-    def __init__(self, path2source, path2labels, path2dataset):
+    def __init__(self, path2source, path2labels, path2datasets, path2models):
         """
         Initializes the data manager object
 
@@ -23,15 +25,22 @@ class DataManager(object):
         ----------
         path2source: str or pathlib.Path
             Path to the folder containing all external source data
-        path2labels: str or pathlib.Pahd
+        path2labels: str or pathlib.Path
             Path to the folder containing sets of labels
+        path2datasets: str or pathlib.Path
+            Path to the folder containing datasets
         """
 
         self.path2source = pathlib.Path(path2source)
         self.path2labels = pathlib.Path(path2labels)
-        self.path2dataset = pathlib.Path(path2dataset)
+        self.path2datasets = pathlib.Path(path2datasets)
+        self.path2models = pathlib.Path(path2models)
         # The path to the corpus is given when calling the load_corpus method
         self.path2corpus = None
+
+        # Default name of the corpus. It can be changed by the load_corpus or
+        # the load_dataset methods
+        self.corpus_name = ""
 
         return
 
@@ -45,35 +54,48 @@ class DataManager(object):
 
         return corpus_list
 
-    def get_labelset_list(self, corpus_name=None):
+    def get_labelset_list(self):
         """
         Returns the list of available labels
-
-        Parameters
-        ----------
-        corpus_name: str or None, optional (default=None)
-            Name of the corpus whose labels are requested. If None, all
-            labelsets are returned
         """
 
-        if corpus_name is None:
-            labelset_list = [e.name for e in self.path2labels.iterdir()
-                             if e.is_file()]
-        else:
-            labelset_list = [e.name for e in self.path2labels.iterdir()
-                             if e.is_file() and e.stem.startswith(
-                                 f"labels_{corpus_name}")]
+        prefix = f"labels_{self.corpus_name}_"
+        labelset_list = [e.stem for e in self.path2labels.iterdir()
+                         if e.is_file() and e.stem.startswith(prefix)]
+        # Remove prefixes and get tags only:
+        labelset_list = [e[len(prefix):] for e in labelset_list]
 
         return labelset_list
 
-    def get_keywords_list(self, corpus_name):
+    def get_dataset_list(self):
+        """
+        Returns the list of available datasets
+        """
+
+        prefix = f"dataset_{self.corpus_name}_"
+        dataset_list = [e.stem for e in self.path2datasets.iterdir()
+                        if e.is_file() and e.stem.startswith(prefix)]
+        # Remove prefixes and get tags only:
+        dataset_list = [e[len(prefix):] for e in dataset_list]
+
+        # Since the dataset folder can contain csv and feather versions of the
+        # same dataset, we remove duplicates
+        dataset_list = list(set(dataset_list))
+
+        return dataset_list
+
+    def get_model_list(self):
+        """
+        Returns the list of available models
+        """
+
+        model_list = [e.stem for e in self.path2models.iterdir() if e.is_dir()]
+
+        return model_list
+
+    def get_keywords_list(self):
         """
         Returns a list of IA-related keywords
-
-        Parameters
-        ----------
-        corpus_name: str or None
-            Name of the corpus whose labels are requested.
 
         Returns
         -------
@@ -81,7 +103,7 @@ class DataManager(object):
             A list of keywords
         """
 
-        keywords_fpath = (self.path2source / corpus_name / 'queries'
+        keywords_fpath = (self.path2source / self.corpus_name / 'queries'
                           / 'IA_keywords_SEAD_REV_JAG.txt')
 
         df_keywords = pd.read_csv(keywords_fpath)
@@ -105,6 +127,7 @@ class DataManager(object):
 
         self.path2corpus = self.path2source / corpus_name
         path2feather = self.path2corpus / 'corpus' / 'corpus.feather'
+        self.corpus_name = corpus_name
 
         # If there is a feather file, load it
         if path2feather.is_file():
@@ -237,25 +260,30 @@ class DataManager(object):
 
         return T, df_metadata, topic_words
 
-    def load_dataset(self, corpus_name="", tag=""):
+    def load_dataset(self, tag=""):
         """
         Loads a labeled dataset of documents in the format required by the
         classifier modules
+
+        Parameters
+        ----------
+        tag : str, optional (default="")
+            Name of the dataset
         """
 
         logging.info("-- Loading dataset")
 
-        feather_fname = f'dataset_{corpus_name}_{tag}.feather'
-        csv_fname = f'dataset_{corpus_name}_{tag}.csv'
+        feather_fname = f'dataset_{self.corpus_name}_{tag}.feather'
+        csv_fname = f'dataset_{self.corpus_name}_{tag}.csv'
 
         # If there is a feather file, load it
         t0 = time()
-        path2dataset = self.path2dataset / feather_fname
+        path2dataset = self.path2datasets / feather_fname
         if path2dataset.is_file():
             df_dataset = pd.read_feather(path2dataset)
         else:
             # Rename path to load a csv file.
-            path2dataset = self.path2dataset / csv_fname
+            path2dataset = self.path2datasets / csv_fname
             df_dataset = pd.read_csv(path2dataset)
 
         msg = (f"-- -- Dataset with {len(df_dataset)} samples loaded from "
@@ -266,18 +294,62 @@ class DataManager(object):
         # The log message is returned to be shown in a GUI, if needed
         return df_dataset, msg
 
-    def import_labels(self, corpus_name="", ids_corpus=None):
+    def load_labels(self, tag=""):
+        """
+        Loads a set or PU labels
+        """
+
+        logging.info("-- Loading labels")
+
+        # Read labels from csv file
+        fname = f'labels_{self.corpus_name}_{tag}.csv'
+        path2labels = self.path2labels / fname
+        df_labels = pd.read_csv(path2labels)
+
+        msg = f"-- -- {len(df_labels)} labels loaded from {path2labels}"
+        logging.info(msg)
+
+        # The log message is returned to be shown in a GUI, if needed
+        return df_labels, msg
+
+    def reset_labels(self, tag=""):
+        """
+        Delete all files related to a given class
+
+        Parameters
+        ----------
+        tag : str, optional (default="")
+            Name of the class to be removed
+        """
+
+        # Remove csv file
+        fname = f"labels_{self.corpus_name}_{tag}.csv"
+        path2labelset = self.path2labels / fname
+        path2labelset.unlink()
+
+        # Remove dataset
+        fstem = f"dataset_{self.corpus_name}_{tag}"
+        for p in self.path2datasets.glob(f"{fstem}.*"):
+            p.unlink()
+
+        # Remove model
+        path2model = self.path2models / tag
+        if path2model.is_dir():
+            shutil.rmtree(self.path2models / tag)
+
+        logging.info(f"-- -- Labelset {tag} removed")
+
+    def import_labels(self, ids_corpus=None, tag="imported"):
         """
         Loads a subcorpus of positive labels from file.
 
         Parameters
         ----------
-        corpus_name: str, optional (default="")
-            Name of the corpus. This is used to compose the name of the output
-            file of labels only.
         ids_corpus: list
             List of ids of the documents in the corpus. Only the labels with
             ids in ids_corpus are imported and saved into the output file.
+        tag: str, optional (default="imported")
+            Name for the category defined by the positive labels.
 
         Returns
         -------
@@ -334,18 +406,17 @@ class DataManager(object):
         # ########################
         # Saving id and class only
 
-        tag = "imported"
-        msg = self.save_labels(df_labels, corpus_name=corpus_name, tag=tag)
+        msg = self.save_labels(df_labels, tag=tag)
 
         # The log message is returned to be shown in a GUI, if needed
         return df_labels, msg
 
-    def save_labels(self, df_labels, corpus_name="", tag=""):
+    def save_labels(self, df_labels, tag=""):
 
         # ########################
         # Saving id and class only
 
-        labels_out_fname = f'labels_{corpus_name}_{tag}.csv'
+        labels_out_fname = f'labels_{self.corpus_name}_{tag}.csv'
         path2labels = self.path2labels / labels_out_fname
         df_labels.to_csv(path2labels, index=False)
 
@@ -356,7 +427,7 @@ class DataManager(object):
         # The log message is returned to be shown in a GUI, if needed
         return msg
 
-    def save_dataset(self, df_dataset, corpus_name="", tag="", save_csv=False):
+    def save_dataset(self, df_dataset, tag="", save_csv=False):
         """
         Save dataset in input dataframe in a feather file.
 
@@ -364,9 +435,6 @@ class DataManager(object):
         ----------
         df_dataset : pandas.DataFrame
             Dataset to save
-        corpus_name : str, optional (default="")
-            Name of the corpus. It will be used to compose the name of the
-            output file
         tag : str, optional (default="")
             Optional string to add to the output file name.
         save_csv : boolean, optional (default=False)
@@ -376,15 +444,15 @@ class DataManager(object):
         # ########################
         # Saving id and class only
 
-        dataset_fname = f'dataset_{corpus_name}_{tag}.feather'
-        path2dataset = self.path2dataset / dataset_fname
+        dataset_fname = f'dataset_{self.corpus_name}_{tag}.feather'
+        path2dataset = self.path2datasets / dataset_fname
         df_dataset.to_feather(path2dataset)
         msg = (f"-- File with {len(df_dataset)} samples saved in "
                f"{path2dataset}")
 
         if save_csv:
-            dataset_fname = f'dataset_{corpus_name}_{tag}.csv'
-            path2dataset = self.path2dataset / dataset_fname
+            dataset_fname = f'dataset_{self.corpus_name}_{tag}.csv'
+            path2dataset = self.path2datasets / dataset_fname
             df_dataset.to_csv(path2dataset)
 
         logging.info(msg)

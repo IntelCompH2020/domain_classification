@@ -261,9 +261,9 @@ class CorpusClassifier(object):
         # PREDICTIONS: Fill predictions for the evaluated data
         delta = model_outputs[:, 1] - model_outputs[:, 0]
 
-        self.df_dataset[f"prediction"] = UNUSED
+        self.df_dataset["prediction"] = UNUSED
         self.df_dataset.loc[self.df_dataset['train_test'] == TEST,
-                            f"prediction"] = (delta > 0).astype(int)
+                            "prediction"] = (delta > 0).astype(int)
 
         # Fill probabilistic predictions for the evaluated data
         # Scores are mapped to probabilities thoudh a logistic function.
