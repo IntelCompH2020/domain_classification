@@ -1341,7 +1341,7 @@ border:2px #676A6E;</string>
                    <string notr="true">background-color: #CFCEC6;</string>
                   </property>
                   <property name="currentIndex">
-                   <number>1</number>
+                   <number>2</number>
                   </property>
                   <widget class="QWidget" name="page_load">
                    <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -2583,7 +2583,7 @@ QToolTip {
                               <item>
                                <widget class="QPushButton" name="update_param_pu_model_push_button">
                                 <property name="sizePolicy">
-                                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                                   <horstretch>0</horstretch>
                                   <verstretch>0</verstretch>
                                  </sizepolicy>
@@ -2617,7 +2617,7 @@ QPushButton:pressed {
                               <item>
                                <widget class="QPushButton" name="reset_param_training_pu_model_push_button">
                                 <property name="sizePolicy">
-                                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                                   <horstretch>0</horstretch>
                                   <verstretch>0</verstretch>
                                  </sizepolicy>
@@ -2725,7 +2725,7 @@ QPushButton:pressed {
                               <item>
                                <widget class="QPushButton" name="train_pu_model_push_button">
                                 <property name="sizePolicy">
-                                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                                   <horstretch>0</horstretch>
                                   <verstretch>0</verstretch>
                                  </sizepolicy>
@@ -2738,7 +2738,7 @@ QPushButton:pressed {
                                 </property>
                                 <property name="maximumSize">
                                  <size>
-                                  <width>120</width>
+                                  <width>16777215</width>
                                   <height>16777215</height>
                                  </size>
                                 </property>
@@ -3164,7 +3164,7 @@ QToolTip {
                             <item>
                              <widget class="QPushButton" name="eval_pu_classifier_push_button">
                               <property name="sizePolicy">
-                               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                                 <horstretch>0</horstretch>
                                 <verstretch>0</verstretch>
                                </sizepolicy>
@@ -3795,7 +3795,7 @@ QToolTip {
                           <item>
                            <widget class="QPushButton" name="update_ndocs_al_push_button">
                             <property name="sizePolicy">
-                             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                               <horstretch>0</horstretch>
                               <verstretch>0</verstretch>
                              </sizepolicy>
@@ -4778,14 +4778,14 @@ QProgressBar::chunk {
                                 <item>
                                  <widget class="QPushButton" name="give_feedback_user_push_button">
                                   <property name="sizePolicy">
-                                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                                     <horstretch>0</horstretch>
                                     <verstretch>0</verstretch>
                                    </sizepolicy>
                                   </property>
                                   <property name="maximumSize">
                                    <size>
-                                    <width>150</width>
+                                    <width>16777215</width>
                                     <height>16777215</height>
                                    </size>
                                   </property>
@@ -4812,14 +4812,14 @@ QPushButton:pressed {
                                 <item>
                                  <widget class="QPushButton" name="retrain_pu_model_push_button">
                                   <property name="sizePolicy">
-                                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                                     <horstretch>0</horstretch>
                                     <verstretch>0</verstretch>
                                    </sizepolicy>
                                   </property>
                                   <property name="maximumSize">
                                    <size>
-                                    <width>150</width>
+                                    <width>16777215</width>
                                     <height>16777215</height>
                                    </size>
                                   </property>
@@ -4846,14 +4846,14 @@ QPushButton:pressed {
                                 <item>
                                  <widget class="QPushButton" name="reevaluate_pu_model_push_button">
                                   <property name="sizePolicy">
-                                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                                     <horstretch>0</horstretch>
                                     <verstretch>0</verstretch>
                                    </sizepolicy>
                                   </property>
                                   <property name="maximumSize">
                                    <size>
-                                    <width>150</width>
+                                    <width>16777215</width>
                                     <height>16777215</height>
                                    </size>
                                   </property>
