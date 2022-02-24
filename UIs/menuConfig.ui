@@ -267,7 +267,7 @@
                </property>
                <property name="font">
                 <font>
-                 <family>Helvetica</family>
+                 <family>Arial</family>
                  <pointsize>13</pointsize>
                  <weight>50</weight>
                  <italic>true</italic>
@@ -339,7 +339,7 @@ QPushButton:pressed {
                </property>
                <property name="font">
                 <font>
-                 <family>Helvetica</family>
+                 <family>Arial</family>
                  <pointsize>13</pointsize>
                  <weight>50</weight>
                  <italic>true</italic>

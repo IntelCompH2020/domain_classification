@@ -1341,7 +1341,7 @@ border:2px #676A6E;</string>
                    <string notr="true">background-color: #CFCEC6;</string>
                   </property>
                   <property name="currentIndex">
-                   <number>0</number>
+                   <number>1</number>
                   </property>
                   <widget class="QWidget" name="page_load">
                    <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -2724,6 +2724,18 @@ QPushButton:pressed {
                               </item>
                               <item>
                                <widget class="QPushButton" name="train_pu_model_push_button">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>120</width>
+                                  <height>0</height>
+                                 </size>
+                                </property>
                                 <property name="maximumSize">
                                  <size>
                                   <width>120</width>
@@ -3157,9 +3169,15 @@ QToolTip {
                                 <verstretch>0</verstretch>
                                </sizepolicy>
                               </property>
+                              <property name="minimumSize">
+                               <size>
+                                <width>120</width>
+                                <height>0</height>
+                               </size>
+                              </property>
                               <property name="maximumSize">
                                <size>
-                                <width>150</width>
+                                <width>16777215</width>
                                 <height>16777215</height>
                                </size>
                               </property>

@@ -155,17 +155,13 @@ def main():
     # app.setFont(default_font)
     widget = QtWidgets.QStackedWidget()
     widget.setWindowTitle(Messages.WINDOW_TITLE)
-    width = widget.frameGeometry().width()
-    height = widget.frameGeometry().height()
-    print(height)
-    print(width)
 
     # Create main menu window
     config_window = PreConfig(widget, args)
     widget.addWidget(config_window)
-    height = 2480  # 1540
-    weight = 1360  # 880
-    widget.resize(height, weight)
+    #height = 2480  # 1540
+    #weight = 1360  # 880
+    #widget.resize(height, weight)
     widget.show()
     app.exec_()
     # sys.exit(app.exec_())
