@@ -133,8 +133,6 @@ class PreConfig(QDialog):
 # Main
 ########################################################################
 def main():
-    os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
-
     # Read input arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('--p', type=str, default="/Users/lbartolome/Documents/Intelcomp/project_folder",
