@@ -2570,7 +2570,7 @@ QToolTip {
                                  <enum>Qt::Horizontal</enum>
                                 </property>
                                 <property name="sizeType">
-                                 <enum>QSizePolicy::Fixed</enum>
+                                 <enum>QSizePolicy::Expanding</enum>
                                 </property>
                                 <property name="sizeHint" stdset="0">
                                  <size>
@@ -2654,7 +2654,7 @@ QPushButton:pressed {
                                  <enum>Qt::Horizontal</enum>
                                 </property>
                                 <property name="sizeType">
-                                 <enum>QSizePolicy::Fixed</enum>
+                                 <enum>QSizePolicy::Expanding</enum>
                                 </property>
                                 <property name="sizeHint" stdset="0">
                                  <size>
@@ -2712,7 +2712,7 @@ QPushButton:pressed {
                                  <enum>Qt::Horizontal</enum>
                                 </property>
                                 <property name="sizeType">
-                                 <enum>QSizePolicy::Fixed</enum>
+                                 <enum>QSizePolicy::Expanding</enum>
                                 </property>
                                 <property name="sizeHint" stdset="0">
                                  <size>
@@ -2768,7 +2768,7 @@ QPushButton:pressed {
                                  <enum>Qt::Horizontal</enum>
                                 </property>
                                 <property name="sizeType">
-                                 <enum>QSizePolicy::Fixed</enum>
+                                 <enum>QSizePolicy::Expanding</enum>
                                 </property>
                                 <property name="sizeHint" stdset="0">
                                  <size>
@@ -3151,7 +3151,7 @@ QToolTip {
                                <enum>Qt::Horizontal</enum>
                               </property>
                               <property name="sizeType">
-                               <enum>QSizePolicy::Fixed</enum>
+                               <enum>QSizePolicy::Expanding</enum>
                               </property>
                               <property name="sizeHint" stdset="0">
                                <size>
@@ -3207,7 +3207,7 @@ QPushButton:pressed {
                                <enum>Qt::Horizontal</enum>
                               </property>
                               <property name="sizeType">
-                               <enum>QSizePolicy::Fixed</enum>
+                               <enum>QSizePolicy::Expanding</enum>
                               </property>
                               <property name="sizeHint" stdset="0">
                                <size>
@@ -3276,7 +3276,7 @@ QPushButton:pressed {
                              <enum>Qt::Vertical</enum>
                             </property>
                             <property name="sizeType">
-                             <enum>QSizePolicy::Fixed</enum>
+                             <enum>QSizePolicy::Expanding</enum>
                             </property>
                             <property name="sizeHint" stdset="0">
                              <size>
