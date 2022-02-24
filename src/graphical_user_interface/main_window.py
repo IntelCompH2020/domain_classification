@@ -217,6 +217,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # from the values read from the configuration file
         self.init_params_train_pu_model()
 
+        self.table_pu_classification_results.resizeColumnsToContents()
+        self.table_pu_classification_results.resizeRowsToContents()
+
         # GET FEEDBACK WIDGETS
         # #####################################################################
         self.give_feedback_user_push_button.clicked.connect(
@@ -242,6 +245,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # The loading bar is initially not visible
         self.progress_bar_feedback_update.setVisible(False)
         self.progress_bar_feedback_update.setValue(0)
+
+        self.table_pu_reclassification_results.resizeColumnsToContents()
+        self.table_pu_reclassification_results.resizeRowsToContents()
 
         # Initialize the value for the number of documents to annotate based on the default value noted in the
         # configuration file
@@ -825,7 +831,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 results.append(v)
             for i in np.arange(self.table_pu_classification_results.rowCount()):
                 self.table_pu_classification_results.setItem(
-                    i-1, 1, QtWidgets.QTableWidgetItem(str(results[i])))
+                    i-1, 3, QtWidgets.QTableWidgetItem(str(results[i])))
+
+        self.table_pu_classification_results.resizeColumnsToContents()
+        self.table_pu_classification_results.resizeRowsToContents()
 
         # Show informative message in pop up window
         QtWidgets.QMessageBox.information(
@@ -1164,7 +1173,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 results.append(v)
             for i in np.arange(self.table_pu_reclassification_results.rowCount()):
                 self.table_pu_reclassification_results.setItem(
-                    i - 1, 1, QtWidgets.QTableWidgetItem(str(results[i])))
+                    i - 1, 3, QtWidgets.QTableWidgetItem(str(results[i])))
+
+        self.table_pu_reclassification_results.resizeColumnsToContents()
+        self.table_pu_reclassification_results.resizeRowsToContents()
 
         # Show message in pop up window
         QtWidgets.QMessageBox.information(

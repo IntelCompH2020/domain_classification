@@ -189,9 +189,10 @@ class GetTopicsListWindow(QtWidgets.QDialog):
 
         # Show warning message in case the user clicks on the "Select weighted topic lists" button without having
         # previously written the weights that the user wants to use for the generation of the weighted topic list
-        if self.line_topic_list.text() is None:
+        if self.line_topic_list.text() == "":
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE, Messages.NO_TOPIC_LIST_SELECTED)
+            return
         else:
             # Get topic list
             topic_list = str(self.line_topic_list.text())
@@ -211,9 +212,10 @@ class GetTopicsListWindow(QtWidgets.QDialog):
 
         # Show warning message in case no tag for the file in which the subcorpus conformed based on the selected
         # topics is going to be saved has been selected
-        if self.line_edit_get_tag.text() is None:
+        if self.line_edit_get_tag.text() == "":
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE, Messages.NO_TAG_SELECTED)
+            return
         else:
             # Get selected tag
             self.selectedTag = str(self.line_edit_get_tag.text())

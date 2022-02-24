@@ -35,7 +35,6 @@ class PreConfig(QDialog):
     """
 
     def __init__(self, widget, args):
-        super(PreConfig, self).__init__()
         """
         Initializes the main class for the Domain Classification GUI.
 
@@ -47,10 +46,15 @@ class PreConfig(QDialog):
             List of positional arguments leftover after parsing options.
         """
 
+        super(PreConfig, self).__init__()
+
         # Load UI
         loadUi("UIs/menuConfig.ui", self)
+
+        # Center window
         self.center()
 
+        # Attributes
         self.widget = widget
         self.args = args
 
@@ -153,6 +157,7 @@ def main():
     # Create main menu window
     config_window = PreConfig(widget, args)
     widget.addWidget(config_window)
+    widget.showMaximized()
     # height = 2480  # 1540
     # weight = 1360  # 880
     # widget.resize(height, weight)

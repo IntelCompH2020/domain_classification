@@ -1969,7 +1969,7 @@ QPushButton:pressed {
                                </size>
                               </property>
                               <property name="toolTip">
-                               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Select a set of labels and click the &amp;quot;Load labels&amp;quot; button for loading it into the current session. Alternatively, click the &amp;quot;Reset labels&amp;quot; button to remove the previously selected labels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Select a set of labels (i.e. category you want to discriminate) and click the &amp;quot;Load labels&amp;quot; button for loading it into the current session. Alternatively, click the &amp;quot;Reset labels&amp;quot; button to remove the previously selected labels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                               </property>
                               <property name="styleSheet">
                                <string notr="true">QPushButton {
@@ -3420,6 +3420,9 @@ QToolTip {
 	color:black;
 }</string>
                             </property>
+                            <property name="sizeAdjustPolicy">
+                             <enum>QAbstractScrollArea::AdjustToContents</enum>
+                            </property>
                             <property name="editTriggers">
                              <set>QAbstractItemView::NoEditTriggers</set>
                             </property>
@@ -3522,6 +3525,84 @@ QToolTip {
                               <string/>
                              </property>
                             </column>
+                            <column>
+                             <property name="text">
+                              <string/>
+                             </property>
+                            </column>
+                            <item row="0" column="0">
+                             <property name="text">
+                              <string>Correlation coefficient between the observed
+and predicted binary classifications: it returns
+a value between −1 (total disagreement) and
++1 (perfect prediction).</string>
+                             </property>
+                            </item>
+                            <item row="1" column="0">
+                             <property name="text">
+                              <string>Number of true positives.</string>
+                             </property>
+                             <property name="textAlignment">
+                              <set>AlignJustify|AlignVCenter</set>
+                             </property>
+                            </item>
+                            <item row="2" column="0">
+                             <property name="text">
+                              <string>Number of true negatives.</string>
+                             </property>
+                             <property name="textAlignment">
+                              <set>AlignJustify|AlignVCenter</set>
+                             </property>
+                            </item>
+                            <item row="3" column="0">
+                             <property name="text">
+                              <string>Number of false positives.</string>
+                             </property>
+                             <property name="textAlignment">
+                              <set>AlignJustify|AlignVCenter</set>
+                             </property>
+                            </item>
+                            <item row="4" column="0">
+                             <property name="text">
+                              <string>Number of false negatives.</string>
+                             </property>
+                             <property name="textAlignment">
+                              <set>AlignJustify|AlignVCenter</set>
+                             </property>
+                            </item>
+                            <item row="5" column="0">
+                             <property name="text">
+                              <string>Area under the receiver operating characteristic.
+It is a performance metric for discrimination, as 
+it informs about the model’s ability to discriminate
+between cases positive and negative examples.
+The worst AUROC is 0.5, and the best AUROC is 1.0.</string>
+                             </property>
+                             <property name="textAlignment">
+                              <set>AlignJustify|AlignVCenter</set>
+                             </property>
+                            </item>
+                            <item row="6" column="0">
+                             <property name="text">
+                              <string>Area under the precision-recall curve. It is a useful
+performance metric for problems with imbalanced
+data, in which it is important to find the positive
+examples. A model achieves perfect AUPRC when
+it finds all the positive examples without accidentally
+marking any negative examples as positive.</string>
+                             </property>
+                             <property name="textAlignment">
+                              <set>AlignJustify|AlignVCenter</set>
+                             </property>
+                            </item>
+                            <item row="7" column="0">
+                             <property name="text">
+                              <string>Loss occurred during the evaluation of the classifier.</string>
+                             </property>
+                             <property name="textAlignment">
+                              <set>AlignJustify|AlignVCenter</set>
+                             </property>
+                            </item>
                            </widget>
                           </item>
                          </layout>
@@ -5075,7 +5156,7 @@ QToolTip {
                               <item>
                                <widget class="QTableWidget" name="table_pu_reclassification_results">
                                 <property name="sizePolicy">
-                                 <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                                   <horstretch>0</horstretch>
                                   <verstretch>0</verstretch>
                                  </sizepolicy>
@@ -5148,6 +5229,9 @@ QToolTip {
 	border: 2px solid #ABC2CB;
 	color:black;
 }</string>
+                                </property>
+                                <property name="sizeAdjustPolicy">
+                                 <enum>QAbstractScrollArea::AdjustToContents</enum>
                                 </property>
                                 <property name="editTriggers">
                                  <set>QAbstractItemView::NoEditTriggers</set>
@@ -5251,6 +5335,95 @@ QToolTip {
                                   <string/>
                                  </property>
                                 </column>
+                                <column>
+                                 <property name="text">
+                                  <string/>
+                                 </property>
+                                </column>
+                                <item row="0" column="0">
+                                 <property name="text">
+                                  <string>Correlation coefficient between the observed
+and predicted binary classifications: it returns
+a value between −1 (total disagreement) and
++1 (perfect prediction).</string>
+                                 </property>
+                                 <property name="textAlignment">
+                                  <set>AlignJustify|AlignVCenter</set>
+                                 </property>
+                                </item>
+                                <item row="0" column="1">
+                                 <property name="text">
+                                  <string/>
+                                 </property>
+                                 <property name="textAlignment">
+                                  <set>AlignJustify|AlignVCenter</set>
+                                 </property>
+                                </item>
+                                <item row="1" column="0">
+                                 <property name="text">
+                                  <string>Number of true positives.</string>
+                                 </property>
+                                 <property name="textAlignment">
+                                  <set>AlignJustify|AlignVCenter</set>
+                                 </property>
+                                </item>
+                                <item row="2" column="0">
+                                 <property name="text">
+                                  <string>Number of true negatives.</string>
+                                 </property>
+                                 <property name="textAlignment">
+                                  <set>AlignJustify|AlignVCenter</set>
+                                 </property>
+                                </item>
+                                <item row="3" column="0">
+                                 <property name="text">
+                                  <string>Number of false positives.</string>
+                                 </property>
+                                 <property name="textAlignment">
+                                  <set>AlignJustify|AlignVCenter</set>
+                                 </property>
+                                </item>
+                                <item row="4" column="0">
+                                 <property name="text">
+                                  <string>Number of false negatives.</string>
+                                 </property>
+                                 <property name="textAlignment">
+                                  <set>AlignJustify|AlignVCenter</set>
+                                 </property>
+                                </item>
+                                <item row="5" column="0">
+                                 <property name="text">
+                                  <string>Area under the receiver operating characteristic.
+It is a performance metric for discrimination, as 
+it informs about the model’s ability to discriminate
+between cases positive and negative examples.
+The worst AUROC is 0.5, and the best AUROC is 1.0.</string>
+                                 </property>
+                                 <property name="textAlignment">
+                                  <set>AlignJustify|AlignVCenter</set>
+                                 </property>
+                                </item>
+                                <item row="6" column="0">
+                                 <property name="text">
+                                  <string>Area under the precision-recall curve. It is a useful
+performance metric for problems with imbalanced
+data, in which it is important to find the positive
+examples. A model achieves perfect AUPRC when
+it finds all the positive examples without accidentally
+marking any negative examples as positive.</string>
+                                 </property>
+                                 <property name="textAlignment">
+                                  <set>AlignJustify|AlignVCenter</set>
+                                 </property>
+                                </item>
+                                <item row="7" column="0">
+                                 <property name="text">
+                                  <string>Loss occurred during the evaluation of the classifier.</string>
+                                 </property>
+                                 <property name="textAlignment">
+                                  <set>AlignJustify|AlignVCenter</set>
+                                 </property>
+                                </item>
                                </widget>
                               </item>
                              </layout>

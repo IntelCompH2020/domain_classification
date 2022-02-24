@@ -139,9 +139,10 @@ class GetKeywordsWindow(QtWidgets.QDialog):
 
         # Show warning message in case the user clicks on the "Select keywords" button without having previously
         # written the words that he wants to use as keywords
-        if self.text_edit_get_keywords.toPlainText() is None:
+        if self.text_edit_get_keywords.toPlainText() == "":
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE, Messages.NO_KEYWORDS_SELECTED)
+            return
         else:
             # Get keywords from the "text_edit_get_keywords" QTextEdit (positioned at the bottom left of the window)
             keywords = self.text_edit_get_keywords.toPlainText()
@@ -153,9 +154,11 @@ class GetKeywordsWindow(QtWidgets.QDialog):
 
         # Show warning message in case no tag for the file in which the subcorpus conformed based on the selected
         # keywords is going to be saved has been selected
-        if self.line_edit_get_tag.text() is None:
+
+        if self.line_edit_get_tag.text() == "":
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE, Messages.NO_TAG_SELECTED)
+            return
         else:
             # Get selected tag
             self.selectedTag = str(self.line_edit_get_tag.text())
