@@ -1,16 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 @author: lcalv
-******************************************************************************
-***                   CLASS ANALYZE KEYWORDS WINDOW                        ***
-******************************************************************************
-Class representing the window that is used for the analysis of the presence of
-selected keywords in the corpus
+
 """
 
-##############################################################################
-#                                IMPORTS                                     #
-##############################################################################
 # General imports
 import numpy as np
 from PyQt5 import uic, QtWidgets
@@ -24,7 +17,20 @@ from src.graphical_user_interface.messages import Messages
 
 
 class AnalyzeKeywordsWindow(QtWidgets.QDialog):
+    """
+    Class representing the window that is used for the analysis of the presence of
+    selected keywords in the corpus
+    """
     def __init__(self, tm):
+        """
+        Initializes a "AnalyzeKeywordsWindow" window.
+
+        Parameters
+        ----------
+        tm : TaskManager 
+            TaskManager object associated with the project
+        """
+
         super(AnalyzeKeywordsWindow, self).__init__()
 
         # Load UI and configure default geometry of the window
@@ -38,8 +44,7 @@ class AnalyzeKeywordsWindow(QtWidgets.QDialog):
         self.figure = plt.figure()
         self.figure1 = plt.figure()
 
-        # These are the Canvas Widgets that display the figures
-        # It takes the 'figure' instance as a parameter to __init__
+        # Canvas Widgets that display the figures
         self.canvas = FigureCanvas(self.figure)
         self.layoutPlot.addWidget(self.canvas)
         self.canvas1 = FigureCanvas(self.figure1)

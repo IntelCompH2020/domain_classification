@@ -26,8 +26,8 @@ class MainWindow(QtWidgets.QMainWindow):
     """
     Class representing the main window of the application.
     """
+
     def __init__(self, project_folder, source_folder, tm, widget, stdout, stderr):
-        super(MainWindow, self).__init__()
         """
         Initializes the application's main window based on the parameters received
         from the application's starting window.
@@ -47,6 +47,8 @@ class MainWindow(QtWidgets.QMainWindow):
         stderr : sys.stderr
             Standard Error file object
         """
+
+        super(MainWindow, self).__init__()
 
         # Load UI and configure default geometry of the window
         #######################################################################

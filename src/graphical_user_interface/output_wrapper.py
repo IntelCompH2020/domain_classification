@@ -1,30 +1,26 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Mar  2 13:19:34 2021
 @author: lcalv
-******************************************************************************
-***                        CLASS OUTPUT WRAPPER                            ***
-******************************************************************************
-Module that overrides the "sys.stderr" and "sys.stdout" with a wrapper object
-that emits a signal whenever output is written. In order to account for other
-modules that need "sys.stdout" / "sys.stderr" (such as the logging module) use
-the wrapped versions wherever necessary, the instance of the OutputWrapper are
-created before the TaskManager object.
-
-It has been created based on the analogous
-class provided by:
-https://stackoverflow.com/questions/19855288/duplicate-stdout-stderr-in-qtextedit-widget
 """
 
-##############################################################################
-#                                IMPORTS                                     #
-##############################################################################
 # General imports
 import sys
 from PyQt5 import QtCore
 
 
 class OutputWrapper(QtCore.QObject):
+    """
+    Module that overrides the "sys.stderr" and "sys.stdout" with a wrapper object
+    that emits a signal whenever output is written. In order to account for other
+    modules that need "sys.stdout" / "sys.stderr" (such as the logging module) use
+    the wrapped versions wherever necessary, the instance of the OutputWrapper are
+    created before the TaskManager object.
+
+    It has been created based on the analogous
+    class provided by:
+    https://stackoverflow.com/questions/19855288/duplicate-stdout-stderr-in-qtextedit-widget
+    """
+
     outputWritten = QtCore.pyqtSignal(str)
 
     def __init__(self, parent, stdout=True):

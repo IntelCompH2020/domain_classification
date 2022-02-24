@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 @author: lcalv
-******************************************************************************
-***                           CLASS MESSAGES                              ***
-******************************************************************************
-Class containing the majority of the messages utilized in the GUI to
-facilitate the readability of the code.
 """
 
 
 class Messages:
+    """
+    Class containing the majority of the messages utilized in the GUI to
+    facilitate the readability of the code.
+    """
     # Generic application messages
     ###########################################################################
     DC_MESSAGE = 'Domain classifier message'

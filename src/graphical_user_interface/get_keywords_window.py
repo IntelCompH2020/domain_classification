@@ -1,16 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 @author: lcalv
-******************************************************************************
-***                     CLASS GET KEYWORDS WINDOW                          ***
-******************************************************************************
-Class representing the window that is used for the attainment of a subcorpus
-from a given list of keywords, this list being selected by the user.
 """
 
-##############################################################################
-#                                IMPORTS                                     #
-##############################################################################
 # General imports
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtCore import QSize
@@ -23,7 +15,20 @@ from src.graphical_user_interface.constants import Constants
 
 
 class GetKeywordsWindow(QtWidgets.QDialog):
+    """
+    Class representing the window that is used for the attainment of a subcorpus
+    from a given list of keywords, this list being selected by the user.
+    """
     def __init__(self, tm):
+        """
+        Initializes a "GetKeywordsWindow" window.
+
+        Parameters
+        ----------
+        tm : TaskManager 
+            TaskManager object associated with the project
+        """
+
         super(GetKeywordsWindow, self).__init__()
 
         # Load UI and configure default geometry of the window

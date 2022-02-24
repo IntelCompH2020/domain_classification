@@ -1,16 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 @author: lcalv
-******************************************************************************
-***                     CLASS TOPIC LISTS WINDOW                           ***
-******************************************************************************
-Class representing the window in charge of getting a subcorpus from a given
-list of topics, such a list being specified by the user.
 """
 
-##############################################################################
-#                                IMPORTS                                     #
-##############################################################################
 # General imports
 import numpy as np
 from PyQt5 import uic, QtWidgets
@@ -24,7 +16,20 @@ from src.graphical_user_interface.constants import Constants
 
 
 class GetTopicsListWindow(QtWidgets.QDialog):
+    """
+    Class representing the window in charge of getting a subcorpus from a given
+    list of topics, such a list being specified by the user.
+    """
     def __init__(self, tm):
+        """
+        Initializes a "GetTopicsListWindow" window.
+
+        Parameters
+        ----------
+        tm : TaskManager 
+            TaskManager object associated with the project
+        """
+
         super(GetTopicsListWindow, self).__init__()
 
         # Load UI and configure default geometry of the window
@@ -161,7 +166,8 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         return
 
     def updated_topic_weighted_list(self):
-        """Generates the topic weighted list based on the weights that the user has introduced on the "table_widget_topics_weight" table
+        """Generates the topic weighted list based on the weights that the user has introduced on the
+        "table_widget_topics_weight" table
         """
         # Get weights from the left table
         topic_weighted_list = ""

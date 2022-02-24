@@ -1,16 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 @author: lcalv
-******************************************************************************
-***                       UTIL(AUXILIARY FUNCTIONS)                         ***
-******************************************************************************
-Class with a set of auxiliary functions for the GUI deployment.
-
 """
 
-##############################################################################
-#                                IMPORTS                                     #
-##############################################################################
 # General imports
 from PyQt5 import QtCore
 
@@ -19,19 +11,22 @@ from src.graphical_user_interface.worker import Worker
 
 
 def toggle_menu(gui, max_width):
-    """Method to control the movement of the Toggle menu located on the
+    """
+    Method to control the movement of the Toggle menu located on the
     left. When collapsed, only the icon for each of the options is shown;
     when expanded, both icons and name indicating the description of the
     functionality are shown.
     Based on the code available at:
     https://github.com/Wanderson-Magalhaes/Toggle_Burguer_Menu_Python_PySide2/blob/master/ui_functions.py
 
-    Parameters:
+    Parameters
     ----------
-    * gui       -  MainWindow object to which the toggle menu will be appended.
-    * maxWidth  -  Maximum width to which the toggle menu is going to be
-                   expanded.
+    gui: MainWindow
+        MainWindow object to which the toggle menu will be appended.
+    maxWidth: int
+        Maximum width to which the toggle menu is going to be expanded.
     """
+
     # Get width
     width = gui.frame_left_menu.width()
     max_extend = max_width
@@ -65,19 +60,23 @@ def toggle_menu(gui, max_width):
 
 
 def execute_in_thread(gui, function, function_output, progress_bar):
-    """ Method to execute a function in the secondary thread while showing
+    """
+    Method to execute a function in the secondary thread while showing
     a progress bar at the time the function is being executed if a progress bar object is provided.
     When finished, it forces the execution of the method to be
     executed after the function executing in a thread is completed.
     Based on the functions provided in the manual available at:
     https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/
 
-    Parameters:
+    Parameters
     ----------
-    * function (UDF)              - Function to be executed in thread
-    * function_output (UDF)       - Function to be executed at the end of the thread
-    * progress_bar (QProgressBar) - If a QProgressBar object is provided, it shows a progress 
-                                    bar in the main thread while the main task is being carried out in a secondary thread
+    function: UDF
+        Function to be executed in thread
+    function_output: UDF
+        Function to be executed at the end of the thread
+    progress_bar: QProgressBar
+        If a QProgressBar object is provided, it shows a progress bar in the
+        main thread while the main task is being carried out in a secondary thread
     """
 
     # Pass the function to execute
@@ -87,8 +86,8 @@ def execute_in_thread(gui, function, function_output, progress_bar):
     if progress_bar is not None:
         signal_accept(progress_bar)
 
-    # Connect function that is going to be executed when the task being carrying out in the secondary thread has
-    # been completed
+    # Connect function that is going to be executed when the task being
+    # carrying out in the secondary thread has been completed
     gui.worker.signals.finished.connect(function_output)
 
     # Execute
@@ -96,13 +95,15 @@ def execute_in_thread(gui, function, function_output, progress_bar):
 
 
 def signal_accept(progress_bar):
-    """Makes the progress bar passed as an argument visible and configures it for an event whose duration is unknown by
-    setting both its minimum and maximum both to 0, thus the bar shows a busy indicator instead of a percentage of steps.
+    """
+    Makes the progress bar passed as an argument visible and configures it for
+    an event whose duration is unknown by setting both its minimum and maximum
+    both to 0, thus the bar shows a busy indicator instead of a percentage of steps.
 
-    Parameters:
+    Parameters
     ----------
-        * progress_bar (QProgressBar): Progress bar object in which the progress is going to 
-                                       be displayed.
+    progress_bar: QProgressBar
+         Progress bar object in which the progress is going to be displayed.
     """
     progress_bar.setVisible(True)
     progress_bar.setMaximum(0)
@@ -110,6 +111,18 @@ def signal_accept(progress_bar):
 
 
 def change_background_color_text_edit(text_edit, prediction):
+    """
+    Method to that changes the border color of the QTextEdit associated with the documents to be annotated, based on
+    the predicted class selected by the user.
+
+    Parameters
+    ----------
+    text_edit: QTextEdit
+        QTextEdit (document) whose border color is going to be updated based on the
+    prediction: int (0 or 1)
+        Predicted class specified by the user. If prediction == 1, the document's associated QTextEdit's border
+        color is set to #6A7288; if prediction == 0, it is set to #DB8678.
+    """
     if prediction == 1:
         text_edit.setStyleSheet("""
             QTextEdit {	
