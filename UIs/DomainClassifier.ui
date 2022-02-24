@@ -3756,7 +3756,7 @@ border: 1px solid black;</string>
                              </size>
                             </property>
                             <property name="toolTip">
-                             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;This parameter determines the number of documents to show each Active Learning round. By default, it is configured to 4, but a different value can be assigned to it by inserting an alternative number on the label located at the right. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;This parameter determines the number of documents to show each Active Learning round. By default, it is configured to 4, but a different value can be assigned to it by inserting an alternative number on the label located at the right. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                             </property>
                             <property name="styleSheet">
                              <string notr="true">QPushButton {
