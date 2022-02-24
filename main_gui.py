@@ -42,6 +42,7 @@ class PreConfig(QDialog):
         super(PreConfig, self).__init__()
         # Load UI
         loadUi("UIs/menuConfig.ui", self)
+        self.center()
 
         self.widget = widget
         self.args = args
@@ -108,7 +109,6 @@ class PreConfig(QDialog):
             print("A new project folder was selected. Proceeding with "
                   "its configuration...")
             tm.create()
-            # tm.configure_project_folder()
             tm.setup()
         else:
             print("An existing project folder was selected. Proceeding with "
@@ -119,6 +119,7 @@ class PreConfig(QDialog):
         main_window = MainWindow(self.projectFolder, self.sourceFolder, tm, self.widget, self.stdout, self.stderr)
         self.widget.addWidget(main_window)
         self.widget.setCurrentIndex(self.widget.currentIndex() + 1)
+        self.widget.showMaximized()
         # widget.resize(2480, 1360)
         return
 
@@ -159,11 +160,10 @@ def main():
 
     # Create main menu window
     config_window = PreConfig(widget, args)
-    config_window.center()
     widget.addWidget(config_window)
     height = 2480  # 1540
     weight = 1360  # 880
-    widget.resize(height, weight)
+    #widget.resize(height, weight)
     widget.show()
     app.exec_()
     # sys.exit(app.exec_())
