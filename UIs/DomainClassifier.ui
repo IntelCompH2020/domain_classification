@@ -1341,7 +1341,7 @@ border:2px #676A6E;</string>
                    <string notr="true">background-color: #CFCEC6;</string>
                   </property>
                   <property name="currentIndex">
-                   <number>1</number>
+                   <number>0</number>
                   </property>
                   <widget class="QWidget" name="page_load">
                    <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -3276,7 +3276,7 @@ QPushButton:pressed {
                              <enum>Qt::Vertical</enum>
                             </property>
                             <property name="sizeType">
-                             <enum>QSizePolicy::Expanding</enum>
+                             <enum>QSizePolicy::Fixed</enum>
                             </property>
                             <property name="sizeHint" stdset="0">
                              <size>
@@ -4980,7 +4980,7 @@ QToolTip {
                               <item>
                                <widget class="QTextEdit" name="text_edit_results_reval_retrain_pu_model">
                                 <property name="sizePolicy">
-                                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                                 <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                                   <horstretch>0</horstretch>
                                   <verstretch>0</verstretch>
                                  </sizepolicy>
@@ -5027,7 +5027,7 @@ QToolTip {
                               <item>
                                <widget class="QTableWidget" name="table_pu_reclassification_results">
                                 <property name="sizePolicy">
-                                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                                 <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                                   <horstretch>0</horstretch>
                                   <verstretch>0</verstretch>
                                  </sizepolicy>
