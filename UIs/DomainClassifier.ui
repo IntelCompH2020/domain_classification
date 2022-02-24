@@ -1341,7 +1341,7 @@ border:2px #676A6E;</string>
                    <string notr="true">background-color: #CFCEC6;</string>
                   </property>
                   <property name="currentIndex">
-                   <number>0</number>
+                   <number>1</number>
                   </property>
                   <widget class="QWidget" name="page_load">
                    <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -2415,7 +2415,7 @@ QToolTip {
                               <item>
                                <widget class="QTableWidget" name="table_train_pu_model_params">
                                 <property name="sizePolicy">
-                                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                                   <horstretch>0</horstretch>
                                   <verstretch>0</verstretch>
                                  </sizepolicy>
@@ -2428,8 +2428,8 @@ QToolTip {
                                 </property>
                                 <property name="maximumSize">
                                  <size>
-                                  <width>550</width>
-                                  <height>100</height>
+                                  <width>16777215</width>
+                                  <height>16777215</height>
                                  </size>
                                 </property>
                                 <property name="styleSheet">
@@ -2771,7 +2771,7 @@ QPushButton:pressed {
                             <item>
                              <widget class="QTextEdit" name="text_logs_train_pu_model">
                               <property name="sizePolicy">
-                               <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                                 <horstretch>0</horstretch>
                                 <verstretch>0</verstretch>
                                </sizepolicy>
@@ -2784,7 +2784,7 @@ QPushButton:pressed {
                               </property>
                               <property name="maximumSize">
                                <size>
-                                <width>500</width>
+                                <width>16777215</width>
                                 <height>16777215</height>
                                </size>
                               </property>
@@ -3204,7 +3204,7 @@ QPushButton:pressed {
                           <item>
                            <widget class="QTextEdit" name="text_edit_results_eval_pu_classifier">
                             <property name="sizePolicy">
-                             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                               <horstretch>0</horstretch>
                               <verstretch>0</verstretch>
                              </sizepolicy>
@@ -3271,7 +3271,7 @@ QPushButton:pressed {
                           <item>
                            <widget class="QTableWidget" name="table_pu_classification_results">
                             <property name="sizePolicy">
-                             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                             <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                               <horstretch>0</horstretch>
                               <verstretch>0</verstretch>
                              </sizepolicy>
@@ -5009,7 +5009,7 @@ QToolTip {
                               <item>
                                <widget class="QTableWidget" name="table_pu_reclassification_results">
                                 <property name="sizePolicy">
-                                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                                   <horstretch>0</horstretch>
                                   <verstretch>0</verstretch>
                                  </sizepolicy>
