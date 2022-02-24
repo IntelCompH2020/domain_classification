@@ -36,6 +36,7 @@ from src.graphical_user_interface.messages import Messages
 from src.task_manager import TaskManagerGUI
 from src.graphical_user_interface.output_wrapper import OutputWrapper
 
+
 class PreConfig(QDialog):
     def __init__(self, widget, args):
         super(PreConfig, self).__init__()
@@ -82,13 +83,13 @@ class PreConfig(QDialog):
 
     def get_project_folder(self):
         print(self.args.p)
-        self.projectFolder =  \
+        self.projectFolder = \
             QFileDialog.getExistingDirectory(
                 self, 'Create or select an an existing project', self.home)
         self.showProjectFolder.setText(self.projectFolder)
 
     def get_source_data_folder(self):
-        self.sourceFolder =  \
+        self.sourceFolder = \
             QFileDialog.getExistingDirectory(
                 self, 'Select the source data folder', self.home)
         self.showSourceDataFolder.setText(self.sourceFolder)
@@ -97,8 +98,8 @@ class PreConfig(QDialog):
         # We show a warning message if one or  both folders have not selected
         if self.projectFolder == "" or self.sourceFolder == "":
             QtWidgets.QMessageBox.warning(
-             self, Messages.DC_MESSAGE,
-             Messages.INCORRECT_INPUT_PARAM_SELECTION)
+                self, Messages.DC_MESSAGE,
+                Messages.INCORRECT_INPUT_PARAM_SELECTION)
             return
 
         # Create the TaskManager object
@@ -158,10 +159,11 @@ def main():
 
     # Create main menu window
     config_window = PreConfig(widget, args)
+    config_window.center()
     widget.addWidget(config_window)
-    #height = 2480  # 1540
-    #weight = 1360  # 880
-    #widget.resize(height, weight)
+    height = 2480  # 1540
+    weight = 1360  # 880
+    widget.resize(height, weight)
     widget.show()
     app.exec_()
     # sys.exit(app.exec_())

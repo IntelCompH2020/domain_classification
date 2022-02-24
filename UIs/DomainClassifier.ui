@@ -1341,7 +1341,7 @@ border:2px #676A6E;</string>
                    <string notr="true">background-color: #CFCEC6;</string>
                   </property>
                   <property name="currentIndex">
-                   <number>0</number>
+                   <number>2</number>
                   </property>
                   <widget class="QWidget" name="page_load">
                    <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -2395,6 +2395,40 @@ QToolTip {
                           <item>
                            <layout class="QVBoxLayout" name="verticalLayout_43">
                             <item>
+                             <widget class="QFrame" name="frame_grip_12">
+                              <property name="enabled">
+                               <bool>true</bool>
+                              </property>
+                              <property name="sizePolicy">
+                               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                               </sizepolicy>
+                              </property>
+                              <property name="minimumSize">
+                               <size>
+                                <width>650</width>
+                                <height>20</height>
+                               </size>
+                              </property>
+                              <property name="maximumSize">
+                               <size>
+                                <width>16777215</width>
+                                <height>16777215</height>
+                               </size>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">background-color: #CFCEC6;</string>
+                              </property>
+                              <property name="frameShape">
+                               <enum>QFrame::NoFrame</enum>
+                              </property>
+                              <property name="frameShadow">
+                               <enum>QFrame::Raised</enum>
+                              </property>
+                             </widget>
+                            </item>
+                            <item>
                              <layout class="QHBoxLayout" name="horizontalLayout_54">
                               <item>
                                <spacer name="horizontalSpacer_78">
@@ -3289,7 +3323,7 @@ QPushButton:pressed {
                           <item>
                            <widget class="QTableWidget" name="table_pu_classification_results">
                             <property name="sizePolicy">
-                             <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                               <horstretch>0</horstretch>
                               <verstretch>0</verstretch>
                              </sizepolicy>
@@ -3509,11 +3543,7 @@ QToolTip {
                              </size>
                             </property>
                             <property name="toolTip">
-                             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;From this view, you can give feedback about the trained model. As many documents as specified in the parameter 'n_docs' will be displayed, together with its associated prediction, if it is available. Documents that initially belong to the positive class (1) are highlighted in purple, those that belong to the negative one (0), in red. To annotate a document as belonging to the positive class, the checkbox that is located under such a document must be checked. Once the documents' annotations have been completed, the button 'Give feedback' must be clicked on. Once this is done, the model can be retrained using the manual annotations by clicking the 'Retrain model' button, and then reevaluated by clicking on 'Reevaluate model'.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;From this view, you can give feedback about the trained model. As many documents as specified in the parameter 'n_docs' will be displayed, together with its associated prediction, if it is available. Documents that initially belong to the positive class (1) are highlighted in purple, those that belong to the negative one (0), in red. To annotate a document as belonging to the positive class, the checkbox that is located under such a document must be checked. Once the documents' annotations have been completed, the button 'Give feedback' must be clicked on. Once this is done, the model can be retrained using the manual annotations by clicking the 'Retrain model' button, and then reevaluated by clicking on 'Reevaluate model'.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                             </property>
                             <property name="styleSheet">
                              <string notr="true">QPushButton {
@@ -5035,7 +5065,7 @@ QToolTip {
                                 <property name="minimumSize">
                                  <size>
                                   <width>650</width>
-                                  <height>0</height>
+                                  <height>100</height>
                                  </size>
                                 </property>
                                 <property name="styleSheet">
