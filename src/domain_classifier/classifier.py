@@ -8,6 +8,7 @@ from datetime import datetime
 import pandas as pd
 import numpy as np
 import torch
+from torch.utils.data import Dataset, DataLoader
 from simpletransformers.classification import ClassificationModel
 from sklearn import model_selection
 
@@ -17,6 +18,35 @@ TEST = 1
 # Equivalent to NaN for the integer columns in self.df_dataset:
 # (nan is not used because it converts the whole column to float)
 UNUSED = -99
+
+
+class CustomDataset(Dataset):
+    """
+    Custom dataset to use with the custom model
+    """
+    def __init__(self, df):
+
+        self.id = None
+        self.text = None
+        self.labels = None
+        self.sample_weight = None
+
+        for k, v in df.to_dict(orient="list").items():
+            if hasattr(self, k):
+                setattr(self, k, v)
+
+    def __getitem__(self, idx):
+        item = {
+            "id": self.id[idx],
+            "text": self.text[idx],
+            "sample_weight": self.sample_weight[idx],
+        }
+        if self.labels is not None:
+            item["labels"] = torch.tensor(self.labels[idx])
+        return item
+
+    def __len__(self):
+        return len(self.id)
 
 
 class CorpusClassifier(object):
@@ -129,6 +159,18 @@ class CorpusClassifier(object):
         self.df_dataset.loc[df_test.index, 'train_test'] = TEST
 
         return
+
+    def create_data_loader(df, batch_size=8):
+        """
+        Creates a DataLoader from a DataFrame to train/eval model
+        """
+
+        df_set = CustomDataset(df)
+        loader = DataLoader(
+            dataset=df_set, batch_size=batch_size, shuffle=True, num_workers=0
+        )
+
+        return loader
 
     def load_model(self):
         """
