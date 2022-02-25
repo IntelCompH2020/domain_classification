@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Class containing the majority of the messages utilized in the GUI so as to
-facilitate the readability of the code.
-
 @author: lcalv
 """
 
 
 class Messages:
+    """
+    Class containing the majority of the messages utilized in the GUI to
+    facilitate the readability of the code.
+    """
     # Generic application messages
     ###########################################################################
     DC_MESSAGE = 'Domain classifier message'
@@ -15,66 +16,61 @@ class Messages:
 
     # Starting window messages
     ###########################################################################
-    INCORRECT_INPUT_PARAM_SELECTION = 'A project folder and a source folder must be specified to proceed to the main ' \
-                                      'menu. '
-    # Toggle bar messages
-    ###########################################################################
-    INFO_LOAD_CORPUS_LABELS = 'Load corpus (thus resetting any previous corpus loaded in the project),\n ' \
-                              'select a preliminary subcorpus from the positive class, and load or \n' \
-                              'reset labels.'
-    INFO_TRAIN_CLASSIFIER = 'Train classifier model with the available labels.'
-    INFO_GET_FEEDBACK = 'Get relevance feedback to update the classifier model in accordance to it.'
+    INCORRECT_INPUT_PARAM_SELECTION = \
+        'A project folder and a source folder must be specified to proceed to the main menu.'
 
-    # Loading corpus messages
+    # Load corpus messages
     ###########################################################################
-    INCORRECT_NO_CORPUS_SELECTED = 'You need to select a corpus first in order to proceed.'
-    INFO_SELECT_CORPUS = 'Click on one of the corpus below listed and in the LOAD CORPUS button in order to load\n ' \
-                         'an specific corpus into the application.'
+    INCORRECT_NO_CORPUS_SELECTED = \
+        'A corpus must be selected first in order to proceed.'
+    INFO_SELECT_CORPUS = \
+        "Select one of the corpus listed below and clicked the 'Load\n" \
+        "corpus' button to load a specific corpus into the application."
 
-    # Getting labels messages
+    # Get labels messages
     ###########################################################################
-    INCORRECT_NO_LABEL_OPTION_SELECTED = 'You must first choose how you want to load the subcorpus.'
-    INFO_GET_LABELS = 'Select the option through which you want to load the labels and then clicked on the button\n ' \
-                      'Get subcorpus. If you are a list of keywords to get the subcorpus, you must first select \n ' \
-                      'the keywords that you want to use.'
-    INFO_TYPE_KEYWORDS = 'Write your keywords (separated by commas, e.g.: "gradient descent, gibbs sampling") '
-    NO_KEYWORDS_SELECTED = 'You must write a set of keywords in order to proceed.'
-    INFO_TAG = 'Tag that is going to be used to compose the label file name.'
-    NO_TAG_SELECTED = 'You must select a tag to compose the label file name'
-    INFO_NO_ACTIVE_KEYWORDS = 'There are no active keywords in this session. Proceeding with its selection...'
-    INFO_ACTIVE_KEYWORDS = 'Analyzing current list of active keywords....'
-    INFO_TOPIC_LIST = 'In this line the weighted topic list that is going to be used for the attainment of the\n'\
-                      'labels is going to be updated according to the weights that you are introducing on the top\n' \
-                      'left table of this view with the following format: "id_0, weight_0, id_1, weight_1, ...".'
-    NO_TOPIC_LIST_SELECTED = 'You must introduce your weighted topic list with the form:\n'\
-                             '"id_0, weight_0, id_1, weight_1, ..."'
-    INFO_TABLE_WEIGHTS = 'Insert the weight that you want to give for each of the associated topics located in the\n'\
-                         'right table.'
-    INFO_TABLE_PARAMETERS_KEYWORDS = 'These are the default values of the parameters needed for the labels import.\n' \
-                                     'You can change any of them by tipping a different value on its corresponding\n' \
-                                     'column. The parameters refer to:\n' \
-                                     '- wt: Weighting factor for the title components.\n' \
-                                     '- n_max: Maximum number of elements in the output list.\n' \
-                                     '- s_min: Minimum score. Only elements strictly above s_min are selected.'
+    INCORRECT_NO_LABEL_OPTION_SELECTED = \
+        "An option between:\n" \
+        "1. Import labels from source file.\n" \
+        "2. Get subcorpus from a given list of keywords.\n" \
+        "3. Analyze the presence of selected keywords in corpus.\n" \
+        "4. Get subcorpus from a topic selection function.\n" \
+        "5. Get subcorpus from documents defining categories.\n" \
+        "must be chosen before clicking on the 'Get labels' button to\n" \
+        "determine the approach for selecting a preliminary subcorpus\n" \
+        "from the positive class."
+    NO_KEYWORDS_SELECTED = \
+        'A set of keywords must be selected first in order to proceed.'
+    NO_TAG_SELECTED = \
+        "A tag to compose the label file name must be selected first."
+    INFO_NO_ACTIVE_KEYWORDS = \
+        'There are no active keywords in this session. Proceeding with its selection...'
+    INFO_ACTIVE_KEYWORDS = \
+        'Analyzing current list of active keywords....'
+    NO_TOPIC_LIST_SELECTED = \
+        "A weighted topic list with the form: 'id_0, weight_0, id_1," \
+        "weight_1,...' must be selected to proceed to the next step."
 
-    INFO_TABLE_PARAMETERS_TOPICS = 'These are the default values of the parameters needed for the labels import.\n' \
-                                   'You can change any of them by tipping a different value on its corresponding\n' \
-                                   'column. The parameters refer to:\n' \
-                                   '- n_max: Maximum number of elements in the output list.\n' \
-                                   '- s_min: Minimum score. Only elements strictly above s_min are selected.'
-
-    # Loading labels messages
+    # Load labels messages
     ###########################################################################
-    INFO_LOAD_RESET_LABELS = 'Select a set of labels and click on LOAD LABELS for loading it into the current \n' \
-                             'session. Alternatively, click on RESET LABELS for removing previously selected labels.' \
+    INFO_LOAD_RESET_LABELS = \
+        "Select a set of labels and click the 'Load labels' button for\n" \
+        "loading it into the current session. Alternatively, click the\n" \
+        "'Reset labels' button to remove the previously selected labels."
 
-    # Training classifier messages
+    # Train and evaluate PU model
     ###########################################################################
+    WARNING_TRAINING = \
+        'To proceed with training: first select a corpus and set of labels.'
+    WARNING_EVALUATION = \
+        'To proceed with evaluation: first select a corpus and set of labels, and train a PU model'
 
     # Getting relevance feedback messages
     ###########################################################################
 
-
-
-
-
+    # Train and revaluate PU model
+    ###########################################################################
+    WARNING_RETRAINING = \
+        'To proceed with retraining: first select a corpus and set of labels.'
+    WARNING_REEVALUATION = \
+        'To proceed with reevaluation: first select a corpus and set of labels, and train a PU model'

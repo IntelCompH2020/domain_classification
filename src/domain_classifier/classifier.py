@@ -418,4 +418,3 @@ class CorpusClassifier(object):
         self.df_dataset.loc[self.df_dataset.learned == 0, 'learned'] = 1
 
         return
-

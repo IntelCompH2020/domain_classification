@@ -520,7 +520,7 @@ class TaskManager(baseTaskManager):
         # Update dataset file to include scores
         self._save_dataset()
 
-        return
+        return result
 
 
 class TaskManagerCMD(TaskManager):
@@ -534,7 +534,6 @@ class TaskManagerCMD(TaskManager):
                  metadata_fname='metadata.yaml', set_logs=True):
         """
         Opens a task manager object.
-
         Parameters
         ----------
         path2project : pathlib.Path
@@ -560,7 +559,6 @@ class TaskManagerCMD(TaskManager):
     def _ask_keywords(self):
         """
         Ask the user for a list of keywords.
-
         Returns
         -------
         keywords : list of str
@@ -577,7 +575,6 @@ class TaskManagerCMD(TaskManager):
     def _ask_label_tag(self):
         """
         Ask the user for a tag to compose the label file name.
-
         Returns
         -------
         tag : str
@@ -814,6 +811,9 @@ class TaskManagerGUI(TaskManager):
         return msg
 
     def get_topic_words(self, n_max, s_min):
+        """
+        Get a set of positive labels from a weighted list of topics
+        """
 
         # Load topics
         T, df_metadata, topic_words = self.DM.load_topics()
@@ -825,23 +825,29 @@ class TaskManagerGUI(TaskManager):
 
         return topic_words, T, df_metadata
 
-    def get_labels_from_docs(self, selected_docs):
+    def get_feedback(self, idx, labels):
         """
-        Requests feedback about the class of given documents.
+        Gets some labels from a user for a selected subset of documents
 
-        Parameters
-        ----------
-        selected_docs : pands.DataFrame
-            Selected documents
-
-        Returns
-        -------
-        labels : list of boolean
-            Labels for the given documents, in the same order than the
-            documents in the input dataframe
+        Notes
+        -----
+        In comparison to the corresponding parent method, STEPS 1 and 2 are
+        carried out directly through the GUI
         """
 
-        # FIXME: Implement this method
-        labels = []
+        # STEP 3: Annotate
+        self.dc.annotate(idx, labels)
 
-        return labels
+        # Update dataset file to include new labels
+        self._save_dataset()
+
+        return
+
+    def train_PUmodel(self, max_imabalance, nmax):
+        """
+        Train a domain classifier
+        """
+
+        super().train_PUmodel(max_imabalance, nmax)
+
+        return

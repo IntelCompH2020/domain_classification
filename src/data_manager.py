@@ -459,3 +459,4 @@ class DataManager(object):
 
         # The log message is returned to be shown in a GUI, if needed
         return msg
+

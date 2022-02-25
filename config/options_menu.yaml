@@ -31,7 +31,7 @@ root:
 #      further list of options>
 #     <Alternatively, options may contain a list of single-key dicts. This
 #      happens when the task has been already selected, but some input
-#      arguments are needed. 
+#      arguments are needed.
 #      The single key of each dictionary specifes the way to get the input
 #      arguments. There are thres possible ways: >
 #     <1: 'parameter': in that case, the options are defined in another
@@ -45,7 +45,7 @@ root:
 #                 in the path specified in paths2data[name], where paths2data
 #                 is one the dictionaries required to create a MenuNavigator
 #                 object>
-#     - path: name  
+#     - path: name
 #     <3: 'get_method': the possible values of the input argument are computed
 #                       by the specified method 'name' defined in the task
 #                       TaskManager class>
@@ -140,7 +140,6 @@ predict_PU:
 
 evaluate_PUmodel:
   title: Evaluate PU classifier model with the available labels
-
 
 # ########################
 # Options for update_model
