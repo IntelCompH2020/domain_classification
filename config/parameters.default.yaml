@@ -22,7 +22,7 @@ keywords:
   # Maximum number of documents to be selected.
   n_max: 2000
   # Minimum score. Only docs scored strictly above s_min are selected
-  s_min: 1
+  s_min: 0.6
 
 # Parameter for the keyword-based document selector
 topics:

@@ -75,7 +75,8 @@ class TaskManager(baseTaskManager):
         self.f_struct = {'labels': 'labels',
                          'datasets': 'datasets',
                          'models': 'models',
-                         'output': 'output'}
+                         'output': 'output',
+                         'embeddings': 'embeddings'}
 
         # Main paths
         # Path to the folder with the corpus files
@@ -84,6 +85,7 @@ class TaskManager(baseTaskManager):
         self.path2labels = self.path2project / self.f_struct['labels']
         self.path2dataset = self.path2project / self.f_struct['datasets']
         self.path2models = self.path2project / self.f_struct['models']
+        self.path2embeddings = self.path2project / self.f_struct['embeddings']
 
         # Corpus dataframe
         self.df_corpus = None      # Corpus dataframe
@@ -103,8 +105,9 @@ class TaskManager(baseTaskManager):
         self.metadata['corpus_name'] = None
 
         # Datamanager
-        self.DM = DataManager(self.path2source, self.path2labels,
-                              self.path2dataset, self.path2models)
+        self.DM = DataManager(
+            self.path2source, self.path2labels, self.path2dataset,
+            self.path2models, self.path2embeddings)
 
         return
 
@@ -188,7 +191,8 @@ class TaskManager(baseTaskManager):
 
         # Load corpus in a dataframe.
         self.df_corpus = self.DM.load_corpus(corpus_name)
-        self.CorpusProc = CorpusDFProcessor(self.df_corpus)
+        self.CorpusProc = CorpusDFProcessor(
+            self.df_corpus, self.path2embeddings)
 
         if not self.state['selected_corpus']:
             # Store the name of the corpus an object attribute because later
@@ -261,7 +265,7 @@ class TaskManager(baseTaskManager):
 
         # Find the documents with the highest scores given the keywords
         ids = self.CorpusProc.filter_by_keywords(
-            self.keywords, wt=wt, n_max=n_max, s_min=s_min)
+            self.keywords, wt=wt, n_max=n_max, s_min=s_min,)
 
         # Create dataframe of positive labels from the list of ids
         self.df_labels = self.CorpusProc.make_pos_labels_df(ids)

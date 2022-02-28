@@ -1,5 +1,11 @@
 import numpy as np
 import pandas as pd
+import pathlib
+import pickle
+import logging
+
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
 
 
 class CorpusProcessor(object):
@@ -10,14 +16,25 @@ class CorpusProcessor(object):
     of strings)
     """
 
-    def __init__(self):
+    def __init__(self, path2embeddings=None):
         """
         Initializes a preprocessor object
+
+        Parameters
+        ----------
+        path2embeddings : str or pathlib.Path or None, optional (default=None)
+            Path to the folder containing the document embeddings.
+            If None, no embeddings will be used. Document scores will be based
+            in word counts
         """
+
+        self.path2embeddings = path2embeddings
+        logging.info("-- Preprocessor object created. No embedding data. "
+                     "Document scores will be based in word counts")
 
         return
 
-    def score_docs_by_keywords(self, corpus, keywords):
+    def score_docs_by_keyword_count(self, corpus, keywords):
         """
         Computes a score for every document in a given pandas dataframe
         according to the frequency of appearing some given keywords
@@ -40,6 +57,75 @@ class CorpusProcessor(object):
             print(f"-- Processing document {i} out of {n_docs}   \r", end="")
             reps = [doc.count(k) for k in keywords]
             score.append(sum(reps))
+
+        return score
+
+    def score_docs_by_keywords(self, corpus, keywords):
+        """
+        Computes a score for every document in a given pandas dataframe
+        according to the frequency of appearing some given keywords
+
+        Parameters
+        ----------
+        corpus : list (or pandas.Series) of str
+            Input corpus.
+        keywords : list of str
+            List of keywords
+
+        Returns
+        -------
+        score : list of float
+            List of scores, one per document in corpus
+        """
+
+        # Check if embeddings have been provided
+        if self.path2embeddings is None:
+            score = self.score_docs_by_keyword_count(corpus, keywords)
+            return score
+
+        # FIXME: The name of the SBERT model should be configurable. Move it to
+        #        the config file (parameters.default.yaml)
+        # model_name = 'distilbert-base-nli-mean-tokens'
+        model_name = 'all-MiniLM-L6-v2'
+        # model_name = 'allenai-specter'
+
+        # 1. Load sentence transformer model
+        model = SentenceTransformer(model_name)
+
+        # 2. Document embeddings. If precalculated, load the embeddings.
+        # Otherwise, compute the embeddings.
+        embeddings_out_fname = f'corpus_embed_{model_name}.pkl'
+        embeddings_fname = self.path2embeddings / embeddings_out_fname
+
+        if pathlib.Path.exists(embeddings_fname):
+            # Load embedding of the corpus documents
+            with open(embeddings_fname, "rb") as f_in:
+                doc_embeddings = pickle.load(f_in)
+
+            logging.info(f'-- Corpus {embeddings_fname} loaded with '
+                         f'{len(doc_embeddings)} doc embeddings')
+        else:
+            # Corpus embedding computation
+            logging.info(f'-- No embedding file {embeddings_fname} available')
+            logging.info(f'-- Embedding docs with model {model_name}')
+            n_docs = len(corpus)
+            # n_docs = 2000
+            batch_size = 128
+            doc_embeddings = model.encode(corpus.values[0:n_docs],
+                                          batch_size=batch_size)
+
+            # Saving doc embedding
+            with open(embeddings_fname, "wb") as fOut:
+                pickle.dump(doc_embeddings, fOut)
+            logging.info(f'-- Corpus embeddings saved in {embeddings_fname}')
+
+        # 3. Keyword embeddings
+        logging.info(f'-- Embedding keywords with model {model_name}')
+        keyword_embeddings = model.encode(keywords)
+
+        # 4. Cosine similarities computation
+        distances = cosine_similarity(doc_embeddings, keyword_embeddings)
+        score = np.mean(distances, axis=1)
 
         return score
 
@@ -111,17 +197,29 @@ class CorpusDFProcessor(object):
         description: body of the document text
     """
 
-    def __init__(self, df_corpus):
+    def __init__(self, df_corpus, path2embeddings=None):
         """
         Initializes a preprocessor object
+
+        Parameters
+        ----------
+        df_corpus : pandas.dataFrame
+            Input corpus.
+        path2embeddings : str or pathlib.Path or None, optional (default=None)
+            Path to the folder containing the document embeddings.
+            If None, no embeddings will be used. Document scores will be based
+            in word counts
         """
 
+        self.path2embeddings = path2embeddings
+        logging.info("-- Preprocessor object created. No embedding data. "
+                     "Document scores will be based in word counts")
         self.df_corpus = df_corpus
 
         # This class uses methods from the corpus processor class.
         # FIXME: Uset CorpusProcessor as a base class and inherit
         #        CorpusDFProcessor from CorpusProcessor
-        self.prep = CorpusProcessor()
+        self.prep = CorpusProcessor(self.path2embeddings)
 
         return
 
@@ -187,7 +285,7 @@ class CorpusDFProcessor(object):
 
         return df_stats, kf_stats
 
-    def score_by_keywords(self, keywords, wt=2):
+    def score_by_keyword_count(self, keywords, wt=2):
         """
         Computes a score for every document in a given pandas dataframe
         according to the frequency of appearing some given keywords
@@ -206,12 +304,51 @@ class CorpusDFProcessor(object):
             List of scores, one per documents in corpus
         """
 
-        score_title = self.prep.score_docs_by_keywords(
+        score_title = self.prep.score_docs_by_keyword_count(
             self.df_corpus['title'], keywords)
-        score_descr = self.prep.score_docs_by_keywords(
+        score_descr = self.prep.score_docs_by_keyword_count(
             self.df_corpus['description'], keywords)
 
         score = wt * np.array(score_title) + np.array(score_descr)
+
+        return score
+
+    def score_by_keywords(self, keywords, wt=2):
+        """
+        Computes a score for every document in a given pandas dataframe
+        according to the frequency of appearing some given keywords
+
+        Parameters
+        ----------
+        corpus : dataframe
+            Dataframe of corpus.
+        keywords : list of str
+            List of keywords
+        wt : float, optional (default=2)
+            Weighting factor for the title components. Keyword matches with
+            title words are weighted by this factor
+            This input argument is used if self.path2embeddings is None only
+
+        Returns
+        -------
+        score : list of float
+            List of scores, one per documents in corpus
+        """
+
+        # Check if embeddings have been provided
+        if self.path2embeddings is None:
+            score = self.score_by_keyword_count(keywords, wt)
+            return score
+
+        # Copy relevant columns only
+        df_dataset = self.df_corpus[['id', 'title', 'description']]
+
+        # Joing title and description into a single column
+        df_dataset['text'] = (df_dataset['title'] + '. '
+                              + df_dataset['description'])
+        df_dataset.drop(columns=['description', 'title'], inplace=True)
+
+        score = self.prep.score_docs_by_keywords(df_dataset['text'], keywords)
 
         return score
 
@@ -219,6 +356,7 @@ class CorpusDFProcessor(object):
         """
         Computes a score for every document in a given pandas dataframe
         according to the relevance of a weighted list of topics
+
         Parameters
         ----------
         T: numpy.ndarray or scipy.sparse
@@ -229,6 +367,7 @@ class CorpusDFProcessor(object):
         topic_weights: dict
             Dictionary {t_i: w_i}, where t_i is a topic index and w_i is the
             weight of the topic
+
         Returns
         -------
         score : list of float
@@ -277,19 +416,22 @@ class CorpusDFProcessor(object):
 
     def filter_by_keywords(self, keywords, wt=2, n_max=1e100, s_min=0):
         """
-        Select documnts with a significant presence of a given set of keywords
+        Select documents with a significant presence of a given set of keywords
+
         Parameters
         ----------
         keywords : list of str
             List of keywords
         wt : float, optional (default=2)
             Weighting factor for the title components. Keyword matches with
-            title words are weighted by this factor
+            title words are weighted by this factor. Not used if
+            self.path2embeddings is None
         n_max: int or None, optional (defaul=1e100)
             Maximum number of elements in the output list. The default is
             a huge number that, in practice, means there is no loimit
         s_min: float, optional (default=0)
             Minimum score. Only elements strictly above s_min are selected
+
         Returns
         -------
         ids : list
