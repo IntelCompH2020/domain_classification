@@ -267,7 +267,7 @@ class CustomModel(nn.Module):
         out = self.classifier(out)
         return out
 
-    def train_model(self, df_train, epochs=1, device="cuda"):
+    def train_model(self, df_train, device="cuda"):
         """
         Train the model
 
@@ -296,55 +296,52 @@ class CustomModel(nn.Module):
         self.embeddings.to(device)
         criterion.to(device)
 
-        epoch_loss = []
-        for e in enumerate(tqdm(range(epochs), desc="Train epoch")):
+        # Turn on train mode
+        self.train()
 
-            # Turn on train mode
-            self.train()
+        running_loss = []
+        start_time = time()
+        for i, data in enumerate(tqdm(train_data, desc="Train batch", leave=None)):
 
-            running_loss = []
-            start_time = time()
-            for i, data in enumerate(tqdm(train_data, desc="Train batch", leave=False)):
+            # get the inputs; data is a list of [inputs, labels]
+            data_id = data.get("id")
+            labels = data.get("labels").to(device)
+            text = data.get("text")
+            sample_weight = data.get("sample_weight", torch.tensor(1)).to(device)
 
-                # get the inputs; data is a list of [inputs, labels]
-                data_id = data.get("id")
-                labels = data.get("labels").to(device)
-                text = data.get("text")
-                sample_weight = data.get("sample_weight", torch.tensor(1)).to(device)
+            # Tokenize
+            tokenized = self.tokenizer(text, padding="max_length", truncation=True)
+            # print(tokenized["input_ids"])
+            input_ids = torch.tensor(tokenized["input_ids"]).to(device)
+            attention_mask = torch.tensor(tokenized["attention_mask"]).to(device)
+            # Embeddings
+            embs = self.embeddings(input_ids)
 
-                # Tokenize
-                tokenized = self.tokenizer(text, padding="max_length", truncation=True)
-                # print(tokenized["input_ids"])
-                input_ids = torch.tensor(tokenized["input_ids"]).to(device)
-                attention_mask = torch.tensor(tokenized["attention_mask"]).to(device)
-                # Embeddings
-                embs = self.embeddings(input_ids)
+            # zero the parameter gradients
+            optimizer.zero_grad()
 
-                # zero the parameter gradients
-                optimizer.zero_grad()
+            # forward + backward + optimize
+            outputs = self.forward(embs, attention_mask)
+            loss = criterion(outputs, labels)
+            # loss = (loss * sample_weight / sample_weight.sum()).sum()
+            loss = (loss * sample_weight / len(sample_weight)).sum()
+            loss.backward()
+            optimizer.step()
 
-                # forward + backward + optimize
-                outputs = self.forward(embs, attention_mask)
-                loss = criterion(outputs, labels)
-                # loss = (loss * sample_weight / sample_weight.sum()).sum()
-                loss = (loss * sample_weight / len(sample_weight)).sum()
-                loss.backward()
-                optimizer.step()
+            # Save result
+            running_loss.append(loss.to("cpu").item())
 
-                # Save result
-                running_loss.append(loss.to("cpu").item())
-
-            end_time = time()
-            epoch_loss.append(np.sum(running_loss))
-            t_time = end_time - start_time
+        end_time = time()
+        running_loss = np.sum(running_loss)
+        t_time = end_time - start_time
 
         self.to("cpu")
         self.embeddings.to("cpu")
         criterion.to("cpu")
 
-        return epoch_loss  # , t_time, batch_data
+        return running_loss, t_time#, batch_data
 
-    def eval_model(self, df_eval, device="cuda", verbose=True):
+    def eval_model(self, df_eval, device="cuda"):
         """
         Evaluate trained model
         """
@@ -363,7 +360,7 @@ class CustomModel(nn.Module):
         metrics = {"precision": 0.0, "recall": 0.0, "f1": 0.0, "accuracy": 0.0}
 
         with torch.no_grad():
-            for i, data in enumerate(tqdm(eval_data, desc="Eval batch")):
+            for i, data in enumerate(tqdm(eval_data, desc="Eval batch", leave=None)):
                 data_id = data.get("id")
                 labels = data.get("labels").to(device)
                 text = data.get("text")
@@ -395,22 +392,17 @@ class CustomModel(nn.Module):
                 for k, v in batch_scores.items():
                     scores[k] += v
                 # total_loss += batch_size * criterion(output_flat, targets).item()
-            if verbose:
-                print()
-                print("Example")
-                print("Preds:", [p.item() for p in preds])
-                print("Origs:", [p.item() for p in origs])
-                print()
 
         metrics = self._compute_metrics_(scores)
-        metrics.update(scores)
+        
+        result = {**scores, **metrics}
         total_loss = np.sum(total_loss)
         predictions = np.array(predictions)
 
         self.to("cpu")
         self.embeddings.to("cpu")
 
-        return predictions, total_loss, metrics
+        return predictions, total_loss, result
 
     def _compute_scores_(self, orig, pred):
         scores = {"tp": 0, "fp": 0, "tn": 0, "fn": 0}

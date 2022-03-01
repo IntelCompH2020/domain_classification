@@ -14,6 +14,7 @@ from simpletransformers.classification import ClassificationModel
 from transformers.models.roberta.configuration_roberta import RobertaConfig
 from .custom_model import CustomModel
 from sklearn import model_selection
+from tqdm import tqdm
 
 from transformers import logging as hf_logging
 
@@ -208,7 +209,7 @@ class CorpusClassifier(object):
 
         return
 
-    def train_model(self):
+    def train_model(self, epochs=3, evaluate=True):
         """
         Train binary text classification model based on transformers
 
@@ -250,11 +251,43 @@ class CorpusClassifier(object):
         # # FIXME: Base model 'roberta' should be configurable. Move it to
         # #        the config file (parameters.default.yaml)
 
+        # Best model selection
+        best_epoch = 0
+        best_result = 0
+        best_model = None
+
         # Train the model
+        epoch_loss = []
         logging.info(f"-- -- Training model with {len(df_train)} documents...")
         t0 = time()
-        epoch_loss = self.model.train_model(df_train, epochs=1)
+        for e in tqdm(range(epochs), desc="Train epoch"):
+
+            # Train epoch
+            epoch_loss, epoch_time = self.model.train_model(df_train)
+
+            if evaluate:
+                # #########################
+                # Evaluation
+
+                # Get test data (rows with value 1 in column 'train_test')
+                # Note that we select the columns required for training only
+                df_test = self.df_dataset[
+                    self.df_dataset.train_test == TEST][['id', 'text', 'labels']]
+                df_test["sample_weight"] = 1
+
+                # Evaluate the model
+                predictions, total_loss, result = self.model.eval_model(df_test)
+
+                if result["f1"] > best_result:
+                    best_epoch = e
+                    best_result = result["f1"]
+                    best_model = copy.deepcopy(self.model)
+
         logging.info(f"-- -- Model trained in {time() - t0:.3f} seconds")
+
+        if evaluate:
+            self.model = best_model
+            logging.info(f"-- Best model in epoch {best_epoch} with F1: {best_result:.3f}")
 
         # Freeze middle layers
         self.model.freeze_encoder_layer()
