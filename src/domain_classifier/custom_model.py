@@ -21,9 +21,10 @@ from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 from transformers import RobertaTokenizerFast
 from transformers.models.roberta.modeling_roberta import RobertaEmbeddings
+from transformers import logging as hf_logging
 
-logging.getLogger("transformers.tokenization_utils_base").setLevel(logging.ERROR)
-
+# Remove message when loading transformers model
+hf_logging.set_verbosity_error()
 
 class CustomDataset(Dataset):
     def __init__(self, df):
@@ -33,7 +34,6 @@ class CustomDataset(Dataset):
         self.labels = None
         self.sample_weight = None
 
-        self.id = df.index.tolist()
         for k, v in df.to_dict(orient="list").items():
             if hasattr(self, k):
                 setattr(self, k, v)
@@ -42,8 +42,9 @@ class CustomDataset(Dataset):
         item = {
             "id": self.id[idx],
             "text": self.text[idx],
-            "sample_weight": self.sample_weight[idx],
         }
+        if self.sample_weight is not None:
+            item["sample_weight"] = self.sample_weight[idx]
         if self.labels is not None:
             item["labels"] = torch.tensor(self.labels[idx])
         return item
@@ -229,8 +230,8 @@ class CustomModel(nn.Module):
         # Save model config if not saved before
         if not path2embeddings_state.exists():
             # Load TransformerModel
+            logging.info(f"No available embeddings. Loading embeddings from roberta model.")
             model = ClassificationModel("roberta", "roberta-base", use_cuda=False)
-            logging.info(f"Roberta model loaded")
 
             embeddings = copy.deepcopy(model.model.roberta.embeddings)
 
@@ -306,9 +307,10 @@ class CustomModel(nn.Module):
             for i, data in enumerate(tqdm(train_data, desc="Train batch", leave=False)):
 
                 # get the inputs; data is a list of [inputs, labels]
-                data_id, text, sample_weight, labels = data.values()
-                labels = labels.to(device)
-                sample_weight = sample_weight.to(device)
+                data_id = data.get("id")
+                labels = data.get("labels").to(device)
+                text = data.get("text")
+                sample_weight = data.get("sample_weight", torch.tensor(1)).to(device)
 
                 # Tokenize
                 tokenized = self.tokenizer(text, padding="max_length", truncation=True)
@@ -362,10 +364,10 @@ class CustomModel(nn.Module):
 
         with torch.no_grad():
             for i, data in enumerate(tqdm(eval_data, desc="Eval batch")):
-                data_id, text, sample_weight, labels = data.values()
-                # text = text.to(device)
-                labels = labels.to(device)
-                sample_weight = sample_weight.to(device)
+                data_id = data.get("id")
+                labels = data.get("labels").to(device)
+                text = data.get("text")
+                sample_weight = data.get("sample_weight", torch.tensor(1)).to(device)
 
                 # Tokenize
                 tokenized = self.tokenizer(text, padding="max_length", truncation=True)

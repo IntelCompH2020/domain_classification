@@ -15,6 +15,8 @@ from transformers.models.roberta.configuration_roberta import RobertaConfig
 from .custom_model import CustomModel
 from sklearn import model_selection
 
+from transformers import logging as hf_logging
+
 # Mnemonics for values in column 'train_test'
 TRAIN = 0
 TEST = 1
@@ -22,7 +24,7 @@ TEST = 1
 # (nan is not used because it converts the whole column to float)
 UNUSED = -99
 
-logging.getLogger("transformers.tokenization_utils_base").setLevel(logging.ERROR)
+hf_logging.set_verbosity_error()
 
 class CorpusClassifier(object):
     """
@@ -155,21 +157,21 @@ class CorpusClassifier(object):
         # Save model config if not saved before
         if not path2model_config.exists():
             # Load TransformerModel
+            logging.info(f"No available configuration. Loading cofiguration from roberta model.")
             model = ClassificationModel("roberta", "roberta-base", use_cuda=False)
-            logging.info(f"Roberta model loaded")
 
             config = copy.deepcopy(model.config)
 
             # Save config
             config.to_json_file(path2model_config)
-            logging.info(" -- Model configuration saved")
+            logging.info("-- Model configuration saved")
 
             del model
 
         else:
             # Load config
             config = RobertaConfig.from_json_file(path2model_config)
-            logging.info("Model configuration loaded from file")
+            logging.info("-- Model configuration loaded from file")
 
         self.config = config
 
@@ -232,7 +234,7 @@ class CorpusClassifier(object):
         # Get training data (rows with value 1 in column 'train_test')
         # Note that we select the columns required for training only
         df_train = self.df_dataset[
-            self.df_dataset.train_test == TRAIN][['text', 'labels']]
+            self.df_dataset.train_test == TRAIN][['id', 'text', 'labels']]
 
         df_train["sample_weight"] = 1
 
@@ -253,6 +255,9 @@ class CorpusClassifier(object):
         t0 = time()
         epoch_loss = self.model.train_model(df_train, epochs=1)
         logging.info(f"-- -- Model trained in {time() - t0:.3f} seconds")
+
+        # Freeze middle layers
+        self.model.freeze_encoder_layer()
         
         # Save model
         self.model.save(model_dir)
@@ -290,9 +295,12 @@ class CorpusClassifier(object):
         # Get test data (rows with value 1 in column 'train_test')
         # Note that we select the columns required for training only
         df_test = self.df_dataset[
-            self.df_dataset.train_test == TEST][['text', 'labels']]
+            self.df_dataset.train_test == TEST][['id', 'text', 'labels']]
 
-        df_test["sample_weight"] = 1
+        if tag_score == "PUscore":
+            df_test["sample_weight"] = 1
+        else:
+            df_test["sample_weight"] = 10
 
         # #########################
         # Prediction and Evaluation
@@ -322,6 +330,8 @@ class CorpusClassifier(object):
         self.df_dataset.loc[self.df_dataset['train_test'] == TEST,
                             f"prob_pred"] = 1 / (1 + np.exp(-delta))
 
+        # TODO: redefine output of evaluation
+        # result = {}
         wrong_predictions = []
         return result, wrong_predictions
 
@@ -376,6 +386,9 @@ class CorpusClassifier(object):
                 f"-- -- Column {col} does not exist in dataframe. Added.")
             self.df_dataset[[col]] = UNUSED
         # Add labels to annotation columns
+        if not labels:
+            logging.warning(f"-- Labels not confirmed")
+            return
         self.df_dataset.loc[idx, col] = labels
 
         # Create colum of used labels if it does not exist
@@ -392,81 +405,71 @@ class CorpusClassifier(object):
 
         return
 
-    # def retrain_model(self):
-    #     """
-    #     Re-train the classifier model using annotations
-    #     """
+    def retrain_model(self):
+        """
+        Re-train the classifier model using annotations
+        """
 
-    #     # #################
-    #     # Get training data
+        # #################
+        # Get training data
 
-    #     # FIXME: Implement the data collection here:
-    #     # He we should combine two colums from self.df_dataset
-    #     #   - "labels", with the original labels used to train the first model
-    #     #   - "annotations", with the new annotations
-    #     # Notes:
-    #     # Take into account that the annotation process could take place
-    #     # iteratively, so this method could be called several times, each time
-    #     # with some already used annotations and the new ones gathered from the
-    #     # late human-annotation iteration. To help with this, you might use two
-    #     # complementary columns from self.df_dataset
-    #     #   - column 'date', with the annotation date
-    #     #   - column 'learned', marking with 1 those labels already used in
-    #     #                    previous retrainings
+        # FIXME: Implement the data collection here:
+        # He we should combine two colums from self.df_dataset
+        #   - "labels", with the original labels used to train the first model
+        #   - "annotations", with the new annotations
+        # Notes:
+        # Take into account that the annotation process could take place
+        # iteratively, so this method could be called several times, each time
+        # with some already used annotations and the new ones gathered from the
+        # late human-annotation iteration. To help with this, you might use two
+        # complementary columns from self.df_dataset
+        #   - column 'date', with the annotation date
+        #   - column 'learned', marking with 1 those labels already used in
+        #                    previous retrainings
 
-    #     # ####################
-    #     # Get PU training data
-    #     # Note that we select the columns required for training only
-    #     # Note, also, that we exclude from the PU data the annotated labels
-    #     df_train_PU = self.df_dataset[
-    #         (self.df_dataset.train_test == TRAIN)
-    #         & (self.df_dataset.learned == UNUSED)][['text', 'labels']]
+        # ####################
+        # Get PU training data
+        # Note that we select the columns required for training only
+        # Note, also, that we exclude from the PU data the annotated labels
+        df_train_PU = self.df_dataset[
+            (self.df_dataset.train_test == TRAIN)
+            & (self.df_dataset.learned == UNUSED)][['id', 'text', 'labels']]
 
-    #     #  Get annotated samples already used for retraining
-    #     df_clean_used = self.df_dataset[
-    #         self.df_dataset.learned == 1][['text', 'labels']]
+        #  Get annotated samples already used for retraining
+        df_clean_used = self.df_dataset[
+            self.df_dataset.learned == 1][['id', 'text', 'labels']]
 
-    #     #  Get new annotated samples, not used for retraining yet
-    #     df_clean_new = self.df_dataset[
-    #         self.df_dataset.learned == 0][['text', 'labels']]
+        #  Get new annotated samples, not used for retraining yet
+        df_clean_new = self.df_dataset[
+            self.df_dataset.learned == 0][['id', 'text', 'labels']]
+        # ##################
+        # Integrate datasets
 
-    #     # ##################
-    #     # Integrate datasets
+        # FIXME: Change this by a more clever integration
+        df_train = pd.concat([df_train_PU, df_clean_used, df_clean_new])
 
-    #     # FIXME: Change this by a more clever integration
-    #     df_train = pd.concat([df_train_PU, df_clean_used, df_clean_new])
+        df_train = df_clean_new
+        df_train["sample_weight"] = 10
 
-    #     # ##############
-    #     # Classification
+        # ##############
+        # Classification
 
-    #     # FIXME: replace by a more clever training
-    #     # Create a TransformerModel
-    #     model_args = {
-    #         'cache_dir': str(self.path2transformers / "cache_dir"),
-    #         'output_dir': str(self.path2transformers / "outputs"),
-    #         'best_model_dir': str(self.path2transformers / "outputs"
-    #                               / "best_model"),
-    #         'tensorboard_dir': str(self.path2transformers / "runs"),
-    #         'overwrite_output_dir': True}
-    #     os.environ["TOKENIZERS_PARALLELISM"] = "false"
+        # Train the model
+        t0 = time()
+        logging.info(f"-- -- Training model with {len(df_train)} documents...")
+        self.model.train_model(df_train)
+        logging.info(f"-- -- Model trained in {time() - t0:.3f} seconds")
 
-    #     # FIXME: Base model 'roberta' should be configurable. Move it to
-    #     #        the config file (parameters.default.yaml)
-    #     self.model = ClassificationModel(
-    #         'roberta', 'roberta-base', use_cuda=self.cuda_available,
-    #         args=model_args)
+        # ################
+        # Update dataframe
 
-    #     # Train the model
-    #     t0 = time()
-    #     logging.info(f"-- -- Training model with {len(df_train)} documents...")
-    #     self.model.train_model(df_train)
-    #     logging.info(f"-- -- Model trained in {time() - t0} seconds")
+        # Mark new annotations as used
+        self.df_dataset.loc[self.df_dataset.learned == 0, 'learned'] = 1
 
-    #     # ################
-    #     # Update dataframe
+        # Save model        
+        model_dir = self.path2transformers / "best_model.pt"
+        self.model.save(model_dir)
+        logging.info(f"-- Model saved in {model_dir}")
 
-    #     # Mark new annotations as used
-    #     self.df_dataset.loc[self.df_dataset.learned == 0, 'learned'] = 1
-
-    #     return
+        return
 
