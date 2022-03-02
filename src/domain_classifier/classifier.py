@@ -237,6 +237,7 @@ class CorpusClassifier(object):
         df_train = self.df_dataset[
             self.df_dataset.train_test == TRAIN][['id', 'text', 'labels']]
 
+        # TODO: set correct weight
         df_train["sample_weight"] = 1
 
         # ##############
@@ -254,6 +255,7 @@ class CorpusClassifier(object):
         # Best model selection
         best_epoch = 0
         best_result = 0
+        best_predictions = None
         best_model = None
 
         # Train the model
@@ -281,6 +283,7 @@ class CorpusClassifier(object):
                 if result["f1"] > best_result:
                     best_epoch = e
                     best_result = result["f1"]
+                    best_predictions = predictions
                     best_model = copy.deepcopy(self.model)
 
         logging.info(f"-- -- Model trained in {time() - t0:.3f} seconds")
@@ -288,6 +291,25 @@ class CorpusClassifier(object):
         if evaluate:
             self.model = best_model
             logging.info(f"-- Best model in epoch {best_epoch} with F1: {best_result:.3f}")
+
+            # SCORES: Fill scores for the evaluated data
+            self.df_dataset.loc[
+                self.df_dataset['train_test'] == TEST, ["PUscore_0", "PUscore_1"]
+            ] = best_predictions
+
+            # PREDICTIONS: Fill predictions for the evaluated data
+            delta = predictions[:, 1] - predictions[:, 0]
+
+            self.df_dataset["prediction"] = UNUSED
+            self.df_dataset.loc[self.df_dataset['train_test'] == TEST,
+                                "prediction"] = (delta > 0).astype(int)
+
+            # Fill probabilistic predictions for the evaluated data
+            # Scores are mapped to probabilities thoudh a logistic function.
+            # FIXME: Check training loss in simpletransformers documentation or
+            #        code, to see if logistic loss is appropriate here.
+            self.df_dataset.loc[self.df_dataset['train_test'] == TEST,
+                                f"prob_pred"] = 1 / (1 + np.exp(-delta))
 
         # Freeze middle layers
         self.model.freeze_encoder_layer()
@@ -481,6 +503,7 @@ class CorpusClassifier(object):
         # FIXME: Change this by a more clever integration
         df_train = pd.concat([df_train_PU, df_clean_used, df_clean_new])
 
+        # TODO: set correct weight
         df_train = df_clean_new
         df_train["sample_weight"] = 10
 

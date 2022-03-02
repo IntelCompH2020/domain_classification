@@ -395,9 +395,10 @@ class CustomModel(nn.Module):
 
         metrics = self._compute_metrics_(scores)
         
-        result = {**scores, **metrics}
-        total_loss = np.sum(total_loss)
+        # Set outputs
         predictions = np.array(predictions)
+        total_loss = np.sum(total_loss)
+        result = {**scores, **metrics}
 
         self.to("cpu")
         self.embeddings.to("cpu")
