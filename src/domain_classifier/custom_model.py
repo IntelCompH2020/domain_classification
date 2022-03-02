@@ -26,6 +26,7 @@ from transformers import logging as hf_logging
 # Remove message when loading transformers model
 hf_logging.set_verbosity_error()
 
+
 class CustomDataset(Dataset):
     def __init__(self, df):
 
@@ -230,7 +231,9 @@ class CustomModel(nn.Module):
         # Save model config if not saved before
         if not path2embeddings_state.exists():
             # Load TransformerModel
-            logging.info(f"No available embeddings. Loading embeddings from roberta model.")
+            logging.info(
+                f"No available embeddings. Loading embeddings from roberta model."
+            )
             model = ClassificationModel("roberta", "roberta-base", use_cuda=False)
 
             embeddings = copy.deepcopy(model.model.roberta.embeddings)
@@ -284,8 +287,11 @@ class CustomModel(nn.Module):
 
         # Balance weights giving more weight to the less common label
         label_occurrences = df_train["labels"].value_counts()
-        weights_train = label_occurrences.max() / label_occurrences.sort_index()
-        weights_train = torch.tensor(weights_train.tolist())
+        if len(label_occurrences) == 2:
+            weights_train = label_occurrences.max() / label_occurrences.sort_index()
+            weights_train = torch.tensor(weights_train.tolist())
+        else:
+            weights_train = torch.tensor([1.0, 1.0])
 
         # Set criterion and optimizer
         criterion = nn.CrossEntropyLoss(weight=weights_train, reduction="none")
@@ -339,7 +345,7 @@ class CustomModel(nn.Module):
         self.embeddings.to("cpu")
         criterion.to("cpu")
 
-        return running_loss, t_time#, batch_data
+        return running_loss, t_time  # , batch_data
 
     def eval_model(self, df_eval, device="cuda"):
         """
@@ -394,7 +400,7 @@ class CustomModel(nn.Module):
                 # total_loss += batch_size * criterion(output_flat, targets).item()
 
         metrics = self._compute_metrics_(scores)
-        
+
         # Set outputs
         predictions = np.array(predictions)
         total_loss = np.sum(total_loss)

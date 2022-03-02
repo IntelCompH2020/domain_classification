@@ -130,6 +130,9 @@ class CorpusClassifier(object):
             df0 = df0.sample(n=int(max_imbalance * l1))
             # Re-join dataframes
             df_subset = pd.concat((df0, df1))
+            # Recalculate number of class samples
+            l1 = sum(df_subset["labels"])
+            l0 = len(df_subset) - l1
 
         # Undersampling
         if nmax is not None and nmax < l0 + l1:
@@ -259,7 +262,6 @@ class CorpusClassifier(object):
         best_model = None
 
         # Train the model
-        epoch_loss = []
         logging.info(f"-- -- Training model with {len(df_train)} documents...")
         t0 = time()
         for e in tqdm(range(epochs), desc="Train epoch"):
