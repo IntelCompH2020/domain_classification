@@ -31,6 +31,9 @@ def main():
                         help="path to a new or an existing project")
     parser.add_argument('--source', type=str, default='../datasets',
                         help="path to the source data folder")
+    parser.add_argument('--zeroshot', type=str,
+                        default='../zero_shot_model/Sciro-Shot',
+                        help="path to the zero-shot model folder")
     args = parser.parse_args()
 
     # Read project_path
@@ -47,7 +50,8 @@ def main():
     # query_needed = False
 
     # Create task manager object
-    tm = TaskManagerCMD(project_path, path2source=args.source)
+    tm = TaskManagerCMD(project_path, path2source=args.source,
+                        path2zeroshot=args.zeroshot)
 
     # ########################
     # Prepare user interaction

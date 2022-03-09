@@ -85,7 +85,7 @@ get_labels:
     - get_labels_by_keywords
     - analyze_keywords
     - get_labels_by_topics
-    - get_labels_by_definitions
+    - get_labels_by_zeroshot
 
 load_labels:
   title: Load labels
@@ -126,8 +126,8 @@ analyze_keywords:
 get_labels_by_topics:
     title: Get subcorpus from a topic selection function
 
-get_labels_by_definitions:
-    title: Get subcorpus from documents defining categories
+get_labels_by_zeroshot:
+    title: Get subcorpus from a category name
 
 # #######################
 # Options for PU_learning

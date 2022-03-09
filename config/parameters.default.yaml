@@ -1,10 +1,3 @@
-# Default parameters
-
-# Parameters for the dataset selection
-dataset:
-  # Source file name
-  path2source: '../datasets'
-
 # Specify format for the log outputs
 logformat:
   filename:    msgs.log
@@ -19,6 +12,13 @@ keywords:
   # Weight of the title. A word in the title is equivalent to wt repetitions
   # of the word in the description.
   wt: 2 
+  # Maximum number of documents to be selected.
+  n_max: 2000
+  # Minimum score. Only docs scored strictly above s_min are selected
+  s_min: 0.6
+
+# Parameter for the zero-shot document selector
+zeroshot:
   # Maximum number of documents to be selected.
   n_max: 2000
   # Minimum score. Only docs scored strictly above s_min are selected

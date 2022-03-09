@@ -7,6 +7,9 @@ import logging
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from transformers import (
+    pipeline, AutoModelForSequenceClassification, AutoTokenizer)
+
 
 class CorpusProcessor(object):
     """
@@ -16,7 +19,7 @@ class CorpusProcessor(object):
     of strings)
     """
 
-    def __init__(self, path2embeddings=None):
+    def __init__(self, path2embeddings=None, path2zeroshot=None):
         """
         Initializes a preprocessor object
 
@@ -26,11 +29,26 @@ class CorpusProcessor(object):
             Path to the folder containing the document embeddings.
             If None, no embeddings will be used. Document scores will be based
             in word counts
+        path2zeroshot : str or pathlib.Path or None, optional (default=None)
+            Path to the folder containing the pretrained zero-shot model
+            If None, zero-shot classification will not be available.
         """
 
-        self.path2embeddings = path2embeddings
-        logging.info("-- Preprocessor object created. No embedding data. "
-                     "Document scores will be based in word counts")
+        if path2embeddings is not None:
+            self.path2embeddings = pathlib.Path(path2embeddings)
+        else:
+            self.path2embedding = None
+            logging.info("-- No path to embeddings. "
+                         "Document scores will be based in word counts")
+
+        if path2zeroshot is not None:
+            self.path2zeroshot = pathlib.Path(path2zeroshot)
+        else:
+            self.path2zeroshot = None
+            logging.info("-- No path to zero-shot model. "
+                         "Zero-shot classification not available")
+
+        logging.info("-- Preprocessor object created.")
 
         return
 
@@ -129,6 +147,61 @@ class CorpusProcessor(object):
 
         return score
 
+    def score_docs_by_zeroshot(self, corpus, keyword):
+        """
+        Computes a score for every document in a given pandas dataframe
+        according to a given keyword and a pre-trained zero-shot classifier
+
+        Parameters
+        ----------
+        corpus : list (or pandas.Series) of str
+            Input corpus.
+        keyword : str
+            Keyword defining the target category
+
+        Returns
+        -------
+        score : list of float
+            List of scores, one per document in corpus
+        """
+
+        # Check if there is a zero-shot model
+        if self.path2zeroshot is None:
+            logging.warning("-- -- No zero-shot model is available.")
+            return
+
+        tokenizer = AutoTokenizer.from_pretrained(self.path2zeroshot)
+        model = AutoModelForSequenceClassification.from_pretrained(
+            self.path2zeroshot)
+
+        # Use device=0 for GPU inference
+        zsc = pipeline("zero-shot-classification", model=model,
+                       tokenizer=tokenizer, device=-1)
+
+        score = []
+        n_docs = len(corpus)
+        for i, doc in enumerate(corpus):
+            print(f"-- Processing document {i} out of {n_docs}")
+            # print(f"-- Processing document {i} out of {n_docs}   \r", end="")
+
+            # We have to truncate the document. Othervise an error is raised:
+            #    "The expanded size of the tensor (519) must match the existing
+            #     size (514) at non-singleton dimension 1.  Target sizes:
+            #     [1, 519].  Tensor sizes: [1, 514]"
+            doc_i = doc[:1000]
+
+            # Run the zero-shot classifier for document doc_i and category
+            # keyboard
+            # result = zsc(sentence1, labels,
+            #   hypothesis_template="This example is {}.", multi_label=True)
+            result = zsc(doc_i, keyword, multi_label=False)
+
+            # Save score
+            score_i = sum(result['scores'])
+            score.append(score_i)
+
+        return score
+
     def compute_keyword_stats(self, corpus, keywords):
         """
         Computes keyword statistics
@@ -197,7 +270,7 @@ class CorpusDFProcessor(object):
         description: body of the document text
     """
 
-    def __init__(self, df_corpus, path2embeddings=None):
+    def __init__(self, df_corpus, path2embeddings=None, path2zeroshot=None):
         """
         Initializes a preprocessor object
 
@@ -209,17 +282,31 @@ class CorpusDFProcessor(object):
             Path to the folder containing the document embeddings.
             If None, no embeddings will be used. Document scores will be based
             in word counts
+        path2zeroshot : str or pathlib.Path or None, optional (default=None)
+            Path to the folder containing the pretrained zero-shot model
+            If None, zero-shot classification will not be available.
         """
 
-        self.path2embeddings = path2embeddings
-        logging.info("-- Preprocessor object created. No embedding data. "
-                     "Document scores will be based in word counts")
+        if path2embeddings is not None:
+            self.path2embeddings = pathlib.Path(path2embeddings)
+        else:
+            self.path2embedding = None
+            logging.info("-- No path to embeddings. "
+                         "Document scores will be based in word counts")
+
+        if path2zeroshot is not None:
+            self.path2zeroshot = pathlib.Path(path2zeroshot)
+        else:
+            self.path2zeroshot = None
+            logging.info("-- No path to zero-shot model. "
+                         "Zero-shot classification not available")
+
         self.df_corpus = df_corpus
 
         # This class uses methods from the corpus processor class.
         # FIXME: Uset CorpusProcessor as a base class and inherit
         #        CorpusDFProcessor from CorpusProcessor
-        self.prep = CorpusProcessor(self.path2embeddings)
+        self.prep = CorpusProcessor(self.path2embeddings, self.path2zeroshot)
 
         return
 
@@ -320,8 +407,6 @@ class CorpusDFProcessor(object):
 
         Parameters
         ----------
-        corpus : dataframe
-            Dataframe of corpus.
         keywords : list of str
             List of keywords
         wt : float, optional (default=2)
@@ -343,12 +428,41 @@ class CorpusDFProcessor(object):
         # Copy relevant columns only
         df_dataset = self.df_corpus[['id', 'title', 'description']]
 
-        # Joing title and description into a single column
+        # Join title and description into a single column
         df_dataset['text'] = (df_dataset['title'] + '. '
                               + df_dataset['description'])
         df_dataset.drop(columns=['description', 'title'], inplace=True)
 
         score = self.prep.score_docs_by_keywords(df_dataset['text'], keywords)
+
+        return score
+
+    def score_by_zeroshot(self, keyword):
+        """
+        Computes a score for every document in a given pandas dataframe
+        according to the relevance of a given keyword according to a pretrained
+        zero-shot classifier
+
+        Parameters
+        ----------
+        keyword : str
+            Keywords defining the target category
+
+        Returns
+        -------
+        score : list of float
+            List of scores, one per documents in corpus
+        """
+
+        # Copy relevant columns only
+        df_dataset = self.df_corpus[['id', 'title', 'description']]
+
+        # Join title and description into a single column
+        df_dataset['text'] = (df_dataset['title'] + '. '
+                              + df_dataset['description'])
+        df_dataset.drop(columns=['description', 'title'], inplace=True)
+
+        score = self.prep.score_docs_by_zeroshot(df_dataset['text'], keyword)
 
         return score
 
@@ -470,6 +584,14 @@ class CorpusDFProcessor(object):
 
         score = self.score_by_topics(T, doc_ids, topic_weights)
         ids = self.get_top_scores(score, n_max=n_max, s_min=s_min)
+
+        return ids
+
+    def filter_by_zeroshot(self, keyword, n_max, s_min):
+
+        scores = self.score_by_zeroshot(keyword)
+
+        ids = self.get_top_scores(scores, n_max=n_max, s_min=s_min)
 
         return ids
 
