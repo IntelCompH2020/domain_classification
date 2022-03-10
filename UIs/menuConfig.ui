@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MusicalSpoon</string>
+   <string>Domain Classifier</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: #CFCEC6;</string>

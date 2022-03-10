@@ -5,4 +5,5 @@ PyQt5==5.15.4
 PyYAML==6.0
 scikit_learn==1.0.1
 scipy==1.6.2
-simpletransformers==0.63.3
+simpletransformers~=0.63.3
+sentence-transformers~=2.2.0
