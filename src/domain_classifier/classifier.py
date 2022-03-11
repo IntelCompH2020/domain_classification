@@ -57,6 +57,7 @@ class CorpusClassifier(object):
         path2transformers other than '.'.
         """
 
+        logging.info("-- Initializing classifier object")
         self.path2transformers = pathlib.Path(path2transformers)
         self.model = None
         self.df_dataset = df_dataset
@@ -65,21 +66,24 @@ class CorpusClassifier(object):
         if use_cuda:
             if torch.cuda.is_available():
                 self.device = torch.device("cuda")
-                logging.info("Cuda available: GPU will be used")
+                logging.info("-- --Cuda available: GPU will be used")
             else:
                 logging.warning(
-                    "'use_cuda' set to True when cuda is unavailable."
+                    "-- -- 'use_cuda' set to True when cuda is unavailable."
                     " Make sure CUDA is available or set use_cuda=False."
                 )
                 self.device = torch.device("cpu")
-                logging.info(f"Cuda unavailable: training model without GPU")
+                logging.info(
+                    f"-- -- Cuda unavailable: training model without GPU")
         else:
             self.device = torch.device("cpu")
-            logging.info(f"Cuda unavailable: training model without GPU")
+            logging.info(f"-- -- Cuda unavailable: training model without GPU")
 
         if 'labels' not in self.df_dataset:
+            logging.error(" ")
             logging.error(f"-- -- Column 'labels' does not exist in the input "
                           "dataframe")
+            logging.error(" ")
             sys.exit()
 
         return
@@ -116,6 +120,7 @@ class CorpusClassifier(object):
             -1: otherwise
         """
 
+        logging.info("-- Selecting train and test ...")
         l1 = sum(self.df_dataset['labels'])
         l0 = len(self.df_dataset) - l1
 
@@ -167,6 +172,7 @@ class CorpusClassifier(object):
             # Load TransformerModel
             logging.info("-- -- No available configuration. Loading "
                          "configuration from roberta model.")
+
             model = ClassificationModel(
                 "roberta", "roberta-base", use_cuda=False)
 
@@ -174,14 +180,14 @@ class CorpusClassifier(object):
 
             # Save config
             config.to_json_file(path2model_config)
-            logging.info("-- Model configuration saved")
+            logging.info("-- -- Model configuration saved")
 
             del model
 
         else:
             # Load config
             config = RobertaConfig.from_json_file(path2model_config)
-            logging.info("-- Model configuration loaded from file")
+            logging.info("-- -- Model configuration loaded from file")
 
         self.config = config
 
@@ -224,6 +230,8 @@ class CorpusClassifier(object):
         easiest-bert-roberta-xlnet-and-xlm-library-58bf8c59b2a3
         """
 
+        logging.info("-- Training model...")
+
         # Create model directory
         self.path2transformers.mkdir(exist_ok=True)
         model_dir = self.path2transformers / "best_model.pt"
@@ -263,7 +271,7 @@ class CorpusClassifier(object):
         best_model = None
 
         # Train the model
-        logging.info(f"-- -- Training model with {len(df_train)} documents...")
+        logging.info(f"-- Training model with {len(df_train)} documents...")
         t0 = time()
         for e in tqdm(range(epochs), desc="Train epoch"):
 

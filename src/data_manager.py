@@ -304,7 +304,7 @@ class DataManager(object):
         Loads a set or PU labels
         """
 
-        logging.info("-- Loading labels")
+        logging.info(f"-- Loading labelset {tag}")
 
         # Read labels from csv file
         fname = f'labels_{self.corpus_name}_{tag}.csv'
@@ -404,8 +404,8 @@ class DataManager(object):
 
         if len(strange_labels) > 0:
             logging.warn(
-                f"-- Removing {len(strange_labels)} documents in the labeled "
-                f"dataset that do not belong to the corpus.")
+                f"-- Removing {len(strange_labels)} documents from the "
+                f"labeled dataset that do not belong to the corpus.")
             df_labels = df_labels[df_labels.id.isin(ids_corpus)]
 
         # ########################

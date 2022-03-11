@@ -388,7 +388,6 @@ class TaskManager(baseTaskManager):
         Load a set of labels and its corresponding dataset (if it exists)
         """
 
-        logging.info(f"-- -- Labelset {class_name} loaded")
         self.df_labels, msg = self.DM.load_labels(class_name)
         self.class_name = class_name
 
@@ -428,6 +427,15 @@ class TaskManager(baseTaskManager):
     def train_PUmodel(self, max_imbalance=3, nmax=400):
         """
         Train a domain classifiers
+
+        Parameters
+        ----------
+        max_imbalance : int or float or None, optional (default=None)
+            Maximum ratio negative vs positive samples. If the ratio in
+            df_dataset is higher, the negative class is subsampled.
+            If None, the original proportions are preserved
+        nmax : int or None (defautl=None)
+            Maximum size of the whole (train+test) dataset
         """
 
         if self.df_labels is None:

@@ -79,17 +79,17 @@ class CustomEncoderLayer(nn.Module):
         self.num_hidden_layers = num_hidden_layers
 
         # Transformer encoder
-        self.norm_layer = nn.LayerNorm(self.hidden_size, eps=self.layer_norm_eps)
+        self.norm_layer = nn.LayerNorm(
+            self.hidden_size, eps=self.layer_norm_eps)
         encoder_layer = nn.TransformerEncoderLayer(
             d_model=self.hidden_size,
             nhead=self.num_attention_heads,
             dim_feedforward=self.intermediate_size,
             batch_first=True,
-            activation=self.hidden_act,
-        )
+            activation=self.hidden_act)
         self.transformer_encoder = nn.TransformerEncoder(
-            encoder_layer, num_layers=self.num_hidden_layers, norm=self.norm_layer
-        )
+            encoder_layer, num_layers=self.num_hidden_layers,
+            norm=self.norm_layer)
 
     def forward(self, features: torch.Tensor, mask: torch.Tensor):
         """
@@ -101,20 +101,22 @@ class CustomEncoderLayer(nn.Module):
             The mask for the src keys per batch
         """
 
-        out = self.transformer_encoder(features, src_key_padding_mask=~mask.bool())
+        out = self.transformer_encoder(
+            features, src_key_padding_mask=~mask.bool())
 
         return out
 
 
 class CustomClassificationHead(nn.Module):
     """
-    Copy of class RobertaClassificationHead (from transformers.models.roberta.modeling_roberta)
+    Copy of class RobertaClassificationHead
+    (from transformers.models.roberta.modeling_roberta)
     Head for sentence-level classification tasks.
     """
 
-    def __init__(
-        self, classifier_dropout=0.1, hidden_dropout_prob=0.1, hidden_size=768
-    ):
+    def __init__(self, classifier_dropout=0.1, hidden_dropout_prob=0.1,
+                 hidden_size=768):
+
         super().__init__()
 
         # Configuration
@@ -149,7 +151,8 @@ class CustomClassificationHead(nn.Module):
 
 class CustomModel(nn.Module):
     """
-    Copy of class RobertaClassificationHead (from transformers.models.roberta.modeling_roberta)
+    Copy of class RobertaClassificationHead
+    (from transformers.models.roberta.modeling_roberta)
     Head for sentence-level classification tasks.
     """
 
@@ -187,15 +190,13 @@ class CustomModel(nn.Module):
             intermediate_size=self.intermediate_size,
             layer_norm_eps=self.layer_norm_eps,
             num_attention_heads=self.num_attention_heads,
-            num_hidden_layers=self.num_hidden_layers,
-        )
+            num_hidden_layers=self.num_hidden_layers)
 
         # Classification layer
         self.classifier = CustomClassificationHead(
             classifier_dropout=self.classifier_dropout,
             hidden_dropout_prob=self.hidden_dropout_prob,
-            hidden_size=self.hidden_size,
-        )
+            hidden_size=self.hidden_size)
 
         # Load configuration
         self.load_embeddings()
@@ -215,7 +216,7 @@ class CustomModel(nn.Module):
 
     def load_tokenizer(self):
         tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
-        logging.info("-- Tokenizer loaded")
+        logging.info("-- -- Tokenizer loaded")
         # logging.info(f" -- Max length: {tokenizer.model_max_length}")
         self.tokenizer = tokenizer
 
@@ -232,15 +233,16 @@ class CustomModel(nn.Module):
         if not path2embeddings_state.exists():
             # Load TransformerModel
             logging.info(
-                f"No available embeddings. Loading embeddings from roberta model."
-            )
-            model = ClassificationModel("roberta", "roberta-base", use_cuda=False)
+                f"-- -- No available embeddings. Loading embeddings from "
+                "roberta model.")
+            model = ClassificationModel(
+                "roberta", "roberta-base", use_cuda=False)
 
             embeddings = copy.deepcopy(model.model.roberta.embeddings)
 
             # Save model
             torch.save(embeddings.state_dict(), path2embeddings_state)
-            logging.info("-- Embeddings model saved")
+            logging.info("-- -- Embeddings model saved")
 
             del model
 
@@ -248,7 +250,7 @@ class CustomModel(nn.Module):
             # Load model
             embeddings = RobertaEmbeddings(self.config)
             embeddings.load_state_dict(torch.load(path2embeddings_state))
-            logging.info("-- Embeddings model loaded from file")
+            logging.info("-- -- Embeddings model loaded from file")
 
         # Set grad to false to freeze layer
         for param in embeddings.parameters():
@@ -288,7 +290,8 @@ class CustomModel(nn.Module):
         # Balance weights giving more weight to the less common label
         label_occurrences = df_train["labels"].value_counts()
         if len(label_occurrences) == 2:
-            weights_train = label_occurrences.max() / label_occurrences.sort_index()
+            weights_train = (
+                label_occurrences.max() / label_occurrences.sort_index())
             weights_train = torch.tensor(weights_train.tolist())
         else:
             weights_train = torch.tensor([1.0, 1.0])
@@ -307,19 +310,23 @@ class CustomModel(nn.Module):
 
         running_loss = []
         start_time = time()
-        for i, data in enumerate(tqdm(train_data, desc="Train batch", leave=None)):
+        for i, data in enumerate(tqdm(train_data, desc="Train batch",
+                                      leave=None)):
 
             # get the inputs; data is a list of [inputs, labels]
             data_id = data.get("id")
             labels = data.get("labels").to(device)
             text = data.get("text")
-            sample_weight = data.get("sample_weight", torch.tensor(1)).to(device)
+            sample_weight = data.get(
+                "sample_weight", torch.tensor(1)).to(device)
 
             # Tokenize
-            tokenized = self.tokenizer(text, padding="max_length", truncation=True)
+            tokenized = self.tokenizer(
+                text, padding="max_length", truncation=True)
             # print(tokenized["input_ids"])
             input_ids = torch.tensor(tokenized["input_ids"]).to(device)
-            attention_mask = torch.tensor(tokenized["attention_mask"]).to(device)
+            attention_mask = torch.tensor(
+                tokenized["attention_mask"]).to(device)
             # Embeddings
             embs = self.embeddings(input_ids)
 
@@ -366,17 +373,21 @@ class CustomModel(nn.Module):
         metrics = {"precision": 0.0, "recall": 0.0, "f1": 0.0, "accuracy": 0.0}
 
         with torch.no_grad():
-            for i, data in enumerate(tqdm(eval_data, desc="Eval batch", leave=None)):
+            for i, data in enumerate(tqdm(eval_data, desc="Eval batch",
+                                          leave=None)):
                 data_id = data.get("id")
                 labels = data.get("labels").to(device)
                 text = data.get("text")
-                sample_weight = data.get("sample_weight", torch.tensor(1)).to(device)
+                sample_weight = data.get(
+                    "sample_weight", torch.tensor(1)).to(device)
 
                 # Tokenize
-                tokenized = self.tokenizer(text, padding="max_length", truncation=True)
+                tokenized = self.tokenizer(
+                    text, padding="max_length", truncation=True)
                 # print(tokenized["input_ids"])
                 input_ids = torch.tensor(tokenized["input_ids"]).to(device)
-                attention_mask = torch.tensor(tokenized["attention_mask"]).to(device)
+                attention_mask = torch.tensor(
+                    tokenized["attention_mask"]).to(device)
                 # Embeddings
                 embs = self.embeddings(input_ids)
 
@@ -397,7 +408,8 @@ class CustomModel(nn.Module):
                 batch_scores = self._compute_scores_(origs, preds)
                 for k, v in batch_scores.items():
                     scores[k] += v
-                # total_loss += batch_size * criterion(output_flat, targets).item()
+                # total_loss += batch_size * criterion(
+                #     output_flat, targets).item()
 
         metrics = self._compute_metrics_(scores)
 
@@ -438,8 +450,7 @@ class CustomModel(nn.Module):
             "precision": 0.0,
             "recall": 0.0,
             "f1": 0.0,
-            "accuracy": 0.0,
-        }
+            "accuracy": 0.0}
         eps = 1e-12
 
         TP = scores["tp"]
