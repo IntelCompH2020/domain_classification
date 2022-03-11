@@ -188,7 +188,7 @@ class CorpusProcessor(object):
             #    "The expanded size of the tensor (519) must match the existing
             #     size (514) at non-singleton dimension 1.  Target sizes:
             #     [1, 519].  Tensor sizes: [1, 514]"
-            doc_i = doc[:1000]
+            doc_i = doc[:1500]
 
             # Run the zero-shot classifier for document doc_i and category
             # keyboard
