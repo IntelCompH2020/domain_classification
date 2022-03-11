@@ -1,10 +1,8 @@
 import logging
 import pathlib
 import sys
-import os
 from time import time
 from datetime import datetime
-from xml.dom import WrongDocumentErr
 
 import pandas as pd
 import numpy as np
@@ -27,6 +25,7 @@ UNUSED = -99
 
 hf_logging.set_verbosity_error()
 
+
 class CorpusClassifier(object):
     """
     A container of corpus classification methods
@@ -48,6 +47,9 @@ class CorpusClassifier(object):
             simpletransformers library.
             Default value is ".".
 
+        use_cuda : boolean, optional (default=True)
+            If true, GPU will be used, if available.
+
         Notes
         -----
         Be aware that the simpletransformers library produces several folders,
@@ -58,11 +60,12 @@ class CorpusClassifier(object):
         self.path2transformers = pathlib.Path(path2transformers)
         self.model = None
         self.df_dataset = df_dataset
+        self.config = None
 
         if use_cuda:
             if torch.cuda.is_available():
-                    self.device = torch.device("cuda")
-                    logging.info("Cuda available: GPU will be used")
+                self.device = torch.device("cuda")
+                logging.info("Cuda available: GPU will be used")
             else:
                 logging.warning(
                     "'use_cuda' set to True when cuda is unavailable."
@@ -158,11 +161,14 @@ class CorpusClassifier(object):
         """
 
         path2model_config = self.path2transformers / "config.json"
+
         # Save model config if not saved before
         if not path2model_config.exists():
             # Load TransformerModel
-            logging.info(f"No available configuration. Loading cofiguration from roberta model.")
-            model = ClassificationModel("roberta", "roberta-base", use_cuda=False)
+            logging.info("-- -- No available configuration. Loading "
+                         "configuration from roberta model.")
+            model = ClassificationModel(
+                "roberta", "roberta-base", use_cuda=False)
 
             config = copy.deepcopy(model.config)
 
@@ -179,21 +185,16 @@ class CorpusClassifier(object):
 
         self.config = config
 
+        return
+
     def load_model(self):
         """
         Loads an existing classification model
 
         Returns
         -------
-        The loaded model is store in attribute self.model
+        The loaded model is stored in attribute self.model
         """
-
-        # # Create a TransformerModel
-        # cuda_available = torch.cuda.is_available()
-        # if cuda_available:
-        #     logging.info(f"-- -- Cuda available: GPU will be used")
-        # else:
-        #     logging.info(f"-- -- Cuda unavailable: no GPU will be used")
 
         # Expected location of the previously stored model.
         model_dir = self.path2transformers / "best_model.pt"
@@ -276,11 +277,13 @@ class CorpusClassifier(object):
                 # Get test data (rows with value 1 in column 'train_test')
                 # Note that we select the columns required for training only
                 df_test = self.df_dataset[
-                    self.df_dataset.train_test == TEST][['id', 'text', 'labels']]
+                    self.df_dataset.train_test == TEST][
+                        ['id', 'text', 'labels']]
                 df_test["sample_weight"] = 1
 
                 # Evaluate the model
-                predictions, total_loss, result = self.model.eval_model(df_test)
+                predictions, total_loss, result = self.model.eval_model(
+                    df_test)
 
                 if result["f1"] > best_result:
                     best_epoch = e
@@ -292,12 +295,13 @@ class CorpusClassifier(object):
 
         if evaluate:
             self.model = best_model
-            logging.info(f"-- Best model in epoch {best_epoch} with F1: {best_result:.3f}")
+            logging.info(f"-- Best model in epoch {best_epoch} with "
+                         f"F1: {best_result:.3f}")
 
             # SCORES: Fill scores for the evaluated data
             self.df_dataset.loc[
-                self.df_dataset['train_test'] == TEST, ["PUscore_0", "PUscore_1"]
-            ] = best_predictions
+                self.df_dataset['train_test'] == TEST,
+                ["PUscore_0", "PUscore_1"]] = best_predictions
 
             # PREDICTIONS: Fill predictions for the evaluated data
             delta = predictions[:, 1] - predictions[:, 0]
@@ -315,7 +319,7 @@ class CorpusClassifier(object):
 
         # Freeze middle layers
         self.model.freeze_encoder_layer()
-        
+
         # Save model
         self.model.save(model_dir)
         logging.info(f"-- Model saved in {model_dir}")
@@ -390,6 +394,7 @@ class CorpusClassifier(object):
         # TODO: redefine output of evaluation
         # result = {}
         wrong_predictions = []
+
         return result, wrong_predictions
 
     def AL_sample(self, n_samples=5):
@@ -524,7 +529,7 @@ class CorpusClassifier(object):
         # Mark new annotations as used
         self.df_dataset.loc[self.df_dataset.learned == 0, 'learned'] = 1
 
-        # Save model        
+        # Save model
         model_dir = self.path2transformers / "best_model.pt"
         self.model.save(model_dir)
         logging.info(f"-- Model saved in {model_dir}")
