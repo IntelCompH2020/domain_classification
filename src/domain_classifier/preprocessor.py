@@ -1,5 +1,14 @@
 import numpy as np
 import pandas as pd
+import pathlib
+import pickle
+import logging
+
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
+
+from transformers import (
+    pipeline, AutoModelForSequenceClassification, AutoTokenizer)
 
 
 class CorpusProcessor(object):
@@ -10,14 +19,40 @@ class CorpusProcessor(object):
     of strings)
     """
 
-    def __init__(self):
+    def __init__(self, path2embeddings=None, path2zeroshot=None):
         """
         Initializes a preprocessor object
+
+        Parameters
+        ----------
+        path2embeddings : str or pathlib.Path or None, optional (default=None)
+            Path to the folder containing the document embeddings.
+            If None, no embeddings will be used. Document scores will be based
+            in word counts
+        path2zeroshot : str or pathlib.Path or None, optional (default=None)
+            Path to the folder containing the pretrained zero-shot model
+            If None, zero-shot classification will not be available.
         """
+
+        if path2embeddings is not None:
+            self.path2embeddings = pathlib.Path(path2embeddings)
+        else:
+            self.path2embedding = None
+            logging.info("-- No path to embeddings. "
+                         "Document scores will be based in word counts")
+
+        if path2zeroshot is not None:
+            self.path2zeroshot = pathlib.Path(path2zeroshot)
+        else:
+            self.path2zeroshot = None
+            logging.info("-- No path to zero-shot model. "
+                         "Zero-shot classification not available")
+
+        logging.info("-- Preprocessor object created.")
 
         return
 
-    def score_docs_by_keywords(self, corpus, keywords):
+    def score_docs_by_keyword_count(self, corpus, keywords):
         """
         Computes a score for every document in a given pandas dataframe
         according to the frequency of appearing some given keywords
@@ -40,6 +75,130 @@ class CorpusProcessor(object):
             print(f"-- Processing document {i} out of {n_docs}   \r", end="")
             reps = [doc.count(k) for k in keywords]
             score.append(sum(reps))
+
+        return score
+
+    def score_docs_by_keywords(self, corpus, keywords):
+        """
+        Computes a score for every document in a given pandas dataframe
+        according to the frequency of appearing some given keywords
+
+        Parameters
+        ----------
+        corpus : list (or pandas.Series) of str
+            Input corpus.
+        keywords : list of str
+            List of keywords
+
+        Returns
+        -------
+        score : list of float
+            List of scores, one per document in corpus
+        """
+
+        # Check if embeddings have been provided
+        if self.path2embeddings is None:
+            score = self.score_docs_by_keyword_count(corpus, keywords)
+            return score
+
+        # FIXME: The name of the SBERT model should be configurable. Move it to
+        #        the config file (parameters.default.yaml)
+        # model_name = 'distilbert-base-nli-mean-tokens'
+        model_name = 'all-MiniLM-L6-v2'
+        # model_name = 'allenai-specter'
+
+        # 1. Load sentence transformer model
+        model = SentenceTransformer(model_name)
+
+        # 2. Document embeddings. If precalculated, load the embeddings.
+        # Otherwise, compute the embeddings.
+        embeddings_out_fname = f'corpus_embed_{model_name}.pkl'
+        embeddings_fname = self.path2embeddings / embeddings_out_fname
+
+        if pathlib.Path.exists(embeddings_fname):
+            # Load embedding of the corpus documents
+            with open(embeddings_fname, "rb") as f_in:
+                doc_embeddings = pickle.load(f_in)
+
+            logging.info(f'-- Corpus {embeddings_fname} loaded with '
+                         f'{len(doc_embeddings)} doc embeddings')
+        else:
+            # Corpus embedding computation
+            logging.info(f'-- No embedding file {embeddings_fname} available')
+            logging.info(f'-- Embedding docs with model {model_name}')
+            n_docs = len(corpus)
+            # n_docs = 2000
+            batch_size = 128
+            doc_embeddings = model.encode(corpus.values[0:n_docs],
+                                          batch_size=batch_size)
+
+            # Saving doc embedding
+            with open(embeddings_fname, "wb") as fOut:
+                pickle.dump(doc_embeddings, fOut)
+            logging.info(f'-- Corpus embeddings saved in {embeddings_fname}')
+
+        # 3. Keyword embeddings
+        logging.info(f'-- Embedding keywords with model {model_name}')
+        keyword_embeddings = model.encode(keywords)
+
+        # 4. Cosine similarities computation
+        distances = cosine_similarity(doc_embeddings, keyword_embeddings)
+        score = np.mean(distances, axis=1)
+
+        return score
+
+    def score_docs_by_zeroshot(self, corpus, keyword):
+        """
+        Computes a score for every document in a given pandas dataframe
+        according to a given keyword and a pre-trained zero-shot classifier
+
+        Parameters
+        ----------
+        corpus : list (or pandas.Series) of str
+            Input corpus.
+        keyword : str
+            Keyword defining the target category
+
+        Returns
+        -------
+        score : list of float
+            List of scores, one per document in corpus
+        """
+
+        # Check if there is a zero-shot model
+        if self.path2zeroshot is None:
+            logging.warning("-- -- No zero-shot model is available.")
+            return
+
+        tokenizer = AutoTokenizer.from_pretrained(self.path2zeroshot)
+        model = AutoModelForSequenceClassification.from_pretrained(
+            self.path2zeroshot)
+
+        # Use device=0 for GPU inference
+        zsc = pipeline("zero-shot-classification", model=model,
+                       tokenizer=tokenizer, device=-1)
+
+        score = []
+        n_docs = len(corpus)
+        for i, doc in enumerate(corpus):
+            print(f"-- Processing document {i} out of {n_docs}")
+            # print(f"-- Processing document {i} out of {n_docs}   \r", end="")
+
+            # We have to truncate the document. Othervise an error is raised:
+            #    "The expanded size of the tensor (519) must match the existing
+            #     size (514) at non-singleton dimension 1.  Target sizes:
+            #     [1, 519].  Tensor sizes: [1, 514]"
+            doc_i = doc[:1000]
+
+            # Run the zero-shot classifier for document doc_i and category
+            # keyboard
+            # result = zsc(sentence1, labels,
+            #   hypothesis_template="This example is {}.", multi_label=True)
+            result = zsc(doc_i, keyword, multi_label=False)
+
+            # Save score
+            score_i = sum(result['scores'])
+            score.append(score_i)
 
         return score
 
@@ -111,17 +270,43 @@ class CorpusDFProcessor(object):
         description: body of the document text
     """
 
-    def __init__(self, df_corpus):
+    def __init__(self, df_corpus, path2embeddings=None, path2zeroshot=None):
         """
         Initializes a preprocessor object
+
+        Parameters
+        ----------
+        df_corpus : pandas.dataFrame
+            Input corpus.
+        path2embeddings : str or pathlib.Path or None, optional (default=None)
+            Path to the folder containing the document embeddings.
+            If None, no embeddings will be used. Document scores will be based
+            in word counts
+        path2zeroshot : str or pathlib.Path or None, optional (default=None)
+            Path to the folder containing the pretrained zero-shot model
+            If None, zero-shot classification will not be available.
         """
+
+        if path2embeddings is not None:
+            self.path2embeddings = pathlib.Path(path2embeddings)
+        else:
+            self.path2embedding = None
+            logging.info("-- No path to embeddings. "
+                         "Document scores will be based in word counts")
+
+        if path2zeroshot is not None:
+            self.path2zeroshot = pathlib.Path(path2zeroshot)
+        else:
+            self.path2zeroshot = None
+            logging.info("-- No path to zero-shot model. "
+                         "Zero-shot classification not available")
 
         self.df_corpus = df_corpus
 
         # This class uses methods from the corpus processor class.
         # FIXME: Uset CorpusProcessor as a base class and inherit
         #        CorpusDFProcessor from CorpusProcessor
-        self.prep = CorpusProcessor()
+        self.prep = CorpusProcessor(self.path2embeddings, self.path2zeroshot)
 
         return
 
@@ -187,7 +372,7 @@ class CorpusDFProcessor(object):
 
         return df_stats, kf_stats
 
-    def score_by_keywords(self, keywords, wt=2):
+    def score_by_keyword_count(self, keywords, wt=2):
         """
         Computes a score for every document in a given pandas dataframe
         according to the frequency of appearing some given keywords
@@ -206,12 +391,78 @@ class CorpusDFProcessor(object):
             List of scores, one per documents in corpus
         """
 
-        score_title = self.prep.score_docs_by_keywords(
+        score_title = self.prep.score_docs_by_keyword_count(
             self.df_corpus['title'], keywords)
-        score_descr = self.prep.score_docs_by_keywords(
+        score_descr = self.prep.score_docs_by_keyword_count(
             self.df_corpus['description'], keywords)
 
         score = wt * np.array(score_title) + np.array(score_descr)
+
+        return score
+
+    def score_by_keywords(self, keywords, wt=2):
+        """
+        Computes a score for every document in a given pandas dataframe
+        according to the frequency of appearing some given keywords
+
+        Parameters
+        ----------
+        keywords : list of str
+            List of keywords
+        wt : float, optional (default=2)
+            Weighting factor for the title components. Keyword matches with
+            title words are weighted by this factor
+            This input argument is used if self.path2embeddings is None only
+
+        Returns
+        -------
+        score : list of float
+            List of scores, one per documents in corpus
+        """
+
+        # Check if embeddings have been provided
+        if self.path2embeddings is None:
+            score = self.score_by_keyword_count(keywords, wt)
+            return score
+
+        # Copy relevant columns only
+        df_dataset = self.df_corpus[['id', 'title', 'description']]
+
+        # Join title and description into a single column
+        df_dataset['text'] = (df_dataset['title'] + '. '
+                              + df_dataset['description'])
+        df_dataset.drop(columns=['description', 'title'], inplace=True)
+
+        score = self.prep.score_docs_by_keywords(df_dataset['text'], keywords)
+
+        return score
+
+    def score_by_zeroshot(self, keyword):
+        """
+        Computes a score for every document in a given pandas dataframe
+        according to the relevance of a given keyword according to a pretrained
+        zero-shot classifier
+
+        Parameters
+        ----------
+        keyword : str
+            Keywords defining the target category
+
+        Returns
+        -------
+        score : list of float
+            List of scores, one per documents in corpus
+        """
+
+        # Copy relevant columns only
+        df_dataset = self.df_corpus[['id', 'title', 'description']]
+
+        # Join title and description into a single column
+        df_dataset['text'] = (df_dataset['title'] + '. '
+                              + df_dataset['description'])
+        df_dataset.drop(columns=['description', 'title'], inplace=True)
+
+        score = self.prep.score_docs_by_zeroshot(df_dataset['text'], keyword)
 
         return score
 
@@ -219,6 +470,7 @@ class CorpusDFProcessor(object):
         """
         Computes a score for every document in a given pandas dataframe
         according to the relevance of a weighted list of topics
+
         Parameters
         ----------
         T: numpy.ndarray or scipy.sparse
@@ -229,6 +481,7 @@ class CorpusDFProcessor(object):
         topic_weights: dict
             Dictionary {t_i: w_i}, where t_i is a topic index and w_i is the
             weight of the topic
+
         Returns
         -------
         score : list of float
@@ -277,19 +530,22 @@ class CorpusDFProcessor(object):
 
     def filter_by_keywords(self, keywords, wt=2, n_max=1e100, s_min=0):
         """
-        Select documnts with a significant presence of a given set of keywords
+        Select documents with a significant presence of a given set of keywords
+
         Parameters
         ----------
         keywords : list of str
             List of keywords
         wt : float, optional (default=2)
             Weighting factor for the title components. Keyword matches with
-            title words are weighted by this factor
+            title words are weighted by this factor. Not used if
+            self.path2embeddings is None
         n_max: int or None, optional (defaul=1e100)
             Maximum number of elements in the output list. The default is
             a huge number that, in practice, means there is no loimit
         s_min: float, optional (default=0)
             Minimum score. Only elements strictly above s_min are selected
+
         Returns
         -------
         ids : list
@@ -331,6 +587,14 @@ class CorpusDFProcessor(object):
 
         return ids
 
+    def filter_by_zeroshot(self, keyword, n_max, s_min):
+
+        scores = self.score_by_zeroshot(keyword)
+
+        ids = self.get_top_scores(scores, n_max=n_max, s_min=s_min)
+
+        return ids
+
     def make_pos_labels_df(self, ids):
         """
         Returns a dataframe with the given ids and a single, all-ones column
@@ -355,6 +619,7 @@ class CorpusDFProcessor(object):
         """
         Returns the labeled dataframe in the format required by the
         CorpusClassifier class
+
         Parameters
         ----------
         df_corpus: pandas.DataFrame
@@ -362,6 +627,7 @@ class CorpusDFProcessor(object):
         df_labels: pandas.DataFrame
             Dataframe of positive labels. It should contain column id. All
             labels are assumed to be positive
+
         Returns
         -------
         df_dataset: pandas.DataFrame

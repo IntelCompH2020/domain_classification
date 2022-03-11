@@ -17,7 +17,8 @@ class DataManager(object):
     It assumes that source and destination data will be stored in files.
     """
 
-    def __init__(self, path2source, path2labels, path2datasets, path2models):
+    def __init__(self, path2source, path2labels, path2datasets, path2models,
+                 path2embeddings=None):
         """
         Initializes the data manager object
 
@@ -29,12 +30,16 @@ class DataManager(object):
             Path to the folder containing sets of labels
         path2datasets: str or pathlib.Path
             Path to the folder containing datasets
+        path2embeddings: str or pathlib.Path
+            Path to the folder containing the document embeddings
         """
 
         self.path2source = pathlib.Path(path2source)
         self.path2labels = pathlib.Path(path2labels)
         self.path2datasets = pathlib.Path(path2datasets)
         self.path2models = pathlib.Path(path2models)
+        if path2embeddings is not None:
+            self.path2embeddings = pathlib.Path(path2embeddings)
         # The path to the corpus is given when calling the load_corpus method
         self.path2corpus = None
 
@@ -105,9 +110,9 @@ class DataManager(object):
 
         keywords_fpath = (self.path2source / self.corpus_name / 'queries'
                           / 'IA_keywords_SEAD_REV_JAG.txt')
-
-        df_keywords = pd.read_csv(keywords_fpath)
-        keywords = list(df_keywords['artificial neural network'])
+        df_keywords = pd.read_csv(
+            keywords_fpath, delimiter=',', names=['keywords'])
+        keywords = list(df_keywords['keywords'])
 
         return keywords
 
@@ -459,3 +464,4 @@ class DataManager(object):
 
         # The log message is returned to be shown in a GUI, if needed
         return msg
+

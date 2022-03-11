@@ -19,14 +19,14 @@ class TaskManager(baseTaskManager):
     basic method to create, load and setup an application project.
 
     The behavior of this class might depend on the state of the project, in
-    dictionary self.state, with the followin entries:
+    dictionary self.state, with the following entries:
 
     - 'isProject'   : If True, project created. Metadata variables loaded
     - 'configReady' : If True, config file succesfully loaded. Datamanager
                       activated.
     """
 
-    def __init__(self, path2project, path2source=None,
+    def __init__(self, path2project, path2source=None, path2zeroshot=None,
                  config_fname='parameters.yaml',
                  metadata_fname='metadata.yaml', set_logs=True):
         """
@@ -36,8 +36,10 @@ class TaskManager(baseTaskManager):
         ----------
         path2project : pathlib.Path
             Path to the application project
-        path2source : pathlib.Path
+        path2source : str or pathlib.Path or None (default=None)
             Path to the folder containing the data sources
+        path2zeroshot : str or pathlib.Path or None (default=None)
+            Path to the folder containing the zero-shot-model
         config_fname : str, optional (default='parameters.yaml')
             Name of the configuration file
         metadata_fname : str or None, optional (default=None)
@@ -75,7 +77,8 @@ class TaskManager(baseTaskManager):
         self.f_struct = {'labels': 'labels',
                          'datasets': 'datasets',
                          'models': 'models',
-                         'output': 'output'}
+                         'output': 'output',
+                         'embeddings': 'embeddings'}
 
         # Main paths
         # Path to the folder with the corpus files
@@ -84,11 +87,15 @@ class TaskManager(baseTaskManager):
         self.path2labels = self.path2project / self.f_struct['labels']
         self.path2dataset = self.path2project / self.f_struct['datasets']
         self.path2models = self.path2project / self.f_struct['models']
+        self.path2embeddings = self.path2project / self.f_struct['embeddings']
+
+        # Path to the folder containing the zero-shot model
+        self.path2zeroshot = path2zeroshot
 
         # Corpus dataframe
-        self.df_corpus = None  # Corpus dataframe
-        self.df_labels = None  # Labels
-        self.class_name = None  # Name of the working category
+        self.df_corpus = None      # Corpus dataframe
+        self.df_labels = None      # Labels
+        self.class_name = None     # Name of the working category
         self.keywords = None
         self.CorpusProc = None
 
@@ -103,8 +110,9 @@ class TaskManager(baseTaskManager):
         self.metadata['corpus_name'] = None
 
         # Datamanager
-        self.DM = DataManager(self.path2source, self.path2labels,
-                              self.path2dataset, self.path2models)
+        self.DM = DataManager(
+            self.path2source, self.path2labels, self.path2dataset,
+            self.path2models, self.path2embeddings)
 
         return
 
@@ -188,7 +196,8 @@ class TaskManager(baseTaskManager):
 
         # Load corpus in a dataframe.
         self.df_corpus = self.DM.load_corpus(corpus_name)
-        self.CorpusProc = CorpusDFProcessor(self.df_corpus)
+        self.CorpusProc = CorpusDFProcessor(
+            self.df_corpus, self.path2embeddings, self.path2zeroshot)
 
         if not self.state['selected_corpus']:
             # Store the name of the corpus an object attribute because later
@@ -261,7 +270,7 @@ class TaskManager(baseTaskManager):
 
         # Find the documents with the highest scores given the keywords
         ids = self.CorpusProc.filter_by_keywords(
-            self.keywords, wt=wt, n_max=n_max, s_min=s_min)
+            self.keywords, wt=wt, n_max=n_max, s_min=s_min,)
 
         # Create dataframe of positive labels from the list of ids
         self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
@@ -282,6 +291,46 @@ class TaskManager(baseTaskManager):
             'n_max': n_max,
             's_min': s_min,
             'keywords': self.keywords}
+        self._save_metadata()
+
+        return msg
+
+    def get_labels_by_zeroshot(self, n_max=2000, s_min=0.1, tag="zeroshot"):
+        """
+        Get a set of positive labels using a zero-shot classification model
+
+        Parameters:
+        -----------
+        n_max: int or None, optional (defaul=2000)
+            Maximum number of elements in the output list. The default is
+            a huge number that, in practice, means there is no loimit
+        s_min: float, optional (default=0.1)
+            Minimum score. Only elements strictly above s_min are selected
+        tag: str, optional (default=1)
+            Name of the output label set.
+        """
+
+        # Filter documents by topics
+        ids = self.CorpusProc.filter_by_zeroshot(
+            self.keywords, n_max=n_max, s_min=s_min)
+
+        # Create dataframe of positive labels from the list of ids
+        self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
+        self.class_name = tag
+
+        # ###########
+        # Save labels
+        msg = self.DM.save_labels(self.df_labels, tag=tag)
+
+        # ################################
+        # Save parameters in metadata file
+        key = 'zeroshot_parameters'
+        if key not in self.metadata:
+            self.metadata[key] = {}
+        self.metadata[key][tag] = {
+            'keyword': self.keywords,
+            'n_max': n_max,
+            's_min': s_min}
         self._save_metadata()
 
         return msg
@@ -333,12 +382,6 @@ class TaskManager(baseTaskManager):
         self._save_metadata()
 
         return msg
-
-    def get_labels_by_definitions(self):
-
-        labels = ['lab1', 'lab2', 'lab3']
-
-        return labels
 
     def load_labels(self, class_name):
         """
@@ -529,7 +572,7 @@ class TaskManagerCMD(TaskManager):
     from users from a command window.
     """
 
-    def __init__(self, path2project, path2source=None,
+    def __init__(self, path2project, path2source=None, path2zeroshot=None,
                  config_fname='parameters.yaml',
                  metadata_fname='metadata.yaml', set_logs=True):
         """
@@ -538,8 +581,10 @@ class TaskManagerCMD(TaskManager):
         ----------
         path2project : pathlib.Path
             Path to the application project
-        path2source : pathlib.Path
+        path2source : str or pathlib.Path or None (default=None)
             Path to the folder containing the data sources
+        path2zeroshot : str or pathlib.Path or None (default=None)
+            Path to the folder containing the zero-shot-model
         config_fname : str, optional (default='parameters.yaml')
             Name of the configuration file
         metadata_fname : str or None, optional (default=None)
@@ -550,8 +595,10 @@ class TaskManagerCMD(TaskManager):
             specified in the configuration file
         """
 
-        super().__init__(path2project, path2source, config_fname=config_fname,
-                         metadata_fname=metadata_fname, set_logs=set_logs)
+        super().__init__(
+            path2project, path2source, path2zeroshot=path2zeroshot,
+            config_fname=config_fname, metadata_fname=metadata_fname,
+            set_logs=set_logs)
 
         # Query manager
         self.QM = QueryManager()
@@ -653,6 +700,42 @@ class TaskManagerCMD(TaskManager):
 
         return
 
+    def get_labels_by_zeroshot(self):
+        """
+        Get a set of positive labels using keyword-based search
+        """
+
+        # ##############
+        # Get parameters
+
+        # Get weight parameter (weight of title word wrt description words)
+        n_max = self.QM.ask_value(
+            query=("Set maximum number of returned documents"),
+            convert_to=int,
+            default=self.global_parameters['zeroshot']['n_max'])
+
+        # Get score threshold
+        s_min = self.QM.ask_value(
+            query=("Set score_threshold"),
+            convert_to=float,
+            default=self.global_parameters['zeroshot']['s_min'])
+
+        # Get keywords and labels
+        self.keywords = self.QM.ask_keywords()
+        # Transform list in a comma-separated string of keywords, which is
+        # the format used by the zero-shot classifier
+        self.keywords = ', '.join(self.keywords)
+        tag = self._ask_label_tag()
+
+        # ##########
+        # Get labels
+        msg = super().get_labels_by_zeroshot(
+            n_max=n_max, s_min=s_min, tag=tag)
+
+        logging.info(msg)
+
+        return
+
     def get_labels_by_topics(self):
         """
         Get a set of positive labels from a weighted list of topics
@@ -699,10 +782,12 @@ class TaskManagerCMD(TaskManager):
     def get_labels_from_docs(self, selected_docs):
         """
         Requests feedback about the class of given documents.
+
         Parameters
         ----------
         selected_docs : pands.DataFrame
             Selected documents
+
         Returns
         -------
         labels : list of boolean
@@ -826,9 +911,12 @@ class TaskManagerGUI(TaskManager):
     def get_feedback(self, idx, labels):
         """
         Gets some labels from a user for a selected subset of documents
+
+        Notes
+        -----
+        In comparison to the corresponding parent method, STEPS 1 and 2 are
+        carried out directly through the GUI
         """
-        # In comparison to the "get_feedback" function from the parent, STEPS 1 and 2 are carried out directly through
-        # the GUI
 
         # STEP 3: Annotate
         self.dc.annotate(idx, labels)

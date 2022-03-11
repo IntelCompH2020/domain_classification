@@ -15,7 +15,7 @@ class QueryManager(object):
 
         return
 
-    def ask_keywords(self, kw_library):
+    def ask_keywords(self, kw_library=None):
         """
         Ask the user for a list of keywords.
 
@@ -30,10 +30,11 @@ class QueryManager(object):
             List of keywords
         """
 
-        logging.info(
-            f"-- Suggested list of keywords: {', '.join(kw_library)}\n")
+        if kw_library is not None:
+            logging.info(
+                f"-- Suggested list of keywords: {', '.join(kw_library)}\n")
 
-        str_keys = input('-- Write your keywords (separated by commas, '
+        str_keys = input('-- Write your keyword/s (separated by commas, '
                          'e.g., "gradient descent, gibbs sampling") ')
 
         # Split by commas, removing leading and trailing spaces
@@ -193,3 +194,4 @@ class QueryManager(object):
                       "labels in this session will be removed: ")
 
         return label == 'y'
+
