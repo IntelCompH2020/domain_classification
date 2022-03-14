@@ -267,7 +267,7 @@ class CorpusClassifier(object):
         for e in tqdm(range(epochs), desc="Train epoch"):
 
             # Train epoch
-            epoch_loss, epoch_time = self.model.train_model(df_train)
+            epoch_loss, epoch_time = self.model.train_model(df_train, self.device)
 
             if evaluate:
                 # #########################
@@ -280,7 +280,7 @@ class CorpusClassifier(object):
                 df_test["sample_weight"] = 1
 
                 # Evaluate the model
-                predictions, total_loss, result = self.model.eval_model(df_test)
+                predictions, total_loss, result = self.model.eval_model(df_test, self.device)
 
                 if result["f1"] > best_result:
                     best_epoch = e
@@ -365,7 +365,7 @@ class CorpusClassifier(object):
         # Evaluate the model
         logging.info(f"-- -- Testing model with {len(df_test)} documents...")
         t0 = time()
-        predictions, total_loss, result = self.model.eval_model(df_test)
+        predictions, total_loss, result = self.model.eval_model(df_test, self.device)
         logging.info(f"-- -- Model tested in {time() - t0} seconds")
 
         # SCORES: Fill scores for the evaluated data
@@ -515,7 +515,7 @@ class CorpusClassifier(object):
         # Train the model
         t0 = time()
         logging.info(f"-- -- Training model with {len(df_train)} documents...")
-        self.model.train_model(df_train)
+        self.model.train_model(df_train, self.device)
         logging.info(f"-- -- Model trained in {time() - t0:.3f} seconds")
 
         # ################
