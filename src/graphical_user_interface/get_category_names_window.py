@@ -42,10 +42,10 @@ class GetCategoryNamesWindow(QtWidgets.QDialog):
         self.selectedKeywords = None
         self.selectedTag = None
         # Maximum number of elements in the output list
-        self.n_max_default = 2000 # self.tm.global_parameters['zeroshot']['n_max']
+        self.n_max_default = self.tm.global_parameters['zeroshot']['n_max']
         self.n_max = self.n_max_default
         # Minimum score. Only docs scored strictly above s_min are selected
-        self.s_min_default = 0.6 # self.tm.global_parameters['zeroshot']['s_min']
+        self.s_min_default = self.tm.global_parameters['zeroshot']['s_min']
         self.s_min = self.s_min_default
 
         # Initialize parameters in the GUI

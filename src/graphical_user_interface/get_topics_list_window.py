@@ -181,8 +181,13 @@ class GetTopicsListWindow(QtWidgets.QDialog):
             if self.table_widget_topics_weight.item(i, 0) is not None:
                 weight = self.table_widget_topics_weight.item(i, 0).text()
                 topic_weighted_list += str(i) + "," + weight + ","
-        # Remove empty space 
+        # Remove empty space
         topic_weighted_list = topic_weighted_list[:-1]
+
+        # Remove comma if needed
+        if topic_weighted_list[-1] == ",":
+            topic_weighted_list = topic_weighted_list[:-1]
+
         # Write in table
         self.line_topic_list.setText(topic_weighted_list)
 
