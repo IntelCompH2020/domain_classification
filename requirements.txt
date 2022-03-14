@@ -5,5 +5,8 @@ PyQt5==5.15.4
 PyYAML==6.0
 scikit_learn==1.0.1
 scipy==1.6.2
-simpletransformers~=0.63.3
-sentence-transformers~=2.2.0
+simpletransformers==0.63.3
+openpyxl==3.0.9
+torch==1.10.2
+torchaudio==0.10.2
+torchvision==0.11.3

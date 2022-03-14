@@ -1,15 +1,20 @@
 import logging
 import pathlib
 import sys
-import os
 from time import time
 from datetime import datetime
 
 import pandas as pd
 import numpy as np
 import torch
+import copy
 from simpletransformers.classification import ClassificationModel
+from transformers.models.roberta.configuration_roberta import RobertaConfig
+from .custom_model import CustomModel
 from sklearn import model_selection
+from tqdm import tqdm
+
+from transformers import logging as hf_logging
 
 # Mnemonics for values in column 'train_test'
 TRAIN = 0
@@ -18,13 +23,15 @@ TEST = 1
 # (nan is not used because it converts the whole column to float)
 UNUSED = -99
 
+hf_logging.set_verbosity_error()
+
 
 class CorpusClassifier(object):
     """
     A container of corpus classification methods
     """
 
-    def __init__(self, df_dataset, path2transformers="."):
+    def __init__(self, df_dataset, path2transformers=".", use_cuda=True):
         """
         Initializes a preprocessor object
 
@@ -40,6 +47,9 @@ class CorpusClassifier(object):
             simpletransformers library.
             Default value is ".".
 
+        use_cuda : boolean, optional (default=True)
+            If true, GPU will be used, if available.
+
         Notes
         -----
         Be aware that the simpletransformers library produces several folders,
@@ -47,20 +57,33 @@ class CorpusClassifier(object):
         path2transformers other than '.'.
         """
 
+        logging.info("-- Initializing classifier object")
         self.path2transformers = pathlib.Path(path2transformers)
         self.model = None
         self.df_dataset = df_dataset
+        self.config = None
 
-        # Check if GPU is available
-        self.cuda_available = torch.cuda.is_available()
-        if self.cuda_available:
-            logging.info(f"Cuda available: GPU will be used")
+        if use_cuda:
+            if torch.cuda.is_available():
+                self.device = torch.device("cuda")
+                logging.info("-- --Cuda available: GPU will be used")
+            else:
+                logging.warning(
+                    "-- -- 'use_cuda' set to True when cuda is unavailable."
+                    " Make sure CUDA is available or set use_cuda=False."
+                )
+                self.device = torch.device("cpu")
+                logging.info(
+                    f"-- -- Cuda unavailable: training model without GPU")
         else:
-            logging.info(f"Cuda unavailable: training model without GPU")
+            self.device = torch.device("cpu")
+            logging.info(f"-- -- Cuda unavailable: training model without GPU")
 
         if 'labels' not in self.df_dataset:
+            logging.error(" ")
             logging.error(f"-- -- Column 'labels' does not exist in the input "
                           "dataframe")
+            logging.error(" ")
             sys.exit()
 
         return
@@ -97,6 +120,7 @@ class CorpusClassifier(object):
             -1: otherwise
         """
 
+        logging.info("-- Selecting train and test ...")
         l1 = sum(self.df_dataset['labels'])
         l0 = len(self.df_dataset) - l1
 
@@ -114,6 +138,9 @@ class CorpusClassifier(object):
             df0 = df0.sample(n=int(max_imbalance * l1))
             # Re-join dataframes
             df_subset = pd.concat((df0, df1))
+            # Recalculate number of class samples
+            l1 = sum(df_subset["labels"])
+            l0 = len(df_subset) - l1
 
         # Undersampling
         if nmax is not None and nmax < l0 + l1:
@@ -130,37 +157,69 @@ class CorpusClassifier(object):
 
         return
 
+    def load_model_config(self):
+        """
+        Load configuration for model.
+
+        If there is no previous configuration, copy it from simpletransformers
+        ClassificationModel and save it.
+        """
+
+        path2model_config = self.path2transformers / "config.json"
+
+        # Save model config if not saved before
+        if not path2model_config.exists():
+            # Load TransformerModel
+            logging.info("-- -- No available configuration. Loading "
+                         "configuration from roberta model.")
+
+            model = ClassificationModel(
+                "roberta", "roberta-base", use_cuda=False)
+
+            config = copy.deepcopy(model.config)
+
+            # Save config
+            config.to_json_file(path2model_config)
+            logging.info("-- -- Model configuration saved")
+
+            del model
+
+        else:
+            # Load config
+            config = RobertaConfig.from_json_file(path2model_config)
+            logging.info("-- -- Model configuration loaded from file")
+
+        self.config = config
+
+        return
+
     def load_model(self):
         """
         Loads an existing classification model
 
         Returns
         -------
-        The loaded model is store in attribute self.model
+        The loaded model is stored in attribute self.model
         """
 
-        # Create a TransformerModel
-        cuda_available = torch.cuda.is_available()
-        if cuda_available:
-            logging.info(f"-- -- Cuda available: GPU will be used")
-        else:
-            logging.info(f"-- -- Cuda unavailable: no GPU will be used")
-
         # Expected location of the previously stored model.
-        model_dir = self.path2transformers / "outputs" / "best_model"
-        if not pathlib.Path.exists(model_dir):
-            model_dir = self.path2transformers / "outputs"
+        model_dir = self.path2transformers / "best_model.pt"
         if not pathlib.Path.exists(model_dir):
             logging.error(f"-- No model available in {model_dir}")
             return
 
+        # Load config
+        self.load_model_config()
+
         # Load model
-        self.model = ClassificationModel(
-            'roberta', model_dir, use_cuda=cuda_available)
+        self.model = CustomModel(self.config, self.path2transformers)
+        self.model.load(model_dir)
+
+        logging.info(f"-- Model loaded from {model_dir}")
 
         return
 
-    def train_model(self):
+    def train_model(self, epochs=3, evaluate=True):
         """
         Train binary text classification model based on transformers
 
@@ -170,6 +229,12 @@ class CorpusClassifier(object):
         https://towardsdatascience.com/simple-transformers-introducing-the-
         easiest-bert-roberta-xlnet-and-xlm-library-58bf8c59b2a3
         """
+
+        logging.info("-- Training model...")
+
+        # Create model directory
+        self.path2transformers.mkdir(exist_ok=True)
+        model_dir = self.path2transformers / "best_model.pt"
 
         # #################
         # Get training data
@@ -182,32 +247,90 @@ class CorpusClassifier(object):
         # Get training data (rows with value 1 in column 'train_test')
         # Note that we select the columns required for training only
         df_train = self.df_dataset[
-            self.df_dataset.train_test == TRAIN][['text', 'labels']]
+            self.df_dataset.train_test == TRAIN][['id', 'text', 'labels']]
+
+        # TODO: set correct weight
+        df_train["sample_weight"] = 1
 
         # ##############
         # Classification
 
-        # Create a TransformerModel
-        model_args = {
-            'cache_dir': str(self.path2transformers / "cache_dir"),
-            'output_dir': str(self.path2transformers / "outputs"),
-            'best_model_dir': str(self.path2transformers / "outputs"
-                                  / "best_model"),
-            'tensorboard_dir': str(self.path2transformers / "runs"),
-            'overwrite_output_dir': True}
-        os.environ["TOKENIZERS_PARALLELISM"] = "false"
+        # Load config
+        self.load_model_config()
 
-        # FIXME: Base model 'roberta' should be configurable. Move it to
-        #        the config file (parameters.default.yaml)
-        self.model = ClassificationModel(
-            'roberta', 'roberta-base', use_cuda=self.cuda_available,
-            args=model_args)
+        # Create model
+        self.model = CustomModel(self.config, self.path2transformers)
+
+        # # FIXME: Base model 'roberta' should be configurable. Move it to
+        # #        the config file (parameters.default.yaml)
+
+        # Best model selection
+        best_epoch = 0
+        best_result = 0
+        best_predictions = None
+        best_model = None
 
         # Train the model
-        logging.info(f"-- -- Training model with {len(df_train)} documents...")
+        logging.info(f"-- Training model with {len(df_train)} documents...")
         t0 = time()
-        self.model.train_model(df_train)
-        logging.info(f"-- -- Model trained in {time() - t0} seconds")
+        for e in tqdm(range(epochs), desc="Train epoch"):
+
+            # Train epoch
+            epoch_loss, epoch_time = self.model.train_model(df_train)
+
+            if evaluate:
+                # #########################
+                # Evaluation
+
+                # Get test data (rows with value 1 in column 'train_test')
+                # Note that we select the columns required for training only
+                df_test = self.df_dataset[
+                    self.df_dataset.train_test == TEST][
+                        ['id', 'text', 'labels']]
+                df_test["sample_weight"] = 1
+
+                # Evaluate the model
+                predictions, total_loss, result = self.model.eval_model(
+                    df_test)
+
+                if result["f1"] > best_result:
+                    best_epoch = e
+                    best_result = result["f1"]
+                    best_predictions = predictions
+                    best_model = copy.deepcopy(self.model)
+
+        logging.info(f"-- -- Model trained in {time() - t0:.3f} seconds")
+
+        if evaluate:
+            self.model = best_model
+            logging.info(f"-- Best model in epoch {best_epoch} with "
+                         f"F1: {best_result:.3f}")
+
+            # SCORES: Fill scores for the evaluated data
+            self.df_dataset.loc[
+                self.df_dataset['train_test'] == TEST,
+                ["PUscore_0", "PUscore_1"]] = best_predictions
+
+            # PREDICTIONS: Fill predictions for the evaluated data
+            delta = predictions[:, 1] - predictions[:, 0]
+
+            self.df_dataset["prediction"] = UNUSED
+            self.df_dataset.loc[self.df_dataset['train_test'] == TEST,
+                                "prediction"] = (delta > 0).astype(int)
+
+            # Fill probabilistic predictions for the evaluated data
+            # Scores are mapped to probabilities thoudh a logistic function.
+            # FIXME: Check training loss in simpletransformers documentation or
+            #        code, to see if logistic loss is appropriate here.
+            self.df_dataset.loc[self.df_dataset['train_test'] == TEST,
+                                f"prob_pred"] = 1 / (1 + np.exp(-delta))
+
+        # Freeze middle layers
+        self.model.freeze_encoder_layer()
+
+        # Save model
+        self.model.save(model_dir)
+        logging.info(f"-- Model saved in {model_dir}")
 
         return
 
@@ -241,7 +364,12 @@ class CorpusClassifier(object):
         # Get test data (rows with value 1 in column 'train_test')
         # Note that we select the columns required for training only
         df_test = self.df_dataset[
-            self.df_dataset.train_test == TEST][['text', 'labels']]
+            self.df_dataset.train_test == TEST][['id', 'text', 'labels']]
+
+        if tag_score == "PUscore":
+            df_test["sample_weight"] = 1
+        else:
+            df_test["sample_weight"] = 10
 
         # #########################
         # Prediction and Evaluation
@@ -249,17 +377,16 @@ class CorpusClassifier(object):
         # Evaluate the model
         logging.info(f"-- -- Testing model with {len(df_test)} documents...")
         t0 = time()
-        result, model_outputs, wrong_predictions = self.model.eval_model(
-            df_test)
+        predictions, total_loss, result = self.model.eval_model(df_test)
         logging.info(f"-- -- Model tested in {time() - t0} seconds")
 
         # SCORES: Fill scores for the evaluated data
         self.df_dataset.loc[
             self.df_dataset['train_test'] == TEST,
-            [f"{tag_score}_0", f"{tag_score}_1"]] = model_outputs
+            [f"{tag_score}_0", f"{tag_score}_1"]] = predictions
 
         # PREDICTIONS: Fill predictions for the evaluated data
-        delta = model_outputs[:, 1] - model_outputs[:, 0]
+        delta = predictions[:, 1] - predictions[:, 0]
 
         self.df_dataset["prediction"] = UNUSED
         self.df_dataset.loc[self.df_dataset['train_test'] == TEST,
@@ -271,6 +398,10 @@ class CorpusClassifier(object):
         #        code, to see if logistic loss is appropriate here.
         self.df_dataset.loc[self.df_dataset['train_test'] == TEST,
                             f"prob_pred"] = 1 / (1 + np.exp(-delta))
+
+        # TODO: redefine output of evaluation
+        # result = {}
+        wrong_predictions = []
 
         return result, wrong_predictions
 
@@ -325,6 +456,9 @@ class CorpusClassifier(object):
                 f"-- -- Column {col} does not exist in dataframe. Added.")
             self.df_dataset[[col]] = UNUSED
         # Add labels to annotation columns
+        if not labels:
+            logging.warning(f"-- Labels not confirmed")
+            return
         self.df_dataset.loc[idx, col] = labels
 
         # Create colum of used labels if it does not exist
@@ -369,52 +503,43 @@ class CorpusClassifier(object):
         # Note, also, that we exclude from the PU data the annotated labels
         df_train_PU = self.df_dataset[
             (self.df_dataset.train_test == TRAIN)
-            & (self.df_dataset.learned == UNUSED)][['text', 'labels']]
+            & (self.df_dataset.learned == UNUSED)][['id', 'text', 'labels']]
 
         #  Get annotated samples already used for retraining
         df_clean_used = self.df_dataset[
-            self.df_dataset.learned == 1][['text', 'labels']]
+            self.df_dataset.learned == 1][['id', 'text', 'labels']]
 
         #  Get new annotated samples, not used for retraining yet
         df_clean_new = self.df_dataset[
-            self.df_dataset.learned == 0][['text', 'labels']]
-
+            self.df_dataset.learned == 0][['id', 'text', 'labels']]
         # ##################
         # Integrate datasets
 
         # FIXME: Change this by a more clever integration
         df_train = pd.concat([df_train_PU, df_clean_used, df_clean_new])
 
+        # TODO: set correct weight
+        df_train = df_clean_new
+        df_train["sample_weight"] = 10
+
         # ##############
         # Classification
-
-        # FIXME: replace by a more clever training
-        # Create a TransformerModel
-        model_args = {
-            'cache_dir': str(self.path2transformers / "cache_dir"),
-            'output_dir': str(self.path2transformers / "outputs"),
-            'best_model_dir': str(self.path2transformers / "outputs"
-                                  / "best_model"),
-            'tensorboard_dir': str(self.path2transformers / "runs"),
-            'overwrite_output_dir': True}
-        os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
-        # FIXME: Base model 'roberta' should be configurable. Move it to
-        #        the config file (parameters.default.yaml)
-        self.model = ClassificationModel(
-            'roberta', 'roberta-base', use_cuda=self.cuda_available,
-            args=model_args)
 
         # Train the model
         t0 = time()
         logging.info(f"-- -- Training model with {len(df_train)} documents...")
         self.model.train_model(df_train)
-        logging.info(f"-- -- Model trained in {time() - t0} seconds")
+        logging.info(f"-- -- Model trained in {time() - t0:.3f} seconds")
 
         # ################
         # Update dataframe
 
         # Mark new annotations as used
         self.df_dataset.loc[self.df_dataset.learned == 0, 'learned'] = 1
+
+        # Save model
+        model_dir = self.path2transformers / "best_model.pt"
+        self.model.save(model_dir)
+        logging.info(f"-- Model saved in {model_dir}")
 
         return
