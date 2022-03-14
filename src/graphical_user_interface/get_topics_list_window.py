@@ -132,8 +132,7 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         with the id and corresponding chemical description of each of the topics.
         """
         # Get topic words       
-        self.tw, self.T, self.df_metadata = self.tm.get_topic_words(
-            self.n_max, self.s_min)
+        self.tw, self.T, self.df_metadata = self.tm.get_topic_words()
         n_topics = len(self.tw)
 
         # Configure "table_widget_topic_list" table (positioned at the top right)
@@ -155,6 +154,9 @@ class GetTopicsListWindow(QtWidgets.QDialog):
                 str(self.tw[i]))
             self.table_widget_topic_list.setItem(i, 1, item_topic_description)
 
+        self.table_widget_topic_list.resizeColumnsToContents()
+        self.table_widget_topic_list.resizeRowsToContents()
+
         # Configure "table_widget_topics_weight" table (positioned at the top left)
         # TABLE IN WHICH THE USER INTRODUCES THE WEIGHTS FOR THE TOPICS
         #################################################################
@@ -163,6 +165,10 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         self.table_widget_topics_weight.clearContents()
         self.table_widget_topics_weight.setRowCount(n_topics)
         self.table_widget_topics_weight.setColumnCount(1)
+
+        self.table_widget_topics_weight.resizeColumnsToContents()
+        self.table_widget_topics_weight.resizeRowsToContents()
+
         return
 
     def updated_topic_weighted_list(self):
@@ -177,6 +183,7 @@ class GetTopicsListWindow(QtWidgets.QDialog):
                 topic_weighted_list += str(i) + "," + weight + ","
         # Remove empty space 
         topic_weighted_list = topic_weighted_list[:-1]
+        # Write in table
         self.line_topic_list.setText(topic_weighted_list)
 
     def clicked_get_topic_list(self):

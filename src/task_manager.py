@@ -879,21 +879,36 @@ class TaskManagerGUI(TaskManager):
 
         return suggested_keywords
 
-    def get_labels_by_keywords(self, keywords, _tag):
+    def get_labels_by_keywords(self, keywords, wt, n_max, s_min, tag):
         """
         Get a set of positive labels using keyword-based search through the
         MainWindow
+
+        Parameters:
+        -----------
+        keywords : list of str
+            List of keywords
+        wt : float, optional (default=2)
+            Weighting factor for the title components. Keyword matches with
+            title words are weighted by this factor
+        n_max: int or None, optional (defaul=2000)
+            Maximum number of elements in the output list. The default is
+            a huge number that, in practice, means there is no loimit
+        s_min: float, optional (default=1)
+            Minimum score. Only elements strictly above s_min are selected
+        tag: str, optional (default=1)
+            Name of the output label set.
         """
 
-        # Keywords are received as arguments
+        # Keywords, parameters and tags are received as arguments
         self.keywords = keywords
 
-        msg = super().get_labels_by_keywords(wt=2, n_max=2000, s_min=1,
-                                             tag=_tag)
+        msg = super().get_labels_by_keywords(wt=wt, n_max=n_max, s_min=s_min,
+                                             tag=tag)
 
         return msg
 
-    def get_topic_words(self, n_max, s_min):
+    def get_topic_words(self):
         """
         Get a set of positive labels from a weighted list of topics
         """
@@ -912,6 +927,14 @@ class TaskManagerGUI(TaskManager):
         """
         Gets some labels from a user for a selected subset of documents
 
+        Parameters
+        ----------
+        idx : list of int
+            Indices of the selected docs
+
+        labels : list of boolean
+            Requested labels
+
         Notes
         -----
         In comparison to the corresponding parent method, STEPS 1 and 2 are
@@ -929,8 +952,44 @@ class TaskManagerGUI(TaskManager):
     def train_PUmodel(self, max_imabalance, nmax):
         """
         Train a domain classifier
+
+        Parameters
+        ----------
+        max_imabalance : int (default 3)
+            Maximum ratio negative vs positive samples in the training set
+
+        nmax : int (default = 400)
+            Maximum number of documents in the training set.
         """
 
         super().train_PUmodel(max_imabalance, nmax)
 
         return
+
+    def get_labels_by_zeroshot(self, keywords, n_max, s_min, tag):
+        """
+        Get a set of positive labels using a zero-shot classification model
+
+        Parameters:
+        -----------
+        keywords : list of str
+            List of keywords
+        n_max: int or None, optional (defaul=2000)
+            Maximum number of elements in the output list. The default is
+            a huge number that, in practice, means there is no loimit
+        s_min: float, optional (default=0.1)
+            Minimum score. Only elements strictly above s_min are selected
+        tag: str, optional (default=1)
+            Name of the output label set.
+        """
+
+        # Keywords, parameters and tag  are received as arguments
+        self.keywords = keywords
+
+        # Get labels
+        msg = super().get_labels_by_zeroshot(
+            n_max=n_max, s_min=s_min, tag=tag)
+
+        logging.info(msg)
+
+        return msg

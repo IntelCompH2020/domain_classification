@@ -1308,37 +1308,37 @@ QToolTip {
                               </property>
                               <layout class="QVBoxLayout" name="verticalLayout_17">
                                <item>
-                                <widget class="QRadioButton" name="get_labels_option1">
+                                <widget class="QRadioButton" name="get_labels_option_1">
                                  <property name="text">
                                   <string>Import labels from a source file</string>
                                  </property>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QRadioButton" name="get_labels_option2">
+                                <widget class="QRadioButton" name="get_labels_option_2">
                                  <property name="text">
                                   <string>Get subcorpus from a given list of keywords</string>
                                  </property>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QRadioButton" name="get_labels_option3">
+                                <widget class="QRadioButton" name="get_labels_option_3">
                                  <property name="text">
                                   <string>Analyze the presence of selected keywords in the corpus</string>
                                  </property>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QRadioButton" name="get_labels_option4">
+                                <widget class="QRadioButton" name="get_labels_option_4">
                                  <property name="text">
                                   <string>Get subcorpus from a topic selection function</string>
                                  </property>
                                 </widget>
                                </item>
                                <item>
-                                <widget class="QRadioButton" name="get_labels_option5">
+                                <widget class="QRadioButton" name="get_labels_option_5">
                                  <property name="text">
-                                  <string>Get subcorpus from documents defining categories</string>
+                                  <string>Get subcorpus from a category name</string>
                                  </property>
                                 </widget>
                                </item>
