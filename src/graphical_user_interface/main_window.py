@@ -961,7 +961,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         # Select bunch of documents at random
         n_docs = self.n_docs_al
-        if self.tm.dc is None or self.tm.df_dataset.prediction is None:
+        if self.tm.dc is None or self.tm.dc.df_dataset.prediction is None:
             return
 
         self.selected_docs_to_annotate = self.tm.dc.AL_sample(n_samples=n_docs)
