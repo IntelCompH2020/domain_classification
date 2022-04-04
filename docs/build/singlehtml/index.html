@@ -1,0 +1,2366 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>domain_classification_doc documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="#" class="icon icon-home"> domain_classification_doc
+          </a>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-mn_menu_navigator">Menu Navigator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-dc_base_taskmanager">Base Task Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-dc_task_manager">Task Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-dc_data_manager">Data Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-dc_query_manager">Query Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-dc_classifier">Classifier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-dc_custom_model">Custom Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-dc_preprocessor">Preprocessor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-gui_main_window">Main Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-gui_analyze_keywords_window">Analyze Keywords Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-gui_constants">Constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-gui_get_keywords_window">Get Keywords Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-gui_get_topics_list_window">Get Topics List Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-gui_messages">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-gui_output_wrapper">Output Wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-gui_util">Util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-gui_worker_signals">Worker Signals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-gui_worker">Worker</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">domain_classification_doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+      <li>domain_classification_doc  documentation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="domain-classifier-docs">
+<h1>Domain Classifier Docs<a class="headerlink" href="#domain-classifier-docs" title="Permalink to this headline"></a></h1>
+<div class="toctree-wrapper compound">
+<span id="document-mn_menu_navigator"></span><section id="menu-navigator">
+<h2>Menu Navigator<a class="headerlink" href="#menu-navigator" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.menu_navigator.menu_navigator"></span><p>A generic class to manage the user navigation through a multilevel options
+menu.</p>
+<p>Created on March. 04, 2019</p>
+<dl class="simple">
+<dt>&#64;author: Jesús Cid Sueiro</dt><dd><p>Based on former menu manager scripts by Jerónimo Arenas.</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.menu_navigator.menu_navigator.MenuNavigator">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.menu_navigator.menu_navigator.</span></span><span class="sig-name descname"><span class="pre">MenuNavigator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2menu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths2data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.menu_navigator.menu_navigator.MenuNavigator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to manage the user navigation through a multilevel options menu.</p>
+<p>The structure of multilevel menu options with their associated
+actions and parameters should be defined in a yaml file.</p>
+<p>A taskmanager class is required to take the selected actions with the
+given parameters.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.menu_navigator.menu_navigator.MenuNavigator.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2menu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths2data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.menu_navigator.menu_navigator.MenuNavigator.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes a menu navigator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tm</strong> (<em>object</em>) – A task manager object, that will be in charge of executing all
+actions selected by the user through the menu interaction. Thus, it
+must contain:
+(1) One action method per method specified in the menu structure
+(2) Data collection methods, required for some menus with dynamic
+options.</p></li>
+<li><p><strong>path2menu</strong> (<em>str</em>) – The route to the yaml file containing the menu structure</p></li>
+<li><p><strong>paths2data</strong> (<em>dict or None, optional (default=None)</em>) – A dictionary of paths to data repositories. The key is a name of
+the path, and the value is the path.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.menu_navigator.menu_navigator.MenuNavigator.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#src.menu_navigator.menu_navigator.MenuNavigator.__weakref__" title="Permalink to this definition"></a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.menu_navigator.menu_navigator.MenuNavigator.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.menu_navigator.menu_navigator.MenuNavigator.clear" title="Permalink to this definition"></a></dt>
+<dd><p>Cleans terminal window</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.menu_navigator.menu_navigator.MenuNavigator.front_page">
+<span class="sig-name descname"><span class="pre">front_page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.menu_navigator.menu_navigator.MenuNavigator.front_page" title="Permalink to this definition"></a></dt>
+<dd><p>Prints a simple title heading the application user screen</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>title</strong> (<em>str</em>) – Title message to be printed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.menu_navigator.menu_navigator.MenuNavigator.navigate">
+<span class="sig-name descname"><span class="pre">navigate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.menu_navigator.menu_navigator.MenuNavigator.navigate" title="Permalink to this definition"></a></dt>
+<dd><p>Manages the menu navigation loop</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>dict</em>) – A dictionary of options</p></li>
+<li><p><strong>active_options</strong> (<em>list or None, optional (default=None)</em>) – List of option keys indicating the available options to print.
+If None, all options are shown.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.menu_navigator.menu_navigator.MenuNavigator.query_options">
+<span class="sig-name descname"><span class="pre">query_options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'exit'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.menu_navigator.menu_navigator.MenuNavigator.query_options" title="Permalink to this definition"></a></dt>
+<dd><p>Prints a heading mnd the subset of options indicated in the list of
+active_options, and returns the one selected by the used</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>options</strong> (<em>dict</em>) – A dictionary of options</p></li>
+<li><p><strong>active_options</strong> (<em>list or None, optional (default=None)</em>) – List of option keys indicating the available options to print.
+If None, all options are shown.</p></li>
+<li><p><strong>msg</strong> (<em>str or None, optional (default=None)</em>) – Heading message to be printed before the list of available options</p></li>
+<li><p><strong>zero_option</strong> (<em>str {‘exit’, ‘up’}, optional (default=’exit’)</em>) – If ‘exit’, an exit option is shown
+If ‘up’, an option to go back to the main menu</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>option</strong> – Selected option</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.menu_navigator.menu_navigator.MenuNavigator.request_confirmation">
+<span class="sig-name descname"><span class="pre">request_confirmation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'</span>&#160;&#160;&#160;&#160; <span class="pre">Are</span> <span class="pre">you</span> <span class="pre">sure?'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.menu_navigator.menu_navigator.MenuNavigator.request_confirmation" title="Permalink to this definition"></a></dt>
+<dd><p>Request confirmation from user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> (<em>str, optional (default=”    Are you sure?”)</em>) – Message printed to request confirmation</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>r</strong> – User respones</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str {‘yes’, ‘no’}</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<span id="document-dc_base_taskmanager"></span><section id="base-task-manager">
+<h2>Base Task Manager<a class="headerlink" href="#base-task-manager" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.base_taskmanager"></span><dl class="py class">
+<dt class="sig sig-object py" id="src.base_taskmanager.baseTaskManager">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.base_taskmanager.</span></span><span class="sig-name descname"><span class="pre">baseTaskManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parameters.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'metadata.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_logs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.base_taskmanager.baseTaskManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base Task Manager class.</p>
+<p>This class provides the basic functionality to create, load and setup an
+execution project from the main application</p>
+<p>The behavior of this class might depend on the state of the project, which
+is stored in dictionary self.state, with the followin entries:</p>
+<ul class="simple">
+<li><p>‘isProject’   : If True, project created. Metadata variables loaded</p></li>
+<li><p>‘configReady’ : If True, config file succesfully loaded and processed</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.base_taskmanager.baseTaskManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parameters.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'metadata.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_logs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.base_taskmanager.baseTaskManager.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the main attributes to manage tasks over a specific application
+project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path2project</strong> (<em>str or pathlib.Path</em>) – Path to the application project</p></li>
+<li><p><strong>path2source</strong> (<em>str or pathlib.Path or None, optional (default=None)</em>) – Paht to the folder containing the data sources for the application.
+If none, no source data is used.</p></li>
+<li><p><strong>config_fname</strong> (<em>str, optional (default=’parameters.yaml’)</em>) – Name of the configuration file</p></li>
+<li><p><strong>metadata_fname</strong> (<em>str or None, optional (default=’metadata.yaml’)</em>) – Name of the project metadata file.</p></li>
+<li><p><strong>set_logs</strong> (<em>bool, optional (default=True)</em>) – If True logger objects are created according to the parameters
+specified in the configuration file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.base_taskmanager.baseTaskManager.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#src.base_taskmanager.baseTaskManager.__weakref__" title="Permalink to this definition"></a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.base_taskmanager.baseTaskManager.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.base_taskmanager.baseTaskManager.create" title="Permalink to this definition"></a></dt>
+<dd><p>Creates an application project.
+To do so, it defines the main folder structure, and creates (or cleans)
+the project folder, specified in self.path2project</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.base_taskmanager.baseTaskManager.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.base_taskmanager.baseTaskManager.load" title="Permalink to this definition"></a></dt>
+<dd><p>Loads an existing project, by reading the metadata file in the project
+folder.</p>
+<p>It can be used to modify file or folder names, or paths, by specifying
+the new names/paths in the f_struct dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.base_taskmanager.baseTaskManager.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.base_taskmanager.baseTaskManager.setup" title="Permalink to this definition"></a></dt>
+<dd><p>Sets up the application projetc. To do so, it loads the configuration
+file and activates the logger objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<span id="document-dc_task_manager"></span><section id="task-manager">
+<h2>Task Manager<a class="headerlink" href="#task-manager" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.task_manager"></span><dl class="py class">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.task_manager.</span></span><span class="sig-name descname"><span class="pre">TaskManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2zeroshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parameters.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'metadata.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_logs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="index.html#src.base_taskmanager.baseTaskManager" title="src.base_taskmanager.baseTaskManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.base_taskmanager.baseTaskManager</span></code></a></p>
+<p>This class extends the functionality of the baseTaskManager class for a
+specific example application</p>
+<p>This class inherits from the baseTaskManager class, which provides the
+basic method to create, load and setup an application project.</p>
+<p>The behavior of this class might depend on the state of the project, in
+dictionary self.state, with the following entries:</p>
+<ul class="simple">
+<li><p>‘isProject’   : If True, project created. Metadata variables loaded</p></li>
+<li><dl class="simple">
+<dt>‘configReady’<span class="classifier">If True, config file succesfully loaded. Datamanager</span></dt><dd><p>activated.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2zeroshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parameters.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'metadata.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_logs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Opens a task manager object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path2project</strong> (<em>pathlib.Path</em>) – Path to the application project</p></li>
+<li><p><strong>path2source</strong> (<em>str or pathlib.Path or None (default=None)</em>) – Path to the folder containing the data sources</p></li>
+<li><p><strong>path2zeroshot</strong> (<em>str or pathlib.Path or None (default=None)</em>) – Path to the folder containing the zero-shot-model</p></li>
+<li><p><strong>config_fname</strong> (<em>str, optional (default=’parameters.yaml’)</em>) – Name of the configuration file</p></li>
+<li><p><strong>metadata_fname</strong> (<em>str or None, optional (default=None)</em>) – Name of the project metadata file.
+If None, no metadata file is used.</p></li>
+<li><p><strong>set_logs</strong> (<em>bool, optional (default=True)</em>) – If True logger objects are created according to the parameters
+specified in the configuration file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.analyze_keywords">
+<span class="sig-name descname"><span class="pre">analyze_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.analyze_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels using keyword-based search</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>wt</strong> (<em>float, optional (default=2)</em>) – Weighting factor for the title components. Keyword matches with
+title words are weighted by this factor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.evaluate_PUmodel">
+<span class="sig-name descname"><span class="pre">evaluate_PUmodel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.evaluate_PUmodel" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate a domain classifiers</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.get_feedback">
+<span class="sig-name descname"><span class="pre">get_feedback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.get_feedback" title="Permalink to this definition"></a></dt>
+<dd><p>Gets some labels from a user for a selected subset of documents</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.get_labels_by_keywords">
+<span class="sig-name descname"><span class="pre">get_labels_by_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kwds'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.get_labels_by_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels using keyword-based search</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wt</strong> (<em>float, optional (default=2)</em>) – Weighting factor for the title components. Keyword matches with
+title words are weighted by this factor</p></li>
+<li><p><strong>n_max</strong> (<em>int or None, optional (defaul=2000)</em>) – Maximum number of elements in the output list. The default is
+a huge number that, in practice, means there is no loimit</p></li>
+<li><p><strong>s_min</strong> (<em>float, optional (default=1)</em>) – Minimum score. Only elements strictly above s_min are selected</p></li>
+<li><p><strong>tag</strong> (<em>str, optional (default=1)</em>) – Name of the output label set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.get_labels_by_topics">
+<span class="sig-name descname"><span class="pre">get_labels_by_topics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topic_weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tpcs'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.get_labels_by_topics" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels from a weighted list of topics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>topic_weights</strong> (<em>numpy.array</em>) – Weight of each topic</p></li>
+<li><p><strong>T</strong> (<em>numpy.ndarray</em>) – Topic matrix</p></li>
+<li><p><strong>df_metadata</strong> – Topic metadata</p></li>
+<li><p><strong>n_max</strong> (<em>int or None, optional (defaul=2000)</em>) – Maximum number of elements in the output list. The default is
+a huge number that, in practice, means there is no loimit</p></li>
+<li><p><strong>s_min</strong> (<em>float, optional (default=1)</em>) – Minimum score. Only elements strictly above s_min are selected</p></li>
+<li><p><strong>tag</strong> (<em>str, optional (default=1)</em>) – Name of the output label set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.get_labels_by_zeroshot">
+<span class="sig-name descname"><span class="pre">get_labels_by_zeroshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zeroshot'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.get_labels_by_zeroshot" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels using a zero-shot classification model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_max</strong> (<em>int or None, optional (defaul=2000)</em>) – Maximum number of elements in the output list. The default is
+a huge number that, in practice, means there is no loimit</p></li>
+<li><p><strong>s_min</strong> (<em>float, optional (default=0.1)</em>) – Minimum score. Only elements strictly above s_min are selected</p></li>
+<li><p><strong>tag</strong> (<em>str, optional (default=1)</em>) – Name of the output label set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.get_labels_from_docs">
+<span class="sig-name descname"><span class="pre">get_labels_from_docs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_docs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.get_labels_from_docs" title="Permalink to this definition"></a></dt>
+<dd><p>Requests feedback about the class of given documents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>selected_docs</strong> (<em>pands.DataFrame</em>) – Selected documents</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>labels</strong> – Labels for the given documents, in the same order than the
+documents in the input dataframe</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.import_labels">
+<span class="sig-name descname"><span class="pre">import_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.import_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Import labels from file</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.load" title="Permalink to this definition"></a></dt>
+<dd><p>Extends the load method from the parent class to load the project
+corpus and the dataset (if any)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.load_corpus">
+<span class="sig-name descname"><span class="pre">load_corpus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corpus_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.load_corpus" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a dataframe of documents from a given corpus.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>corpus_name</strong> (<em>str</em>) – Name of the corpus. It should be the name of a folder in
+self.path2source</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.load_labels">
+<span class="sig-name descname"><span class="pre">load_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.load_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Load a set of labels and its corresponding dataset (if it exists)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>class_name</strong> (<em>str</em>) – Name of the target category</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.reevaluate_model">
+<span class="sig-name descname"><span class="pre">reevaluate_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.reevaluate_model" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate a domain classifier</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.reset_labels">
+<span class="sig-name descname"><span class="pre">reset_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labelset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.reset_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Reset all labels and models associated to a given category</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>labelset</strong> (<em>str</em>) – Name of the category to be removed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.retrain_model">
+<span class="sig-name descname"><span class="pre">retrain_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.retrain_model" title="Permalink to this definition"></a></dt>
+<dd><p>Improves classifier performance using the labels provided by users</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.train_PUmodel">
+<span class="sig-name descname"><span class="pre">train_PUmodel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_imbalance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.train_PUmodel" title="Permalink to this definition"></a></dt>
+<dd><p>Train a domain classifiers</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>max_imbalance</strong> (<em>int or float or None, optional (default=None)</em>) – Maximum ratio negative vs positive samples. If the ratio in
+df_dataset is higher, the negative class is subsampled.
+If None, the original proportions are preserved</p></li>
+<li><p><strong>nmax</strong> (<em>int or None (defautl=None)</em>) – Maximum size of the whole (train+test) dataset</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerCMD">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.task_manager.</span></span><span class="sig-name descname"><span class="pre">TaskManagerCMD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2zeroshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parameters.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'metadata.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_logs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerCMD" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.task_manager.TaskManager" title="src.task_manager.TaskManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.task_manager.TaskManager</span></code></a></p>
+<p>Provides extra functionality to the task manager, requesting parameters
+from users from a command window.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerCMD.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2zeroshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parameters.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'metadata.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_logs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerCMD.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Opens a task manager object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path2project</strong> (<em>pathlib.Path</em>) – Path to the application project</p></li>
+<li><p><strong>path2source</strong> (<em>str or pathlib.Path or None (default=None)</em>) – Path to the folder containing the data sources</p></li>
+<li><p><strong>path2zeroshot</strong> (<em>str or pathlib.Path or None (default=None)</em>) – Path to the folder containing the zero-shot-model</p></li>
+<li><p><strong>config_fname</strong> (<em>str, optional (default=’parameters.yaml’)</em>) – Name of the configuration file</p></li>
+<li><p><strong>metadata_fname</strong> (<em>str or None, optional (default=None)</em>) – Name of the project metadata file.
+If None, no metadata file is used.</p></li>
+<li><p><strong>set_logs</strong> (<em>bool, optional (default=True)</em>) – If True logger objects are created according to the parameters
+specified in the configuration file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerCMD.analyze_keywords">
+<span class="sig-name descname"><span class="pre">analyze_keywords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerCMD.analyze_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels using keyword-based search</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerCMD.get_labels_by_keywords">
+<span class="sig-name descname"><span class="pre">get_labels_by_keywords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerCMD.get_labels_by_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels using keyword-based search</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerCMD.get_labels_by_topics">
+<span class="sig-name descname"><span class="pre">get_labels_by_topics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerCMD.get_labels_by_topics" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels from a weighted list of topics</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerCMD.get_labels_by_zeroshot">
+<span class="sig-name descname"><span class="pre">get_labels_by_zeroshot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerCMD.get_labels_by_zeroshot" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels using keyword-based search</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerCMD.get_labels_from_docs">
+<span class="sig-name descname"><span class="pre">get_labels_from_docs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selected_docs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerCMD.get_labels_from_docs" title="Permalink to this definition"></a></dt>
+<dd><p>Requests feedback about the class of given documents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>selected_docs</strong> (<em>pands.DataFrame</em>) – Selected documents</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>labels</strong> – Labels for the given documents, in the same order than the
+documents in the input dataframe</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerCMD.train_PUmodel">
+<span class="sig-name descname"><span class="pre">train_PUmodel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerCMD.train_PUmodel" title="Permalink to this definition"></a></dt>
+<dd><p>Train a domain classifier</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerGUI">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.task_manager.</span></span><span class="sig-name descname"><span class="pre">TaskManagerGUI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2zeroshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parameters.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'metadata.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_logs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerGUI" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.task_manager.TaskManager" title="src.task_manager.TaskManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.task_manager.TaskManager</span></code></a></p>
+<p>Provides extra functionality to the task manager, to be used by the
+Graphical User Interface (GUI)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerGUI.get_feedback">
+<span class="sig-name descname"><span class="pre">get_feedback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerGUI.get_feedback" title="Permalink to this definition"></a></dt>
+<dd><p>Gets some labels from a user for a selected subset of documents</p>
+<p class="rubric">Notes</p>
+<p>In comparison to the corresponding parent method, STEPS 1 and 2 are
+carried out directly through the GUI</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerGUI.get_labels_by_keywords">
+<span class="sig-name descname"><span class="pre">get_labels_by_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerGUI.get_labels_by_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels using keyword-based search through the
+MainWindow</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerGUI.get_suggested_keywords">
+<span class="sig-name descname"><span class="pre">get_suggested_keywords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerGUI.get_suggested_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Get the list of suggested keywords to showing it in the GUI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>suggested_keywords</strong> – List of suggested keywords</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerGUI.get_topic_words">
+<span class="sig-name descname"><span class="pre">get_topic_words</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerGUI.get_topic_words" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels from a weighted list of topics</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerGUI.train_PUmodel">
+<span class="sig-name descname"><span class="pre">train_PUmodel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_imabalance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmax</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerGUI.train_PUmodel" title="Permalink to this definition"></a></dt>
+<dd><p>Train a domain classifier</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<span id="document-dc_data_manager"></span><section id="data-manager">
+<h2>Data Manager<a class="headerlink" href="#data-manager" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.data_manager"></span><dl class="py class">
+<dt class="sig sig-object py" id="src.data_manager.DataManager">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.data_manager.</span></span><span class="sig-name descname"><span class="pre">DataManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2datasets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2embeddings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class contains all read / write functionalities required by the
+domain_classification project.</p>
+<p>It assumes that source and destination data will be stored in files.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2datasets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2embeddings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the data manager object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path2source</strong> (<em>str or pathlib.Path</em>) – Path to the folder containing all external source data</p></li>
+<li><p><strong>path2labels</strong> (<em>str or pathlib.Path</em>) – Path to the folder containing sets of labels</p></li>
+<li><p><strong>path2datasets</strong> (<em>str or pathlib.Path</em>) – Path to the folder containing datasets</p></li>
+<li><p><strong>path2embeddings</strong> (<em>str or pathlib.Path</em>) – Path to the folder containing the document embeddings</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#src.data_manager.DataManager.__weakref__" title="Permalink to this definition"></a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.get_corpus_list">
+<span class="sig-name descname"><span class="pre">get_corpus_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.get_corpus_list" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the list of available corpus</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.get_dataset_list">
+<span class="sig-name descname"><span class="pre">get_dataset_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.get_dataset_list" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the list of available datasets</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.get_keywords_list">
+<span class="sig-name descname"><span class="pre">get_keywords_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.get_keywords_list" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a list of IA-related keywords</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>keywords</strong> – A list of keywords</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.get_labelset_list">
+<span class="sig-name descname"><span class="pre">get_labelset_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.get_labelset_list" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the list of available labels</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.get_model_list">
+<span class="sig-name descname"><span class="pre">get_model_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.get_model_list" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the list of available models</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.import_labels">
+<span class="sig-name descname"><span class="pre">import_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ids_corpus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'imported'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.import_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a subcorpus of positive labels from file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ids_corpus</strong> (<em>list</em>) – List of ids of the documents in the corpus. Only the labels with
+ids in ids_corpus are imported and saved into the output file.</p></li>
+<li><p><strong>tag</strong> (<em>str, optional (default=”imported”)</em>) – Name for the category defined by the positive labels.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df_labels</strong> – Dataframe of labels, with two columns: id and class.
+id identifies the document corresponding to the label.
+class identifies the class. All documents are assumed to be class 1</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.load_corpus">
+<span class="sig-name descname"><span class="pre">load_corpus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corpus_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.load_corpus" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a dataframe of documents from a given corpus.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>corpus_name</strong> (<em>str</em>) – Name of the corpus. It should be the name of a folder in
+self.path2source</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.load_dataset">
+<span class="sig-name descname"><span class="pre">load_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.load_dataset" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a labeled dataset of documents in the format required by the
+classifier modules</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<em>str, optional (default=””)</em>) – Name of the dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.load_labels">
+<span class="sig-name descname"><span class="pre">load_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.load_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a set or PU labels</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.load_topics">
+<span class="sig-name descname"><span class="pre">load_topics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.load_topics" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a topic matrix for a specific corpus</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.reset_labels">
+<span class="sig-name descname"><span class="pre">reset_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.reset_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Delete all files related to a given class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<em>str, optional (default=””)</em>) – Name of the class to be removed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.save_dataset">
+<span class="sig-name descname"><span class="pre">save_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_csv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.save_dataset" title="Permalink to this definition"></a></dt>
+<dd><p>Save dataset in input dataframe in a feather file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_dataset</strong> (<em>pandas.DataFrame</em>) – Dataset to save</p></li>
+<li><p><strong>tag</strong> (<em>str, optional (default=””)</em>) – Optional string to add to the output file name.</p></li>
+<li><p><strong>save_csv</strong> (<em>boolean, optional (default=False)</em>) – If True, the dataset is saved in csv format too</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<span id="document-dc_query_manager"></span><section id="query-manager">
+<h2>Query Manager<a class="headerlink" href="#query-manager" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.query_manager"></span><dl class="py class">
+<dt class="sig sig-object py" id="src.query_manager.QueryManager">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.query_manager.</span></span><span class="sig-name descname"><span class="pre">QueryManager</span></span><a class="headerlink" href="#src.query_manager.QueryManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class contains all user queries needed by the datamanager.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.query_manager.QueryManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.query_manager.QueryManager.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the query manager object</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.query_manager.QueryManager.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#src.query_manager.QueryManager.__weakref__" title="Permalink to this definition"></a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.query_manager.QueryManager.ask_keywords">
+<span class="sig-name descname"><span class="pre">ask_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kw_library</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.query_manager.QueryManager.ask_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Ask the user for a list of keywords.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kw_library</strong> (<em>list</em>) – A list of possible keywords</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>keywords</strong> – List of keywords</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.query_manager.QueryManager.ask_label">
+<span class="sig-name descname"><span class="pre">ask_label</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.query_manager.QueryManager.ask_label" title="Permalink to this definition"></a></dt>
+<dd><p>Ask the user for a single binary label</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>label</strong> – Binary value read from the standard input</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.query_manager.QueryManager.ask_label_tag">
+<span class="sig-name descname"><span class="pre">ask_label_tag</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.query_manager.QueryManager.ask_label_tag" title="Permalink to this definition"></a></dt>
+<dd><p>Ask the user for a tag to compose the label file name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>keywords</strong> – List of keywords</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.query_manager.QueryManager.ask_labels">
+<span class="sig-name descname"><span class="pre">ask_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.query_manager.QueryManager.ask_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Ask the user for a weighted list of labels related to some documents</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>labels</strong> – List of labels</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.query_manager.QueryManager.ask_topics">
+<span class="sig-name descname"><span class="pre">ask_topics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topic_words</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.query_manager.QueryManager.ask_topics" title="Permalink to this definition"></a></dt>
+<dd><p>Ask the user for a weighted list of topics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>topic_words</strong> (<em>list of str</em>) – List of the main words from each topic</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>tw</strong> – Dictionary of topics: weights</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.query_manager.QueryManager.ask_value">
+<span class="sig-name descname"><span class="pre">ask_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query='Write</span> <span class="pre">value:</span> <span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convert_to=&lt;class</span> <span class="pre">'str'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.query_manager.QueryManager.ask_value" title="Permalink to this definition"></a></dt>
+<dd><p>Ask user for a value</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<em>str, optional (default value=”Write value: “)</em>) – Text to print</p></li>
+<li><p><strong>convert_to</strong> (<em>function, optional (default=str)</em>) – A function to apply to the selected value. It can be used, for
+instance, for type conversion.</p></li>
+<li><p><strong>default</strong> (<em>optional (default=None)</em>) – Default value to return if an empty value is returned</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The returned value is equal to conver_to(x), where x is the string
+introduced by the user (if any) or the default value.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.query_manager.QueryManager.confirm">
+<span class="sig-name descname"><span class="pre">confirm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.query_manager.QueryManager.confirm" title="Permalink to this definition"></a></dt>
+<dd><p>Ask the user for confirmation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>True if the user inputs ‘y’, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<span id="document-dc_classifier"></span><section id="classifier">
+<h2>Classifier<a class="headerlink" href="#classifier" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.domain_classifier.classifier"></span><dl class="py class">
+<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.domain_classifier.classifier.</span></span><span class="sig-name descname"><span class="pre">CorpusClassifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2transformers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A container of corpus classification methods</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.AL_sample">
+<span class="sig-name descname"><span class="pre">AL_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.AL_sample" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a given number of samples for active learning (AL)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>n_samples</strong> (<em>int, optional (default=5)</em>) – Number of samples to return</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df_out</strong> – Selected samples</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.dataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2transformers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes a preprocessor object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_dataset</strong> (<em>pandas.DataFrame</em>) – Dataset with text and labels. It must contain at least two columns
+with names “text” and “labels”, with the input and the target
+labels for classification.</p></li>
+<li><p><strong>path2transformers</strong> (<em>pathlib.Path or str, optional (default=”.”)</em>) – Path to the folder that will store all files produced by the
+simpletransformers library.
+Default value is “.”.</p></li>
+<li><p><strong>use_cuda</strong> (<em>boolean, optional (default=True)</em>) – If true, GPU will be used, if available.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Be aware that the simpletransformers library produces several folders,
+with some large files. You might like to use a value of
+path2transformers other than ‘.’.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.__weakref__" title="Permalink to this definition"></a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.annotate">
+<span class="sig-name descname"><span class="pre">annotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'annotations'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.annotate" title="Permalink to this definition"></a></dt>
+<dd><p>Annotate the given labels in the given positions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>idx</strong> (<em>list of int</em>) – Rows to locate the labels.</p></li>
+<li><p><strong>labels</strong> (<em>list of int</em>) – Labels to annotate</p></li>
+<li><p><strong>col</strong> (<em>str, optional (default = ‘annotations’)</em>) – Column in the dataframe where the labels will be annotated. If it
+does not exist, it is created.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.eval_model">
+<span class="sig-name descname"><span class="pre">eval_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag_score</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'score'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.eval_model" title="Permalink to this definition"></a></dt>
+<dd><p>Compute predictions of the classification model over the input dataset
+and compute performance metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag_score</strong> (<em>str</em>) – Prefix of the score names.
+The scores will be save in the columns of self.df_dataset
+containing these scores.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The use of simpletransformers follows the example code in
+<a class="reference external" href="https://towardsdatascience.com/simple-transformers-introducing-the">https://towardsdatascience.com/simple-transformers-introducing-the</a>-
+easiest-bert-roberta-xlnet-and-xlm-library-58bf8c59b2a3</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.load_model">
+<span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.load_model" title="Permalink to this definition"></a></dt>
+<dd><p>Loads an existing classification model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>The loaded model is stored in attribute self.model</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.load_model_config">
+<span class="sig-name descname"><span class="pre">load_model_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.load_model_config" title="Permalink to this definition"></a></dt>
+<dd><p>Load configuration for model.</p>
+<p>If there is no previous configuration, copy it from simpletransformers
+ClassificationModel and save it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.retrain_model">
+<span class="sig-name descname"><span class="pre">retrain_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.retrain_model" title="Permalink to this definition"></a></dt>
+<dd><p>Re-train the classifier model using annotations</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.train_model">
+<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.train_model" title="Permalink to this definition"></a></dt>
+<dd><p>Train binary text classification model based on transformers</p>
+<p class="rubric">Notes</p>
+<p>The use of simpletransformers follows the example code in
+<a class="reference external" href="https://towardsdatascience.com/simple-transformers-introducing-the">https://towardsdatascience.com/simple-transformers-introducing-the</a>-
+easiest-bert-roberta-xlnet-and-xlm-library-58bf8c59b2a3</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.train_test_split">
+<span class="sig-name descname"><span class="pre">train_test_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_imbalance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.train_test_split" title="Permalink to this definition"></a></dt>
+<dd><p>Split dataframe dataset into train an test datasets, undersampling
+the negative class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>max_imbalance</strong> (<em>int or float or None, optional (default=None)</em>) – Maximum ratio negative vs positive samples. If the ratio in
+df_dataset is higher, the negative class is subsampled
+If None, the original proportions are preserved</p></li>
+<li><p><strong>nmax</strong> (<em>int or None (defautl=None)</em>) – Maximum size of the whole (train+test) dataset</p></li>
+<li><p><strong>train_size</strong> (<em>float or int (default=0.6)</em>) – Size of the training set.
+If float in [0.0, 1.0], proportion of the dataset to include in the
+train split.
+If int, absolute number of train samples.</p></li>
+<li><p><strong>random_state</strong> (<em>int or None (default=None)</em>) – Controls the shuffling applied to the data before splitting.
+Pass an int for reproducible output across multiple function calls.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>No variables are returned. The dataset dataframe in self.df_dataset is</em></p></li>
+<li><p><em>updated with a new columm ‘train_test’ taking values</em> – 0: if row is selected for training
+1: if row is selected for test
+-1: otherwise</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<span id="document-dc_custom_model"></span><section id="custom-model">
+<h2>Custom Model<a class="headerlink" href="#custom-model" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.domain_classifier.custom_model"></span><p>A custom classifier based on the RobertaModel class from transformers.</p>
+<p>Created on February 2022</p>
+<p>&#64;author: José Antonio Espinosa</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.domain_classifier.custom_model.CustomClassificationHead">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.domain_classifier.custom_model.</span></span><span class="sig-name descname"><span class="pre">CustomClassificationHead</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier_dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dropout_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">768</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.custom_model.CustomClassificationHead" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Copy of class RobertaClassificationHead
+(from transformers.models.roberta.modeling_roberta)
+Head for sentence-level classification tasks.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.custom_model.CustomClassificationHead.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier_dropout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dropout_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">768</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.custom_model.CustomClassificationHead.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.custom_model.CustomClassificationHead.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w">  </span><span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.custom_model.CustomClassificationHead.forward" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>features</strong> (<em>Tensor</em>) – The encoded text</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.domain_classifier.custom_model.CustomDataset">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.domain_classifier.custom_model.</span></span><span class="sig-name descname"><span class="pre">CustomDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.custom_model.CustomDataset" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.custom_model.CustomDataset.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.custom_model.CustomDataset.__init__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.domain_classifier.custom_model.CustomEncoderLayer">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.domain_classifier.custom_model.</span></span><span class="sig-name descname"><span class="pre">CustomEncoderLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hidden_act</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gelu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">768</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intermediate_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3072</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_norm_eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_attention_heads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_hidden_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.custom_model.CustomEncoderLayer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Custom encoder layer of transformer for classification.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.custom_model.CustomEncoderLayer.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hidden_act</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gelu'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">768</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intermediate_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3072</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_norm_eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_attention_heads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_hidden_layers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.custom_model.CustomEncoderLayer.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.custom_model.CustomEncoderLayer.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w">  </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w">  </span><span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.custom_model.CustomEncoderLayer.forward" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>Tensor</em>) – The sequence to the encoder</p></li>
+<li><p><strong>mask</strong> (<em>Tensor</em>) – The mask for the src keys per batch</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.domain_classifier.custom_model.CustomModel">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.domain_classifier.custom_model.</span></span><span class="sig-name descname"><span class="pre">CustomModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.custom_model.CustomModel" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Copy of class RobertaClassificationHead
+(from transformers.models.roberta.modeling_roberta)
+Head for sentence-level classification tasks.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.custom_model.CustomModel.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.custom_model.CustomModel.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.custom_model.CustomModel.create_data_loader">
+<span class="sig-name descname"><span class="pre">create_data_loader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.custom_model.CustomModel.create_data_loader" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a DataLoader from a DataFrame to train/eval model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.custom_model.CustomModel.eval_model">
+<span class="sig-name descname"><span class="pre">eval_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_eval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.custom_model.CustomModel.eval_model" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate trained model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.custom_model.CustomModel.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w">  </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w">  </span><span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.custom_model.CustomModel.forward" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>Tensor</em>) – The sequence to the encoder</p></li>
+<li><p><strong>mask</strong> (<em>Tensor</em>) – The mask for the src keys per batch</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.custom_model.CustomModel.load_embeddings">
+<span class="sig-name descname"><span class="pre">load_embeddings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.custom_model.CustomModel.load_embeddings" title="Permalink to this definition"></a></dt>
+<dd><p>Load embeddings layer.</p>
+<p>If there is no previous configuration, copy it from simpletransformers
+ClassificationModel and save it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.custom_model.CustomModel.train_model">
+<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cuda'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.custom_model.CustomModel.train_model" title="Permalink to this definition"></a></dt>
+<dd><p>Train the model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_train</strong> (<em>DataFrame</em>) – Training dataframe</p></li>
+<li><p><strong>epochs</strong> (<em>int</em>) – Number of epochs to train model</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<span id="document-dc_preprocessor"></span><section id="preprocessor">
+<h2>Preprocessor<a class="headerlink" href="#preprocessor" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.domain_classifier.preprocessor"></span><dl class="py class">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusDFProcessor">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.domain_classifier.preprocessor.</span></span><span class="sig-name descname"><span class="pre">CorpusDFProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_corpus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2embeddings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2zeroshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A container of corpus processing methods.
+It assumes that a corpus is given by a dataframe of documents.</p>
+<p>Each dataframe must contain three columns:
+id: document identifiers
+title: document titles
+description: body of the document text</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusDFProcessor.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_corpus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2embeddings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2zeroshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes a preprocessor object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_corpus</strong> (<em>pandas.dataFrame</em>) – Input corpus.</p></li>
+<li><p><strong>path2embeddings</strong> (<em>str or pathlib.Path or None, optional (default=None)</em>) – Path to the folder containing the document embeddings.
+If None, no embeddings will be used. Document scores will be based
+in word counts</p></li>
+<li><p><strong>path2zeroshot</strong> (<em>str or pathlib.Path or None, optional (default=None)</em>) – Path to the folder containing the pretrained zero-shot model
+If None, zero-shot classification will not be available.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusDFProcessor.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor.__weakref__" title="Permalink to this definition"></a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusDFProcessor.compute_keyword_stats">
+<span class="sig-name descname"><span class="pre">compute_keyword_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor.compute_keyword_stats" title="Permalink to this definition"></a></dt>
+<dd><p>Computes keyword statistics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>corpus</strong> (<em>dataframe</em>) – Dataframe of corpus.</p></li>
+<li><p><strong>keywords</strong> (<em>list of str</em>) – List of keywords</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>df_stats</strong> (<em>dict</em>) – Dictionary of document frequencies per keyword
+df_stats[k] is the number of docs containing keyword k</p></li>
+<li><p><strong>kf_stats</strong> (<em>dict</em>) – Dictionary of keyword frequencies
+df_stats[k] is the number of times keyword k appers in the corpus</p></li>
+<li><p><strong>wt</strong> (<em>float, optional (default=2)</em>) – Weighting factor for the title components. Keyword matches with
+title words are weighted by this factor</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusDFProcessor.filter_by_keywords">
+<span class="sig-name descname"><span class="pre">filter_by_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e+100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor.filter_by_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Select documents with a significant presence of a given set of keywords</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keywords</strong> (<em>list of str</em>) – List of keywords</p></li>
+<li><p><strong>wt</strong> (<em>float, optional (default=2)</em>) – Weighting factor for the title components. Keyword matches with
+title words are weighted by this factor. Not used if
+self.path2embeddings is None</p></li>
+<li><p><strong>n_max</strong> (<em>int or None, optional (defaul=1e100)</em>) – Maximum number of elements in the output list. The default is
+a huge number that, in practice, means there is no loimit</p></li>
+<li><p><strong>s_min</strong> (<em>float, optional (default=0)</em>) – Minimum score. Only elements strictly above s_min are selected</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ids</strong> – List of ids of the selected documents</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusDFProcessor.filter_by_topics">
+<span class="sig-name descname"><span class="pre">filter_by_topics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doc_ids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topic_weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e+100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor.filter_by_topics" title="Permalink to this definition"></a></dt>
+<dd><p>Select documents with a significant presence of a given set of keywords</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>numpy.ndarray or scipy.sparse</em>) – Topic matrix.</p></li>
+<li><p><strong>doc_ids</strong> (<em>array-like</em>) – Ids of the documents in the topic matrix. doc_ids[i] = ‘123’ means
+that document with id ‘123’ has topic vector T[i]</p></li>
+<li><p><strong>topic_weights</strong> (<em>dict</em>) – Dictionary {t_i: w_i}, where t_i is a topic index and w_i is the
+weight of the topic</p></li>
+<li><p><strong>n_max</strong> (<em>int or None, optional (defaul=1e100)</em>) – Maximum number of elements in the output list. The default is
+a huge number that, in practice, means there is no loimit</p></li>
+<li><p><strong>s_min</strong> (<em>float, optional (default=0)</em>) – Minimum score. Only elements strictly above s_min are selected</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>ids</strong> – List of ids of the selected documents</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusDFProcessor.get_top_scores">
+<span class="sig-name descname"><span class="pre">get_top_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scores</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e+100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor.get_top_scores" title="Permalink to this definition"></a></dt>
+<dd><p>Select documents from the corpus whose score is strictly above a lower
+bound</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scores</strong> (<em>array-like of float</em>) – List of scores. It must be the same size than the number of docs
+in the corpus</p></li>
+<li><p><strong>n_max</strong> (<em>int or None, optional (defaul=1e100)</em>) – Maximum number of elements in the output list. The default is
+a huge number that, in practice, means there is no loimit</p></li>
+<li><p><strong>s_min</strong> (<em>float, optional (default=0)</em>) – Minimum score. Only elements strictly above s_min are selected</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusDFProcessor.make_PU_dataset">
+<span class="sig-name descname"><span class="pre">make_PU_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_labels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor.make_PU_dataset" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the labeled dataframe in the format required by the
+CorpusClassifier class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_corpus</strong> (<em>pandas.DataFrame</em>) – Text corpus, with at least three columns: id, title and description</p></li>
+<li><p><strong>df_labels</strong> (<em>pandas.DataFrame</em>) – Dataframe of positive labels. It should contain column id. All
+labels are assumed to be positive</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df_dataset</strong> – A pandas dataframe with three columns: id, text and labels.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusDFProcessor.make_pos_labels_df">
+<span class="sig-name descname"><span class="pre">make_pos_labels_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ids</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor.make_pos_labels_df" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a dataframe with the given ids and a single, all-ones column</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ids</strong> (<em>array-like</em>) – Values for the column ‘ids’</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df_labels</strong> – A dataframe with two columns: ‘id’ and ‘class’. All values in
+class column are equal to one.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusDFProcessor.remove_docs_from_topics">
+<span class="sig-name descname"><span class="pre">remove_docs_from_topics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'id'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor.remove_docs_from_topics" title="Permalink to this definition"></a></dt>
+<dd><p>Removes, from a given topic-document matrix and its corresponding
+metadata dataframe, all documents that do not belong to the corpus</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>numpy.ndarray or scipy.sparse</em>) – Topic matrix (one column per topic)</p></li>
+<li><p><strong>df_metadata</strong> (<em>pandas.DataFrame</em>) – Dataframe of metadata. It must include a column with document ids</p></li>
+<li><p><strong>col_id</strong> (<em>str, optional (default=’id’)</em>) – Name of the column containing the document ids in df_metadata</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>T_out</strong> (<em>numpy.ndarray or scipy.sparse</em>) – Reduced topic matrix (after document removal)</p></li>
+<li><p><strong>df_out</strong> (<em>pands.DataFrame</em>) – Metadata dataframe, after document removal</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusDFProcessor.score_by_keyword_count">
+<span class="sig-name descname"><span class="pre">score_by_keyword_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor.score_by_keyword_count" title="Permalink to this definition"></a></dt>
+<dd><p>Computes a score for every document in a given pandas dataframe
+according to the frequency of appearing some given keywords</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>corpus</strong> (<em>dataframe</em>) – Dataframe of corpus.</p></li>
+<li><p><strong>keywords</strong> (<em>list of str</em>) – List of keywords</p></li>
+<li><p><strong>wt</strong> (<em>float, optional (default=2)</em>) – Weighting factor for the title components. Keyword matches with
+title words are weighted by this factor</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>score</strong> – List of scores, one per documents in corpus</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusDFProcessor.score_by_keywords">
+<span class="sig-name descname"><span class="pre">score_by_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor.score_by_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Computes a score for every document in a given pandas dataframe
+according to the frequency of appearing some given keywords</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keywords</strong> (<em>list of str</em>) – List of keywords</p></li>
+<li><p><strong>wt</strong> (<em>float, optional (default=2)</em>) – Weighting factor for the title components. Keyword matches with
+title words are weighted by this factor
+This input argument is used if self.path2embeddings is None only</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>score</strong> – List of scores, one per documents in corpus</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusDFProcessor.score_by_topics">
+<span class="sig-name descname"><span class="pre">score_by_topics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doc_ids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topic_weights</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor.score_by_topics" title="Permalink to this definition"></a></dt>
+<dd><p>Computes a score for every document in a given pandas dataframe
+according to the relevance of a weighted list of topics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<em>numpy.ndarray or scipy.sparse</em>) – Topic matrix (one column per topic)</p></li>
+<li><p><strong>doc_ids</strong> (<em>array-like</em>) – Ids of the documents in the topic matrix. doc_ids[i] = ‘123’ means
+that document with id ‘123’ has topic vector T[i]</p></li>
+<li><p><strong>topic_weights</strong> (<em>dict</em>) – Dictionary {t_i: w_i}, where t_i is a topic index and w_i is the
+weight of the topic</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>score</strong> – List of scores, one per documents in corpus</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusDFProcessor.score_by_zeroshot">
+<span class="sig-name descname"><span class="pre">score_by_zeroshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keyword</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor.score_by_zeroshot" title="Permalink to this definition"></a></dt>
+<dd><p>Computes a score for every document in a given pandas dataframe
+according to the relevance of a given keyword according to a pretrained
+zero-shot classifier</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>keyword</strong> (<em>str</em>) – Keywords defining the target category</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>score</strong> – List of scores, one per documents in corpus</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusProcessor">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.domain_classifier.preprocessor.</span></span><span class="sig-name descname"><span class="pre">CorpusProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2embeddings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2zeroshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusProcessor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A container of corpus preprocessing methods
+It provides basic processing methods to a corpus of text documents
+The input corpus must be given by a list of strings (or a pandas series
+of strings)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusProcessor.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2embeddings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2zeroshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusProcessor.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes a preprocessor object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path2embeddings</strong> (<em>str or pathlib.Path or None, optional (default=None)</em>) – Path to the folder containing the document embeddings.
+If None, no embeddings will be used. Document scores will be based
+in word counts</p></li>
+<li><p><strong>path2zeroshot</strong> (<em>str or pathlib.Path or None, optional (default=None)</em>) – Path to the folder containing the pretrained zero-shot model
+If None, zero-shot classification will not be available.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusProcessor.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusProcessor.__weakref__" title="Permalink to this definition"></a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusProcessor.compute_keyword_stats">
+<span class="sig-name descname"><span class="pre">compute_keyword_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corpus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusProcessor.compute_keyword_stats" title="Permalink to this definition"></a></dt>
+<dd><p>Computes keyword statistics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>corpus</strong> (<em>list (or pandas.Series) of str</em>) – Input corpus.</p></li>
+<li><p><strong>keywords</strong> (<em>list of str</em>) – List of keywords</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>df_stats</strong> (<em>dict</em>) – Dictionary of document frequencies per keyword
+df_stats[k] is the number of docs containing keyword k</p></li>
+<li><p><strong>kf_stats</strong> (<em>dict</em>) – Dictionary of keyword frequencies
+df_stats[k] is the number of times keyword k appers in the corpus</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusProcessor.get_top_scores">
+<span class="sig-name descname"><span class="pre">get_top_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scores</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e+100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusProcessor.get_top_scores" title="Permalink to this definition"></a></dt>
+<dd><p>Select the elements from a given list of numbers that fulfill some
+conditions</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_max</strong> (<em>int or None, optional (defaul=1e100)</em>) – Maximum number of elements in the output list. The default is
+a huge number that, in practice, means there is no loimit</p></li>
+<li><p><strong>s_min</strong> (<em>float, optional (default=0)</em>) – Minimum score. Only elements strictly above s_min are selected</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusProcessor.score_docs_by_keyword_count">
+<span class="sig-name descname"><span class="pre">score_docs_by_keyword_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corpus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusProcessor.score_docs_by_keyword_count" title="Permalink to this definition"></a></dt>
+<dd><p>Computes a score for every document in a given pandas dataframe
+according to the frequency of appearing some given keywords</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>corpus</strong> (<em>list (or pandas.Series) of str</em>) – Input corpus.</p></li>
+<li><p><strong>keywords</strong> (<em>list of str</em>) – List of keywords</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>score</strong> – List of scores, one per document in corpus</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusProcessor.score_docs_by_keywords">
+<span class="sig-name descname"><span class="pre">score_docs_by_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corpus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusProcessor.score_docs_by_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Computes a score for every document in a given pandas dataframe
+according to the frequency of appearing some given keywords</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>corpus</strong> (<em>list (or pandas.Series) of str</em>) – Input corpus.</p></li>
+<li><p><strong>keywords</strong> (<em>list of str</em>) – List of keywords</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>score</strong> – List of scores, one per document in corpus</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusProcessor.score_docs_by_zeroshot">
+<span class="sig-name descname"><span class="pre">score_docs_by_zeroshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corpus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusProcessor.score_docs_by_zeroshot" title="Permalink to this definition"></a></dt>
+<dd><p>Computes a score for every document in a given pandas dataframe
+according to a given keyword and a pre-trained zero-shot classifier</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>corpus</strong> (<em>list (or pandas.Series) of str</em>) – Input corpus.</p></li>
+<li><p><strong>keyword</strong> (<em>str</em>) – Keyword defining the target category</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>score</strong> – List of scores, one per document in corpus</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<span id="document-gui_main_window"></span><section id="main-window">
+<h2>Main Window<a class="headerlink" href="#main-window" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.graphical_user_interface.main_window"></span><p>&#64;author: lcalv</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.main_window.</span></span><span class="sig-name descname"><span class="pre">MainWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stderr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QMainWindow</span></code></p>
+<p>Class representing the main window of the application.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stderr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the application’s main window based on the parameters received
+from the application’s starting window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_folder</strong> (<em>pathlib.Path</em>) – Path to the application project</p></li>
+<li><p><strong>source_folder</strong> (<em>pathlib.Path</em>) – Path to the folder containing the data sources</p></li>
+<li><p><strong>tm</strong> (<em>TaskManager</em>) – TaskManager object associated with the project</p></li>
+<li><p><strong>widget</strong> (<em>QtWidgets.QStackedWidget</em>) – Window to which the application’s main window is attached to</p></li>
+<li><p><strong>stdout</strong> (<em>sys.stdout</em>) – Output file object</p></li>
+<li><p><strong>stderr</strong> (<em>sys.stderr</em>) – Standard Error file object</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.append_text_evaluate">
+<span class="sig-name descname"><span class="pre">append_text_evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.append_text_evaluate" title="Permalink to this definition"></a></dt>
+<dd><p>Method to redirect the stdout and stderr in the “text_edit_results_eval_pu_classifier”
+while the evaluation of a PU model is being performed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.append_text_retrain_reval">
+<span class="sig-name descname"><span class="pre">append_text_retrain_reval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.append_text_retrain_reval" title="Permalink to this definition"></a></dt>
+<dd><p>Method to redirect the stdout and stderr in the “text_edit_results_reval_retrain_pu_model”
+while the retraining of a PU model is being performed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.append_text_train">
+<span class="sig-name descname"><span class="pre">append_text_train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.append_text_train" title="Permalink to this definition"></a></dt>
+<dd><p>Method to redirect the stdout and stderr in the “text_logs_train_pu_model”
+while the training of a PU model is being performed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.center">
+<span class="sig-name descname"><span class="pre">center</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.center" title="Permalink to this definition"></a></dt>
+<dd><p>Centers the window at the middle of the screen at which the application is being executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_change_predicted_class">
+<span class="sig-name descname"><span class="pre">clicked_change_predicted_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkbox</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_change_predicted_class" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the checking or unchecking of the QCheckboxes that represented
+the predicted class that the user has associated to each of the documents to annotate.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_evaluate_PU_model">
+<span class="sig-name descname"><span class="pre">clicked_evaluate_PU_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_evaluate_PU_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method that controls the actions that are carried out when the button “eval_pu_classifier_push_button” is
+clicked by the user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_get_labels">
+<span class="sig-name descname"><span class="pre">clicked_get_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_get_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Method for performing the getting of the labels according to the
+method selected for it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_get_labels_option">
+<span class="sig-name descname"><span class="pre">clicked_get_labels_option</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_get_labels_option" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the functionality associated with the selection of
+each of the QRadioButtons associated with the labels’ getting.
+Only one QRadioButton can be selected at a time.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_give_feedback">
+<span class="sig-name descname"><span class="pre">clicked_give_feedback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_give_feedback" title="Permalink to this definition"></a></dt>
+<dd><p>Method that controls the actions that are carried out when the button “give_feedback_user_push_button” is
+clicked by the user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_load_corpus">
+<span class="sig-name descname"><span class="pre">clicked_load_corpus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_load_corpus" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the selection of a new corpus by double-clicking
+one of the items of the corpus list within the selected source folder,
+as well as its loading as dataframe into the TaskManager object.
+Important is that the corpus cannot be changed inside the same project,
+so if a corpus was used before me must keep the same one.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_load_labels">
+<span class="sig-name descname"><span class="pre">clicked_load_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_load_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Method for controlling the loading of the labels into the session.
+It is equivalent to the “_get_labelset_list” method from the
+TaskManager class</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_reevaluate_model">
+<span class="sig-name descname"><span class="pre">clicked_reevaluate_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_reevaluate_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method that controls the actions that are carried out when the button “retrain_pu_model_push_button” is
+clicked by the user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_reset_labels">
+<span class="sig-name descname"><span class="pre">clicked_reset_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_reset_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Method for controlling the resetting of the current session’s labels.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_retrain_model">
+<span class="sig-name descname"><span class="pre">clicked_retrain_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_retrain_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method that controls the actions that are carried out when the button “retrain_pu_model_push_button” is
+clicked by the user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_train_PU_model">
+<span class="sig-name descname"><span class="pre">clicked_train_PU_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_train_PU_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method that controls the actions that are carried out when the button “train_pu_model_push_button” is
+clicked by the user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_update_ndocs_al">
+<span class="sig-name descname"><span class="pre">clicked_update_ndocs_al</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_update_ndocs_al" title="Permalink to this definition"></a></dt>
+<dd><p>Updates the AL parameter that is going to be used for the resampling of the documents to be labelled based
+on the value specified by the user and shows the id, title, abstract and predicted class (if available) of each
+of the documents in a QTextEdit widget.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.do_after_evaluate_pu_model">
+<span class="sig-name descname"><span class="pre">do_after_evaluate_pu_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.do_after_evaluate_pu_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method to be executed after the evaluation of the PU model has been
+completed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.do_after_give_feedback">
+<span class="sig-name descname"><span class="pre">do_after_give_feedback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.do_after_give_feedback" title="Permalink to this definition"></a></dt>
+<dd><p>Method to be executed after annotating the labels given by the user in their corresponding positions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.do_after_import_labels">
+<span class="sig-name descname"><span class="pre">do_after_import_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.do_after_import_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Function to be executed after the labels’ importing has been completed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.do_after_load_corpus">
+<span class="sig-name descname"><span class="pre">do_after_load_corpus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.do_after_load_corpus" title="Permalink to this definition"></a></dt>
+<dd><p>Method to be executed after the loading of the corpus has been
+completed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.do_after_reevaluate_model">
+<span class="sig-name descname"><span class="pre">do_after_reevaluate_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.do_after_reevaluate_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method to be executed once the reevaluation of the model based on the feedback of the user has been completed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.do_after_retrain_model">
+<span class="sig-name descname"><span class="pre">do_after_retrain_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.do_after_retrain_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method to be executed once the retraining of the model based on the feedback of the user has been completed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.do_after_train_classifier">
+<span class="sig-name descname"><span class="pre">do_after_train_classifier</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.do_after_train_classifier" title="Permalink to this definition"></a></dt>
+<dd><p>Method to be executed after the training of the classifier has been
+completed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.execute_evaluate_pu_model">
+<span class="sig-name descname"><span class="pre">execute_evaluate_pu_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.execute_evaluate_pu_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the execution of the evaluation of a classifier on a
+secondary thread while the MainWindow execution is maintained in the
+main thread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.execute_give_feedback">
+<span class="sig-name descname"><span class="pre">execute_give_feedback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.execute_give_feedback" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the annotation of a selected subset of documents based on the labels introduced by the
+user on a secondary thread while the MainWindow execution is maintained in the main thread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.execute_import_labels">
+<span class="sig-name descname"><span class="pre">execute_import_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.execute_import_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Imports the labels by invoking the corresponding method in the Task Manager
+object associated with the GUI.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.execute_load_corpus">
+<span class="sig-name descname"><span class="pre">execute_load_corpus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.execute_load_corpus" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the execution of the loading of a corpus on a
+secondary thread while the MainWindow execution is maintained in the
+main thread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.execute_reevaluate_model">
+<span class="sig-name descname"><span class="pre">execute_reevaluate_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.execute_reevaluate_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the execution of the reevaluation of a classifier on a
+secondary thread while the MainWindow execution is maintained in the
+main thread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.execute_retrain_model">
+<span class="sig-name descname"><span class="pre">execute_retrain_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.execute_retrain_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the execution of the retraining of a classifier on a
+secondary thread while the MainWindow execution is maintained in the
+main thread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.execute_train_classifier">
+<span class="sig-name descname"><span class="pre">execute_train_classifier</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.execute_train_classifier" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the execution of the training of a classifier on a
+secondary thread while the MainWindow execution is maintained in the
+main thread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.init_feedback_elements">
+<span class="sig-name descname"><span class="pre">init_feedback_elements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.init_feedback_elements" title="Permalink to this definition"></a></dt>
+<dd><p>Method for showing the documents to be annotated in the FEEDBACK TAB.
+The number of documents that is shown depends on the value assigned to
+self.n_docs_al; the remaining widgets that exist for showing documents
+until Constants.MAX_N_DOCS are hided while they are not used.
+The widgets that represent the document are displayed as empty spaces
+until the conditions for the annotation of the documents are met, i.e.
+a corpus and a set of labels have been selected</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.init_ndocs_al">
+<span class="sig-name descname"><span class="pre">init_ndocs_al</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.init_ndocs_al" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the AL parameter in the text edit within the third tab of the main GUI
+window, i.e. n_docs. The default configuration of this parameter is read from the
+configuration file ‘/config/parameters.default.yaml’.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.init_params_train_pu_model">
+<span class="sig-name descname"><span class="pre">init_params_train_pu_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.init_params_train_pu_model" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the classifier parameters in the parameters’ table within the second tab of the main GUI
+window, i.e. max_imbalance and nmax. The default configuration of these parameters is read from the
+configuration file ‘/config/parameters.default.yaml’.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.init_ui">
+<span class="sig-name descname"><span class="pre">init_ui</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.init_ui" title="Permalink to this definition"></a></dt>
+<dd><p>Configures the elements of the GUI window that are not configured in the UI, i.e. icon of the application,
+the application’s title, and the position of the window at its opening.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.reset_params_train_pu_model">
+<span class="sig-name descname"><span class="pre">reset_params_train_pu_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.reset_params_train_pu_model" title="Permalink to this definition"></a></dt>
+<dd><p>Resets the PU model training parameters to its default value based on the values
+that were read initially from the configuration file</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.show_corpora">
+<span class="sig-name descname"><span class="pre">show_corpora</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.show_corpora" title="Permalink to this definition"></a></dt>
+<dd><p>List all corpora contained in the source folder selected by the user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.show_labels">
+<span class="sig-name descname"><span class="pre">show_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.show_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Method for showing the labels associated with the selected corpus.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.show_sampled_docs_for_labeling">
+<span class="sig-name descname"><span class="pre">show_sampled_docs_for_labeling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.show_sampled_docs_for_labeling" title="Permalink to this definition"></a></dt>
+<dd><p>Visualizes the documents from which the user is going to give feedback for the updating of a model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.update_params_train_pu_model">
+<span class="sig-name descname"><span class="pre">update_params_train_pu_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.update_params_train_pu_model" title="Permalink to this definition"></a></dt>
+<dd><p>Updates the classifier parameters that are going to be used for the training of the PU model based on the
+values read from the table within the second tab of the main GUI
+window that have been specified by the user.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<span id="document-gui_analyze_keywords_window"></span><section id="analyze-keywords-window">
+<h2>Analyze Keywords Window<a class="headerlink" href="#analyze-keywords-window" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.graphical_user_interface.analyze_keywords_window"></span><p>&#64;author: lcalv</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.graphical_user_interface.analyze_keywords_window.AnalyzeKeywordsWindow">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.analyze_keywords_window.</span></span><span class="sig-name descname"><span class="pre">AnalyzeKeywordsWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tm</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.analyze_keywords_window.AnalyzeKeywordsWindow" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
+<p>Class representing the window that is used for the analysis of the presence of
+selected keywords in the corpus</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.analyze_keywords_window.AnalyzeKeywordsWindow.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tm</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.analyze_keywords_window.AnalyzeKeywordsWindow.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes a “AnalyzeKeywordsWindow” window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tm</strong> (<em>TaskManager</em>) – TaskManager object associated with the project</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.analyze_keywords_window.AnalyzeKeywordsWindow.center">
+<span class="sig-name descname"><span class="pre">center</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.analyze_keywords_window.AnalyzeKeywordsWindow.center" title="Permalink to this definition"></a></dt>
+<dd><p>Centers the window at the middle of the screen at which the application is being executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.analyze_keywords_window.AnalyzeKeywordsWindow.do_analysis">
+<span class="sig-name descname"><span class="pre">do_analysis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.analyze_keywords_window.AnalyzeKeywordsWindow.do_analysis" title="Permalink to this definition"></a></dt>
+<dd><p>Performs the analysis of the keywords based by showing the “Sorted document scores”,
+“Document frequencies” and “Keyword frequencies” graphs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.analyze_keywords_window.AnalyzeKeywordsWindow.initUI">
+<span class="sig-name descname"><span class="pre">initUI</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.analyze_keywords_window.AnalyzeKeywordsWindow.initUI" title="Permalink to this definition"></a></dt>
+<dd><p>Configures the elements of the GUI window that are not configured in the UI,
+i.e. icon of the application, the application’s title, and the position of the window at its opening.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<span id="document-gui_constants"></span><section id="constants">
+<h2>Constants<a class="headerlink" href="#constants" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.graphical_user_interface.constants"></span><p>&#64;author: lcalv</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.graphical_user_interface.constants.Constants">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.constants.</span></span><span class="sig-name descname"><span class="pre">Constants</span></span><a class="headerlink" href="#src.graphical_user_interface.constants.Constants" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class containing a series of constants for GUI configuration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.graphical_user_interface.constants.Constants.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#src.graphical_user_interface.constants.Constants.__weakref__" title="Permalink to this definition"></a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<span id="document-gui_get_keywords_window"></span><section id="get-keywords-window">
+<h2>Get Keywords Window<a class="headerlink" href="#get-keywords-window" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.graphical_user_interface.get_keywords_window"></span><p>&#64;author: lcalv</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_keywords_window.GetKeywordsWindow">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.get_keywords_window.</span></span><span class="sig-name descname"><span class="pre">GetKeywordsWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tm</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_keywords_window.GetKeywordsWindow" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
+<p>Class representing the window that is used for the attainment of a subcorpus
+from a given list of keywords, this list being selected by the user.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_keywords_window.GetKeywordsWindow.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tm</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_keywords_window.GetKeywordsWindow.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes a “GetKeywordsWindow” window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tm</strong> (<em>TaskManager</em>) – TaskManager object associated with the project</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_keywords_window.GetKeywordsWindow.center">
+<span class="sig-name descname"><span class="pre">center</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_keywords_window.GetKeywordsWindow.center" title="Permalink to this definition"></a></dt>
+<dd><p>Centers the window at the middle of the screen at which the application is being executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_keywords_window.GetKeywordsWindow.clicked_select_keywords">
+<span class="sig-name descname"><span class="pre">clicked_select_keywords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_keywords_window.GetKeywordsWindow.clicked_select_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the actions that are carried out at the time the “Select keywords” button of the “Get
+keywords window” is pressed by the user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_keywords_window.GetKeywordsWindow.init_params">
+<span class="sig-name descname"><span class="pre">init_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_keywords_window.GetKeywordsWindow.init_params" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the keywords parameters in the parameters’ table within the GUI’s “Get keywords” window,
+i.e. wt, n_max, and s_min. The default configuration of these parameters is read from the configuration file
+‘/config/parameters.default.yaml’.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_keywords_window.GetKeywordsWindow.init_ui">
+<span class="sig-name descname"><span class="pre">init_ui</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_keywords_window.GetKeywordsWindow.init_ui" title="Permalink to this definition"></a></dt>
+<dd><p>Configures the elements of the GUI window that are not configured in the UI, i.e. icon of the application,
+the application’s title, and the position of the window at its opening.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_keywords_window.GetKeywordsWindow.show_suggested_keywords">
+<span class="sig-name descname"><span class="pre">show_suggested_keywords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_keywords_window.GetKeywordsWindow.show_suggested_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Displays the corresponding keywords based on the configuration parameters selected by the user on the top
+QTextEdit “text_edit_show_keywords”.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_keywords_window.GetKeywordsWindow.update_params">
+<span class="sig-name descname"><span class="pre">update_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_keywords_window.GetKeywordsWindow.update_params" title="Permalink to this definition"></a></dt>
+<dd><p>Updates the keywords parameters that are going to be used in the getting of the keywords based on the
+values read from the table within the GUI’s “Get keywords” window that have been specified by the user.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<span id="document-gui_get_topics_list_window"></span><section id="get-topics-list-window">
+<h2>Get Topics List Window<a class="headerlink" href="#get-topics-list-window" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.graphical_user_interface.get_topics_list_window"></span><p>&#64;author: lcalv</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.get_topics_list_window.</span></span><span class="sig-name descname"><span class="pre">GetTopicsListWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tm</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QDialog</span></code></p>
+<p>Class representing the window in charge of getting a subcorpus from a given
+list of topics, such a list being specified by the user.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tm</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes a “GetTopicsListWindow” window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tm</strong> (<em>TaskManager</em>) – TaskManager object associated with the project</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.center">
+<span class="sig-name descname"><span class="pre">center</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.center" title="Permalink to this definition"></a></dt>
+<dd><p>Centers the window at the middle of the screen at which the application is being executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.clicked_get_topic_list">
+<span class="sig-name descname"><span class="pre">clicked_get_topic_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.clicked_get_topic_list" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the actions that are carried out at the time the “Select weighted topic list” button of
+the “Get topics window” is pressed by the user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.initUI">
+<span class="sig-name descname"><span class="pre">initUI</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.initUI" title="Permalink to this definition"></a></dt>
+<dd><p>Configures the elements of the GUI window that are not configured in the UI, i.e. icon of the application,
+the application’s title, and the position of the window at its opening.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.init_params">
+<span class="sig-name descname"><span class="pre">init_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.init_params" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the topics parameters in the parameters’ table within the GUI’s “Get topic list” window,
+i.e. n_max and s_min. The default configuration of these parameters is read from the configuration file
+‘/config/parameters.default.yaml’.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.show_topics">
+<span class="sig-name descname"><span class="pre">show_topics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.show_topics" title="Permalink to this definition"></a></dt>
+<dd><p>Configures the “table_widget_topic_list” and “table_widget_topics_weight” tables to have the appropriate
+number of columns and rows based on the available topics, and fills out the “table_widget_topic_list” table
+with the id and corresponding chemical description of each of the topics.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.update_params">
+<span class="sig-name descname"><span class="pre">update_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.update_params" title="Permalink to this definition"></a></dt>
+<dd><p>Updates the topics parameters that are going to be used in the getting of the keywords based on the values
+read from the table within the GUI’s “Get topic list” window that have been specified by the user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.updated_topic_weighted_list">
+<span class="sig-name descname"><span class="pre">updated_topic_weighted_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.updated_topic_weighted_list" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the topic weighted list based on the weights that the user has introduced on the
+“table_widget_topics_weight” table</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<span id="document-gui_messages"></span><section id="messages">
+<h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.graphical_user_interface.messages"></span><p>&#64;author: lcalv</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.graphical_user_interface.messages.Messages">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.messages.</span></span><span class="sig-name descname"><span class="pre">Messages</span></span><a class="headerlink" href="#src.graphical_user_interface.messages.Messages" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class containing the majority of the messages utilized in the GUI to
+facilitate the readability of the code.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.graphical_user_interface.messages.Messages.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#src.graphical_user_interface.messages.Messages.__weakref__" title="Permalink to this definition"></a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<span id="document-gui_output_wrapper"></span><section id="output-wrapper">
+<h2>Output Wrapper<a class="headerlink" href="#output-wrapper" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.graphical_user_interface.output_wrapper"></span><p>&#64;author: lcalv</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.graphical_user_interface.output_wrapper.OutputWrapper">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.output_wrapper.</span></span><span class="sig-name descname"><span class="pre">OutputWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.output_wrapper.OutputWrapper" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QObject</span></code></p>
+<p>Module that overrides the “sys.stderr” and “sys.stdout” with a wrapper object
+that emits a signal whenever output is written. In order to account for other
+modules that need “sys.stdout” / “sys.stderr” (such as the logging module) use
+the wrapped versions wherever necessary, the instance of the OutputWrapper are
+created before the TaskManager object.</p>
+<p>It has been created based on the analogous
+class provided by:
+<a class="reference external" href="https://stackoverflow.com/questions/19855288/duplicate-stdout-stderr-in-qtextedit-widget">https://stackoverflow.com/questions/19855288/duplicate-stdout-stderr-in-qtextedit-widget</a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.output_wrapper.OutputWrapper.__getattr__">
+<span class="sig-name descname"><span class="pre">__getattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">object</span></span></span><a class="headerlink" href="#src.graphical_user_interface.output_wrapper.OutputWrapper.__getattr__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.output_wrapper.OutputWrapper.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.output_wrapper.OutputWrapper.__init__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<span id="document-gui_util"></span><section id="util">
+<h2>Util<a class="headerlink" href="#util" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.graphical_user_interface.util"></span><p>&#64;author: lcalv</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.graphical_user_interface.util.change_background_color_text_edit">
+<span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.util.</span></span><span class="sig-name descname"><span class="pre">change_background_color_text_edit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text_edit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.util.change_background_color_text_edit" title="Permalink to this definition"></a></dt>
+<dd><p>Method to that changes the border color of the QTextEdit associated with the documents to be annotated, based on
+the predicted class selected by the user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text_edit</strong> (<em>QTextEdit</em>) – QTextEdit (document) whose border color is going to be updated based on the</p></li>
+<li><p><strong>prediction</strong> (<em>int (0 or 1)</em>) – Predicted class specified by the user. If prediction == 1, the document’s associated QTextEdit’s border
+color is set to #6A7288; if prediction == 0, it is set to #DB8678.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.graphical_user_interface.util.execute_in_thread">
+<span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.util.</span></span><span class="sig-name descname"><span class="pre">execute_in_thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gui</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress_bar</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.util.execute_in_thread" title="Permalink to this definition"></a></dt>
+<dd><p>Method to execute a function in the secondary thread while showing
+a progress bar at the time the function is being executed if a progress bar object is provided.
+When finished, it forces the execution of the method to be
+executed after the function executing in a thread is completed.
+Based on the functions provided in the manual available at:
+<a class="reference external" href="https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/">https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>function</strong> (<em>UDF</em>) – Function to be executed in thread</p></li>
+<li><p><strong>function_output</strong> (<em>UDF</em>) – Function to be executed at the end of the thread</p></li>
+<li><p><strong>progress_bar</strong> (<em>QProgressBar</em>) – If a QProgressBar object is provided, it shows a progress bar in the
+main thread while the main task is being carried out in a secondary thread</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.graphical_user_interface.util.signal_accept">
+<span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.util.</span></span><span class="sig-name descname"><span class="pre">signal_accept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress_bar</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.util.signal_accept" title="Permalink to this definition"></a></dt>
+<dd><p>Makes the progress bar passed as an argument visible and configures it for
+an event whose duration is unknown by setting both its minimum and maximum
+both to 0, thus the bar shows a busy indicator instead of a percentage of steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>progress_bar</strong> (<em>QProgressBar</em>) – Progress bar object in which the progress is going to be displayed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.graphical_user_interface.util.toggle_menu">
+<span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.util.</span></span><span class="sig-name descname"><span class="pre">toggle_menu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gui</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_width</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.util.toggle_menu" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the movement of the Toggle menu located on the
+left. When collapsed, only the icon for each of the options is shown;
+when expanded, both icons and name indicating the description of the
+functionality are shown.
+Based on the code available at:
+<a class="reference external" href="https://github.com/Wanderson-Magalhaes/Toggle_Burguer_Menu_Python_PySide2/blob/master/ui_functions.py">https://github.com/Wanderson-Magalhaes/Toggle_Burguer_Menu_Python_PySide2/blob/master/ui_functions.py</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gui</strong> (<em>MainWindow</em>) – MainWindow object to which the toggle menu will be appended.</p></li>
+<li><p><strong>maxWidth</strong> (<em>int</em>) – Maximum width to which the toggle menu is going to be expanded.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<span id="document-gui_worker_signals"></span><section id="worker-signals">
+<h2>Worker Signals<a class="headerlink" href="#worker-signals" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.graphical_user_interface.worker_signals"></span><p>Created on Tue Mar  2 13:19:34 2021
+&#64;author: lcalv</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.graphical_user_interface.worker_signals.WorkerSignals">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.worker_signals.</span></span><span class="sig-name descname"><span class="pre">WorkerSignals</span></span><a class="headerlink" href="#src.graphical_user_interface.worker_signals.WorkerSignals" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QObject</span></code></p>
+<p>Module that defines the signals that are available from a running
+worker thread, the supported signals being “finished” (there is no more data to process),
+“error”, “result” (object data returned from processing) and “progress” (a
+numerical indicator of the progress that has been achieved at a particular moment).
+It has been created based on the analogous class provided by:
+<a class="reference external" href="https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/">https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/</a></p>
+</dd></dl>
+
+</section>
+<span id="document-gui_worker"></span><section id="worker">
+<h2>Worker<a class="headerlink" href="#worker" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.graphical_user_interface.worker"></span><p>Created on Tue Mar  2 13:19:34 2021
+&#64;author: lcalv</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.graphical_user_interface.worker.Worker">
+<em class="property"><span class="pre">class</span><span class="w">  </span></em><span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.worker.</span></span><span class="sig-name descname"><span class="pre">Worker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.worker.Worker" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtCore.QRunnable</span></code></p>
+<p>Module that inherits from QRunnable and is used to handler worker
+thread setup, signals and wrap-up. It has been created based on the analogous
+class provided by:
+<a class="reference external" href="https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/">https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/</a>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.worker.Worker.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.worker.Worker.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the application’s main window based on the parameters received
+from the application’s starting window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>callback</strong> (<em>UDF</em>) – The function callback to run on this worker thread.
+Supplied args and kwargs will be passed through to the runner.</p></li>
+<li><p><strong>callback</strong> (<em>UDF</em>) – Function</p></li>
+<li><p><strong>args</strong> (<em>list</em>) – Arguments to pass to the callback function</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Keywords to pass to the callback function</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.worker.Worker.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.worker.Worker.run" title="Permalink to this definition"></a></dt>
+<dd><p>Initialises the runner function with passed args, kwargs.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</div>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Jesús Cid, Manuel A. Vázquez.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

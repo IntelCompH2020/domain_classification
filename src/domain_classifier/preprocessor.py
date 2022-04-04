@@ -165,6 +165,10 @@ class CorpusProcessor(object):
         -------
         score : list of float
             List of scores, one per document in corpus
+
+        Notes
+        -----
+        Adapted from code contributed by BSC for the IntelComp project.
         """
 
         # Check if there is a zero-shot model
