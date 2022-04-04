@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Base Task Manager &mdash; domain_classification_doc  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Task Manager" href="dc_task_manager.html" />
+    <link rel="prev" title="Menu Navigator" href="mn_menu_navigator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> domain_classification_doc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="mn_menu_navigator.html">Menu Navigator</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Base Task Manager</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dc_task_manager.html">Task Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_data_manager.html">Data Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_query_manager.html">Query Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_classifier.html">Classifier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_custom_model.html">Custom Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_preprocessor.html">Preprocessor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_main_window.html">Main Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_analyze_keywords_window.html">Analyze Keywords Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_constants.html">Constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_get_keywords_window.html">Get Keywords Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_get_topics_list_window.html">Get Topics List Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_messages.html">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_output_wrapper.html">Output Wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_util.html">Util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_worker_signals.html">Worker Signals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_worker.html">Worker</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">domain_classification_doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Base Task Manager</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/dc_base_taskmanager.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="base-task-manager">
+<h1>Base Task Manager<a class="headerlink" href="#base-task-manager" title="Permalink to this headline"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.base_taskmanager"></span><dl class="py class">
+<dt class="sig sig-object py" id="src.base_taskmanager.baseTaskManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.base_taskmanager.</span></span><span class="sig-name descname"><span class="pre">baseTaskManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parameters.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'metadata.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_logs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.base_taskmanager.baseTaskManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base Task Manager class.</p>
+<p>This class provides the basic functionality to create, load and setup an
+execution project from the main application</p>
+<p>The behavior of this class might depend on the state of the project, which
+is stored in dictionary self.state, with the followin entries:</p>
+<ul class="simple">
+<li><p>‘isProject’   : If True, project created. Metadata variables loaded</p></li>
+<li><p>‘configReady’ : If True, config file succesfully loaded and processed</p></li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.base_taskmanager.baseTaskManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parameters.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'metadata.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_logs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.base_taskmanager.baseTaskManager.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the main attributes to manage tasks over a specific application
+project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path2project</strong> (<em>str or pathlib.Path</em>) – Path to the application project</p></li>
+<li><p><strong>path2source</strong> (<em>str or pathlib.Path or None, optional (default=None)</em>) – Paht to the folder containing the data sources for the application.
+If none, no source data is used.</p></li>
+<li><p><strong>config_fname</strong> (<em>str, optional (default=’parameters.yaml’)</em>) – Name of the configuration file</p></li>
+<li><p><strong>metadata_fname</strong> (<em>str or None, optional (default=’metadata.yaml’)</em>) – Name of the project metadata file.</p></li>
+<li><p><strong>set_logs</strong> (<em>bool, optional (default=True)</em>) – If True logger objects are created according to the parameters
+specified in the configuration file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.base_taskmanager.baseTaskManager.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#src.base_taskmanager.baseTaskManager.__weakref__" title="Permalink to this definition"></a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.base_taskmanager.baseTaskManager.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.base_taskmanager.baseTaskManager.create" title="Permalink to this definition"></a></dt>
+<dd><p>Creates an application project.
+To do so, it defines the main folder structure, and creates (or cleans)
+the project folder, specified in self.path2project</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.base_taskmanager.baseTaskManager.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.base_taskmanager.baseTaskManager.load" title="Permalink to this definition"></a></dt>
+<dd><p>Loads an existing project, by reading the metadata file in the project
+folder.</p>
+<p>It can be used to modify file or folder names, or paths, by specifying
+the new names/paths in the f_struct dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.base_taskmanager.baseTaskManager.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.base_taskmanager.baseTaskManager.setup" title="Permalink to this definition"></a></dt>
+<dd><p>Sets up the application projetc. To do so, it loads the configuration
+file and activates the logger objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mn_menu_navigator.html" class="btn btn-neutral float-left" title="Menu Navigator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dc_task_manager.html" class="btn btn-neutral float-right" title="Task Manager" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Jesús Cid, Manuel A. Vázquez.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
