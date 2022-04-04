@@ -224,8 +224,8 @@ class TaskManager(baseTaskManager):
         """
         Get a set of positive labels using keyword-based search
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         wt : float, optional (default=2)
             Weighting factor for the title components. Keyword matches with
             title words are weighted by this factor
@@ -252,8 +252,8 @@ class TaskManager(baseTaskManager):
         """
         Get a set of positive labels using keyword-based search
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         wt : float, optional (default=2)
             Weighting factor for the title components. Keyword matches with
             title words are weighted by this factor
@@ -299,8 +299,8 @@ class TaskManager(baseTaskManager):
         """
         Get a set of positive labels using a zero-shot classification model
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         n_max: int or None, optional (defaul=2000)
             Maximum number of elements in the output list. The default is
             a huge number that, in practice, means there is no loimit
@@ -310,7 +310,7 @@ class TaskManager(baseTaskManager):
             Name of the output label set.
         """
 
-        # Filter documents by topics
+        # Filter documents by zero-shot classification
         ids = self.CorpusProc.filter_by_zeroshot(
             self.keywords, n_max=n_max, s_min=s_min)
 
@@ -340,8 +340,8 @@ class TaskManager(baseTaskManager):
         """
         Get a set of positive labels from a weighted list of topics
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         topic_weights: numpy.array
             Weight of each topic
         T: numpy.ndarray
@@ -386,6 +386,11 @@ class TaskManager(baseTaskManager):
     def load_labels(self, class_name):
         """
         Load a set of labels and its corresponding dataset (if it exists)
+
+        Parameters
+        ----------
+        class_name : str
+            Name of the target category
         """
 
         self.df_labels, msg = self.DM.load_labels(class_name)
@@ -408,8 +413,8 @@ class TaskManager(baseTaskManager):
         """
         Reset all labels and models associated to a given category
 
-        Parameter
-        ---------
+        Parameters
+        ----------
         labelset: str
             Name of the category to be removed.
         """
@@ -585,6 +590,7 @@ class TaskManagerCMD(TaskManager):
                  metadata_fname='metadata.yaml', set_logs=True):
         """
         Opens a task manager object.
+
         Parameters
         ----------
         path2project : pathlib.Path
@@ -641,6 +647,17 @@ class TaskManagerCMD(TaskManager):
     def _ask_topics(self, topic_words):
         """
         Ask the user for a weighted list of topics
+
+        Parameters
+        ----------
+        topic_words : list of str
+            Description of each available topic as a list of its most relevant
+            words
+
+        Returns
+        -------
+        weighted_topics : list of tuple
+            A weighted list of topics.
         """
 
         return self.QM.ask_topics(topic_words)
