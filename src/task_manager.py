@@ -213,10 +213,17 @@ class TaskManager(baseTaskManager):
         Import labels from file
         """
 
-        ids_corpus = self.df_corpus['id']
-        self.class_name = 'AIimported'
-        self.df_labels, msg = self.DM.import_labels(
-            ids_corpus=ids_corpus, tag=self.class_name)
+        if self.metadata['corpus_name'] == "EU_projects":
+
+            ids_corpus = self.df_corpus['id']
+            self.class_name = 'AIimported'
+            self.df_labels, msg = self.DM.import_labels(
+                ids_corpus=ids_corpus, tag=self.class_name)
+
+        else:
+            logging.error("-- No label files available for importation from "
+                          f"corpus {self.metadata['corpus_name']}")
+            msg = " "
 
         return msg
 
