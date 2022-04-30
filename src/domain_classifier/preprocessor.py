@@ -92,7 +92,8 @@ class CorpusProcessor(object):
 
         return score
 
-    def score_docs_by_keywords(self, corpus, keywords):
+    def score_docs_by_keywords(self, corpus, keywords,
+                               model_name='all-MiniLM-L6-v2'):
         """
         Computes a score for every document in a given pandas dataframe
         according to the frequency of appearing some given keywords
@@ -103,6 +104,8 @@ class CorpusProcessor(object):
             Input corpus.
         keywords : list of str
             List of keywords
+        model_name : str, optinal (default = 'all-MiniLM-L6-v2')
+            Name of the SBERT transformer model
 
         Returns
         -------
@@ -118,7 +121,7 @@ class CorpusProcessor(object):
         # FIXME: The name of the SBERT model should be configurable. Move it to
         #        the config file (parameters.default.yaml)
         # model_name = 'distilbert-base-nli-mean-tokens'
-        model_name = 'all-MiniLM-L6-v2'
+        # model_name = 'all-MiniLM-L6-v2'
         # model_name = 'all-mpnet-base-v2'
         # model_name = 'msmarco-distilbert-cos-v5'
         # model_name = 'allenai-specter'
@@ -201,8 +204,7 @@ class CorpusProcessor(object):
         score = []
         n_docs = len(corpus)
         for i, doc in enumerate(corpus):
-            print(f"-- Processing document {i} out of {n_docs}")
-            # print(f"-- Processing document {i} out of {n_docs}   \r", end="")
+            print(f"-- Processing document {i} out of {n_docs}   \r", end="")
 
             # We have to truncate the document. Othervise an error is raised:
             #    "The expanded size of the tensor (519) must match the existing
@@ -430,7 +432,7 @@ class CorpusDFProcessor(object):
 
         return score
 
-    def score_by_keywords(self, keywords, wt=2):
+    def score_by_keywords(self, keywords, wt=2, model_name='all-MiniLM-L6-v2'):
         """
         Computes a score for every document in a given pandas dataframe
         according to the frequency of appearing some given keywords
@@ -443,6 +445,8 @@ class CorpusDFProcessor(object):
             Weighting factor for the title components. Keyword matches with
             title words are weighted by this factor
             This input argument is used if self.path2embeddings is None only
+        model_name : str, optinal (default = 'all-MiniLM-L6-v2')
+            Name of the SBERT transformer model
 
         Returns
         -------
@@ -464,7 +468,8 @@ class CorpusDFProcessor(object):
 
         df_dataset.drop(columns=['description', 'title'], inplace=True)
 
-        score = self.prep.score_docs_by_keywords(df_dataset['text'], keywords)
+        score = self.prep.score_docs_by_keywords(
+            df_dataset['text'], keywords, model_name)
 
         return score
 
@@ -486,11 +491,11 @@ class CorpusDFProcessor(object):
         """
 
         # Copy relevant columns only
-        df_dataset = self.df_corpus[['id', 'title', 'description']]
+        df_dataset = self.df_corpus.loc[:, ['id', 'title', 'description']]
 
         # Join title and description into a single column
-        df_dataset['text'] = (df_dataset['title'] + '. '
-                              + df_dataset['description'])
+        df_dataset.loc[:, 'text'] = (df_dataset['title'] + '. '
+                                     + df_dataset['description'])
         df_dataset.drop(columns=['description', 'title'], inplace=True)
 
         score = self.prep.score_docs_by_zeroshot(df_dataset['text'], keyword)
@@ -560,9 +565,10 @@ class CorpusDFProcessor(object):
 
         return ids
 
-    def filter_by_keywords(self, keywords, wt=2, n_max=1e100, s_min=0):
+    def filter_by_keywords(self, keywords, wt=2, n_max=1e100, s_min=0,
+                           model_name='all-MiniLM-L6-v2'):
         """
-        Select documents with a significant presence of a given set of keywords
+        Select documents from a given set of keywords
 
         Parameters
         ----------
@@ -577,6 +583,8 @@ class CorpusDFProcessor(object):
             a huge number that, in practice, means there is no loimit
         s_min: float, optional (default=0)
             Minimum score. Only elements strictly above s_min are selected
+        model_name : str, optinal (default = 'all-MiniLM-L6-v2')
+            Name of the SBERT transformer model
 
         Returns
         -------
@@ -587,7 +595,7 @@ class CorpusDFProcessor(object):
             available for evaluation, an empty dictionary is returned.
         """
 
-        scores = self.score_by_keywords(keywords, wt)
+        scores = self.score_by_keywords(keywords, wt, model_name)
         ids = self.get_top_scores(scores, n_max=n_max, s_min=s_min)
 
         if set(['target_bio', 'target_tic', 'target_ene']).issubset(

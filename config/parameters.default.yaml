@@ -11,11 +11,14 @@ logformat:
 keywords:
   # Weight of the title. A word in the title is equivalent to wt repetitions
   # of the word in the description.
-  wt: 2 
+  wt: 1 
   # Maximum number of documents to be selected.
   n_max: 2000
   # Minimum score. Only docs scored strictly above s_min are selected
   s_min: 0.6
+  # Name of the SBERT model. Available pretrained models can be found in 
+  # https://www.sbert.net/docs/pretrained_models.html
+  model_name: all-MiniLM-L6-v2
 
 # Parameter for the zero-shot document selector
 zeroshot:

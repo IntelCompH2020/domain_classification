@@ -285,11 +285,13 @@ class TaskManager(baseTaskManager):
 
         logging.info(f'-- Selected keywords: {self.keywords}')
 
+        # Take name of the SBERT model from the configuration parameters
+        model_name = self.global_parameters['keywords']['model_name']
+
         # Find the documents with the highest scores given the keywords
-        # ids = self.CorpusProc.filter_by_keywords(
-        #     self.keywords, wt=wt, n_max=n_max, s_min=s_min,)
         ids, eval_scores = self.CorpusProc.filter_by_keywords(
-            self.keywords, wt=wt, n_max=n_max, s_min=s_min,)
+            self.keywords, wt=wt, n_max=n_max, s_min=s_min,
+            model_name=model_name)
 
         # Create dataframe of positive labels from the list of ids
         self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
