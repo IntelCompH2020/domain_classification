@@ -100,21 +100,29 @@ class DataManager(object):
 
         return model_list
 
-    def get_keywords_list(self):
+    def get_keywords_list(self, filename='IA_keywords_SEAD_REV_JAG.txt'):
         """
-        Returns a list of IA-related keywords
+        Returns a list of IA-related keywords read from a file.
+
+        Parameters
+        ----------
+        filename : str, optional (default=='IA_keywords_SEAD_REV_JAG.txt')
+            Name of the file with the keywords
 
         Returns
         -------
         keywords: list
-            A list of keywords
+            A list of keywords (empty if the file does not exist)
         """
 
         keywords_fpath = (self.path2source / self.corpus_name / 'queries'
-                          / 'IA_keywords_SEAD_REV_JAG.txt')
-        df_keywords = pd.read_csv(
-            keywords_fpath, delimiter=',', names=['keywords'])
-        keywords = list(df_keywords['keywords'])
+                          / filename)
+
+        keywords = []
+        if keywords_fpath.is_file():
+            df_keywords = pd.read_csv(keywords_fpath, delimiter=',',
+                                      names=['keywords'])
+            keywords = list(df_keywords['keywords'])
 
         return keywords
 

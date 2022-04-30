@@ -1,3 +1,10 @@
+"""
+Contributors:
+    Jesus Cid-Sueiro,
+    Lorena Calvo-Bartolome
+    Ascension Gallardo-Antolin
+"""
+
 import logging
 
 # Local imports
@@ -8,6 +15,9 @@ from .query_manager import QueryManager
 from .domain_classifier.preprocessor import CorpusDFProcessor
 from .domain_classifier.classifier import CorpusClassifier
 from .utils import plotter
+
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 class TaskManager(baseTaskManager):
@@ -276,7 +286,9 @@ class TaskManager(baseTaskManager):
         logging.info(f'-- Selected keywords: {self.keywords}')
 
         # Find the documents with the highest scores given the keywords
-        ids = self.CorpusProc.filter_by_keywords(
+        # ids = self.CorpusProc.filter_by_keywords(
+        #     self.keywords, wt=wt, n_max=n_max, s_min=s_min,)
+        ids, eval_scores = self.CorpusProc.filter_by_keywords(
             self.keywords, wt=wt, n_max=n_max, s_min=s_min,)
 
         # Create dataframe of positive labels from the list of ids
@@ -298,6 +310,37 @@ class TaskManager(baseTaskManager):
             'n_max': n_max,
             's_min': s_min,
             'keywords': self.keywords}
+
+        # Metadata for evaluation
+        if eval_scores:
+            # Save tpr fpr and ROC curve
+            # FIXME: The name of the SBERT model should be read from the config
+            # file (parameters.default.yaml or metadata file (metadata.yaml))
+            model_name = 'all-MiniLM-L6-v2'
+            results_out_fname = f'results_{model_name}_{self.keywords}_ROC'
+            results_fname = self.path2labels / results_out_fname
+            np.savez(results_fname, tpr_roc=eval_scores['tpr_roc'],
+                     fpr_roc=eval_scores['fpr_roc'])
+
+            fig, ax = plt.subplots()
+            plt.plot(eval_scores['fpr_roc'], eval_scores['tpr_roc'],
+                     lw=2.5, label=self.keywords)
+            plt.grid(b=True, which='major', color='gray', alpha=0.6,
+                     linestyle='dotted', lw=1.5)
+            plt.xlabel('False Positive Rate (FPR)')
+            plt.ylabel('True Positive Rate (TPR)')
+            plt.title('ROC curve')
+            plt.legend()
+            figure_out_fname = f'figure_{model_name}_{self.keywords}_ROC'
+            figure_fname = self.path2labels / figure_out_fname
+            plt.savefig(figure_fname)
+
+            # Save smin and nmax evaluation scores
+            # FIXME: The name of the SBERT model should be read from the config
+            # file (parameters.default.yaml or metadata file (metadata.yaml))
+            del eval_scores['fpr_roc'], eval_scores['tpr_roc']
+            self.metadata[key][tag].__setitem__('eval_scores', eval_scores)
+
         self._save_metadata()
 
         return msg
