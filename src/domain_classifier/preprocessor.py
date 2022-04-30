@@ -456,11 +456,12 @@ class CorpusDFProcessor(object):
             return score
 
         # Copy relevant columns only
-        df_dataset = self.df_corpus[['id', 'title', 'description']]
+        df_dataset = self.df_corpus.loc[:, ['id', 'title', 'description']]
 
         # Join title and description into a single column
-        df_dataset['text'] = (df_dataset['title'] + '. '
-                              + df_dataset['description'])
+        df_dataset.loc[:, 'text'] = (df_dataset['title'] + '. '
+                                     + df_dataset['description'])
+
         df_dataset.drop(columns=['description', 'title'], inplace=True)
 
         score = self.prep.score_docs_by_keywords(df_dataset['text'], keywords)
