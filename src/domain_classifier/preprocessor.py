@@ -204,19 +204,28 @@ class CorpusProcessor(object):
         score = []
         n_docs = len(corpus)
         for i, doc in enumerate(corpus):
-            print(f"-- Processing document {i} out of {n_docs}   \r", end="")
+            li = len(doc)
+            print(f"-- Processing document {i} / {n_docs}, size {li} \r",
+                  end="")
 
-            # We have to truncate the document. Othervise an error is raised:
-            #    "The expanded size of the tensor (519) must match the existing
-            #     size (514) at non-singleton dimension 1.  Target sizes:
-            #     [1, 519].  Tensor sizes: [1, 514]"
-            doc_i = doc[:1500]
+            in_process = True
+            while in_process:
+                try:
+                    # Zero-shot classification for doc_i and
+                    # category keyboard
+                    doc_i = doc[:li]
+                    result = zsc(doc_i, keyword, multi_label=False)
+                    in_process = False
 
-            # Run the zero-shot classifier for document doc_i and category
-            # keyboard
-            # result = zsc(sentence1, labels,
-            #   hypothesis_template="This example is {}.", multi_label=True)
-            result = zsc(doc_i, keyword, multi_label=False)
+                except:
+                    # An error is raised because "The expanded size of the
+                    # tensor (519) must match the existing size (514) at
+                    # non-singleton dimension 1.  Target sizes: [1, 519].
+                    # Tensor sizes: [1, 514]"
+                    # We have to truncate the document.
+                    li = 3 * li // 4
+                    logging.info(
+                        f"-- -- Document {i} too long, reduced to size {li}")
 
             # Save score
             score_i = sum(result['scores'])
