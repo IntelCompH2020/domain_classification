@@ -173,8 +173,9 @@ class CorpusClassifier(object):
             logging.info("-- -- No available configuration. Loading "
                          "configuration from roberta model.")
 
+            # use_cuda = torch.cuda.is_available()
             model = ClassificationModel(
-                "roberta", "roberta-base", use_cuda=False)
+                "roberta", "roberta-base", use_cuda=True)
 
             config = copy.deepcopy(model.config)
 
@@ -276,8 +277,8 @@ class CorpusClassifier(object):
         for e in tqdm(range(epochs), desc="Train epoch"):
 
             # Train epoch
-            epoch_loss, epoch_time = self.model.train_model(df_train)
-
+            epoch_loss, epoch_time = self.model.train_model(
+                df_train, self.device)
             if evaluate:
                 # #########################
                 # Evaluation
@@ -291,7 +292,7 @@ class CorpusClassifier(object):
 
                 # Evaluate the model
                 predictions, total_loss, result = self.model.eval_model(
-                    df_test)
+                    df_test, self.device)
 
                 if result["f1"] > best_result:
                     best_epoch = e
@@ -377,7 +378,8 @@ class CorpusClassifier(object):
         # Evaluate the model
         logging.info(f"-- -- Testing model with {len(df_test)} documents...")
         t0 = time()
-        predictions, total_loss, result = self.model.eval_model(df_test)
+        predictions, total_loss, result = self.model.eval_model(
+            df_test, self.device)
         logging.info(f"-- -- Model tested in {time() - t0} seconds")
 
         # SCORES: Fill scores for the evaluated data
@@ -405,7 +407,7 @@ class CorpusClassifier(object):
 
         return result, wrong_predictions
 
-    def AL_sample(self, n_samples=5):
+    def AL_sample(self, n_samples=5, alg='extremes'):
         """
         Returns a given number of samples for active learning (AL)
 
@@ -413,6 +415,13 @@ class CorpusClassifier(object):
         ----------
         n_samples : int, optional (default=5)
             Number of samples to return
+        alg : str, optional (default="random")
+            Sample selection algorithm.
+            - If "random", samples are taken at random from all docs with
+              predictions
+            - If "extremes", samples are taken stochastically, but with
+              documents with the highest or smallest probability scores are
+              selected with higher probability.
 
         Returns
         -------
@@ -420,18 +429,55 @@ class CorpusClassifier(object):
             Selected samples
         """
 
-        # Sample documents from the subset with predictions
+        # Select documents with predictions only
         selected_docs = self.df_dataset.loc[
             self.df_dataset.prediction != UNUSED]
 
-        if len(selected_docs) >= n_samples:
-            selected_docs = selected_docs.sample(n_samples)
-        else:
+        # Select documents without annotations only
+        selected_docs = selected_docs.loc[
+            selected_docs.annotations == UNUSED]
+
+        if len(selected_docs) < n_samples:
             logging.warning(
                 "-- Not enough documents with predictions in the dataset")
+            return selected_docs
 
-        # FIXME: Try intelligent sample selection based on the scores or the
-        #        probabilistic predictions in the self.df_dataset.
+        if alg == 'random':
+            selected_docs = selected_docs.sample(n_samples)
+            # FIXME: Try intelligent sample selection based on the scores or
+            #        the probabilistic predictions in the self.df_dataset.
+        elif alg == 'extremes':
+            # Parameters
+            # FIXME: Consider taking some of these parameters as input args.
+            # Number of positive an negative samples to take
+            n_neg = 20 * n_samples // 100
+            n_pos = n_samples - n_neg
+            # (Approximate) probability of selecting the doc with the highest
+            # score (the value in col 'prob_pred') in a single choice.
+            q = 0.1
+
+            # Generate selection probabilities
+            n_doc = len(selected_docs)
+            p = (1 - q) ** np.array(range(n_doc))
+            p = p / np.sum(p)
+
+            # Sample documents with the highest scores
+            inds = np.argsort(- selected_docs['prob_pred'])
+            selected_inds = np.random.choice(
+                inds, size=n_pos, replace=False, p=p)
+            selected_pos = selected_docs.iloc[selected_inds]
+
+            # Sample documents with the smallest scores
+            inds = np.argsort(selected_docs['prob_pred'])
+            selected_inds = np.random.choice(
+                inds, size=n_neg, replace=False, p=p)
+            selected_neg = selected_docs.iloc[selected_inds]
+
+            selected_docs = pd.concat((selected_pos, selected_neg))
+
+        else:
+            logging.warning(f"-- Unknown sampling algorithm: {alg}")
+            return None
 
         return selected_docs
 
@@ -484,7 +530,7 @@ class CorpusClassifier(object):
         # Get training data
 
         # FIXME: Implement the data collection here:
-        # He we should combine two colums from self.df_dataset
+        # We should combine two colums from self.df_dataset
         #   - "labels", with the original labels used to train the first model
         #   - "annotations", with the new annotations
         # Notes:
@@ -528,7 +574,7 @@ class CorpusClassifier(object):
         # Train the model
         t0 = time()
         logging.info(f"-- -- Training model with {len(df_train)} documents...")
-        self.model.train_model(df_train)
+        self.model.train_model(df_train, self.device)
         logging.info(f"-- -- Model trained in {time() - t0:.3f} seconds")
 
         # ################

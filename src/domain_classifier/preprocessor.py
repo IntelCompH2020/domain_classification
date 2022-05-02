@@ -203,6 +203,13 @@ class CorpusProcessor(object):
 
         score = []
         n_docs = len(corpus)
+
+        # Initialize counter of the number of document truncations required
+        # by the zero-shot model
+        n_trunc = 0
+        # Initialize metric of the minimum size of a reduced document
+        li_min = 1e10
+
         for i, doc in enumerate(corpus):
             li = len(doc)
             print(f"-- Processing document {i} / {n_docs}, size {li} \r",
@@ -224,12 +231,15 @@ class CorpusProcessor(object):
                     # Tensor sizes: [1, 514]"
                     # We have to truncate the document.
                     li = 3 * li // 4
-                    logging.info(
-                        f"-- -- Document {i} too long, reduced to size {li}")
+                    li_min = min(li_min, li)
+                    n_trunc += 1
 
             # Save score
             score_i = sum(result['scores'])
             score.append(score_i)
+
+        logging.info(f"-- -- A document truncation was required {n_trunc} "
+                     f"times, up to a size of at least {li_min} characters")
 
         return score
 
@@ -702,11 +712,11 @@ class CorpusDFProcessor(object):
         """
 
         # Copy relevant columns only
-        df_dataset = self.df_corpus[['id', 'title', 'description']]
+        df_dataset = self.df_corpus.loc[:, ['id', 'title', 'description']]
 
-        # Joing title and description into a single column
-        df_dataset['text'] = (df_dataset['title'] + '.'
-                              + df_dataset['description'])
+        # Join title and description into a single column
+        df_dataset.loc[:, 'text'] = (df_dataset['title'] + '. '
+                                     + df_dataset['description'])
         df_dataset.drop(columns=['description', 'title'], inplace=True)
 
         # Default class is 0

@@ -126,6 +126,25 @@ class TaskManager(baseTaskManager):
 
         return
 
+    def _is_model(self):
+        """
+        Check is labels have been loaded and a domain classifier object has
+        been created. 
+        """
+
+        if self.df_labels is None:
+            logging.warning("-- No labels loaded. "
+                            "You must load or create a set of labels first")
+            return False
+
+        elif self.dc is None:
+            logging.warning(f"-- No model has been trained for class "
+                            f"{self.class_name}. You must train a model first")
+            return False
+
+        else:
+            return True
+
     def _get_corpus_list(self):
         """
         Returns the list of available corpus
@@ -459,6 +478,10 @@ class TaskManager(baseTaskManager):
                 df_dataset, path2transformers=path2model)
             self.dc.load_model()
 
+        else:
+            # No model trained for this class
+            self.dc = None
+
         return msg
 
     def reset_labels(self, labelset):
@@ -531,6 +554,10 @@ class TaskManager(baseTaskManager):
         Evaluate a domain classifiers
         """
 
+        # Check if a classifier object exists
+        if not self._is_model():
+            return
+
         # Evaluate the model over the test set
         result, wrong_predictions = self.dc.eval_model(tag_score='PUscore')
 
@@ -548,6 +575,10 @@ class TaskManager(baseTaskManager):
         """
         Gets some labels from a user for a selected subset of documents
         """
+
+        # Check if a classifier object exists
+        if not self._is_model():
+            return
 
         # STEP 1: Select bunch of documents at random
         n_docs = self.global_parameters['active_learning']['n_docs']
@@ -596,6 +627,10 @@ class TaskManager(baseTaskManager):
         Improves classifier performance using the labels provided by users
         """
 
+        # Check if a classifier object exists
+        if not self._is_model():
+            return
+
         # Retrain model using the new labels
         self.dc.retrain_model()
 
@@ -616,6 +651,10 @@ class TaskManager(baseTaskManager):
         # FIXME: this code is equal to evaluate_model() but using a different
         #        tagscore. It should be modified to provide evaluation metrics
         #        computed from the annotated labels.
+
+        # Check if a classifier object exists
+        if not self._is_model():
+            return
 
         # Evaluate the model over the test set
         result, wrong_predictions = self.dc.eval_model(tag_score='PNscore')
