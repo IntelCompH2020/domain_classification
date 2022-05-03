@@ -133,6 +133,9 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         """
         # Get topic words       
         self.tw, self.T, self.df_metadata = self.tm.get_topic_words()
+        # (Added by JCS) This is to escape if no topic model is available
+        if self.tw is None:
+            return
         n_topics = len(self.tw)
 
         # Configure "table_widget_topic_list" table (positioned at the top right)

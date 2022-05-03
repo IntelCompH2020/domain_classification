@@ -164,11 +164,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--p', type=str,
-        default="/Users/lbartolome/Documents/Intelcomp/project_folder",
+        default="../project_folder",
         help="path to a new or an existing project")
     parser.add_argument(
         '--source', type=str,
-        default="/Users/lbartolome/Documents/Intelcomp/datasets",
+        default="../datasets",
         help="path to the source data folder")
     parser.add_argument(
         '--zeroshot', type=str,

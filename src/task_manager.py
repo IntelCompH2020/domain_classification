@@ -995,7 +995,7 @@ class TaskManagerGUI(TaskManager):
 
         return suggested_keywords
 
-    def get_labels_by_keywords(self, keywords, _tag):
+    def get_labels_by_keywords(self, keywords, wt, n_max, s_min, tag):
         """
         Get a set of positive labels using keyword-based search through the
         MainWindow
@@ -1019,12 +1019,12 @@ class TaskManagerGUI(TaskManager):
         # Keywords are received as arguments
         self.keywords = keywords
 
-        msg = super().get_labels_by_keywords(wt=2, n_max=2000, s_min=1,
-                                             tag=_tag)
+        msg = super().get_labels_by_keywords(wt=wt, n_max=n_max, s_min=s_min,
+                                             tag=tag)
 
         return msg
 
-    def get_topic_words(self, n_max, s_min):
+    def get_topic_words(self):
         """
         Get a set of positive labels from a weighted list of topics
         """
@@ -1034,8 +1034,9 @@ class TaskManagerGUI(TaskManager):
 
         # Remove all documents (rows) from the topic matrix, that are not
         # in self.df_corpus.
-        T, df_metadata = self.CorpusProc.remove_docs_from_topics(
-            T, df_metadata, col_id='corpusid')
+        if T is not None:
+            T, df_metadata = self.CorpusProc.remove_docs_from_topics(
+                T, df_metadata, col_id='corpusid')
 
         return topic_words, T, df_metadata
 

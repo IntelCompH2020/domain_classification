@@ -311,6 +311,11 @@ class DataManager(object):
 
         # Load topic model
         path2topics = self.path2corpus / topic_folder / topic_model_fname
+
+        if not pathlib.Path.exists(path2topics):
+            logging.warning(f"-- No topic model available at {path2topics}")
+            return None, None, None
+
         data = np.load(path2topics)
 
         # Extract topic descriptions
