@@ -85,12 +85,17 @@ class PreConfig(QDialog):
         self.showSourceDataFolder.setText(
             self.args.source) if self.args.source is not None else print(
             "source not provided")
+        self.showZeroShot.setText(
+            self.args.zeroshot) if self.args.zeroshot is not None else print(
+            "zero-shot folder not provided")
 
         # CONNECTION WITH HANDLER FUNCTIONS
         #######################################################################
         self.selectProjectFolder.clicked.connect(self.get_project_folder)
         self.selectSourceDataFolder.clicked.connect(
             self.get_source_data_folder)
+
+        self.selectZeroShot.clicked.connect(self.get_zeroshot_folder)
         self.start.clicked.connect(self.start_application)
 
     def center(self):
@@ -100,7 +105,6 @@ class PreConfig(QDialog):
         self.move(qr.topLeft())
 
     def get_project_folder(self):
-        print(self.args.p)
         self.projectFolder = \
             QFileDialog.getExistingDirectory(
                 self, 'Create or select an an existing project', self.home)
@@ -116,11 +120,13 @@ class PreConfig(QDialog):
         self.zeroshotFolder = \
             QFileDialog.getExistingDirectory(
                 self, 'Select the folder with the zero shot model', self.home)
-        self.showSourceDataFolder.setText(self.zeroshotFolder)
+
+        # self.showSourceDataFolder.setText(self.zeroshotFolder)
+        self.showZeroShot.setText(self.zeroshotFolder)
 
     def start_application(self):
         # We show a warning message if one or  both folders have not selected
-        if self.projectFolder == "" or self.sourceFolder == "":
+        if self.projectFolder == "" or self.sourceFolder == "" or self.zeroshotFolder == "":
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
                 Messages.INCORRECT_INPUT_PARAM_SELECTION)
@@ -182,9 +188,6 @@ def main():
     config_window = PreConfig(widget, args)
     widget.addWidget(config_window)
     widget.showMaximized()
-    # height = 2480  # 1540
-    # weight = 1360  # 880
-    # widget.resize(height, weight)
     widget.show()
     app.exec_()
 

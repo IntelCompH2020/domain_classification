@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MusicalSpoon</string>
+   <string>Domain Classifier</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: #CFCEC6;</string>
@@ -394,6 +394,78 @@ QPushButton:pressed {
                </property>
                <property name="text">
                 <string>Select source data folder</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <item>
+              <widget class="QLineEdit" name="showZeroShot">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>Helvetica</family>
+                 <pointsize>13</pointsize>
+                 <weight>50</weight>
+                 <italic>true</italic>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QLineEdit {	
+	background-color: #FFFFFF;
+	border-radius: 5px;
+	gridline-color: #FFFFFF;
+	border-bottom: 1px solid #FFFFFF;
+	color:black;
+}</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="selectZeroShot">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>Arial</family>
+                 <pointsize>13</pointsize>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+	border: 5px solid #ABC2CB;
+	border-radius: 5px;	
+	background-color: #ABC2CB;
+color:black;
+}
+QPushButton:hover {
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}
+QPushButton:pressed {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+}</string>
+               </property>
+               <property name="text">
+                <string>Select zero-shot model</string>
                </property>
               </widget>
              </item>

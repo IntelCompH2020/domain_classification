@@ -14,7 +14,7 @@ from src.graphical_user_interface.messages import Messages
 from src.graphical_user_interface.constants import Constants
 
 
-class GetKeywordsWindow(QtWidgets.QDialog):
+class GetCategoryNamesWindow(QtWidgets.QDialog):
     """
     Class representing the window that is used for the attainment of a subcorpus
     from a given list of keywords, this list being selected by the user.
@@ -25,15 +25,15 @@ class GetKeywordsWindow(QtWidgets.QDialog):
 
         Parameters
         ----------
-        tm : TaskManager 
+        tm : TaskManager
             TaskManager object associated with the project
         """
 
-        super(GetKeywordsWindow, self).__init__()
+        super(GetCategoryNamesWindow, self).__init__()
 
         # Load UI and configure default geometry of the window
         # #####################################################################
-        uic.loadUi("UIS/get_labels_by_keywords.ui", self)
+        uic.loadUi("UIS/get_labels_from_zeroshot.ui", self)
         self.init_ui()
 
         # ATTRIBUTES
@@ -41,15 +41,11 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         self.tm = tm
         self.selectedKeywords = None
         self.selectedTag = None
-        # Weight of the title. A word in the title is equivalent to wt repetitions
-        # of the word in the description.
-        self.wt_default = self.tm.global_parameters['keywords']['wt']
-        self.wt = self.wt_default
         # Maximum number of elements in the output list
-        self.n_max_default = self.tm.global_parameters['keywords']['n_max']
+        self.n_max_default = self.tm.global_parameters['zeroshot']['n_max']
         self.n_max = self.n_max_default
         # Minimum score. Only docs scored strictly above s_min are selected
-        self.s_min_default = self.tm.global_parameters['keywords']['s_min']
+        self.s_min_default = self.tm.global_parameters['zeroshot']['s_min']
         self.s_min = self.s_min_default
 
         # Initialize parameters in the GUI
@@ -94,46 +90,33 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         """
         self.table_params.clearContents()
         self.table_params.setRowCount(1)
-        self.table_params.setColumnCount(3)
+        self.table_params.setColumnCount(2)
 
         self.table_params.setItem(
-            0, 0, QtWidgets.QTableWidgetItem(str(self.wt)))
+            0, 0, QtWidgets.QTableWidgetItem(str(self.n_max)))
         self.table_params.setItem(
-            0, 1, QtWidgets.QTableWidgetItem(str(self.n_max)))
-        self.table_params.setItem(
-            0, 2, QtWidgets.QTableWidgetItem(str(self.s_min)))
+            0, 1, QtWidgets.QTableWidgetItem(str(self.s_min)))
 
     def update_params(self):
-        """Updates the keywords parameters that are going to be used in the getting of the keywords based on the
-        values read from the table within the GUI's "Get keywords" window that have been specified by the user.
+        """Updates the keywords parameters that are going to be used in the zero-shot model based on the
+        values read from the table within the GUI's "Get category names" window that have been specified by the user.
         """
-        if self.table_params.item(0, 0) is not None:
-            self.wt = int(self.table_params.item(0, 0).text())
-        else:
-            self.wt = self.wt_default
 
-        if self.table_params.item(0, 1) is not None:
-            self.n_max = int(self.table_params.item(0, 1).text())
+        if self.table_params.item(0, 0) is not None:
+            self.n_max = int(self.table_params.item(0, 0).text())
         else:
             self.n_max = self.n_max_default
 
-        if self.table_params.item(0, 2) is not None:
-            self.s_min = float(self.table_params.item(0, 2).text())
+        if self.table_params.item(0, 1) is not None:
+            self.s_min = float(self.table_params.item(0, 1).text())
         else:
             self.s_min = self.s_min_default
 
         self.init_params()
 
-    def show_suggested_keywords(self):
-        """Displays the corresponding keywords based on the configuration parameters selected by the user on the top
-        QTextEdit "text_edit_show_keywords".
-        """
-        suggested_keywords = self.tm.get_suggested_keywords()
-        self.text_edit_show_keywords.setPlainText(suggested_keywords)
-
     def clicked_select_keywords(self):
-        """Method to control the actions that are carried out at the time the "Select keywords" button of the "Get
-        keywords window" is pressed by the user.
+        """Method to control the actions that are carried out at the time the "Select labels from zero shot" button of
+         the "Get category names" is pressed by the user.
         """
         # Update configuration parameters to take into account the changes that the user could have introduced
         self.update_params()
@@ -167,7 +150,6 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         # Hide window
         self.hide()
         # Clear QLineEdits and QTextEdits
-        self.text_edit_show_keywords.setPlainText("")
         self.text_edit_get_keywords.setPlainText("")
         self.line_edit_get_tag.setText("")
         return

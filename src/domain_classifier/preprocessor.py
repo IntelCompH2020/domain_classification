@@ -867,4 +867,3 @@ class CorpusDFProcessor(object):
             'fpr_roc': fpr_roc_float}
 
         return eval_scores
-

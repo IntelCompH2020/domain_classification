@@ -279,6 +279,7 @@ class CorpusClassifier(object):
             # Train epoch
             epoch_loss, epoch_time = self.model.train_model(
                 df_train, self.device)
+
             if evaluate:
                 # #########################
                 # Evaluation

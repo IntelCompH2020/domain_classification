@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>921</width>
-    <height>619</height>
+    <width>670</width>
+    <height>424</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -105,66 +105,6 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QFrame" name="frame_4">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QFrame { 
-  background-color: #CFCEC6;
-  border: 5px solid #CFCEC6
-} 
-</string>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::StyledPanel</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_5"/>
-          </widget>
-         </item>
-         <item>
-          <widget class="QTextEdit" name="text_edit_show_keywords">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>150</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QTextEdit {	
-	background-color: #FFFFFF;
-	border-radius: 5px;
-	gridline-color: #FFFFFF;
-	border-bottom: 1px solid #FFFFFF;
-	color:black;
-}
-
- QScrollBar:vertical {
-	border: none;
-    background: #ABC2CB;
-    width: 14px;
-    margin: 21px 0 21px 0;
-	border-radius: 0px;
- }</string>
-           </property>
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QFrame" name="frame_5">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -223,7 +163,7 @@
               </size>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Write your keywords separated by commas e.g.: gradient descent, Gibbs sampling, etc. on the left white box and configure the parameters needed for the labels import with the right table. To update them, tip a different value on its corresponding column. Each parameter refers to:&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600; color:#0e101a; background-color:transparent;&quot;&gt;- wt: &lt;/span&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Weight of the title. A word in the title is equivalent to the wt repetitions of the word in the description.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600; color:#0e101a; background-color:transparent;&quot;&gt;- n_max:&lt;/span&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt; Maximum number of elements in the output list.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600; color:#0e101a; background-color:transparent;&quot;&gt;- s_min: &lt;/span&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Minimum score. Only elements strictly above s_min are selected.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Write your keywords separated by commas e.g.: gradient descent, Gibbs sampling, etc. on the left white box and configure the parameters needed for the labels import with the right table. To update them, tip a different value on its corresponding column. Each parameter refers to:&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600; color:#0e101a; background-color:transparent;&quot;&gt;- n_max:&lt;/span&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt; Maximum number of documents to be selected.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600; color:#0e101a; background-color:transparent;&quot;&gt;- s_min: &lt;/span&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Minimum score. Only elements strictly above s_min are selected.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="styleSheet">
               <string notr="true">QPushButton {
@@ -291,7 +231,7 @@ QToolTip {
               <string notr="true">color:black;</string>
              </property>
              <property name="text">
-              <string>  Selected keywords and parameters configuration:</string>
+              <string>  Selected keywords to use for the zero-shot model and parameters configuration:</string>
              </property>
             </widget>
            </item>
@@ -484,17 +424,6 @@ QToolTip {
              </attribute>
              <column>
               <property name="text">
-               <string>wt</string>
-              </property>
-              <property name="font">
-               <font>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-             </column>
-             <column>
-              <property name="text">
                <string>n_max</string>
               </property>
               <property name="font">
@@ -554,6 +483,19 @@ QToolTip {
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_13"/>
           </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_7">
@@ -672,6 +614,19 @@ QToolTip {
           </layout>
          </item>
          <item>
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <widget class="QFrame" name="frame_9">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -747,7 +702,7 @@ QPushButton:pressed {
 }</string>
              </property>
              <property name="text">
-              <string>Select keywords</string>
+              <string>Select labels from zero shot</string>
              </property>
             </widget>
            </item>
