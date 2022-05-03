@@ -17,7 +17,7 @@ keywords:
   # Minimum score. Only docs scored strictly above s_min are selected
   s_min: 0.6
   # Selection method: 'embedding' or 'count'
-  method: 'embedding'
+  method: 'count'
   # Name of the SBERT model. Available pretrained models can be found in 
   # https://www.sbert.net/docs/pretrained_models.html
   model_name: all-MiniLM-L6-v2

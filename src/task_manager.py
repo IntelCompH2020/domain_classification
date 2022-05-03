@@ -277,7 +277,8 @@ class TaskManager(baseTaskManager):
         plotter.plot_top_values(
             kf_stats, title="Keyword frequencies", xlabel="No. of keywords")
 
-        y = self.CorpusProc.score_by_keywords(self.keywords, wt=wt)
+        y = self.CorpusProc.score_by_keywords(
+            self.keywords, wt=wt, method="count")
 
         # Plot sorted document scores
         plotter.plot_doc_scores(y)

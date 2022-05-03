@@ -173,9 +173,9 @@ class CorpusClassifier(object):
             logging.info("-- -- No available configuration. Loading "
                          "configuration from roberta model.")
 
-            # use_cuda = torch.cuda.is_available()
+            use_cuda = torch.cuda.is_available()
             model = ClassificationModel(
-                "roberta", "roberta-base", use_cuda=True)
+                "roberta", "roberta-base", use_cuda=use_cuda)
 
             config = copy.deepcopy(model.config)
 
@@ -435,8 +435,9 @@ class CorpusClassifier(object):
             self.df_dataset.prediction != UNUSED]
 
         # Select documents without annotations only
-        selected_docs = selected_docs.loc[
-            selected_docs.annotations == UNUSED]
+        if 'annotations' in selected_docs.columns:
+            selected_docs = selected_docs.loc[
+                selected_docs.annotations == UNUSED]
 
         if len(selected_docs) < n_samples:
             logging.warning(
