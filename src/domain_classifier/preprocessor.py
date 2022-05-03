@@ -337,7 +337,7 @@ class CorpusDFProcessor(object):
         else:
             self.path2embedding = None
             logging.info("-- No path to embeddings. "
-                         "Document scores will be based in word counts")
+                         "Document scores will be based on word counts")
 
         if path2zeroshot is not None:
             self.path2zeroshot = pathlib.Path(path2zeroshot)
@@ -451,7 +451,8 @@ class CorpusDFProcessor(object):
 
         return score
 
-    def score_by_keywords(self, keywords, wt=2, model_name='all-MiniLM-L6-v2'):
+    def score_by_keywords(self, keywords, wt=2, model_name='all-MiniLM-L6-v2',
+                          method='embedding'):
         """
         Computes a score for every document in a given pandas dataframe
         according to the frequency of appearing some given keywords
@@ -466,6 +467,9 @@ class CorpusDFProcessor(object):
             This input argument is used if self.path2embeddings is None only
         model_name : str, optinal (default = 'all-MiniLM-L6-v2')
             Name of the SBERT transformer model
+        method : str in {'embedding', 'count'}
+            - If 'count', documents are scored according to word counts
+            - If 'embedding', scores are based on neural embeddings
 
         Returns
         -------
@@ -474,7 +478,7 @@ class CorpusDFProcessor(object):
         """
 
         # Check if embeddings have been provided
-        if self.path2embeddings is None:
+        if method == 'count' or self.path2embeddings is None:
             score = self.score_by_keyword_count(keywords, wt)
             return score
 
@@ -585,7 +589,8 @@ class CorpusDFProcessor(object):
         return ids
 
     def filter_by_keywords(self, keywords, wt=2, n_max=1e100, s_min=0,
-                           model_name='all-MiniLM-L6-v2'):
+                           model_name='all-MiniLM-L6-v2',
+                           method='embedding'):
         """
         Select documents from a given set of keywords
 
@@ -604,6 +609,9 @@ class CorpusDFProcessor(object):
             Minimum score. Only elements strictly above s_min are selected
         model_name : str, optinal (default = 'all-MiniLM-L6-v2')
             Name of the SBERT transformer model
+        method : str in {'embedding', 'count'}
+            - If 'count', documents are scored according to word counts
+            - If 'embedding', scores are based on neural embeddings
 
         Returns
         -------
@@ -614,7 +622,7 @@ class CorpusDFProcessor(object):
             available for evaluation, an empty dictionary is returned.
         """
 
-        scores = self.score_by_keywords(keywords, wt, model_name)
+        scores = self.score_by_keywords(keywords, wt, model_name, method)
         ids = self.get_top_scores(scores, n_max=n_max, s_min=s_min)
 
         if set(['target_bio', 'target_tic', 'target_ene']).issubset(
