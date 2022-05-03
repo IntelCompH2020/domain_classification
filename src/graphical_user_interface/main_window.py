@@ -14,6 +14,7 @@ from functools import partial
 # Local imports
 from src.graphical_user_interface.analyze_keywords_window import (
     AnalyzeKeywordsWindow)
+from src.graphical_user_interface.get_category_names_window import GetCategoryNamesWindow
 from src.graphical_user_interface.get_keywords_window import GetKeywordsWindow
 from src.graphical_user_interface.get_topics_list_window import (
     GetTopicsListWindow)
@@ -77,6 +78,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.get_keywords_window = GetKeywordsWindow(tm)
         self.analyze_keywords_window = AnalyzeKeywordsWindow(tm)
         self.get_topics_list_window = GetTopicsListWindow(tm)
+        self.get_category_names_window = GetCategoryNamesWindow(tm)
 
         # Attributes that define the parameters read from the configuration file. Initially, the current values are
         # initialized to be equal to the default values read from the configuration file ("parameters.default.yml")
@@ -181,11 +183,11 @@ class MainWindow(QtWidgets.QMainWindow):
         # GET LABELS WIDGETS
         # #####################################################################
         self.get_labels_radio_buttons = QButtonGroup(self)
-        self.get_labels_radio_buttons.addButton(self.get_labels_option1, 1)
-        self.get_labels_radio_buttons.addButton(self.get_labels_option2, 2)
-        self.get_labels_radio_buttons.addButton(self.get_labels_option3, 3)
-        self.get_labels_radio_buttons.addButton(self.get_labels_option4, 4)
-        self.get_labels_radio_buttons.addButton(self.get_labels_option5, 5)
+        self.get_labels_radio_buttons.addButton(self.get_labels_option_1, 1)
+        self.get_labels_radio_buttons.addButton(self.get_labels_option_2, 2)
+        self.get_labels_radio_buttons.addButton(self.get_labels_option_3, 3)
+        self.get_labels_radio_buttons.addButton(self.get_labels_option_4, 4)
+        self.get_labels_radio_buttons.addButton(self.get_labels_option_5, 5)
         self.get_labels_radio_buttons.buttonClicked.connect(
             self.clicked_get_labels_option)
         self.get_labels_push_button.clicked.connect(self.clicked_get_labels)
@@ -420,14 +422,13 @@ class MainWindow(QtWidgets.QMainWindow):
         # Get labels
         if self.get_label_option == 1:
             message_out = self.tm.import_labels()
-        elif self.get_label_option == 2:
+        elif self.get_label_option == 2 or self.get_label_option == 3:
             message_out = self.tm.get_labels_by_keywords(
-                self.get_keywords_window.selectedKeywords,
-                self.get_keywords_window.selectedTag)
-        elif self.get_label_option == 3:
-            message_out = self.tm.get_labels_by_keywords(
-                self.get_keywords_window.selectedKeywords,
-                self.get_keywords_window.selectedTag)
+                keywords = self.get_keywords_window.selectedKeywords,
+                wt = self.get_keywords_window.wt,
+                n_max = self.get_keywords_window.n_max,
+                s_min = self.get_keywords_window.s_min,
+                tag = self.get_keywords_window.selectedTag)
         elif self.get_label_option == 4:
             message_out = self.tm.get_labels_by_topics(
                 topic_weights=self.get_topics_list_window.tw,
@@ -437,7 +438,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 s_min=self.get_topics_list_window.s_min,
                 tag=self.get_topics_list_window.selectedTag)
         elif self.get_label_option == 5:
-            df_labels, message_out = self.tm.get_labels_by_definitions()
+            message_out = self.tm.get_labels_by_zeroshot(
+                keywords = self.get_category_names_window.selectedKeywords,
+                n_max = self.get_category_names_window.n_max,
+                s_min = self.get_category_names_window.s_min,
+                tag = self.get_category_names_window.selectedTag)
 
         self.message_out = message_out[3:]
 
@@ -461,11 +466,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Reset after loading labels
         self.get_labels_radio_buttons.setExclusive(False)
-        self.get_labels_option1.setChecked(False)
-        self.get_labels_option2.setChecked(False)
-        self.get_labels_option3.setChecked(False)
-        self.get_labels_option4.setChecked(False)
-        self.get_labels_option5.setChecked(False)
+        self.get_labels_option_1.setChecked(False)
+        self.get_labels_option_2.setChecked(False)
+        self.get_labels_option_3.setChecked(False)
+        self.get_labels_option_4.setChecked(False)
+        self.get_labels_option_5.setChecked(False)
         self.get_labels_radio_buttons.setExclusive(True)
         self.get_label_option == 0
 
@@ -525,7 +530,8 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 print("Get subcorpus from documents defining categories")
                 self.get_label_option = 5
-                # @ TODO: To be implemented
+                # Show the window for selecting the categories of the zero-shot model
+                self.get_category_names_window.exec()
 
         return
 
@@ -955,6 +961,9 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         # Select bunch of documents at random
         n_docs = self.n_docs_al
+        if self.tm.dc is None or self.tm.dc.df_dataset.prediction is None:
+            return
+
         self.selected_docs_to_annotate = self.tm.dc.AL_sample(n_samples=n_docs)
 
         if self.selected_docs_to_annotate is None:
