@@ -203,6 +203,26 @@ class TaskManager(baseTaskManager):
 
         return msg
 
+    def setup(self):
+        """
+        Sets up the application projetc. To do so, it loads the configuration
+        file and activates the logger objects.
+        """
+
+        super().setup()
+
+        # Fill global parameters.
+        # This is for backward compatibility with project created before the
+        # release of this version
+        params = {'sampler': 'extremes',
+                  'p_ratio': 0.8,
+                  'top_prob': 0.1}
+        for param, value in params.items():
+            if param not in self.global_parameters['active_learning']:
+                self.global_parameters['active_learning'][param] = value
+
+        return
+
     def load_corpus(self, corpus_name):
         """
         Loads a dataframe of documents from a given corpus.
@@ -583,8 +603,12 @@ class TaskManager(baseTaskManager):
             return
 
         # STEP 1: Select bunch of documents at random
-        n_docs = self.global_parameters['active_learning']['n_docs']
-        selected_docs = self.dc.AL_sample(n_samples=n_docs)
+        selected_docs = self.dc.AL_sample(
+            n_samples=self.global_parameters['active_learning']['n_docs'],
+            sampler=self.global_parameters['active_learning']['sampler'],
+            p_ratio=self.global_parameters['active_learning']['p_ratio'],
+            top_prob=self.global_parameters['active_learning']['top_prob']
+            )
 
         if selected_docs is None:
             return

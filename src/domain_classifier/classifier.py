@@ -408,7 +408,8 @@ class CorpusClassifier(object):
 
         return result, wrong_predictions
 
-    def AL_sample(self, n_samples=5, alg='extremes'):
+    def AL_sample(self, n_samples=5, sampler='extremes', p_ratio=0.8,
+                  top_prob=0.1):
         """
         Returns a given number of samples for active learning (AL)
 
@@ -416,13 +417,22 @@ class CorpusClassifier(object):
         ----------
         n_samples : int, optional (default=5)
             Number of samples to return
-        alg : str, optional (default="random")
+        sampler : str, optional (default="random")
             Sample selection algorithm.
             - If "random", samples are taken at random from all docs with
               predictions
             - If "extremes", samples are taken stochastically, but with
               documents with the highest or smallest probability scores are
               selected with higher probability.
+        p_ratio : float, optional (default=0.8)
+            Ratio of high-score samples. The rest will be low-score samples.
+            (Only for sampler='extremes')
+        top_prob : float, optional (default=0.1)
+            (Approximate) probability of selecting the doc with the highest
+            score in a single sampling. This parameter is used to control the
+            randomness of the stochastic sampling: if top_prob=1, the highest
+            score samples are taken deterministically. top_prob=0 is equivalent
+            to random sampling.
 
         Returns
         -------
@@ -444,23 +454,20 @@ class CorpusClassifier(object):
                 "-- Not enough documents with predictions in the dataset")
             return selected_docs
 
-        if alg == 'random':
+        if sampler == 'random':
             selected_docs = selected_docs.sample(n_samples)
             # FIXME: Try intelligent sample selection based on the scores or
             #        the probabilistic predictions in the self.df_dataset.
-        elif alg == 'extremes':
+        elif sampler == 'extremes':
             # Parameters
             # FIXME: Consider taking some of these parameters as input args.
             # Number of positive an negative samples to take
-            n_neg = 20 * n_samples // 100
-            n_pos = n_samples - n_neg
-            # (Approximate) probability of selecting the doc with the highest
-            # score (the value in col 'prob_pred') in a single choice.
-            q = 0.1
+            n_pos = int(p_ratio * n_samples)
+            n_neg = n_samples - n_pos
 
-            # Generate selection probabilities
+            # Generate exponentially decreasing selection probabilities
             n_doc = len(selected_docs)
-            p = (1 - q) ** np.array(range(n_doc))
+            p = (1 - top_prob) ** np.array(range(n_doc))
             p = p / np.sum(p)
 
             # Sample documents with the highest scores
@@ -478,7 +485,7 @@ class CorpusClassifier(object):
             selected_docs = pd.concat((selected_pos, selected_neg))
 
         else:
-            logging.warning(f"-- Unknown sampling algorithm: {alg}")
+            logging.warning(f"-- Unknown sampling algorithm: {sampler}")
             return None
 
         return selected_docs
