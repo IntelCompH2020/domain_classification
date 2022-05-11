@@ -9,15 +9,15 @@ logformat:
 
 # Parameter for the keyword-based document selector
 keywords:
+  # Selection method: 'embedding' or 'count'
+  method: 'embedding'
   # Weight of the title. A word in the title is equivalent to wt repetitions
-  # of the word in the description.
+  # of the word in the description. (For method='count' only)
   wt: 1 
   # Maximum number of documents to be selected.
   n_max: 2000
   # Minimum score. Only docs scored strictly above s_min are selected
   s_min: 0.6
-  # Selection method: 'embedding' or 'count'
-  method: 'embedding'
   # Name of the SBERT model. Available pretrained models can be found in 
   # https://www.sbert.net/docs/pretrained_models.html
   model_name: all-MiniLM-L6-v2
@@ -29,7 +29,7 @@ zeroshot:
   # Minimum score. Only docs scored strictly above s_min are selected
   s_min: 0.6
 
-# Parameter for the keyword-based document selector
+# Parameter for the topic-based document selector
 topics:
   # Maximum number of documents to be selected.
   n_max: 2000

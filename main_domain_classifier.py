@@ -9,7 +9,6 @@ Created on March 20 2019
 @author: Jesús Cid Sueiro
 """
 
-import os
 import pathlib
 import argparse
 
@@ -42,7 +41,9 @@ def main():
         while project_path is None or project_path == "":
             project_path = input('-- Write the path to the project to load or '
                                  'create: ')
-    if os.path.isdir(args.p):
+            project_path = pathlib.Path(project_path)
+
+    if project_path.is_dir():
         option = 'load'
     else:
         option = 'create'
@@ -66,7 +67,7 @@ def main():
     # ##############
 
     menu = MenuNavigator(tm, path2menu, paths2data)
-    menu.front_page(title="An Application example using menuNavigator")
+    menu.front_page(title="Domain Classifier")
     menu.navigate(option, active_options)
 
 
