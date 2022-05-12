@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Util &mdash; domain_classification_doc  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Worker Signals" href="gui_worker_signals.html" />
+    <link rel="prev" title="Output Wrapper" href="gui_output_wrapper.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> domain_classification_doc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="mn_menu_navigator.html">Menu Navigator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_base_taskmanager.html">Base Task Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_task_manager.html">Task Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_data_manager.html">Data Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_query_manager.html">Query Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_classifier.html">Classifier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_custom_model.html">Custom Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_preprocessor.html">Preprocessor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_main_window.html">Main Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_analyze_keywords_window.html">Analyze Keywords Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_constants.html">Constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_get_keywords_window.html">Get Keywords Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_get_topics_list_window.html">Get Topics List Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_messages.html">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_output_wrapper.html">Output Wrapper</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Util</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gui_worker_signals.html">Worker Signals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_worker.html">Worker</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">domain_classification_doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Util</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/gui_util.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="util">
+<h1>Util<a class="headerlink" href="#util" title="Permalink to this headline"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.graphical_user_interface.util"></span><p>&#64;author: lcalv</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.graphical_user_interface.util.change_background_color_text_edit">
+<span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.util.</span></span><span class="sig-name descname"><span class="pre">change_background_color_text_edit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text_edit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.util.change_background_color_text_edit" title="Permalink to this definition"></a></dt>
+<dd><p>Method to that changes the border color of the QTextEdit associated with the documents to be annotated, based on
+the predicted class selected by the user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text_edit</strong> (<em>QTextEdit</em>) – QTextEdit (document) whose border color is going to be updated based on the</p></li>
+<li><p><strong>prediction</strong> (<em>int (0 or 1)</em>) – Predicted class specified by the user. If prediction == 1, the document’s associated QTextEdit’s border
+color is set to #6A7288; if prediction == 0, it is set to #DB8678.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.graphical_user_interface.util.execute_in_thread">
+<span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.util.</span></span><span class="sig-name descname"><span class="pre">execute_in_thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gui</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress_bar</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.util.execute_in_thread" title="Permalink to this definition"></a></dt>
+<dd><p>Method to execute a function in the secondary thread while showing
+a progress bar at the time the function is being executed if a progress bar object is provided.
+When finished, it forces the execution of the method to be
+executed after the function executing in a thread is completed.
+Based on the functions provided in the manual available at:
+<a class="reference external" href="https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/">https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>function</strong> (<em>UDF</em>) – Function to be executed in thread</p></li>
+<li><p><strong>function_output</strong> (<em>UDF</em>) – Function to be executed at the end of the thread</p></li>
+<li><p><strong>progress_bar</strong> (<em>QProgressBar</em>) – If a QProgressBar object is provided, it shows a progress bar in the
+main thread while the main task is being carried out in a secondary thread</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.graphical_user_interface.util.signal_accept">
+<span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.util.</span></span><span class="sig-name descname"><span class="pre">signal_accept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress_bar</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.util.signal_accept" title="Permalink to this definition"></a></dt>
+<dd><p>Makes the progress bar passed as an argument visible and configures it for
+an event whose duration is unknown by setting both its minimum and maximum
+both to 0, thus the bar shows a busy indicator instead of a percentage of steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>progress_bar</strong> (<em>QProgressBar</em>) – Progress bar object in which the progress is going to be displayed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.graphical_user_interface.util.toggle_menu">
+<span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.util.</span></span><span class="sig-name descname"><span class="pre">toggle_menu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gui</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_width</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.util.toggle_menu" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the movement of the Toggle menu located on the
+left. When collapsed, only the icon for each of the options is shown;
+when expanded, both icons and name indicating the description of the
+functionality are shown.
+Based on the code available at:
+<a class="reference external" href="https://github.com/Wanderson-Magalhaes/Toggle_Burguer_Menu_Python_PySide2/blob/master/ui_functions.py">https://github.com/Wanderson-Magalhaes/Toggle_Burguer_Menu_Python_PySide2/blob/master/ui_functions.py</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gui</strong> (<em>MainWindow</em>) – MainWindow object to which the toggle menu will be appended.</p></li>
+<li><p><strong>maxWidth</strong> (<em>int</em>) – Maximum width to which the toggle menu is going to be expanded.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gui_output_wrapper.html" class="btn btn-neutral float-left" title="Output Wrapper" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gui_worker_signals.html" class="btn btn-neutral float-right" title="Worker Signals" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. Cid-Sueiro, L. Calvo, J.A. Espinosa, T. Ahlers, M. A. Vázquez.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

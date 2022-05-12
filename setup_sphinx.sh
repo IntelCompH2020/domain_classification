@@ -1,8 +1,8 @@
 #!/bin/bash
 
-DOCSDIR=docs
+DOCSDIR=docs_all
 PROJECT_NAME=IntelComp_Domain_Classifier
-AUTHORS="Jesús Cid, Manuel A. Vázquez"
+AUTHORS="J. Cid, L. Calvo, J.A. Espinosa, A.Gallardo, T. Ahlers, M.A. Vázquez"
 RELEASE_YEAR=2022
 
 mkdir $DOCSDIR
