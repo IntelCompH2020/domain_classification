@@ -1,3 +1,8 @@
+"""
+Defines the main domain classification class
+
+@author: J. Cid-Sueiro, J.A. Espinosa, A. Gallardo-Antolin
+"""
 import logging
 import pathlib
 import sys

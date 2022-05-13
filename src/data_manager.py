@@ -1,4 +1,9 @@
-# Contributors: Jesus Cid-Sueiro, Ascension Gallardo-Antolin
+"""
+Defines a data manager class to provide basic read-write functionality for
+the project.
+
+@author: J. Cid-Sueiro, A. Gallardo-Antolin
+"""
 
 import pathlib
 import pandas as pd

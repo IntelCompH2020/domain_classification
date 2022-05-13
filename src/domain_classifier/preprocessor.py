@@ -1,7 +1,8 @@
 """
-Contributors:
-   - Jesús Cid-Sueiro
-   - Ascension Gallardo-Antolin
+Defines classes and methods providing the main functionality for document
+selection through keywords, a category name or a weighted list of topics.
+
+@author: J. Cid-Sueiro, A. Gallardo-Antolin
 """
 
 import numpy as np

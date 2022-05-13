@@ -1,3 +1,9 @@
+"""
+Provides basic methods for user interaction through a command window.
+
+@author: J. Cid-Sueiro
+"""
+
 import logging
 
 

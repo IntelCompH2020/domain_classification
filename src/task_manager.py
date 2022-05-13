@@ -1,8 +1,8 @@
 """
-Contributors:
-    Jesus Cid-Sueiro,
-    Lorena Calvo-Bartolome
-    Ascension Gallardo-Antolin
+Defines classes that defined methods to run the main tasks in the project,
+using the core processing classes and methods.
+
+@author: J. Cid-Sueiro, L. Calvo-Bartolome, A. Gallardo-Antolin
 """
 
 import logging
