@@ -1,3 +1,10 @@
+"""
+Defines classes that defined methods to run the main tasks in the project,
+using the core processing classes and methods.
+
+@author: J. Cid-Sueiro, L. Calvo-Bartolome, A. Gallardo-Antolin
+"""
+
 import logging
 
 # Local imports
@@ -8,6 +15,9 @@ from .query_manager import QueryManager
 from .domain_classifier.preprocessor import CorpusDFProcessor
 from .domain_classifier.classifier import CorpusClassifier
 from .utils import plotter
+
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 class TaskManager(baseTaskManager):
@@ -116,6 +126,25 @@ class TaskManager(baseTaskManager):
 
         return
 
+    def _is_model(self):
+        """
+        Check is labels have been loaded and a domain classifier object has
+        been created.
+        """
+
+        if self.df_labels is None:
+            logging.warning("-- No labels loaded. "
+                            "You must load or create a set of labels first")
+            return False
+
+        elif self.dc is None:
+            logging.warning(f"-- No model has been trained for class "
+                            f"{self.class_name}. You must train a model first")
+            return False
+
+        else:
+            return True
+
     def _get_corpus_list(self):
         """
         Returns the list of available corpus
@@ -174,6 +203,26 @@ class TaskManager(baseTaskManager):
 
         return msg
 
+    def setup(self):
+        """
+        Sets up the application projetc. To do so, it loads the configuration
+        file and activates the logger objects.
+        """
+
+        super().setup()
+
+        # Fill global parameters.
+        # This is for backward compatibility with project created before the
+        # release of this version
+        params = {'sampler': 'extremes',
+                  'p_ratio': 0.8,
+                  'top_prob': 0.1}
+        for param, value in params.items():
+            if param not in self.global_parameters['active_learning']:
+                self.global_parameters['active_learning'][param] = value
+
+        return
+
     def load_corpus(self, corpus_name):
         """
         Loads a dataframe of documents from a given corpus.
@@ -213,10 +262,17 @@ class TaskManager(baseTaskManager):
         Import labels from file
         """
 
-        ids_corpus = self.df_corpus['id']
-        self.class_name = 'AIimported'
-        self.df_labels, msg = self.DM.import_labels(
-            ids_corpus=ids_corpus, tag=self.class_name)
+        if self.metadata['corpus_name'] == "EU_projects":
+
+            ids_corpus = self.df_corpus['id']
+            self.class_name = 'AIimported'
+            self.df_labels, msg = self.DM.import_labels(
+                ids_corpus=ids_corpus, tag=self.class_name)
+
+        else:
+            logging.error("-- No label files available for importation from "
+                          f"corpus {self.metadata['corpus_name']}")
+            msg = " "
 
         return msg
 
@@ -224,8 +280,8 @@ class TaskManager(baseTaskManager):
         """
         Get a set of positive labels using keyword-based search
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         wt : float, optional (default=2)
             Weighting factor for the title components. Keyword matches with
             title words are weighted by this factor
@@ -241,7 +297,8 @@ class TaskManager(baseTaskManager):
         plotter.plot_top_values(
             kf_stats, title="Keyword frequencies", xlabel="No. of keywords")
 
-        y = self.CorpusProc.score_by_keywords(self.keywords, wt=wt)
+        y = self.CorpusProc.score_by_keywords(
+            self.keywords, wt=wt, method="count")
 
         # Plot sorted document scores
         plotter.plot_doc_scores(y)
@@ -252,8 +309,8 @@ class TaskManager(baseTaskManager):
         """
         Get a set of positive labels using keyword-based search
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         wt : float, optional (default=2)
             Weighting factor for the title components. Keyword matches with
             title words are weighted by this factor
@@ -268,9 +325,14 @@ class TaskManager(baseTaskManager):
 
         logging.info(f'-- Selected keywords: {self.keywords}')
 
+        # Take name of the SBERT model from the configuration parameters
+        model_name = self.global_parameters['keywords']['model_name']
+        method = self.global_parameters['keywords']['method']
+
         # Find the documents with the highest scores given the keywords
-        ids = self.CorpusProc.filter_by_keywords(
-            self.keywords, wt=wt, n_max=n_max, s_min=s_min,)
+        ids, eval_scores = self.CorpusProc.filter_by_keywords(
+            self.keywords, wt=wt, n_max=n_max, s_min=s_min,
+            model_name=model_name, method=method)
 
         # Create dataframe of positive labels from the list of ids
         self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
@@ -291,6 +353,37 @@ class TaskManager(baseTaskManager):
             'n_max': n_max,
             's_min': s_min,
             'keywords': self.keywords}
+
+        # Metadata for evaluation
+        if eval_scores:
+            # Save tpr fpr and ROC curve
+            # FIXME: The name of the SBERT model should be read from the config
+            # file (parameters.default.yaml or metadata file (metadata.yaml))
+            model_name = 'all-MiniLM-L6-v2'
+            results_out_fname = f'results_{model_name}_{self.keywords}_ROC'
+            results_fname = self.path2labels / results_out_fname
+            np.savez(results_fname, tpr_roc=eval_scores['tpr_roc'],
+                     fpr_roc=eval_scores['fpr_roc'])
+
+            fig, ax = plt.subplots()
+            plt.plot(eval_scores['fpr_roc'], eval_scores['tpr_roc'],
+                     lw=2.5, label=self.keywords)
+            plt.grid(b=True, which='major', color='gray', alpha=0.6,
+                     linestyle='dotted', lw=1.5)
+            plt.xlabel('False Positive Rate (FPR)')
+            plt.ylabel('True Positive Rate (TPR)')
+            plt.title('ROC curve')
+            plt.legend()
+            figure_out_fname = f'figure_{model_name}_{self.keywords}_ROC'
+            figure_fname = self.path2labels / figure_out_fname
+            plt.savefig(figure_fname)
+
+            # Save smin and nmax evaluation scores
+            # FIXME: The name of the SBERT model should be read from the config
+            # file (parameters.default.yaml or metadata file (metadata.yaml))
+            del eval_scores['fpr_roc'], eval_scores['tpr_roc']
+            self.metadata[key][tag].__setitem__('eval_scores', eval_scores)
+
         self._save_metadata()
 
         return msg
@@ -299,8 +392,8 @@ class TaskManager(baseTaskManager):
         """
         Get a set of positive labels using a zero-shot classification model
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         n_max: int or None, optional (defaul=2000)
             Maximum number of elements in the output list. The default is
             a huge number that, in practice, means there is no loimit
@@ -310,7 +403,7 @@ class TaskManager(baseTaskManager):
             Name of the output label set.
         """
 
-        # Filter documents by topics
+        # Filter documents by zero-shot classification
         ids = self.CorpusProc.filter_by_zeroshot(
             self.keywords, n_max=n_max, s_min=s_min)
 
@@ -340,8 +433,8 @@ class TaskManager(baseTaskManager):
         """
         Get a set of positive labels from a weighted list of topics
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         topic_weights: numpy.array
             Weight of each topic
         T: numpy.ndarray
@@ -386,6 +479,11 @@ class TaskManager(baseTaskManager):
     def load_labels(self, class_name):
         """
         Load a set of labels and its corresponding dataset (if it exists)
+
+        Parameters
+        ----------
+        class_name : str
+            Name of the target category
         """
 
         self.df_labels, msg = self.DM.load_labels(class_name)
@@ -402,14 +500,18 @@ class TaskManager(baseTaskManager):
                 df_dataset, path2transformers=path2model)
             self.dc.load_model()
 
+        else:
+            # No model trained for this class
+            self.dc = None
+
         return msg
 
     def reset_labels(self, labelset):
         """
         Reset all labels and models associated to a given category
 
-        Parameter
-        ---------
+        Parameters
+        ----------
         labelset: str
             Name of the category to be removed.
         """
@@ -474,6 +576,10 @@ class TaskManager(baseTaskManager):
         Evaluate a domain classifiers
         """
 
+        # Check if a classifier object exists
+        if not self._is_model():
+            return
+
         # Evaluate the model over the test set
         result, wrong_predictions = self.dc.eval_model(tag_score='PUscore')
 
@@ -492,9 +598,17 @@ class TaskManager(baseTaskManager):
         Gets some labels from a user for a selected subset of documents
         """
 
+        # Check if a classifier object exists
+        if not self._is_model():
+            return
+
         # STEP 1: Select bunch of documents at random
-        n_docs = self.global_parameters['active_learning']['n_docs']
-        selected_docs = self.dc.AL_sample(n_samples=n_docs)
+        selected_docs = self.dc.AL_sample(
+            n_samples=self.global_parameters['active_learning']['n_docs'],
+            sampler=self.global_parameters['active_learning']['sampler'],
+            p_ratio=self.global_parameters['active_learning']['p_ratio'],
+            top_prob=self.global_parameters['active_learning']['top_prob']
+            )
 
         if selected_docs is None:
             return
@@ -539,6 +653,10 @@ class TaskManager(baseTaskManager):
         Improves classifier performance using the labels provided by users
         """
 
+        # Check if a classifier object exists
+        if not self._is_model():
+            return
+
         # Retrain model using the new labels
         self.dc.retrain_model()
 
@@ -559,6 +677,10 @@ class TaskManager(baseTaskManager):
         # FIXME: this code is equal to evaluate_model() but using a different
         #        tagscore. It should be modified to provide evaluation metrics
         #        computed from the annotated labels.
+
+        # Check if a classifier object exists
+        if not self._is_model():
+            return
 
         # Evaluate the model over the test set
         result, wrong_predictions = self.dc.eval_model(tag_score='PNscore')
@@ -585,6 +707,7 @@ class TaskManagerCMD(TaskManager):
                  metadata_fname='metadata.yaml', set_logs=True):
         """
         Opens a task manager object.
+
         Parameters
         ----------
         path2project : pathlib.Path
@@ -641,6 +764,17 @@ class TaskManagerCMD(TaskManager):
     def _ask_topics(self, topic_words):
         """
         Ask the user for a weighted list of topics
+
+        Parameters
+        ----------
+        topic_words : list of str
+            Description of each available topic as a list of its most relevant
+            words
+
+        Returns
+        -------
+        weighted_topics : list of tuple
+            A weighted list of topics.
         """
 
         return self.QM.ask_topics(topic_words)
@@ -908,7 +1042,7 @@ class TaskManagerGUI(TaskManager):
             Name of the output label set.
         """
 
-        # Keywords, parameters and tags are received as arguments
+        # Keywords are received as arguments
         self.keywords = keywords
 
         msg = super().get_labels_by_keywords(wt=wt, n_max=n_max, s_min=s_min,
@@ -926,8 +1060,9 @@ class TaskManagerGUI(TaskManager):
 
         # Remove all documents (rows) from the topic matrix, that are not
         # in self.df_corpus.
-        T, df_metadata = self.CorpusProc.remove_docs_from_topics(
-            T, df_metadata, col_id='corpusid')
+        if T is not None:
+            T, df_metadata = self.CorpusProc.remove_docs_from_topics(
+                T, df_metadata, col_id='corpusid')
 
         return topic_words, T, df_metadata
 

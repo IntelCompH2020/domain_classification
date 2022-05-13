@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Manager &mdash; domain_classification_doc  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Data Manager" href="dc_data_manager.html" />
+    <link rel="prev" title="Base Task Manager" href="dc_base_taskmanager.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> domain_classification_doc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="mn_menu_navigator.html">Menu Navigator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_base_taskmanager.html">Base Task Manager</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Task Manager</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dc_data_manager.html">Data Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_query_manager.html">Query Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_classifier.html">Classifier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_custom_model.html">Custom Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_preprocessor.html">Preprocessor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_main_window.html">Main Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_analyze_keywords_window.html">Analyze Keywords Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_constants.html">Constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_get_keywords_window.html">Get Keywords Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_get_topics_list_window.html">Get Topics List Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_messages.html">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_output_wrapper.html">Output Wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_util.html">Util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_worker_signals.html">Worker Signals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_worker.html">Worker</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">domain_classification_doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Task Manager</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/dc_task_manager.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="task-manager">
+<h1>Task Manager<a class="headerlink" href="#task-manager" title="Permalink to this headline"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.task_manager"></span><dl class="simple">
+<dt>Contributors:</dt><dd><p>Jesus Cid-Sueiro,
+Lorena Calvo-Bartolome
+Ascension Gallardo-Antolin</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.task_manager.</span></span><span class="sig-name descname"><span class="pre">TaskManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2zeroshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parameters.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'metadata.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_logs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="dc_base_taskmanager.html#src.base_taskmanager.baseTaskManager" title="src.base_taskmanager.baseTaskManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.base_taskmanager.baseTaskManager</span></code></a></p>
+<p>This class extends the functionality of the baseTaskManager class for a
+specific example application</p>
+<p>This class inherits from the baseTaskManager class, which provides the
+basic method to create, load and setup an application project.</p>
+<p>The behavior of this class might depend on the state of the project, in
+dictionary self.state, with the following entries:</p>
+<ul class="simple">
+<li><p>‘isProject’   : If True, project created. Metadata variables loaded</p></li>
+<li><dl class="simple">
+<dt>‘configReady’<span class="classifier">If True, config file succesfully loaded. Datamanager</span></dt><dd><p>activated.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2zeroshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parameters.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'metadata.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_logs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Opens a task manager object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path2project</strong> (<em>pathlib.Path</em>) – Path to the application project</p></li>
+<li><p><strong>path2source</strong> (<em>str or pathlib.Path or None (default=None)</em>) – Path to the folder containing the data sources</p></li>
+<li><p><strong>path2zeroshot</strong> (<em>str or pathlib.Path or None (default=None)</em>) – Path to the folder containing the zero-shot-model</p></li>
+<li><p><strong>config_fname</strong> (<em>str, optional (default=’parameters.yaml’)</em>) – Name of the configuration file</p></li>
+<li><p><strong>metadata_fname</strong> (<em>str or None, optional (default=None)</em>) – Name of the project metadata file.
+If None, no metadata file is used.</p></li>
+<li><p><strong>set_logs</strong> (<em>bool, optional (default=True)</em>) – If True logger objects are created according to the parameters
+specified in the configuration file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.analyze_keywords">
+<span class="sig-name descname"><span class="pre">analyze_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.analyze_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels using keyword-based search</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>wt</strong> (<em>float, optional (default=2)</em>) – Weighting factor for the title components. Keyword matches with
+title words are weighted by this factor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.evaluate_PUmodel">
+<span class="sig-name descname"><span class="pre">evaluate_PUmodel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.evaluate_PUmodel" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate a domain classifiers</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.get_feedback">
+<span class="sig-name descname"><span class="pre">get_feedback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.get_feedback" title="Permalink to this definition"></a></dt>
+<dd><p>Gets some labels from a user for a selected subset of documents</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.get_labels_by_keywords">
+<span class="sig-name descname"><span class="pre">get_labels_by_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kwds'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.get_labels_by_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels using keyword-based search</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wt</strong> (<em>float, optional (default=2)</em>) – Weighting factor for the title components. Keyword matches with
+title words are weighted by this factor</p></li>
+<li><p><strong>n_max</strong> (<em>int or None, optional (defaul=2000)</em>) – Maximum number of elements in the output list. The default is
+a huge number that, in practice, means there is no loimit</p></li>
+<li><p><strong>s_min</strong> (<em>float, optional (default=1)</em>) – Minimum score. Only elements strictly above s_min are selected</p></li>
+<li><p><strong>tag</strong> (<em>str, optional (default=1)</em>) – Name of the output label set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.get_labels_by_topics">
+<span class="sig-name descname"><span class="pre">get_labels_by_topics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topic_weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tpcs'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.get_labels_by_topics" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels from a weighted list of topics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>topic_weights</strong> (<em>numpy.array</em>) – Weight of each topic</p></li>
+<li><p><strong>T</strong> (<em>numpy.ndarray</em>) – Topic matrix</p></li>
+<li><p><strong>df_metadata</strong> – Topic metadata</p></li>
+<li><p><strong>n_max</strong> (<em>int or None, optional (defaul=2000)</em>) – Maximum number of elements in the output list. The default is
+a huge number that, in practice, means there is no loimit</p></li>
+<li><p><strong>s_min</strong> (<em>float, optional (default=1)</em>) – Minimum score. Only elements strictly above s_min are selected</p></li>
+<li><p><strong>tag</strong> (<em>str, optional (default=1)</em>) – Name of the output label set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.get_labels_by_zeroshot">
+<span class="sig-name descname"><span class="pre">get_labels_by_zeroshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zeroshot'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.get_labels_by_zeroshot" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels using a zero-shot classification model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_max</strong> (<em>int or None, optional (defaul=2000)</em>) – Maximum number of elements in the output list. The default is
+a huge number that, in practice, means there is no loimit</p></li>
+<li><p><strong>s_min</strong> (<em>float, optional (default=0.1)</em>) – Minimum score. Only elements strictly above s_min are selected</p></li>
+<li><p><strong>tag</strong> (<em>str, optional (default=1)</em>) – Name of the output label set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.get_labels_from_docs">
+<span class="sig-name descname"><span class="pre">get_labels_from_docs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_docs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.get_labels_from_docs" title="Permalink to this definition"></a></dt>
+<dd><p>Requests feedback about the class of given documents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>selected_docs</strong> (<em>pands.DataFrame</em>) – Selected documents</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>labels</strong> – Labels for the given documents, in the same order than the
+documents in the input dataframe</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.import_labels">
+<span class="sig-name descname"><span class="pre">import_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.import_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Import labels from file</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.load" title="Permalink to this definition"></a></dt>
+<dd><p>Extends the load method from the parent class to load the project
+corpus and the dataset (if any)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.load_corpus">
+<span class="sig-name descname"><span class="pre">load_corpus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corpus_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.load_corpus" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a dataframe of documents from a given corpus.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>corpus_name</strong> (<em>str</em>) – Name of the corpus. It should be the name of a folder in
+self.path2source</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.load_labels">
+<span class="sig-name descname"><span class="pre">load_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.load_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Load a set of labels and its corresponding dataset (if it exists)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>class_name</strong> (<em>str</em>) – Name of the target category</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.reevaluate_model">
+<span class="sig-name descname"><span class="pre">reevaluate_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.reevaluate_model" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate a domain classifier</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.reset_labels">
+<span class="sig-name descname"><span class="pre">reset_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labelset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.reset_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Reset all labels and models associated to a given category</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>labelset</strong> (<em>str</em>) – Name of the category to be removed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.retrain_model">
+<span class="sig-name descname"><span class="pre">retrain_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.retrain_model" title="Permalink to this definition"></a></dt>
+<dd><p>Improves classifier performance using the labels provided by users</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.setup" title="Permalink to this definition"></a></dt>
+<dd><p>Sets up the application projetc. To do so, it loads the configuration
+file and activates the logger objects.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManager.train_PUmodel">
+<span class="sig-name descname"><span class="pre">train_PUmodel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_imbalance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">400</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.train_PUmodel" title="Permalink to this definition"></a></dt>
+<dd><p>Train a domain classifiers</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>max_imbalance</strong> (<em>int or float or None, optional (default=None)</em>) – Maximum ratio negative vs positive samples. If the ratio in
+df_dataset is higher, the negative class is subsampled.
+If None, the original proportions are preserved</p></li>
+<li><p><strong>nmax</strong> (<em>int or None (defautl=None)</em>) – Maximum size of the whole (train+test) dataset</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerCMD">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.task_manager.</span></span><span class="sig-name descname"><span class="pre">TaskManagerCMD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2zeroshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parameters.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'metadata.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_logs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerCMD" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.task_manager.TaskManager" title="src.task_manager.TaskManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.task_manager.TaskManager</span></code></a></p>
+<p>Provides extra functionality to the task manager, requesting parameters
+from users from a command window.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerCMD.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2zeroshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parameters.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'metadata.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_logs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerCMD.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Opens a task manager object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path2project</strong> (<em>pathlib.Path</em>) – Path to the application project</p></li>
+<li><p><strong>path2source</strong> (<em>str or pathlib.Path or None (default=None)</em>) – Path to the folder containing the data sources</p></li>
+<li><p><strong>path2zeroshot</strong> (<em>str or pathlib.Path or None (default=None)</em>) – Path to the folder containing the zero-shot-model</p></li>
+<li><p><strong>config_fname</strong> (<em>str, optional (default=’parameters.yaml’)</em>) – Name of the configuration file</p></li>
+<li><p><strong>metadata_fname</strong> (<em>str or None, optional (default=None)</em>) – Name of the project metadata file.
+If None, no metadata file is used.</p></li>
+<li><p><strong>set_logs</strong> (<em>bool, optional (default=True)</em>) – If True logger objects are created according to the parameters
+specified in the configuration file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerCMD.analyze_keywords">
+<span class="sig-name descname"><span class="pre">analyze_keywords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerCMD.analyze_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels using keyword-based search</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerCMD.get_labels_by_keywords">
+<span class="sig-name descname"><span class="pre">get_labels_by_keywords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerCMD.get_labels_by_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels using keyword-based search</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerCMD.get_labels_by_topics">
+<span class="sig-name descname"><span class="pre">get_labels_by_topics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerCMD.get_labels_by_topics" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels from a weighted list of topics</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerCMD.get_labels_by_zeroshot">
+<span class="sig-name descname"><span class="pre">get_labels_by_zeroshot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerCMD.get_labels_by_zeroshot" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels using keyword-based search</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerCMD.get_labels_from_docs">
+<span class="sig-name descname"><span class="pre">get_labels_from_docs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selected_docs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerCMD.get_labels_from_docs" title="Permalink to this definition"></a></dt>
+<dd><p>Requests feedback about the class of given documents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>selected_docs</strong> (<em>pands.DataFrame</em>) – Selected documents</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>labels</strong> – Labels for the given documents, in the same order than the
+documents in the input dataframe</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerCMD.train_PUmodel">
+<span class="sig-name descname"><span class="pre">train_PUmodel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerCMD.train_PUmodel" title="Permalink to this definition"></a></dt>
+<dd><p>Train a domain classifier</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerGUI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.task_manager.</span></span><span class="sig-name descname"><span class="pre">TaskManagerGUI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2zeroshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parameters.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'metadata.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_logs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerGUI" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#src.task_manager.TaskManager" title="src.task_manager.TaskManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.task_manager.TaskManager</span></code></a></p>
+<p>Provides extra functionality to the task manager, to be used by the
+Graphical User Interface (GUI)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerGUI.get_feedback">
+<span class="sig-name descname"><span class="pre">get_feedback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerGUI.get_feedback" title="Permalink to this definition"></a></dt>
+<dd><p>Gets some labels from a user for a selected subset of documents</p>
+<p class="rubric">Notes</p>
+<p>In comparison to the corresponding parent method, STEPS 1 and 2 are
+carried out directly through the GUI</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerGUI.get_labels_by_keywords">
+<span class="sig-name descname"><span class="pre">get_labels_by_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerGUI.get_labels_by_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels using keyword-based search through the
+MainWindow</p>
+<dl class="simple">
+<dt>keywords<span class="classifier">list of str</span></dt><dd><p>List of keywords</p>
+</dd>
+<dt>wt<span class="classifier">float, optional (default=2)</span></dt><dd><p>Weighting factor for the title components. Keyword matches with
+title words are weighted by this factor</p>
+</dd>
+<dt>n_max: int or None, optional (defaul=2000)</dt><dd><p>Maximum number of elements in the output list. The default is
+a huge number that, in practice, means there is no loimit</p>
+</dd>
+<dt>s_min: float, optional (default=1)</dt><dd><p>Minimum score. Only elements strictly above s_min are selected</p>
+</dd>
+<dt>tag: str, optional (default=1)</dt><dd><p>Name of the output label set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerGUI.get_labels_by_zeroshot">
+<span class="sig-name descname"><span class="pre">get_labels_by_zeroshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerGUI.get_labels_by_zeroshot" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels using a zero-shot classification model
+Parameters:
+———–
+keywords : list of str</p>
+<blockquote>
+<div><p>List of keywords</p>
+</div></blockquote>
+<dl class="simple">
+<dt>n_max: int or None, optional (defaul=2000)</dt><dd><p>Maximum number of elements in the output list. The default is
+a huge number that, in practice, means there is no loimit</p>
+</dd>
+<dt>s_min: float, optional (default=0.1)</dt><dd><p>Minimum score. Only elements strictly above s_min are selected</p>
+</dd>
+<dt>tag: str, optional (default=1)</dt><dd><p>Name of the output label set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerGUI.get_suggested_keywords">
+<span class="sig-name descname"><span class="pre">get_suggested_keywords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerGUI.get_suggested_keywords" title="Permalink to this definition"></a></dt>
+<dd><p>Get the list of suggested keywords to showing it in the GUI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>suggested_keywords</strong> – List of suggested keywords</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list of str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerGUI.get_topic_words">
+<span class="sig-name descname"><span class="pre">get_topic_words</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerGUI.get_topic_words" title="Permalink to this definition"></a></dt>
+<dd><p>Get a set of positive labels from a weighted list of topics</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.task_manager.TaskManagerGUI.train_PUmodel">
+<span class="sig-name descname"><span class="pre">train_PUmodel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_imabalance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmax</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerGUI.train_PUmodel" title="Permalink to this definition"></a></dt>
+<dd><p>Train a domain classifier</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>max_imabalance</strong> (<em>int (default 3)</em>) – Maximum ratio negative vs positive samples in the training set</p></li>
+<li><p><strong>nmax</strong> (<em>int (default = 400)</em>) – Maximum number of documents in the training set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dc_base_taskmanager.html" class="btn btn-neutral float-left" title="Base Task Manager" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dc_data_manager.html" class="btn btn-neutral float-right" title="Data Manager" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. Cid-Sueiro, L. Calvo, J.A. Espinosa, T. Ahlers, M. A. Vázquez.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Manager &mdash; domain_classification_doc  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Query Manager" href="dc_query_manager.html" />
+    <link rel="prev" title="Task Manager" href="dc_task_manager.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> domain_classification_doc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="mn_menu_navigator.html">Menu Navigator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_base_taskmanager.html">Base Task Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_task_manager.html">Task Manager</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Data Manager</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dc_query_manager.html">Query Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_classifier.html">Classifier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_custom_model.html">Custom Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_preprocessor.html">Preprocessor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_main_window.html">Main Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_analyze_keywords_window.html">Analyze Keywords Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_constants.html">Constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_get_keywords_window.html">Get Keywords Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_get_topics_list_window.html">Get Topics List Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_messages.html">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_output_wrapper.html">Output Wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_util.html">Util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_worker_signals.html">Worker Signals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_worker.html">Worker</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">domain_classification_doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Data Manager</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/dc_data_manager.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="data-manager">
+<h1>Data Manager<a class="headerlink" href="#data-manager" title="Permalink to this headline"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.data_manager"></span><dl class="py class">
+<dt class="sig sig-object py" id="src.data_manager.DataManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.data_manager.</span></span><span class="sig-name descname"><span class="pre">DataManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2datasets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2embeddings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class contains all read / write functionalities required by the
+domain_classification project.</p>
+<p>It assumes that source and destination data will be stored in files.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2datasets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2embeddings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the data manager object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path2source</strong> (<em>str or pathlib.Path</em>) – Path to the folder containing all external source data</p></li>
+<li><p><strong>path2labels</strong> (<em>str or pathlib.Path</em>) – Path to the folder containing sets of labels</p></li>
+<li><p><strong>path2datasets</strong> (<em>str or pathlib.Path</em>) – Path to the folder containing datasets</p></li>
+<li><p><strong>path2embeddings</strong> (<em>str or pathlib.Path</em>) – Path to the folder containing the document embeddings</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#src.data_manager.DataManager.__weakref__" title="Permalink to this definition"></a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.get_corpus_list">
+<span class="sig-name descname"><span class="pre">get_corpus_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.get_corpus_list" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the list of available corpus</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.get_dataset_list">
+<span class="sig-name descname"><span class="pre">get_dataset_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.get_dataset_list" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the list of available datasets</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.get_keywords_list">
+<span class="sig-name descname"><span class="pre">get_keywords_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IA_keywords_SEAD_REV_JAG.txt'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.get_keywords_list" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a list of IA-related keywords read from a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str, optional (default==’IA_keywords_SEAD_REV_JAG.txt’)</em>) – Name of the file with the keywords</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>keywords</strong> – A list of keywords (empty if the file does not exist)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.get_labelset_list">
+<span class="sig-name descname"><span class="pre">get_labelset_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.get_labelset_list" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the list of available labels</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.get_model_list">
+<span class="sig-name descname"><span class="pre">get_model_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.get_model_list" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the list of available models</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.import_labels">
+<span class="sig-name descname"><span class="pre">import_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ids_corpus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'imported'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.import_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a subcorpus of positive labels from file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ids_corpus</strong> (<em>list</em>) – List of ids of the documents in the corpus. Only the labels with
+ids in ids_corpus are imported and saved into the output file.</p></li>
+<li><p><strong>tag</strong> (<em>str, optional (default=”imported”)</em>) – Name for the category defined by the positive labels.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>df_labels</strong> – Dataframe of labels, with two columns: id and class.
+id identifies the document corresponding to the label.
+class identifies the class. All documents are assumed to be class 1</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.load_corpus">
+<span class="sig-name descname"><span class="pre">load_corpus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corpus_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.load_corpus" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a dataframe of documents from a given corpus.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>corpus_name</strong> (<em>str</em>) – Name of the corpus. It should be the name of a folder in
+self.path2source</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.load_dataset">
+<span class="sig-name descname"><span class="pre">load_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.load_dataset" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a labeled dataset of documents in the format required by the
+classifier modules</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<em>str, optional (default=””)</em>) – Name of the dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.load_labels">
+<span class="sig-name descname"><span class="pre">load_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.load_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a set or PU labels</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.load_topics">
+<span class="sig-name descname"><span class="pre">load_topics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.load_topics" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a topic matrix for a specific corpus</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.reset_labels">
+<span class="sig-name descname"><span class="pre">reset_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.reset_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Delete all files related to a given class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tag</strong> (<em>str, optional (default=””)</em>) – Name of the class to be removed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.data_manager.DataManager.save_dataset">
+<span class="sig-name descname"><span class="pre">save_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_csv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.data_manager.DataManager.save_dataset" title="Permalink to this definition"></a></dt>
+<dd><p>Save dataset in input dataframe in a feather file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df_dataset</strong> (<em>pandas.DataFrame</em>) – Dataset to save</p></li>
+<li><p><strong>tag</strong> (<em>str, optional (default=””)</em>) – Optional string to add to the output file name.</p></li>
+<li><p><strong>save_csv</strong> (<em>boolean, optional (default=False)</em>) – If True, the dataset is saved in csv format too</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dc_task_manager.html" class="btn btn-neutral float-left" title="Task Manager" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dc_query_manager.html" class="btn btn-neutral float-right" title="Query Manager" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. Cid-Sueiro, L. Calvo, J.A. Espinosa, T. Ahlers, M. A. Vázquez.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

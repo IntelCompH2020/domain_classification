@@ -1,3 +1,9 @@
+"""
+Base task manager class.
+
+@author: Jesus Cid-Sueiro
+"""
+
 import shutil
 import yaml
 

@@ -1,3 +1,10 @@
+"""
+Defines a data manager class to provide basic read-write functionality for
+the project.
+
+@author: J. Cid-Sueiro, A. Gallardo-Antolin
+"""
+
 import pathlib
 import pandas as pd
 import numpy as np
@@ -98,21 +105,29 @@ class DataManager(object):
 
         return model_list
 
-    def get_keywords_list(self):
+    def get_keywords_list(self, filename='IA_keywords_SEAD_REV_JAG.txt'):
         """
-        Returns a list of IA-related keywords
+        Returns a list of IA-related keywords read from a file.
+
+        Parameters
+        ----------
+        filename : str, optional (default=='IA_keywords_SEAD_REV_JAG.txt')
+            Name of the file with the keywords
 
         Returns
         -------
         keywords: list
-            A list of keywords
+            A list of keywords (empty if the file does not exist)
         """
 
         keywords_fpath = (self.path2source / self.corpus_name / 'queries'
-                          / 'IA_keywords_SEAD_REV_JAG.txt')
-        df_keywords = pd.read_csv(
-            keywords_fpath, delimiter=',', names=['keywords'])
-        keywords = list(df_keywords['keywords'])
+                          / filename)
+
+        keywords = []
+        if keywords_fpath.is_file():
+            df_keywords = pd.read_csv(keywords_fpath, delimiter=',',
+                                      names=['keywords'])
+            keywords = list(df_keywords['keywords'])
 
         return keywords
 
@@ -135,19 +150,18 @@ class DataManager(object):
         self.corpus_name = corpus_name
 
         # If there is a feather file, load it
+        t0 = time()
         if path2feather.is_file():
 
             logging.info(f'-- -- Feather file {path2feather} found...')
-            t0 = time()
             df_corpus = pd.read_feather(path2feather)
-            logging.info(f'-- -- Feather file loaded in {time() - t0} secs.')
+            logging.info(
+                f'-- -- Feather file loaded in {time() - t0:.2f} secs.')
             logging.info(f'-- -- Corpus {corpus_name} loaded with '
                          f'{len(df_corpus)} documents')
 
         # if it doesn't exist, load the selected corpus in its original form
         elif corpus_name == 'EU_projects':
-
-            t0 = time()
 
             # ####################
             # Paths and file names
@@ -208,9 +222,71 @@ class DataManager(object):
             # Fill nan cells with empty strings
             df_corpus.fillna("", inplace=True)
 
-            logging.info(f"-- -- Aggregated corpus with {len(df_corpus)} "
-                         " documents")
-            logging.info(f'-- -- Corpus loaded in {time() - t0} secs.')
+            logging.info(f"-- -- Corpus aggregated with {len(df_corpus)} "
+                         f" documents and loaded in {time() - t0:.2f} secs.")
+            logging.info(f'-- -- Writing feather file in {path2feather} '
+                         f'to speed up future loads')
+            df_corpus.to_feather(path2feather)
+
+        elif corpus_name == 'AEI_projects':
+
+            # ####################
+            # Paths and file names
+
+            # Some file and folder names that could be specific of the current
+            # corpus. They should be possibly moved to a config file
+            corpus_fpath = pathlib.Path('corpus') / 'AEI_Public.xlsx'
+
+            # ###########
+            # Load corpus
+
+            # Load corpus 1
+            path2corpus = self.path2corpus / corpus_fpath
+            df_corpus = pd.read_excel(path2corpus, engine='openpyxl')
+            # Remove duplicates, if any
+            df_corpus.drop_duplicates(subset=['Referencia'], inplace=True)
+            logging.info(f'-- -- Raw corpus {corpus_name} loaded with '
+                         f'{len(df_corpus)} documents')
+
+            # Remove documents with missing data, if any
+            ind_notna = df_corpus['title'].notna()
+            df_corpus = df_corpus[ind_notna]
+            ind_notna = df_corpus['abstract'] == 0
+            df_corpus = df_corpus[~ind_notna]
+
+            # Original fields are:
+            #     Año, Convocatoria, Referencia, Área, Subárea, Título,
+            #     Palabras Clave, C.I.F., Entidad, CC.AA., Provincia,
+            #     € Conced., Resument, title, abstract, keywords,
+            #     Ind2017_BIO, Ind2017_TIC, Ind2017_ENE
+            df_corpus = df_corpus[[
+                'Referencia', 'title', 'abstract', 'Ind2017_BIO',
+                'Ind2017_TIC', 'Ind2017_ENE']]
+
+            # Map column names to normalized names
+            # We use "Referencia", renamed as "id", as the project id.
+            mapping = {'Referencia': 'id',
+                       'abstract': 'description',
+                       'Ind2017_BIO': 'target_bio',
+                       'Ind2017_TIC': 'target_tic',
+                       'Ind2017_ENE': 'target_ene'}
+            df_corpus.rename(columns=mapping, inplace=True)
+
+            # Fill nan cells with empty strings
+            df_corpus.fillna("", inplace=True)
+
+            # Remove special characters
+            df_corpus['title'] = df_corpus['title'].str.replace('\t', '')
+            df_corpus['description'] = (
+                df_corpus['description'].str.replace('\t', ''))
+
+            # Reset the index and drop the old index
+            df_corpus = df_corpus.reset_index(drop=True)
+
+            logging.info(
+                f"-- -- Corpus {corpus_name} reduced to {len(df_corpus)} "
+                f" documents")
+            logging.info(f"-- -- Loaded in {time() - t0:.2f} secs.")
             logging.info(f'-- -- Writing feather file in {path2feather} '
                          f'to speed up future loads')
             df_corpus.to_feather(path2feather)
@@ -240,6 +316,11 @@ class DataManager(object):
 
         # Load topic model
         path2topics = self.path2corpus / topic_folder / topic_model_fname
+
+        if not pathlib.Path.exists(path2topics):
+            logging.warning(f"-- No topic model available at {path2topics}")
+            return None, None, None
+
         data = np.load(path2topics)
 
         # Extract topic descriptions

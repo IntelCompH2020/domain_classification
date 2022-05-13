@@ -1,3 +1,10 @@
+"""
+Defines classes and methods providing the main functionality for document
+selection through keywords, a category name or a weighted list of topics.
+
+@author: J. Cid-Sueiro, A. Gallardo-Antolin
+"""
+
 import numpy as np
 import pandas as pd
 import pathlib
@@ -9,6 +16,12 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from transformers import (
     pipeline, AutoModelForSequenceClassification, AutoTokenizer)
+
+# Some libraries required for evaluation
+# from sklearn.metrics import precision_recall_fscore_support
+# from sklearn.metrics import average_precision_score, precision_recall_curve
+from sklearn.metrics import confusion_matrix, roc_curve
+import matplotlib.pyplot as plt
 
 
 class CorpusProcessor(object):
@@ -56,12 +69,14 @@ class CorpusProcessor(object):
         """
         Computes a score for every document in a given pandas dataframe
         according to the frequency of appearing some given keywords
+
         Parameters
         ----------
         corpus : list (or pandas.Series) of str
             Input corpus.
         keywords : list of str
             List of keywords
+
         Returns
         -------
         score : list of float
@@ -78,7 +93,8 @@ class CorpusProcessor(object):
 
         return score
 
-    def score_docs_by_keywords(self, corpus, keywords):
+    def score_docs_by_keywords(self, corpus, keywords,
+                               model_name='all-MiniLM-L6-v2'):
         """
         Computes a score for every document in a given pandas dataframe
         according to the frequency of appearing some given keywords
@@ -89,6 +105,8 @@ class CorpusProcessor(object):
             Input corpus.
         keywords : list of str
             List of keywords
+        model_name : str, optinal (default = 'all-MiniLM-L6-v2')
+            Name of the SBERT transformer model
 
         Returns
         -------
@@ -104,7 +122,9 @@ class CorpusProcessor(object):
         # FIXME: The name of the SBERT model should be configurable. Move it to
         #        the config file (parameters.default.yaml)
         # model_name = 'distilbert-base-nli-mean-tokens'
-        model_name = 'all-MiniLM-L6-v2'
+        # model_name = 'all-MiniLM-L6-v2'
+        # model_name = 'all-mpnet-base-v2'
+        # model_name = 'msmarco-distilbert-cos-v5'
         # model_name = 'allenai-specter'
 
         # 1. Load sentence transformer model
@@ -163,6 +183,10 @@ class CorpusProcessor(object):
         -------
         score : list of float
             List of scores, one per document in corpus
+
+        Notes
+        -----
+        Adapted from code contributed by BSC for the IntelComp project.
         """
 
         # Check if there is a zero-shot model
@@ -180,37 +204,57 @@ class CorpusProcessor(object):
 
         score = []
         n_docs = len(corpus)
+
+        # Initialize counter of the number of document truncations required
+        # by the zero-shot model
+        n_trunc = 0
+        # Initialize metric of the minimum size of a reduced document
+        li_min = 1e10
+
         for i, doc in enumerate(corpus):
-            print(f"-- Processing document {i} out of {n_docs}")
-            # print(f"-- Processing document {i} out of {n_docs}   \r", end="")
+            li = len(doc)
+            print(f"-- Processing document {i} / {n_docs}, size {li} \r",
+                  end="")
 
-            # We have to truncate the document. Othervise an error is raised:
-            #    "The expanded size of the tensor (519) must match the existing
-            #     size (514) at non-singleton dimension 1.  Target sizes:
-            #     [1, 519].  Tensor sizes: [1, 514]"
-            doc_i = doc[:1500]
+            in_process = True
+            while in_process:
+                try:
+                    # Zero-shot classification for doc_i and
+                    # category keyboard
+                    doc_i = doc[:li]
+                    result = zsc(doc_i, keyword, multi_label=False)
+                    in_process = False
 
-            # Run the zero-shot classifier for document doc_i and category
-            # keyboard
-            # result = zsc(sentence1, labels,
-            #   hypothesis_template="This example is {}.", multi_label=True)
-            result = zsc(doc_i, keyword, multi_label=False)
+                except:
+                    # An error is raised because "The expanded size of the
+                    # tensor (519) must match the existing size (514) at
+                    # non-singleton dimension 1.  Target sizes: [1, 519].
+                    # Tensor sizes: [1, 514]"
+                    # We have to truncate the document.
+                    li = 3 * li // 4
+                    li_min = min(li_min, li)
+                    n_trunc += 1
 
             # Save score
             score_i = sum(result['scores'])
             score.append(score_i)
+
+        logging.info(f"-- -- A document truncation was required {n_trunc} "
+                     f"times, up to a size of at least {li_min} characters")
 
         return score
 
     def compute_keyword_stats(self, corpus, keywords):
         """
         Computes keyword statistics
+
         Parameters
         ----------
         corpus : list (or pandas.Series) of str
             Input corpus.
         keywords : list of str
             List of keywords
+
         Returns
         -------
         df_stats : dict
@@ -237,6 +281,7 @@ class CorpusProcessor(object):
         """
         Select the elements from a given list of numbers that fulfill some
         conditions
+
         Parameters
         ----------
         n_max: int or None, optional (defaul=1e100)
@@ -264,10 +309,11 @@ class CorpusDFProcessor(object):
     """
     A container of corpus processing methods.
     It assumes that a corpus is given by a dataframe of documents.
+
     Each dataframe must contain three columns:
-        id: document identifiers
-        title: document titles
-        description: body of the document text
+    id: document identifiers
+    title: document titles
+    description: body of the document text
     """
 
     def __init__(self, df_corpus, path2embeddings=None, path2zeroshot=None):
@@ -292,7 +338,7 @@ class CorpusDFProcessor(object):
         else:
             self.path2embedding = None
             logging.info("-- No path to embeddings. "
-                         "Document scores will be based in word counts")
+                         "Document scores will be based on word counts")
 
         if path2zeroshot is not None:
             self.path2zeroshot = pathlib.Path(path2zeroshot)
@@ -314,6 +360,7 @@ class CorpusDFProcessor(object):
         """
         Removes, from a given topic-document matrix and its corresponding
         metadata dataframe, all documents that do not belong to the corpus
+
         Parameters
         ----------
         T: numpy.ndarray or scipy.sparse
@@ -322,6 +369,7 @@ class CorpusDFProcessor(object):
             Dataframe of metadata. It must include a column with document ids
         col_id: str, optional (default='id')
             Name of the column containing the document ids in df_metadata
+
         Returns
         -------
         T_out: numpy.ndarray or scipy.sparse
@@ -343,12 +391,14 @@ class CorpusDFProcessor(object):
     def compute_keyword_stats(self, keywords, wt=2):
         """
         Computes keyword statistics
+
         Parameters
         ----------
         corpus : dataframe
             Dataframe of corpus.
         keywords : list of str
             List of keywords
+
         Returns
         -------
         df_stats : dict
@@ -376,6 +426,7 @@ class CorpusDFProcessor(object):
         """
         Computes a score for every document in a given pandas dataframe
         according to the frequency of appearing some given keywords
+
         Parameters
         ----------
         corpus : dataframe
@@ -385,6 +436,7 @@ class CorpusDFProcessor(object):
         wt : float, optional (default=2)
             Weighting factor for the title components. Keyword matches with
             title words are weighted by this factor
+
         Returns
         -------
         score : list of float
@@ -400,7 +452,8 @@ class CorpusDFProcessor(object):
 
         return score
 
-    def score_by_keywords(self, keywords, wt=2):
+    def score_by_keywords(self, keywords, wt=2, model_name='all-MiniLM-L6-v2',
+                          method='embedding'):
         """
         Computes a score for every document in a given pandas dataframe
         according to the frequency of appearing some given keywords
@@ -413,6 +466,11 @@ class CorpusDFProcessor(object):
             Weighting factor for the title components. Keyword matches with
             title words are weighted by this factor
             This input argument is used if self.path2embeddings is None only
+        model_name : str, optinal (default = 'all-MiniLM-L6-v2')
+            Name of the SBERT transformer model
+        method : str in {'embedding', 'count'}
+            - If 'count', documents are scored according to word counts
+            - If 'embedding', scores are based on neural embeddings
 
         Returns
         -------
@@ -421,19 +479,21 @@ class CorpusDFProcessor(object):
         """
 
         # Check if embeddings have been provided
-        if self.path2embeddings is None:
+        if method == 'count' or self.path2embeddings is None:
             score = self.score_by_keyword_count(keywords, wt)
             return score
 
         # Copy relevant columns only
-        df_dataset = self.df_corpus[['id', 'title', 'description']]
+        df_dataset = self.df_corpus.loc[:, ['id', 'title', 'description']]
 
         # Join title and description into a single column
-        df_dataset['text'] = (df_dataset['title'] + '. '
-                              + df_dataset['description'])
+        df_dataset.loc[:, 'text'] = (df_dataset['title'] + '. '
+                                     + df_dataset['description'])
+
         df_dataset.drop(columns=['description', 'title'], inplace=True)
 
-        score = self.prep.score_docs_by_keywords(df_dataset['text'], keywords)
+        score = self.prep.score_docs_by_keywords(
+            df_dataset['text'], keywords, model_name)
 
         return score
 
@@ -455,11 +515,11 @@ class CorpusDFProcessor(object):
         """
 
         # Copy relevant columns only
-        df_dataset = self.df_corpus[['id', 'title', 'description']]
+        df_dataset = self.df_corpus.loc[:, ['id', 'title', 'description']]
 
         # Join title and description into a single column
-        df_dataset['text'] = (df_dataset['title'] + '. '
-                              + df_dataset['description'])
+        df_dataset.loc[:, 'text'] = (df_dataset['title'] + '. '
+                                     + df_dataset['description'])
         df_dataset.drop(columns=['description', 'title'], inplace=True)
 
         score = self.prep.score_docs_by_zeroshot(df_dataset['text'], keyword)
@@ -511,6 +571,7 @@ class CorpusDFProcessor(object):
         """
         Select documents from the corpus whose score is strictly above a lower
         bound
+
         Parameters
         ----------
         scores: array-like of float
@@ -528,9 +589,11 @@ class CorpusDFProcessor(object):
 
         return ids
 
-    def filter_by_keywords(self, keywords, wt=2, n_max=1e100, s_min=0):
+    def filter_by_keywords(self, keywords, wt=2, n_max=1e100, s_min=0,
+                           model_name='all-MiniLM-L6-v2',
+                           method='embedding'):
         """
-        Select documents with a significant presence of a given set of keywords
+        Select documents from a given set of keywords
 
         Parameters
         ----------
@@ -545,22 +608,42 @@ class CorpusDFProcessor(object):
             a huge number that, in practice, means there is no loimit
         s_min: float, optional (default=0)
             Minimum score. Only elements strictly above s_min are selected
+        model_name : str, optinal (default = 'all-MiniLM-L6-v2')
+            Name of the SBERT transformer model
+        method : str in {'embedding', 'count'}
+            - If 'count', documents are scored according to word counts
+            - If 'embedding', scores are based on neural embeddings
 
         Returns
         -------
         ids : list
             List of ids of the selected documents
+        eval_scores: dict
+            A dictionary of evaluation metrics. If there are no labels
+            available for evaluation, an empty dictionary is returned.
         """
 
-        scores = self.score_by_keywords(keywords, wt)
+        scores = self.score_by_keywords(keywords, wt, model_name, method)
         ids = self.get_top_scores(scores, n_max=n_max, s_min=s_min)
 
-        return ids
+        if set(['target_bio', 'target_tic', 'target_ene']).issubset(
+                self.df_corpus.columns):
+            # Evaluation
+            # FIXME: This is done for a specific dataset only. This code should
+            #        be moved to a specific evaluation method
+            eval_scores = self.evaluate_filter_by_keywords(
+                keywords, scores, n_max, s_min)
+        else:
+            eval_scores = {}
+
+        # ## return ids
+        return ids, eval_scores
 
     def filter_by_topics(self, T, doc_ids, topic_weights, n_max=1e100,
                          s_min=0):
         """
         Select documents with a significant presence of a given set of keywords
+
         Parameters
         ----------
         T: numpy.ndarray or scipy.sparse
@@ -576,6 +659,7 @@ class CorpusDFProcessor(object):
             a huge number that, in practice, means there is no loimit
         s_min: float, optional (default=0)
             Minimum score. Only elements strictly above s_min are selected
+
         Returns
         -------
         ids : list
@@ -598,10 +682,12 @@ class CorpusDFProcessor(object):
     def make_pos_labels_df(self, ids):
         """
         Returns a dataframe with the given ids and a single, all-ones column
+
         Parameters
         ----------
         ids: array-like
             Values for the column 'ids'
+
         Returns
         -------
         df_labels: pandas.DataFrame
@@ -635,11 +721,11 @@ class CorpusDFProcessor(object):
         """
 
         # Copy relevant columns only
-        df_dataset = self.df_corpus[['id', 'title', 'description']]
+        df_dataset = self.df_corpus.loc[:, ['id', 'title', 'description']]
 
-        # Joing title and description into a single column
-        df_dataset['text'] = (df_dataset['title'] + '.'
-                              + df_dataset['description'])
+        # Join title and description into a single column
+        df_dataset.loc[:, 'text'] = (df_dataset['title'] + '. '
+                                     + df_dataset['description'])
         df_dataset.drop(columns=['description', 'title'], inplace=True)
 
         # Default class is 0
@@ -649,3 +735,144 @@ class CorpusDFProcessor(object):
         df_dataset.loc[df_dataset.id.isin(df_labels.id), 'PUlabels'] = 1
 
         return df_dataset
+
+    def evaluate_filter_by_keywords(self, keywords, scores, n_max, s_min):
+        """
+        Compute evaluation metrics for the generation of the subcorpus using
+        keywords
+
+        To do so, it requires from self.df_corpus to have at least the
+        following columns: id, title, description, target_bio, target_tic,
+        target_ene
+
+        Parameters
+        ----------
+        keywords : list of str
+           List of keywords
+        scores : list of float
+            list of unsorted scores
+        n_max: int or None, optional (defaul=1e100)
+            Maximum number of elements in the output list. The default is
+            a huge number that, in practice, means there is no limit
+       s_min: float, optional (default=0)¡
+            Minimum score. Only elements strictly above s_min are selected
+
+        Returns
+        -------
+        None
+        """
+
+        SAVE_ROC_CURVE = 0
+
+        # Copy relevant columns only
+        df_retrieved_docs = pd.DataFrame(columns=["id", "score"])
+
+        # Sort the docs according to the scores
+        s = np.array(scores)
+        ssort = -np.sort(-s)
+        isort = np.argsort(-s)
+        ids = self.df_corpus.iloc[isort]['id']
+
+        # Fill the information related to the retrieved docs
+        df_retrieved_docs['id'] = ids
+        df_retrieved_docs['score'] = ssort
+        df_retrieved_docs['output_smin'] = np.multiply(ssort > s_min, 1)
+        df_retrieved_docs['output_nmax'] = np.hstack(
+            (np.ones(n_max), np.zeros(len(s) - n_max)))
+
+        if keywords == ['biomedicine']:
+            aux_target = self.df_corpus.iloc[isort]['target_bio'].to_numpy()
+        elif keywords == ['information and communication technologies']:
+            aux_target = self.df_corpus.iloc[isort]['target_tic'].to_numpy()
+        elif keywords == ['energy']:
+            aux_target = self.df_corpus.iloc[isort]['target_ene'].to_numpy()
+        else:
+            logging.info(f'-- Keyword {keywords} non available for evaluation')
+            return
+        df_retrieved_docs['target'] = aux_target
+
+        # Metrics computation at s_min threshold
+        tn, fp, fn, tp = confusion_matrix(
+            df_retrieved_docs['target'],
+            df_retrieved_docs['output_smin']).ravel()
+        tpr_smin = tp / (tp + fn)
+        fpr_smin = fp / (fp + tn)
+        acc_smin = (tp + tn) / (tp + tn + fp + fn)
+        bal_acc_smin = 0.5 * (tpr_smin + 1 - fpr_smin)
+
+        # ## prfs = precision_recall_fscore_support(
+        # ##     df_retrieved_docs['target'],
+        # ##     df_retrieved_docs['output_smin'])
+        # ## ap = average_precision_score(df_retrieved_docs['target'],
+        # ##                             df_retrieved_docs['score'])
+
+        logging.info(
+            f'RESULTS of the KEYWORDS "{keywords}" at THRESHOLD {s_min}')
+        logging.info(f"Accuracy = {acc_smin:.4f}, "
+                     f"Balanced accuracy = {bal_acc_smin:.4f}")
+        logging.info(f"TPR (Recall) = {tpr_smin:.4f}, "
+                     f"FPR (Fall-out) = {fpr_smin:.4f}")
+        # ##logging.info("Precision = {0:.4f}, Recall = {1:.4f}, F1 = {2:.4f}"
+        # ##      .format(prfs[0][1], prfs[1][1], prfs[2][1]))
+        # ##logging.info("Average Precision = {0:.4f}".format(ap))
+
+        # Metrics computation at n_max retrieved documents
+        tn, fp, fn, tp = confusion_matrix(
+            df_retrieved_docs['target'],
+            df_retrieved_docs['output_nmax']).ravel()
+        tpr_nmax = tp / (tp + fn)
+        fpr_nmax = fp / (fp + tn)
+        acc_nmax = (tp + tn) / (tp + tn + fp + fn)
+        bal_acc_nmax = 0.5 * (tpr_nmax + 1 - fpr_nmax)
+
+        logging.info(f'RESULTS of the KEYWORDS "{keywords}" at '
+                     f'MAX_NUM DOCUMENTS {n_max}')
+        logging.info(f"Accuracy = {acc_nmax:.4f}, "
+                     f"Balanced accuracy = {bal_acc_nmax:.4f}")
+        logging.info(f"TPR (Recall) = {tpr_nmax:.4f}, "
+                     f"FPR (Fall-out) = {fpr_nmax:.4f}")
+
+        # Precision-Recall curve
+        # ##precision, recall, thresholds = precision_recall_curve(
+        # ##    df_retrieved_docs['target'], df_retrieved_docs['score'])
+
+        # ## fig,ax = plt.subplots()
+        # ## plt.plot(recall,precision,lw=2.5,label=keywords)
+        # ## plt.grid(b=True, which='major', color='gray', alpha=0.6,
+        # ##          linestyle='dotted', lw=1.5)
+        # ## plt.xlabel('Recall (R)')
+        # ## plt.ylabel('Precision (P)')
+        # ## plt.title('Precision-Recall curve')
+        # ## plt.legend()
+
+        # ROC curve
+        fpr_roc, tpr_roc, thresholds = roc_curve(
+            df_retrieved_docs['target'], df_retrieved_docs['score'])
+
+        if SAVE_ROC_CURVE:
+            fig, ax = plt.subplots()
+            plt.plot(fpr_roc, tpr_roc, lw=2.5, label=keywords)
+            plt.grid(b=True, which='major', color='gray', alpha=0.6,
+                     linestyle='dotted', lw=1.5)
+            plt.xlabel('False Positive Rate (FPR)')
+            plt.ylabel('True Positive Rate (TPR)')
+            plt.title('ROC curve')
+            plt.legend()
+            plt.savefig("Plot generated using Matplotlib.png")
+
+        # Dictionary with the evaluation results
+        tpr_roc_float = [float(k) for k in tpr_roc]
+        fpr_roc_float = [float(k) for k in fpr_roc]
+        eval_scores = {
+            'acc_smin': float(acc_smin),
+            'bal_acc_smin': float(bal_acc_smin),
+            'tpr_smin': float(tpr_smin),
+            'fpr_smin': float(fpr_smin),
+            'acc_nmax': float(acc_nmax),
+            'bal_acc_nmax': float(bal_acc_nmax),
+            'tpr_nmax': float(tpr_nmax),
+            'fpr_nmax': float(fpr_nmax),
+            'tpr_roc': tpr_roc_float,
+            'fpr_roc': fpr_roc_float}
+
+        return eval_scores

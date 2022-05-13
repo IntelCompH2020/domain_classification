@@ -99,7 +99,9 @@ class AnalyzeKeywordsWindow(QtWidgets.QDialog):
         ax2.tick_params(axis='both', which='major', labelsize=4)
         ax2.tick_params(axis='both', which='minor', labelsize=4)
         ax2.barh(hot_tokens, hot_values, align='center', alpha=0.4)
-        ax2.set_yticks(y_pos, hot_tokens)
+        # ax2.set_yticks(y_pos, hot_tokens)
+        ax2.set_yticks(y_pos)
+        ax2.set_yticklabels(hot_tokens)
         ax2.set_title("Document frequencies", fontsize=6)
         ax2.set_xlabel('No. of docs', fontsize=4)
 
@@ -110,7 +112,9 @@ class AnalyzeKeywordsWindow(QtWidgets.QDialog):
         ax3.tick_params(axis='both', which='major', labelsize=4)
         ax3.tick_params(axis='both', which='minor', labelsize=4)
         ax3.barh(hot_tokens, hot_values, align='center', alpha=0.4)
-        ax3.set_yticks(y_pos, hot_tokens)
+        # ax3.set_yticks(y_pos, hot_tokens)
+        ax3.set_yticks(y_pos)
+        ax3.set_yticklabels(hot_tokens)
         ax3.set_title("Keyword frequencies", fontsize=6)
         ax3.set_xlabel('No. of keywords', fontsize=4)
 

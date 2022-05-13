@@ -93,8 +93,8 @@ class CustomEncoderLayer(nn.Module):
 
     def forward(self, features: torch.Tensor, mask: torch.Tensor):
         """
-        Parameter
-        ---------
+        Parameters
+        ----------
         features: Tensor
             The sequence to the encoder
         mask: Tensor
@@ -134,8 +134,8 @@ class CustomClassificationHead(nn.Module):
 
     def forward(self, features: torch.Tensor):
         """
-        Parameter
-        ---------
+        Parameters
+        ----------
         features: Tensor
             The encoded text
         """
@@ -260,8 +260,8 @@ class CustomModel(nn.Module):
 
     def forward(self, features: torch.Tensor, mask: torch.Tensor):
         """
-        Parameter
-        ---------
+        Parameters
+        ----------
         features: Tensor
             The sequence to the encoder
         mask: Tensor
@@ -276,7 +276,7 @@ class CustomModel(nn.Module):
         """
         Train the model
 
-        Parameter
+        Parameters
         ----------
         df_train: DataFrame
             Training dataframe

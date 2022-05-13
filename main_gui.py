@@ -67,9 +67,11 @@ class PreConfig(QDialog):
         self.home = str(Path.home())
 
         # Variables for saving the project and source data folders
-        self.sourceFolder = self.args.source if self.args.source is not None else ""
+        self.sourceFolder = (
+            self.args.source if self.args.source is not None else "")
         self.projectFolder = self.args.p if self.args.p is not None else ""
-        self.zeroshotFolder = self.args.zeroshot if self.args.p is not None else ""
+        self.zeroshotFolder = (
+            self.args.zeroshot if self.args.p is not None else "")
 
         # Update image
         pixmap = QPixmap('Images/dc_logo.png')
@@ -92,6 +94,7 @@ class PreConfig(QDialog):
         self.selectProjectFolder.clicked.connect(self.get_project_folder)
         self.selectSourceDataFolder.clicked.connect(
             self.get_source_data_folder)
+
         self.selectZeroShot.clicked.connect(self.get_zeroshot_folder)
         self.start.clicked.connect(self.start_application)
 
@@ -117,6 +120,8 @@ class PreConfig(QDialog):
         self.zeroshotFolder = \
             QFileDialog.getExistingDirectory(
                 self, 'Select the folder with the zero shot model', self.home)
+
+        # self.showSourceDataFolder.setText(self.zeroshotFolder)
         self.showZeroShot.setText(self.zeroshotFolder)
 
     def start_application(self):
@@ -159,15 +164,15 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--p', type=str,
-        default="/Users/lbartolome/Documents/Intelcomp/project_folder",
+        default="../project_folder",
         help="path to a new or an existing project")
     parser.add_argument(
         '--source', type=str,
-        default="/Users/lbartolome/Documents/Intelcomp/datasets",
+        default="../datasets",
         help="path to the source data folder")
     parser.add_argument(
         '--zeroshot', type=str,
-        default='/Users/lbartolome/Documents/zero_shot_model/Sciro-Shot',
+        default='../zero_shot_model/Sciro-Shot',
         help="path to the zero-shot model folder")
     args = parser.parse_args()
 

@@ -37,7 +37,6 @@ class MenuNavigator(object):
             A task manager object, that will be in charge of executing all
             actions selected by the user through the menu interaction. Thus, it
             must contain:
-
             (1) One action method per method specified in the menu structure
             (2) Data collection methods, required for some menus with dynamic
             options.
