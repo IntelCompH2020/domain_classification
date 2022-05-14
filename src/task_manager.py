@@ -17,7 +17,6 @@ from .domain_classifier.classifier import CorpusClassifier
 from .utils import plotter
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 class TaskManager(baseTaskManager):
@@ -98,6 +97,7 @@ class TaskManager(baseTaskManager):
         self.path2dataset = self.path2project / self.f_struct['datasets']
         self.path2models = self.path2project / self.f_struct['models']
         self.path2embeddings = self.path2project / self.f_struct['embeddings']
+        self.path2output = self.path2project / self.f_struct['output']
 
         # Path to the folder containing the zero-shot model
         self.path2zeroshot = path2zeroshot
@@ -359,30 +359,19 @@ class TaskManager(baseTaskManager):
             # Save tpr fpr and ROC curve
             # FIXME: The name of the SBERT model should be read from the config
             # file (parameters.default.yaml or metadata file (metadata.yaml))
-            model_name = 'all-MiniLM-L6-v2'
-            results_out_fname = f'results_{model_name}_{self.keywords}_ROC'
-            results_fname = self.path2labels / results_out_fname
+            results_out_fname = f'{method}_{tag}_ROC'
+            results_fname = self.path2output / results_out_fname
             np.savez(results_fname, tpr_roc=eval_scores['tpr_roc'],
                      fpr_roc=eval_scores['fpr_roc'])
 
-            fig, ax = plt.subplots()
-            plt.plot(eval_scores['fpr_roc'], eval_scores['tpr_roc'],
-                     lw=2.5, label=self.keywords)
-            plt.grid(b=True, which='major', color='gray', alpha=0.6,
-                     linestyle='dotted', lw=1.5)
-            plt.xlabel('False Positive Rate (FPR)')
-            plt.ylabel('True Positive Rate (TPR)')
-            plt.title('ROC curve')
-            plt.legend()
-            figure_out_fname = f'figure_{model_name}_{self.keywords}_ROC'
-            figure_fname = self.path2labels / figure_out_fname
-            plt.savefig(figure_fname)
+            # Plot ROC curve.
+            path2figure = self.path2output / results_out_fname
+            plotter.plot_roc(eval_scores['fpr_roc'], eval_scores['tpr_roc'],
+                             label=tag, path2figure=path2figure)
 
-            # Save smin and nmax evaluation scores
-            # FIXME: The name of the SBERT model should be read from the config
-            # file (parameters.default.yaml or metadata file (metadata.yaml))
+            # Store all but FPR and TPR values in metadata
             del eval_scores['fpr_roc'], eval_scores['tpr_roc']
-            self.metadata[key][tag].__setitem__('eval_scores', eval_scores)
+            self.metadata[key][tag]['eval_scores'] = eval_scores
 
         self._save_metadata()
 
