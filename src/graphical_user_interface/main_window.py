@@ -219,7 +219,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.pushButtonGetFeedback.clicked.connect(
             lambda: self.tabs.setCurrentWidget(self.page_feedback))
 
-
     def init_ui(self):
         """
         Configures the elements of the GUI window that are not configured in the UI, i.e. icon of the application,
@@ -323,7 +322,6 @@ class MainWindow(QtWidgets.QMainWindow):
             # a different project folder in case he chooses a different corpus for
             # an already existing project
             if self.tm.state['selected_corpus'] and corpus_name != current_corpus:
-
                 # Show warning message
                 warning = "The corpus of this project is " + current_corpus + \
                           ". Run another project to use " + corpus_name + "."
@@ -355,11 +353,11 @@ class MainWindow(QtWidgets.QMainWindow):
             message_out = self.tm.import_labels()
         elif self.get_label_option == 2 or self.get_label_option == 3:
             message_out = self.tm.get_labels_by_keywords(
-                keywords = self.get_keywords_window.selectedKeywords,
-                wt = self.get_keywords_window.wt,
-                n_max = self.get_keywords_window.n_max,
-                s_min = self.get_keywords_window.s_min,
-                tag = self.get_keywords_window.selectedTag)
+                keywords=self.get_keywords_window.selectedKeywords,
+                wt=self.get_keywords_window.wt,
+                n_max=self.get_keywords_window.n_max,
+                s_min=self.get_keywords_window.s_min,
+                tag=self.get_keywords_window.selectedTag)
         elif self.get_label_option == 4:
             message_out = self.tm.get_labels_by_topics(
                 topic_weights=self.get_topics_list_window.tw,
@@ -370,10 +368,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 tag=self.get_topics_list_window.selectedTag)
         elif self.get_label_option == 5:
             message_out = self.tm.get_labels_by_zeroshot(
-                keywords = self.get_category_names_window.selectedKeywords,
-                n_max = self.get_category_names_window.n_max,
-                s_min = self.get_category_names_window.s_min,
-                tag = self.get_category_names_window.selectedTag)
+                keywords=self.get_category_names_window.selectedKeywords,
+                n_max=self.get_category_names_window.n_max,
+                s_min=self.get_category_names_window.s_min,
+                tag=self.get_category_names_window.selectedTag)
 
         self.message_out = message_out[3:]
 
@@ -768,14 +766,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 results.append(v)
             for i in np.arange(self.table_pu_classification_results.rowCount()):
                 self.table_pu_classification_results.setItem(
-                    i-1, 3, QtWidgets.QTableWidgetItem(str(results[i])))
+                    i - 1, 3, QtWidgets.QTableWidgetItem(str(results[i])))
         print(results)
-
 
         self.table_pu_classification_results.resizeColumnsToContents()
         self.table_pu_classification_results.resizeRowsToContents()
-
-
 
         # Show informative message in pop up window
         QtWidgets.QMessageBox.information(
@@ -1147,6 +1142,3 @@ class MainWindow(QtWidgets.QMainWindow):
             # Show warning message if the conditions for evaluating the model are not met
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.WARNING_REEVALUATION)
         return
-
-
-
