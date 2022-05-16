@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+
 """
-@author: lcalv
+@author: L. Calvo-Bartolome
 """
 
 # General imports
@@ -54,25 +55,6 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         # Initialize parameters in the GUI
         self.init_params()
 
-        # INFORMATION BUTTONS
-        #######################################################################
-        self.info_button_topic_list.setIcon(QIcon('Images/help2.png'))
-        self.info_button_topic_list.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_topic_list.width(),
-                                            self.info_button_topic_list.height()))
-        self.info_button_selected_tag.setIcon(QIcon('Images/help2.png'))
-        self.info_button_selected_tag.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_selected_tag.width(),
-                                            self.info_button_selected_tag.height()))
-        self.info_button_introduce_weights.setIcon(QIcon('Images/help2.png'))
-        self.info_button_introduce_weights.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_selected_tag.width(),
-                                            self.info_button_selected_tag.height()))
-        self.info_button_get_labels_by_topics_parameters.setIcon(QIcon('Images/help2.png'))
-        self.info_button_get_labels_by_topics_parameters.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_selected_tag.width(),
-                                            self.info_button_selected_tag.height()))
-
         # CONNECTION WITH HANDLER FUNCTIONS
         #######################################################################
         self.table_widget_topics_weight.cellChanged.connect(
@@ -84,7 +66,7 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         """Configures the elements of the GUI window that are not configured in the UI, i.e. icon of the application,
         the application's title, and the position of the window at its opening.
         """
-        self.setWindowIcon(QIcon('Images/dc_logo.png'))
+        self.setWindowIcon(QIcon('UIs/Images/dc_logo.png'))
         self.setWindowTitle(Messages.WINDOW_TITLE)
         self.center()
 

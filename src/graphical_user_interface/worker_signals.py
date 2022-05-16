@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
+
 """
-Created on Tue Mar  2 13:19:34 2021
-@author: lcalv
+@author: L. Calvo-Bartolome
 """
 
 from PyQt5 import QtCore

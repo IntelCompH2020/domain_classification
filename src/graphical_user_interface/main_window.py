@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+
 """
-@author: lcalv
+@author: L. Calvo-Bartolome
 """
 
 import numpy as np
@@ -111,62 +112,6 @@ class MainWindow(QtWidgets.QMainWindow):
               " %d threads" % self.thread_pool.maxThreadCount())
 
         # #####################################################################
-        # INFORMATION BUTTONS: Set image and size
-        # #####################################################################
-        # TAB LOADING
-        self.info_button_select_corpus.setIcon(QIcon('Images/help2.png'))
-        self.info_button_select_corpus.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_select_corpus.width(),
-                                            self.info_button_select_corpus.height()))
-
-        self.info_button_get_labels.setIcon(QIcon('Images/help2.png'))
-        self.info_button_get_labels.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_get_labels.width(),
-                                            self.info_button_get_labels.height()))
-
-        self.info_button_load_reset_labels.setIcon(QIcon('Images/help2.png'))
-        self.info_button_load_reset_labels.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
-                                            self.info_button_load_reset_labels.height()))
-
-        # TAB TRAINING-EVALUATION
-        self.info_button_train_pu_model.setIcon(QIcon('Images/help2.png'))
-        self.info_button_train_pu_model.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
-                                            self.info_button_load_reset_labels.height()))
-
-        self.info_button_eval_pu_classifier.setIcon(QIcon('Images/help2.png'))
-        self.info_button_eval_pu_classifier.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
-                                            self.info_button_load_reset_labels.height()))
-
-        self.info_button_params_classifier.setIcon(QIcon('Images/help2.png'))
-        self.info_button_params_classifier.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
-                                            self.info_button_load_reset_labels.height()))
-
-        self.info_button_pu_classification_results.setIcon(QIcon('Images/help2.png'))
-        self.info_button_pu_classification_results.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
-                                            self.info_button_load_reset_labels.height()))
-
-        # TAB FEEDBACK
-        self.info_button_give_feedback.setIcon(QIcon('Images/help2.png'))
-        self.info_button_give_feedback.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
-                                            self.info_button_load_reset_labels.height()))
-
-        self.info_button_ndocs_al.setIcon(QIcon('Images/help2.png'))
-        self.info_button_ndocs_al.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
-                                            self.info_button_load_reset_labels.height()))
-
-        self.info_button_pu_reclassification_results.setIcon(QIcon('Images/help2.png'))
-        self.info_button_pu_reclassification_results.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
-                                            self.info_button_load_reset_labels.height()))
-
-        # #####################################################################
         # CONFIGURE ELEMENTS IN THE "LOAD CORPUS VIEW"
         # #####################################################################
         # The loading bar is initially not visible
@@ -224,12 +169,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # GET FEEDBACK WIDGETS
         # #####################################################################
-        self.give_feedback_user_push_button.clicked.connect(
+        self.give_feedback_push_button.clicked.connect(
             self.clicked_give_feedback)
         self.update_ndocs_al_push_button.clicked.connect(self.clicked_update_ndocs_al)
-        self.retrain_pu_model_push_button.clicked.connect(
+        self.retrain_model_push_button.clicked.connect(
             self.clicked_retrain_model)
-        self.reevaluate_pu_model_push_button.clicked.connect(
+        self.reevaluate_model_push_button.clicked.connect(
             self.clicked_reevaluate_model)
 
         checkboxes_predictions = []
@@ -248,8 +193,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.progress_bar_feedback_update.setVisible(False)
         self.progress_bar_feedback_update.setValue(0)
 
-        self.table_pu_reclassification_results.resizeColumnsToContents()
-        self.table_pu_reclassification_results.resizeRowsToContents()
+        self.table_reclassification_results.resizeColumnsToContents()
+        self.table_reclassification_results.resizeRowsToContents()
 
         # Initialize the value for the number of documents to annotate based on the default value noted in the
         # configuration file
@@ -259,42 +204,28 @@ class MainWindow(QtWidgets.QMainWindow):
         # TOGGLE MENU
         # #####################################################################
         self.toggleButton.clicked.connect(lambda: toggle_menu(self, 250))
-        self.toggleButton.setIcon(QIcon('Images/menu.png'))
-        self.toggleButton.setIconSize(Constants.BUTTONS_SCALE * QSize(self.toggleButton.width(),
-                                                                      self.toggleButton.height()))
 
         # PAGES
         # #####################################################################
         # PAGE 1: Load corpus/ labels
         self.pushButtonLoad.clicked.connect(
             lambda: self.tabs.setCurrentWidget(self.page_load))
-        self.pushButtonLoad.setIcon(QIcon('Images/settings.png'))
-        self.pushButtonLoad.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.pushButtonLoad.width(),
-                                            self.pushButtonLoad.height()))
+
         # PAGE 2: Train classifier
         self.pushButtonTrain.clicked.connect(
             lambda: self.tabs.setCurrentWidget(self.page_train))
-        self.pushButtonTrain.setIcon(QIcon('Images/training.png'))
-        self.pushButtonTrain.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.pushButtonTrain.width(),
-                                            self.pushButtonTrain.height()))
+
         # PAGE 3: Get relevance feedback
         self.pushButtonGetFeedback.clicked.connect(
             lambda: self.tabs.setCurrentWidget(self.page_feedback))
-        self.pushButtonGetFeedback.setIcon(QIcon('Images/feedback.png'))
-        self.pushButtonGetFeedback.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.pushButtonTrain.width(),
-                                            self.pushButtonTrain.height()))
+
 
     def init_ui(self):
         """
         Configures the elements of the GUI window that are not configured in the UI, i.e. icon of the application,
         the application's title, and the position of the window at its opening.
         """
-        pixmap = QPixmap('Images/dc_logo2.png')
-        self.label_logo.setPixmap(pixmap)
-        self.setWindowIcon(QIcon('Images/dc_logo.png'))
+        self.setWindowIcon(QIcon('UIs/Images/dc_logo.png'))
         self.setWindowTitle(Messages.WINDOW_TITLE)
         self.resize(self.minimumSizeHint())
         self.center()
@@ -763,7 +694,7 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.information(
             self, Messages.DC_MESSAGE,
             "The PU model has been trained.")
-        
+
         return
 
     def clicked_train_PU_model(self):
@@ -774,17 +705,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Check if a corpus has been selected. Otherwise, the training cannot be carried out
         if self.corpus_selected_name is not None and self.tm.df_labels is not None:
-            
+
             # Execute the PU model training in the secondary thread
             execute_in_thread(
                 self, self.execute_train_classifier, self.do_after_train_classifier,
                 self.progress_bar_train)
         else:
-            
+
             # Show warning message if training could not be carried out as either no corpus or
             # not labels were selected at the time the request was made
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.WARNING_TRAINING)
-            
+
         return
 
     # #########################################################################
@@ -838,9 +769,13 @@ class MainWindow(QtWidgets.QMainWindow):
             for i in np.arange(self.table_pu_classification_results.rowCount()):
                 self.table_pu_classification_results.setItem(
                     i-1, 3, QtWidgets.QTableWidgetItem(str(results[i])))
+        print(results)
+
 
         self.table_pu_classification_results.resizeColumnsToContents()
         self.table_pu_classification_results.resizeRowsToContents()
+
+
 
         # Show informative message in pop up window
         QtWidgets.QMessageBox.information(
@@ -1065,7 +1000,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def clicked_give_feedback(self):
         """
-        Method that controls the actions that are carried out when the button "give_feedback_user_push_button" is
+        Method that controls the actions that are carried out when the button "give_feedback_push_button" is
         clicked by the user.
         """
 
@@ -1081,12 +1016,12 @@ class MainWindow(QtWidgets.QMainWindow):
     @pyqtSlot(str)
     def append_text_retrain_reval(self, text):
         """
-        Method to redirect the stdout and stderr in the "text_edit_results_reval_retrain_pu_model"
+        Method to redirect the stdout and stderr in the "text_edit_results_reval_retrain"
         while the retraining of a PU model is being performed.
         """
 
-        self.text_edit_results_reval_retrain_pu_model.moveCursor(QTextCursor.End)
-        self.text_edit_results_reval_retrain_pu_model.insertPlainText(text)
+        self.text_edit_results_reval_retrain.moveCursor(QTextCursor.End)
+        self.text_edit_results_reval_retrain.insertPlainText(text)
 
         return
 
@@ -1126,7 +1061,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def clicked_retrain_model(self):
         """
-        Method that controls the actions that are carried out when the button "retrain_pu_model_push_button" is
+        Method that controls the actions that are carried out when the button "retrain_model_push_button" is
         clicked by the user.
         """
 
@@ -1180,12 +1115,12 @@ class MainWindow(QtWidgets.QMainWindow):
             results = []
             for r, v in self.result_reevaluation_pu_model.items():
                 results.append(v)
-            for i in np.arange(self.table_pu_reclassification_results.rowCount()):
-                self.table_pu_reclassification_results.setItem(
+            for i in np.arange(self.table_reclassification_results.rowCount()):
+                self.table_reclassification_results.setItem(
                     i - 1, 3, QtWidgets.QTableWidgetItem(str(results[i])))
 
-        self.table_pu_reclassification_results.resizeColumnsToContents()
-        self.table_pu_reclassification_results.resizeRowsToContents()
+        self.table_reclassification_results.resizeColumnsToContents()
+        self.table_reclassification_results.resizeRowsToContents()
 
         # Show message in pop up window
         QtWidgets.QMessageBox.information(
@@ -1196,7 +1131,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def clicked_reevaluate_model(self):
         """
-        Method that controls the actions that are carried out when the button "retrain_pu_model_push_button" is
+        Method that controls the actions that are carried out when the button "retrain_model_push_button" is
         clicked by the user.
         """
 

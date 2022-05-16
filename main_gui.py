@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+
 """
-@author: lcalv
+Main program for the graphical user interface
+
+@author: L. Calvo-Bartolome
 """
 
 import sys
@@ -74,7 +77,7 @@ class PreConfig(QDialog):
             self.args.zeroshot if self.args.p is not None else "")
 
         # Update image
-        pixmap = QPixmap('Images/dc_logo.png')
+        pixmap = QPixmap('UIs/Images/dc_logo.png')
         self.label.setPixmap(pixmap)
 
         # Update project and source folder in the GUI if provided through the
@@ -178,7 +181,7 @@ def main():
 
     # Create application
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon('Images/dc_logo.png'))
+    app.setWindowIcon(QIcon('UIs/Images/dc_logo.png'))
 
     # Configure widgets
     widget = QtWidgets.QStackedWidget()

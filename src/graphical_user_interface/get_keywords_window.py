@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+
 """
-@author: lcalv
+@author: L. Calvo-Bartolome
 """
+
 
 # General imports
 from PyQt5 import uic, QtWidgets
@@ -55,17 +57,6 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         # Initialize parameters in the GUI
         self.init_params()
 
-        # INFORMATION BUTTONS
-        # #####################################################################
-        self.info_button_selected_keywords.setIcon(QIcon('Images/help2.png'))
-        self.info_button_selected_keywords.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_selected_keywords.width(),
-                                            self.info_button_selected_keywords.height()))
-        self.info_button_selected_tag.setIcon(QIcon('Images/help2.png'))
-        self.info_button_selected_tag.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_selected_tag.width(),
-                                            self.info_button_selected_tag.height()))
-
         # CONNECTION WITH HANDLER FUNCTIONS
         # #####################################################################
         self.get_labels_push_button.clicked.connect(
@@ -75,7 +66,7 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         """Configures the elements of the GUI window that are not configured in the UI, i.e. icon of the application,
         the application's title, and the position of the window at its opening.
         """
-        self.setWindowIcon(QIcon('Images/dc_logo.png'))
+        self.setWindowIcon(QIcon('UIs/Images/dc_logo.png'))
         self.setWindowTitle(Messages.WINDOW_TITLE)
         self.center()
 
