@@ -21,7 +21,6 @@ from transformers import (
 # from sklearn.metrics import precision_recall_fscore_support
 # from sklearn.metrics import average_precision_score, precision_recall_curve
 from sklearn.metrics import confusion_matrix, roc_curve
-import matplotlib.pyplot as plt
 
 
 class CorpusProcessor(object):
@@ -118,14 +117,6 @@ class CorpusProcessor(object):
         if self.path2embeddings is None:
             score = self.score_docs_by_keyword_count(corpus, keywords)
             return score
-
-        # FIXME: The name of the SBERT model should be configurable. Move it to
-        #        the config file (parameters.default.yaml)
-        # model_name = 'distilbert-base-nli-mean-tokens'
-        # model_name = 'all-MiniLM-L6-v2'
-        # model_name = 'all-mpnet-base-v2'
-        # model_name = 'msmarco-distilbert-cos-v5'
-        # model_name = 'allenai-specter'
 
         # 1. Load sentence transformer model
         model = SentenceTransformer(model_name)
@@ -304,6 +295,90 @@ class CorpusProcessor(object):
 
         return ind
 
+    def performance_metrics(self, scores, target, s_min, n_max):
+        """
+        Compute evaluation metrics for the generation of the subcorpus using
+        a keyword
+
+        To do so, it requires from self.df_corpus to have at least the
+        following columns: id, title, description, target_bio, target_tic,
+        target_ene
+
+        Parameters
+        ----------
+        scores : np.array
+            Score values
+        target : np.array
+            Target values
+        s_min: float, optional (default=0)¡
+            Minimum score. Only elements strictly above s_min are selected
+        n_max: int or None, optional (defaul=1e100)
+            Maximum number of elements in the output list. The default is
+            a huge number that, in practice, means there is no limit
+
+        Returns
+        -------
+        eval_scores: dict
+            A dictionary of evaluation metrics.
+        """
+
+        # Sort scores and target values
+        s = np.array(scores)
+        ssort = -np.sort(-s)
+        isort = np.argsort(-s)
+        target_sorted = target[isort]
+
+        # Fill the information related to the retrieved docs
+        df_output_smin = np.multiply(ssort > s_min, 1)
+        df_output_nmax = np.hstack(
+            (np.ones(n_max), np.zeros(len(s) - n_max)))
+
+        # Metrics computation at s_min threshold
+        tn, fp, fn, tp = confusion_matrix(
+            target_sorted, df_output_smin).ravel()
+        tpr_smin = tp / (tp + fn)
+        fpr_smin = fp / (fp + tn)
+        acc_smin = (tp + tn) / (tp + tn + fp + fn)
+        bal_acc_smin = 0.5 * (tpr_smin + 1 - fpr_smin)
+
+        # ## prfs = precision_recall_fscore_support(
+        # ##     df_retrieved_docs['target'],
+        # ##     df_retrieved_docs['output_smin'])
+        # ## ap = average_precision_score(df_retrieved_docs['target'],
+        # ##                             df_retrieved_docs['score'])
+
+        # Metrics computation at n_max retrieved documents
+        tn, fp, fn, tp = confusion_matrix(
+            target_sorted, df_output_nmax).ravel()
+        tpr_nmax = tp / (tp + fn)
+        fpr_nmax = fp / (fp + tn)
+        acc_nmax = (tp + tn) / (tp + tn + fp + fn)
+        bal_acc_nmax = 0.5 * (tpr_nmax + 1 - fpr_nmax)
+
+        # Precision-Recall curve
+        # ##precision, recall, thresholds = precision_recall_curve(
+        # ##    df_retrieved_docs['target'], df_retrieved_docs['score'])
+
+        # ROC curve
+        fpr_roc, tpr_roc, thresholds = roc_curve(target_sorted, ssort)
+
+        # Dictionary with the evaluation results
+        tpr_roc_float = [float(k) for k in tpr_roc]
+        fpr_roc_float = [float(k) for k in fpr_roc]
+        eval_scores = {
+            'acc_smin': float(acc_smin),
+            'bal_acc_smin': float(bal_acc_smin),
+            'tpr_smin': float(tpr_smin),
+            'fpr_smin': float(fpr_smin),
+            'acc_nmax': float(acc_nmax),
+            'bal_acc_nmax': float(bal_acc_nmax),
+            'tpr_nmax': float(tpr_nmax),
+            'fpr_nmax': float(fpr_nmax),
+            'tpr_roc': tpr_roc_float,
+            'fpr_roc': fpr_roc_float}
+
+        return eval_scores
+
 
 class CorpusDFProcessor(object):
     """
@@ -350,8 +425,6 @@ class CorpusDFProcessor(object):
         self.df_corpus = df_corpus
 
         # This class uses methods from the corpus processor class.
-        # FIXME: Uset CorpusProcessor as a base class and inherit
-        #        CorpusDFProcessor from CorpusProcessor
         self.prep = CorpusProcessor(self.path2embeddings, self.path2zeroshot)
 
         return
@@ -618,26 +691,15 @@ class CorpusDFProcessor(object):
         -------
         ids : list
             List of ids of the selected documents
-        eval_scores: dict
-            A dictionary of evaluation metrics. If there are no labels
-            available for evaluation, an empty dictionary is returned.
+        scores : list of float
+            List of scores, one per documents in corpus
         """
 
         scores = self.score_by_keywords(keywords, wt, model_name, method)
         ids = self.get_top_scores(scores, n_max=n_max, s_min=s_min)
 
-        if set(['target_bio', 'target_tic', 'target_ene']).issubset(
-                self.df_corpus.columns):
-            # Evaluation
-            # FIXME: This is done for a specific dataset only. This code should
-            #        be moved to a specific evaluation method
-            eval_scores = self.evaluate_filter_by_keywords(
-                keywords, scores, n_max, s_min)
-        else:
-            eval_scores = {}
-
         # ## return ids
-        return ids, eval_scores
+        return ids, scores
 
     def filter_by_topics(self, T, doc_ids, topic_weights, n_max=1e100,
                          s_min=0):
@@ -736,10 +798,10 @@ class CorpusDFProcessor(object):
 
         return df_dataset
 
-    def evaluate_filter_by_keywords(self, keywords, scores, n_max, s_min):
+    def evaluate_filter(
+            self, scores, target_col, n_max, s_min, verbose=False):
         """
-        Compute evaluation metrics for the generation of the subcorpus using
-        keywords
+        Compute evaluation metrics for the generation of the subcorpus
 
         To do so, it requires from self.df_corpus to have at least the
         following columns: id, title, description, target_bio, target_tic,
@@ -747,132 +809,49 @@ class CorpusDFProcessor(object):
 
         Parameters
         ----------
-        keywords : list of str
-           List of keywords
         scores : list of float
             list of unsorted scores
+        target_col : str
+            Name of the column in the corpus dataframe that will be used
+            as a reference for evaluation.
         n_max: int or None, optional (defaul=1e100)
             Maximum number of elements in the output list. The default is
             a huge number that, in practice, means there is no limit
-       s_min: float, optional (default=0)¡
+        s_min: float, optional (default=0)¡
             Minimum score. Only elements strictly above s_min are selected
+        verbose : bool, optional
+            If true, the evaluation results are logged at level INFO.
 
         Returns
         -------
-        None
+        eval_scores : dict
+            A dictionary of evaluation metrics. If there are no labels
+            available for evaluation, an empty dictionary is returned.
         """
 
-        SAVE_ROC_CURVE = 0
+        target = self.df_corpus[target_col].to_numpy()
+        eval_scores = self.prep.performance_metrics(
+            scores, target, s_min, n_max)
 
-        # Copy relevant columns only
-        df_retrieved_docs = pd.DataFrame(columns=["id", "score"])
+        if verbose:
+            logging.info(f'-- RESULTS for THRESHOLD {s_min}')
+            logging.info(f"-- -- Accuracy = {eval_scores['acc_smin']:.4f}")
+            logging.info(
+                f"-- -- Balanced accuracy = {eval_scores['bal_acc_smin']:.4f}")
+            logging.info(f"-- -- TPR (Recall) = {eval_scores['tpr_smin']:.4f}")
+            logging.info(
+                f"-- -- FPR (Fall-out) = {eval_scores['fpr_smin']:.4f}")
+            # logging.info(f"-- -- Precision = {prfs[0][1]:.4f}")
+            # logging.info(f"-- -- Recall = {prfs[1][1]:.4f}")
+            # logging.info(f"-- -- F1 = {prfs[2][1]:.4f}")
+            # logging.info(f"Average Precision = {ap:.4f}")
 
-        # Sort the docs according to the scores
-        s = np.array(scores)
-        ssort = -np.sort(-s)
-        isort = np.argsort(-s)
-        ids = self.df_corpus.iloc[isort]['id']
-
-        # Fill the information related to the retrieved docs
-        df_retrieved_docs['id'] = ids
-        df_retrieved_docs['score'] = ssort
-        df_retrieved_docs['output_smin'] = np.multiply(ssort > s_min, 1)
-        df_retrieved_docs['output_nmax'] = np.hstack(
-            (np.ones(n_max), np.zeros(len(s) - n_max)))
-
-        if keywords == ['biomedicine']:
-            aux_target = self.df_corpus.iloc[isort]['target_bio'].to_numpy()
-        elif keywords == ['information and communication technologies']:
-            aux_target = self.df_corpus.iloc[isort]['target_tic'].to_numpy()
-        elif keywords == ['energy']:
-            aux_target = self.df_corpus.iloc[isort]['target_ene'].to_numpy()
-        else:
-            logging.info(f'-- Keyword {keywords} non available for evaluation')
-            return
-        df_retrieved_docs['target'] = aux_target
-
-        # Metrics computation at s_min threshold
-        tn, fp, fn, tp = confusion_matrix(
-            df_retrieved_docs['target'],
-            df_retrieved_docs['output_smin']).ravel()
-        tpr_smin = tp / (tp + fn)
-        fpr_smin = fp / (fp + tn)
-        acc_smin = (tp + tn) / (tp + tn + fp + fn)
-        bal_acc_smin = 0.5 * (tpr_smin + 1 - fpr_smin)
-
-        # ## prfs = precision_recall_fscore_support(
-        # ##     df_retrieved_docs['target'],
-        # ##     df_retrieved_docs['output_smin'])
-        # ## ap = average_precision_score(df_retrieved_docs['target'],
-        # ##                             df_retrieved_docs['score'])
-
-        logging.info(
-            f'RESULTS of the KEYWORDS "{keywords}" at THRESHOLD {s_min}')
-        logging.info(f"Accuracy = {acc_smin:.4f}, "
-                     f"Balanced accuracy = {bal_acc_smin:.4f}")
-        logging.info(f"TPR (Recall) = {tpr_smin:.4f}, "
-                     f"FPR (Fall-out) = {fpr_smin:.4f}")
-        # ##logging.info("Precision = {0:.4f}, Recall = {1:.4f}, F1 = {2:.4f}"
-        # ##      .format(prfs[0][1], prfs[1][1], prfs[2][1]))
-        # ##logging.info("Average Precision = {0:.4f}".format(ap))
-
-        # Metrics computation at n_max retrieved documents
-        tn, fp, fn, tp = confusion_matrix(
-            df_retrieved_docs['target'],
-            df_retrieved_docs['output_nmax']).ravel()
-        tpr_nmax = tp / (tp + fn)
-        fpr_nmax = fp / (fp + tn)
-        acc_nmax = (tp + tn) / (tp + tn + fp + fn)
-        bal_acc_nmax = 0.5 * (tpr_nmax + 1 - fpr_nmax)
-
-        logging.info(f'RESULTS of the KEYWORDS "{keywords}" at '
-                     f'MAX_NUM DOCUMENTS {n_max}')
-        logging.info(f"Accuracy = {acc_nmax:.4f}, "
-                     f"Balanced accuracy = {bal_acc_nmax:.4f}")
-        logging.info(f"TPR (Recall) = {tpr_nmax:.4f}, "
-                     f"FPR (Fall-out) = {fpr_nmax:.4f}")
-
-        # Precision-Recall curve
-        # ##precision, recall, thresholds = precision_recall_curve(
-        # ##    df_retrieved_docs['target'], df_retrieved_docs['score'])
-
-        # ## fig,ax = plt.subplots()
-        # ## plt.plot(recall,precision,lw=2.5,label=keywords)
-        # ## plt.grid(b=True, which='major', color='gray', alpha=0.6,
-        # ##          linestyle='dotted', lw=1.5)
-        # ## plt.xlabel('Recall (R)')
-        # ## plt.ylabel('Precision (P)')
-        # ## plt.title('Precision-Recall curve')
-        # ## plt.legend()
-
-        # ROC curve
-        fpr_roc, tpr_roc, thresholds = roc_curve(
-            df_retrieved_docs['target'], df_retrieved_docs['score'])
-
-        if SAVE_ROC_CURVE:
-            fig, ax = plt.subplots()
-            plt.plot(fpr_roc, tpr_roc, lw=2.5, label=keywords)
-            plt.grid(b=True, which='major', color='gray', alpha=0.6,
-                     linestyle='dotted', lw=1.5)
-            plt.xlabel('False Positive Rate (FPR)')
-            plt.ylabel('True Positive Rate (TPR)')
-            plt.title('ROC curve')
-            plt.legend()
-            plt.savefig("Plot generated using Matplotlib.png")
-
-        # Dictionary with the evaluation results
-        tpr_roc_float = [float(k) for k in tpr_roc]
-        fpr_roc_float = [float(k) for k in fpr_roc]
-        eval_scores = {
-            'acc_smin': float(acc_smin),
-            'bal_acc_smin': float(bal_acc_smin),
-            'tpr_smin': float(tpr_smin),
-            'fpr_smin': float(fpr_smin),
-            'acc_nmax': float(acc_nmax),
-            'bal_acc_nmax': float(bal_acc_nmax),
-            'tpr_nmax': float(tpr_nmax),
-            'fpr_nmax': float(fpr_nmax),
-            'tpr_roc': tpr_roc_float,
-            'fpr_roc': fpr_roc_float}
+            logging.info(f'-- RESULTS for MAX_NUM DOCUMENTS {n_max}')
+            logging.info(f"-- -- Accuracy = {eval_scores['acc_nmax']:.4f}")
+            logging.info(
+                f"-- -- Balanced accuracy = {eval_scores['bal_acc_nmax']:.4f}")
+            logging.info(f"-- -- TPR (Recall) = {eval_scores['tpr_nmax']:.4f}")
+            logging.info(
+                f"-- -- FPR (Fall-out) = {eval_scores['fpr_nmax']:.4f}")
 
         return eval_scores
