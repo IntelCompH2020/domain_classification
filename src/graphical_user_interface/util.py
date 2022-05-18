@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+
 """
-@author: lcalv
+@author: L. Calvo-Bartolome
 """
 
 # General imports
@@ -29,7 +30,7 @@ def toggle_menu(gui, max_width):
 
     # Get width
     width = gui.frame_left_menu.width()
-    max_extend = max_width
+    max_extend = 180
     standard = 70
 
     # Set maximum width

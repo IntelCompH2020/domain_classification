@@ -249,6 +249,16 @@ QToolTip {
              <property name="text">
               <string/>
              </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>Images/help3.png</normaloff>Images/help3.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
             </widget>
            </item>
            <item>
@@ -603,6 +613,16 @@ QToolTip {
              </property>
              <property name="text">
               <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>Images/help3.png</normaloff>Images/help3.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
              </property>
             </widget>
            </item>
