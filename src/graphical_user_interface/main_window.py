@@ -54,7 +54,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Load UI and configure default geometry of the window
         #######################################################################
-        uic.loadUi("UIS/DomainClassifier.ui", self)
+        uic.loadUi("UIs/DomainClassifier.ui", self)
         self.init_ui()
         self.animation = QtCore.QPropertyAnimation(self.frame_left_menu,
                                                    b"minimumWidth")

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1159</width>
-    <height>753</height>
+    <width>1000</width>
+    <height>738</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -28,9 +28,11 @@ QToolTip {
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
-    <string notr="true">background: transparent;
-color: rgb(0, 0, 0);
-
+    <string notr="true">QWidget{
+	font: 11pt &quot;Arial&quot;;
+	background-color: transparent;
+	color:black;
+}
 </string>
    </property>
    <layout class="QGridLayout" name="gridLayout_3">
@@ -962,8 +964,11 @@ QToolTip {
                            <widget class="QLabel" name="label_select_dataset">
                             <property name="font">
                              <font>
-                              <weight>75</weight>
-                              <bold>true</bold>
+                              <family>Arial</family>
+                              <pointsize>11</pointsize>
+                              <weight>50</weight>
+                              <italic>false</italic>
+                              <bold>false</bold>
                              </font>
                             </property>
                             <property name="text">
@@ -1108,8 +1113,11 @@ QPushButton:pressed {
                             </property>
                             <property name="font">
                              <font>
-                              <weight>75</weight>
-                              <bold>true</bold>
+                              <family>Arial</family>
+                              <pointsize>11</pointsize>
+                              <weight>50</weight>
+                              <italic>false</italic>
+                              <bold>false</bold>
                              </font>
                             </property>
                             <property name="text">
@@ -1332,8 +1340,11 @@ QToolTip {
                              <widget class="QLabel" name="labelGetLabels_2">
                               <property name="font">
                                <font>
-                                <weight>75</weight>
-                                <bold>true</bold>
+                                <family>Arial</family>
+                                <pointsize>11</pointsize>
+                                <weight>50</weight>
+                                <italic>false</italic>
+                                <bold>false</bold>
                                </font>
                               </property>
                               <property name="text">
@@ -1579,8 +1590,11 @@ QToolTip {
                              <widget class="QLabel" name="label_load_reset_labels">
                               <property name="font">
                                <font>
-                                <weight>75</weight>
-                                <bold>true</bold>
+                                <family>Arial</family>
+                                <pointsize>11</pointsize>
+                                <weight>50</weight>
+                                <italic>false</italic>
+                                <bold>false</bold>
                                </font>
                               </property>
                               <property name="text">
@@ -1767,8 +1781,11 @@ QPushButton:pressed {
                               </property>
                               <property name="font">
                                <font>
-                                <weight>75</weight>
-                                <bold>true</bold>
+                                <family>Arial</family>
+                                <pointsize>11</pointsize>
+                                <weight>50</weight>
+                                <italic>false</italic>
+                                <bold>false</bold>
                                </font>
                               </property>
                               <property name="text">
@@ -1887,8 +1904,11 @@ QToolTip {
                              <widget class="QLabel" name="label_select_dataset_18">
                               <property name="font">
                                <font>
-                                <weight>75</weight>
-                                <bold>true</bold>
+                                <family>Arial</family>
+                                <pointsize>11</pointsize>
+                                <weight>50</weight>
+                                <italic>false</italic>
+                                <bold>false</bold>
                                </font>
                               </property>
                               <property name="text">
@@ -1975,8 +1995,11 @@ QToolTip {
                               </property>
                               <property name="font">
                                <font>
-                                <weight>75</weight>
-                                <bold>true</bold>
+                                <family>Arial</family>
+                                <pointsize>11</pointsize>
+                                <weight>50</weight>
+                                <italic>false</italic>
+                                <bold>false</bold>
                                </font>
                               </property>
                               <property name="text">
@@ -2048,61 +2071,63 @@ QToolTip {
                                   <height>16777215</height>
                                  </size>
                                 </property>
+                                <property name="focusPolicy">
+                                 <enum>Qt::NoFocus</enum>
+                                </property>
                                 <property name="styleSheet">
                                  <string notr="true">QTableWidget {	
 	padding: 10px;
 	border-radius: 5px;
 	gridline-color: #DFE6ED;
 	color:black;
+	selection-color: #C7CDDA; 
+	selection-background-color: #C7CDDA; 
+}
+QTableView::item { 
+	background-color: #ABC2CB; 
+	color:black;
+}
+QTableView::item:selected{ 
+	background-color: #ABC2CB; 
+	color:black;
+}
 
+QTableView::item:selected:active{ 
+	background-color: #ABC2CB; 
 }
-QTableWidget::item{
-	background-color: #ABC2CB;
-	border-color: #DFE6ED;
-	padding-left: 5px;
-	padding-right: 5px;
-	gridline-color: #DFE6ED;
-}
-QTableWidget::item:selected{
-	background-color: #C7CDDA;
-}
+
 QScrollBar:horizontal {
     border: none;
     background: #A3A8AD;
-    height: 14px;
-    margin: 0px 21px 0 21px;
+    height: 2px;
+    margin: 0px 2px 0 2px;
 	border-radius: 0px;
 }
+
  QScrollBar:vertical {
 	border: none;
     background: #A3A8AD;
-    width: 14px;
-    margin: 21px 0 21px 0;
+    width: 2px;
+    margin: 2px 0 2px 0;
 	border-radius: 0px;
  }
-QHeaderView::section{
-	Background-color: #576079;
-	max-width: 30px;
-	border: 1px solid #576079;
-	border-style: none;
-    border-bottom: 1px solid #576079;
-    border-right: 1px solid #576079;
-	color:white;
+
+QHeaderView::section:horizontal
+{
+	background-color: #576079;
+	padding: 3px;
+    border-bottom: 1px solid #DFE6ED;
+    border-right: 1px solid #DFE6ED;
+    border-top: 1px solid #DFE6ED;
+    border-left: 1px solid #DFE6ED;
 }
+
 QTableWidget::horizontalHeader {	
 	background-color: #576079;
 }
-QHeaderView::section:horizontal
-{
-    border: 1px solid #DFE6ED;
+
+QTableWidget::verticalHeader {	
 	background-color: #576079;
-	padding: 3px;
-	border-top-left-radius: 7px;
-    border-top-right-radius: 7px;
-}
-QHeaderView::section:vertical
-{
-    border: 1px solid #576079;
 }
 
 QToolTip {	
@@ -2115,9 +2140,18 @@ QToolTip {
                                  <enum>QAbstractScrollArea::AdjustIgnored</enum>
                                 </property>
                                 <property name="editTriggers">
-                                 <set>QAbstractItemView::CurrentChanged|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
+                                 <set>QAbstractItemView::CurrentChanged</set>
                                 </property>
+                                <property name="selectionMode">
+                                 <enum>QAbstractItemView::NoSelection</enum>
+                                </property>
+                                <attribute name="horizontalHeaderVisible">
+                                 <bool>false</bool>
+                                </attribute>
                                 <attribute name="horizontalHeaderCascadingSectionResizes">
+                                 <bool>false</bool>
+                                </attribute>
+                                <attribute name="horizontalHeaderHighlightSections">
                                  <bool>false</bool>
                                 </attribute>
                                 <attribute name="horizontalHeaderStretchLastSection">
@@ -2129,9 +2163,17 @@ QToolTip {
                                 <attribute name="verticalHeaderCascadingSectionResizes">
                                  <bool>true</bool>
                                 </attribute>
+                                <attribute name="verticalHeaderHighlightSections">
+                                 <bool>false</bool>
+                                </attribute>
                                 <attribute name="verticalHeaderStretchLastSection">
                                  <bool>true</bool>
                                 </attribute>
+                                <row>
+                                 <property name="text">
+                                  <string>New Row</string>
+                                 </property>
+                                </row>
                                 <column>
                                  <property name="text">
                                   <string>max_imbalance</string>
@@ -2161,6 +2203,16 @@ QToolTip {
                                   </font>
                                  </property>
                                 </column>
+                                <item row="0" column="0">
+                                 <property name="text">
+                                  <string>1</string>
+                                 </property>
+                                </item>
+                                <item row="0" column="1">
+                                 <property name="text">
+                                  <string>1</string>
+                                 </property>
+                                </item>
                                </widget>
                               </item>
                              </layout>
@@ -2405,7 +2457,11 @@ QPushButton:pressed {
                               </property>
                               <property name="font">
                                <font>
+                                <family>Arial</family>
                                 <pointsize>11</pointsize>
+                                <weight>50</weight>
+                                <italic>false</italic>
+                                <bold>false</bold>
                                </font>
                               </property>
                               <property name="styleSheet">
@@ -2661,8 +2717,11 @@ QToolTip {
                             </property>
                             <property name="font">
                              <font>
-                              <weight>75</weight>
-                              <bold>true</bold>
+                              <family>Arial</family>
+                              <pointsize>11</pointsize>
+                              <weight>50</weight>
+                              <italic>false</italic>
+                              <bold>false</bold>
                              </font>
                             </property>
                             <property name="text">
@@ -2770,7 +2829,11 @@ QPushButton:pressed {
                           </property>
                           <property name="font">
                            <font>
+                            <family>Arial</family>
                             <pointsize>11</pointsize>
+                            <weight>50</weight>
+                            <italic>false</italic>
+                            <bold>false</bold>
                            </font>
                           </property>
                           <property name="styleSheet">
@@ -2876,8 +2939,11 @@ QToolTip {
                             </property>
                             <property name="font">
                              <font>
-                              <weight>75</weight>
-                              <bold>true</bold>
+                              <family>Arial</family>
+                              <pointsize>11</pointsize>
+                              <weight>50</weight>
+                              <italic>false</italic>
+                              <bold>false</bold>
                              </font>
                             </property>
                             <property name="text">
@@ -2950,57 +3016,50 @@ QToolTip {
                           </property>
                           <property name="font">
                            <font>
-                            <pointsize>13</pointsize>
+                            <family>Arial</family>
+                            <pointsize>11</pointsize>
+                            <weight>50</weight>
+                            <italic>false</italic>
+                            <bold>false</bold>
                            </font>
                           </property>
                           <property name="styleSheet">
                            <string notr="true">QTableWidget {	
-	padding: 0px;
+	padding: 10px;
 	border-radius: 5px;
 	gridline-color: #DFE6ED;
 	color:black;
+	selection-color: #C7CDDA; 
+	selection-background-color: #C7CDDA; 
+}
+QTableView::item { 
+	background-color: #ABC2CB; 
+}
+QTableView::item:selected{ 
+	background-color: #ABC2CB; 
+}
 
+QTableView::item:selected:active{ 
+	background-color: #ABC2CB; 
 }
-QTableWidget::item{
-	background-color: #ABC2CB;
-	border-color: #DFE6ED;
-	padding-left: 5px;
-	padding-right: 5px;
-	border-bottom: 0.7px solid #DFE6ED;
-	border-top: 0.7px solid #DFE6ED;
-	border-left: 0.7px solid #DFE6ED;
-	border-right: 0.7px solid #DFE6ED;
-}
-QTableWidget::item:selected{
-	background-color: #C7CDDA;
-}
+
 QScrollBar:horizontal {
     border: none;
     background: #A3A8AD;
     height: 2px;
-    margin: 0px 21px 0 21px;
+    margin: 0px 2px 0 2px;
 	border-radius: 0px;
 }
+
  QScrollBar:vertical {
 	border: none;
     background: #A3A8AD;
     width: 2px;
-    margin: 21px 0 21px 0;
+    margin: 2px 0 2px 0;
 	border-radius: 0px;
  }
-QHeaderView::section{
-	Background-color: #576079;
-	max-width: 30px;
-	border: 1px solid #576079;
-	border-style: none;
-    border-bottom: 1px solid #DFE6ED;
-    border-right: 1px solid #DFE6ED;
-    border-top: 1px solid #DFE6ED;
-    border-left: 1px solid #DFE6ED;
-	color:white;
-}
 
-QHeaderView::section:horizontal
+QHeaderView::section:vertical
 {
 	background-color: #576079;
 	padding: 3px;
@@ -3029,6 +3088,9 @@ QToolTip {
                           </property>
                           <property name="editTriggers">
                            <set>QAbstractItemView::NoEditTriggers</set>
+                          </property>
+                          <property name="selectionMode">
+                           <enum>QAbstractItemView::NoSelection</enum>
                           </property>
                           <attribute name="horizontalHeaderVisible">
                            <bool>false</bool>
@@ -3283,8 +3345,11 @@ QToolTip {
                            <widget class="QLabel" name="label_give_feedback">
                             <property name="font">
                              <font>
-                              <weight>75</weight>
-                              <bold>true</bold>
+                              <family>Arial</family>
+                              <pointsize>11</pointsize>
+                              <weight>50</weight>
+                              <italic>false</italic>
+                              <bold>false</bold>
                              </font>
                             </property>
                             <property name="text">
@@ -3363,8 +3428,11 @@ border: 1px solid black;</string>
                              <widget class="QLabel" name="label_give_feedback_2">
                               <property name="font">
                                <font>
-                                <weight>75</weight>
-                                <bold>true</bold>
+                                <family>Arial</family>
+                                <pointsize>11</pointsize>
+                                <weight>50</weight>
+                                <italic>false</italic>
+                                <bold>false</bold>
                                </font>
                               </property>
                               <property name="text">
@@ -3415,8 +3483,11 @@ border: 1px solid black;</string>
                              <widget class="QLabel" name="label_give_feedback_3">
                               <property name="font">
                                <font>
-                                <weight>75</weight>
-                                <bold>true</bold>
+                                <family>Arial</family>
+                                <pointsize>11</pointsize>
+                                <weight>50</weight>
+                                <italic>false</italic>
+                                <bold>false</bold>
                                </font>
                               </property>
                               <property name="text">
@@ -3506,8 +3577,11 @@ QToolTip {
                            <widget class="QLabel" name="label_ndocs_al">
                             <property name="font">
                              <font>
-                              <weight>75</weight>
-                              <bold>true</bold>
+                              <family>Arial</family>
+                              <pointsize>11</pointsize>
+                              <weight>50</weight>
+                              <italic>false</italic>
+                              <bold>false</bold>
                              </font>
                             </property>
                             <property name="text">
@@ -4686,7 +4760,11 @@ QPushButton:pressed {
                               </property>
                               <property name="font">
                                <font>
+                                <family>Arial</family>
                                 <pointsize>11</pointsize>
+                                <weight>50</weight>
+                                <italic>false</italic>
+                                <bold>false</bold>
                                </font>
                               </property>
                               <property name="styleSheet">
@@ -4792,8 +4870,11 @@ QToolTip {
                                 </property>
                                 <property name="font">
                                  <font>
-                                  <weight>75</weight>
-                                  <bold>true</bold>
+                                  <family>Arial</family>
+                                  <pointsize>11</pointsize>
+                                  <weight>50</weight>
+                                  <italic>false</italic>
+                                  <bold>false</bold>
                                  </font>
                                 </property>
                                 <property name="text">
@@ -4853,52 +4934,41 @@ QToolTip {
                               </property>
                               <property name="styleSheet">
                                <string notr="true">QTableWidget {	
-	padding: 0px;
+	padding: 10px;
 	border-radius: 5px;
 	gridline-color: #DFE6ED;
 	color:black;
+	selection-color: #C7CDDA; 
+	selection-background-color: #C7CDDA; 
+}
+QTableView::item { 
+	background-color: #ABC2CB; 
+}
+QTableView::item:selected{ 
+	background-color: #ABC2CB; 
+}
 
+QTableView::item:selected:active{ 
+	background-color: #ABC2CB; 
 }
-QTableWidget::item{
-	background-color: #ABC2CB;
-	border-color: #DFE6ED;
-	padding-left: 5px;
-	padding-right: 5px;
-	border-bottom: 0.7px solid #DFE6ED;
-	border-top: 0.7px solid #DFE6ED;
-	border-left: 0.7px solid #DFE6ED;
-	border-right: 0.7px solid #DFE6ED;
-}
-QTableWidget::item:selected{
-	background-color: #C7CDDA;
-}
+
 QScrollBar:horizontal {
     border: none;
     background: #A3A8AD;
     height: 2px;
-    margin: 0px 21px 0 21px;
+    margin: 0px 2px 0 2px;
 	border-radius: 0px;
 }
+
  QScrollBar:vertical {
 	border: none;
     background: #A3A8AD;
     width: 2px;
-    margin: 21px 0 21px 0;
+    margin: 2px 0 2px 0;
 	border-radius: 0px;
  }
-QHeaderView::section{
-	Background-color: #576079;
-	max-width: 30px;
-	border: 1px solid #576079;
-	border-style: none;
-    border-bottom: 1px solid #DFE6ED;
-    border-right: 1px solid #DFE6ED;
-    border-top: 1px solid #DFE6ED;
-    border-left: 1px solid #DFE6ED;
-	color:white;
-}
 
-QHeaderView::section:horizontal
+QHeaderView::section:vertical
 {
 	background-color: #576079;
 	padding: 3px;

@@ -35,7 +35,7 @@ class GetTopicsListWindow(QtWidgets.QDialog):
 
         # Load UI and configure default geometry of the window
         #######################################################################
-        uic.loadUi("UIS/get_labels_by_topics.ui", self)
+        uic.loadUi("UIs/get_labels_by_topics.ui", self)
         self.initUI()
 
         # ATTRIBUTES
