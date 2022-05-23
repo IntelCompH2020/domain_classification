@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
-    <height>738</height>
+    <width>1196</width>
+    <height>753</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -29,7 +29,7 @@ QToolTip {
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
     <string notr="true">QWidget{
-	font: 11pt &quot;Arial&quot;;
+	font: 12pt &quot;Arial&quot;;
 	background-color: transparent;
 	color:black;
 }
@@ -965,11 +965,14 @@ QToolTip {
                             <property name="font">
                              <font>
                               <family>Arial</family>
-                              <pointsize>11</pointsize>
-                              <weight>50</weight>
+                              <pointsize>12</pointsize>
+                              <weight>75</weight>
                               <italic>false</italic>
-                              <bold>false</bold>
+                              <bold>true</bold>
                              </font>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">font-weight: bold;</string>
                             </property>
                             <property name="text">
                              <string>Select the corpus that you want to load:</string>
@@ -1114,11 +1117,14 @@ QPushButton:pressed {
                             <property name="font">
                              <font>
                               <family>Arial</family>
-                              <pointsize>11</pointsize>
-                              <weight>50</weight>
+                              <pointsize>12</pointsize>
+                              <weight>75</weight>
                               <italic>false</italic>
-                              <bold>false</bold>
+                              <bold>true</bold>
                              </font>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">font-weight: bold;</string>
                             </property>
                             <property name="text">
                              <string>Corpus selected:</string>
@@ -1341,11 +1347,14 @@ QToolTip {
                               <property name="font">
                                <font>
                                 <family>Arial</family>
-                                <pointsize>11</pointsize>
-                                <weight>50</weight>
+                                <pointsize>12</pointsize>
+                                <weight>75</weight>
                                 <italic>false</italic>
-                                <bold>false</bold>
+                                <bold>true</bold>
                                </font>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">font-weight: bold;</string>
                               </property>
                               <property name="text">
                                <string>Select an option to load a preliminary subcorpus from the positive class:</string>
@@ -1591,11 +1600,14 @@ QToolTip {
                               <property name="font">
                                <font>
                                 <family>Arial</family>
-                                <pointsize>11</pointsize>
-                                <weight>50</weight>
+                                <pointsize>12</pointsize>
+                                <weight>75</weight>
                                 <italic>false</italic>
-                                <bold>false</bold>
+                                <bold>true</bold>
                                </font>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">font-weight: bold;</string>
                               </property>
                               <property name="text">
                                <string>Load / reset labels</string>
@@ -1782,11 +1794,14 @@ QPushButton:pressed {
                               <property name="font">
                                <font>
                                 <family>Arial</family>
-                                <pointsize>11</pointsize>
-                                <weight>50</weight>
+                                <pointsize>12</pointsize>
+                                <weight>75</weight>
                                 <italic>false</italic>
-                                <bold>false</bold>
+                                <bold>true</bold>
                                </font>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">font-weight: bold;</string>
                               </property>
                               <property name="text">
                                <string>Labels loaded</string>
@@ -1905,11 +1920,14 @@ QToolTip {
                               <property name="font">
                                <font>
                                 <family>Arial</family>
-                                <pointsize>11</pointsize>
-                                <weight>50</weight>
+                                <pointsize>12</pointsize>
+                                <weight>75</weight>
                                 <italic>false</italic>
-                                <bold>false</bold>
+                                <bold>true</bold>
                                </font>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">font-weight: bold;</string>
                               </property>
                               <property name="text">
                                <string>Classifier parameters</string>
@@ -1996,11 +2014,14 @@ QToolTip {
                               <property name="font">
                                <font>
                                 <family>Arial</family>
-                                <pointsize>11</pointsize>
-                                <weight>50</weight>
+                                <pointsize>12</pointsize>
+                                <weight>75</weight>
                                 <italic>false</italic>
-                                <bold>false</bold>
+                                <bold>true</bold>
                                </font>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">font-weight: bold;</string>
                               </property>
                               <property name="text">
                                <string>Train PU classifier model with the available labels</string>
@@ -2458,7 +2479,7 @@ QPushButton:pressed {
                               <property name="font">
                                <font>
                                 <family>Arial</family>
-                                <pointsize>11</pointsize>
+                                <pointsize>12</pointsize>
                                 <weight>50</weight>
                                 <italic>false</italic>
                                 <bold>false</bold>
@@ -2718,11 +2739,14 @@ QToolTip {
                             <property name="font">
                              <font>
                               <family>Arial</family>
-                              <pointsize>11</pointsize>
-                              <weight>50</weight>
+                              <pointsize>12</pointsize>
+                              <weight>75</weight>
                               <italic>false</italic>
-                              <bold>false</bold>
+                              <bold>true</bold>
                              </font>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">font-weight: bold;</string>
                             </property>
                             <property name="text">
                              <string>Evaluate PU classifier model with the available labels</string>
@@ -2830,7 +2854,7 @@ QPushButton:pressed {
                           <property name="font">
                            <font>
                             <family>Arial</family>
-                            <pointsize>11</pointsize>
+                            <pointsize>12</pointsize>
                             <weight>50</weight>
                             <italic>false</italic>
                             <bold>false</bold>
@@ -2940,11 +2964,14 @@ QToolTip {
                             <property name="font">
                              <font>
                               <family>Arial</family>
-                              <pointsize>11</pointsize>
-                              <weight>50</weight>
+                              <pointsize>12</pointsize>
+                              <weight>75</weight>
                               <italic>false</italic>
-                              <bold>false</bold>
+                              <bold>true</bold>
                              </font>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">font-weight: bold;</string>
                             </property>
                             <property name="text">
                              <string>CLASSIFICATION RESULTS</string>
@@ -3017,7 +3044,7 @@ QToolTip {
                           <property name="font">
                            <font>
                             <family>Arial</family>
-                            <pointsize>11</pointsize>
+                            <pointsize>12</pointsize>
                             <weight>50</weight>
                             <italic>false</italic>
                             <bold>false</bold>
@@ -3346,11 +3373,14 @@ QToolTip {
                             <property name="font">
                              <font>
                               <family>Arial</family>
-                              <pointsize>11</pointsize>
-                              <weight>50</weight>
+                              <pointsize>12</pointsize>
+                              <weight>75</weight>
                               <italic>false</italic>
-                              <bold>false</bold>
+                              <bold>true</bold>
                              </font>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">font-weight: bold;</string>
                             </property>
                             <property name="text">
                              <string>Give feedback and update model based on it</string>
@@ -3429,11 +3459,14 @@ border: 1px solid black;</string>
                               <property name="font">
                                <font>
                                 <family>Arial</family>
-                                <pointsize>11</pointsize>
-                                <weight>50</weight>
+                                <pointsize>12</pointsize>
+                                <weight>75</weight>
                                 <italic>false</italic>
-                                <bold>false</bold>
+                                <bold>true</bold>
                                </font>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">font-weight: bold;</string>
                               </property>
                               <property name="text">
                                <string>Predicted class = 1</string>
@@ -3484,11 +3517,14 @@ border: 1px solid black;</string>
                               <property name="font">
                                <font>
                                 <family>Arial</family>
-                                <pointsize>11</pointsize>
-                                <weight>50</weight>
+                                <pointsize>12</pointsize>
+                                <weight>75</weight>
                                 <italic>false</italic>
-                                <bold>false</bold>
+                                <bold>true</bold>
                                </font>
+                              </property>
+                              <property name="styleSheet">
+                               <string notr="true">font-weight: bold;</string>
                               </property>
                               <property name="text">
                                <string>Predicted class = 0</string>
@@ -3578,11 +3614,14 @@ QToolTip {
                             <property name="font">
                              <font>
                               <family>Arial</family>
-                              <pointsize>11</pointsize>
-                              <weight>50</weight>
+                              <pointsize>12</pointsize>
+                              <weight>75</weight>
                               <italic>false</italic>
-                              <bold>false</bold>
+                              <bold>true</bold>
                              </font>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">font-weight: bold;</string>
                             </property>
                             <property name="text">
                              <string>Number of documents:</string>
@@ -4761,7 +4800,7 @@ QPushButton:pressed {
                               <property name="font">
                                <font>
                                 <family>Arial</family>
-                                <pointsize>11</pointsize>
+                                <pointsize>12</pointsize>
                                 <weight>50</weight>
                                 <italic>false</italic>
                                 <bold>false</bold>
@@ -4871,11 +4910,14 @@ QToolTip {
                                 <property name="font">
                                  <font>
                                   <family>Arial</family>
-                                  <pointsize>11</pointsize>
-                                  <weight>50</weight>
+                                  <pointsize>12</pointsize>
+                                  <weight>75</weight>
                                   <italic>false</italic>
-                                  <bold>false</bold>
+                                  <bold>true</bold>
                                  </font>
+                                </property>
+                                <property name="styleSheet">
+                                 <string notr="true">font-weight: bold;</string>
                                 </property>
                                 <property name="text">
                                  <string>RECLASSIFICATION RESULTS</string>

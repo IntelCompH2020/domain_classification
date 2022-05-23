@@ -231,12 +231,17 @@ QToolTip {
                </property>
                <property name="font">
                 <font>
+                 <family>Arial</family>
+                 <pointsize>12</pointsize>
                  <weight>75</weight>
+                 <italic>false</italic>
                  <bold>true</bold>
                 </font>
                </property>
                <property name="styleSheet">
-                <string notr="true">color:black;</string>
+                <string notr="true">font: 12pt &quot;Arial&quot;;
+font-weight: bold;
+color:black;</string>
                </property>
                <property name="text">
                 <string>Insert weights for each topic</string>
@@ -267,18 +272,23 @@ QToolTip {
 	border-radius: 5px;
 	gridline-color: #DFE6ED;
 	color:black;
+	selection-color: #C7CDDA; 
+	selection-background-color: #C7CDDA; 
+	font: 12pt &quot;Arial&quot;;
+}
+QTableView::item { 
+	background-color: #ABC2CB; 
+	color:black;
+}
+QTableView::item:selected{ 
+	background-color: #ABC2CB; 
+	color:black;
+}
 
+QTableView::item:selected:active{ 
+	background-color: #ABC2CB; 
 }
-QTableWidget::item{
-	background-color: #ABC2CB;
-	border-color: #DFE6ED;
-	padding-left: 5px;
-	padding-right: 5px;
-	gridline-color: #DFE6ED;
-}
-QTableWidget::item:selected{
-	background-color: #C7CDDA;
-}
+
 QScrollBar:horizontal {
     border: none;
     background: #A3A8AD;
@@ -286,6 +296,7 @@ QScrollBar:horizontal {
     margin: 0px 2px 0 2px;
 	border-radius: 0px;
 }
+
  QScrollBar:vertical {
 	border: none;
     background: #A3A8AD;
@@ -293,29 +304,23 @@ QScrollBar:horizontal {
     margin: 2px 0 2px 0;
 	border-radius: 0px;
  }
-QHeaderView::section{
-	Background-color: #576079;
-	max-width: 30px;
-	border: 1px solid #576079;
-	border-style: none;
-    border-bottom: 1px solid #576079;
-    border-right: 1px solid #576079;
-	color:white;
+
+QHeaderView::section:horizontal
+{
+	background-color: #576079;
+	padding: 3px;
+    border-bottom: 1px solid #DFE6ED;
+    border-right: 1px solid #DFE6ED;
+    border-top: 1px solid #DFE6ED;
+    border-left: 1px solid #DFE6ED;
 }
+
 QTableWidget::horizontalHeader {	
 	background-color: #576079;
 }
-QHeaderView::section:horizontal
-{
-    border: 1px solid #DFE6ED;
+
+QTableWidget::verticalHeader {	
 	background-color: #576079;
-	padding: 3px;
-	border-top-left-radius: 7px;
-    border-top-right-radius: 7px;
-}
-QHeaderView::section:vertical
-{
-    border: 1px solid #576079;
 }
 
 QToolTip {	
@@ -373,55 +378,55 @@ QToolTip {
 	border-radius: 5px;
 	gridline-color: #DFE6ED;
 	color:black;
+	selection-color: #C7CDDA; 
+	selection-background-color: #C7CDDA; 
+	font: 12pt &quot;Arial&quot;;
+}
+QTableView::item { 
+	background-color: #ABC2CB; 
+	color:black;
+}
+QTableView::item:selected{ 
+	background-color: #ABC2CB; 
+	color:black;
+}
 
-}
-QTableWidget::item{
-	background-color: #ABC2CB;
-	border-color: #DFE6ED;
-	padding-left: 5px;
-	padding-right: 5px;
-	gridline-color: #DFE6ED;
-}
-QTableWidget::item:selected{
-	background-color: #C7CDDA;
+QTableView::item:selected:active{ 
+	background-color: #ABC2CB; 
 }
 
 QScrollBar:horizontal {
-	background: #A3A8AD;
     border: none;
-    height: 2px;
-	margin: 0px 21px 0 21px;
-}
- QScrollBar:vertical {
     background: #A3A8AD;
-    border: none;
+    height: 2px;
+    margin: 0px 2px 0 2px;
+	border-radius: 0px;
+}
+
+ QScrollBar:vertical {
+	border: none;
+    background: #A3A8AD;
     width: 2px;
-    margin: 21px 0 21px 0;
+    margin: 2px 0 2px 0;
 	border-radius: 0px;
  }
-QHeaderView::section{
-	Background-color: #576079;
-	max-width: 30px;
-	border: 1px solid #576079;
-	border-style: none;
-    border-bottom: 1px solid #576079;
-    border-right: 1px solid #576079;
-	color:white;
+
+QHeaderView::section:horizontal
+{
+	background-color: #576079;
+	padding: 3px;
+    border-bottom: 1px solid #DFE6ED;
+    border-right: 1px solid #DFE6ED;
+    border-top: 1px solid #DFE6ED;
+    border-left: 1px solid #DFE6ED;
 }
+
 QTableWidget::horizontalHeader {	
 	background-color: #576079;
 }
-QHeaderView::section:horizontal
-{
-    border: 1px solid #DFE6ED;
+
+QTableWidget::verticalHeader {	
 	background-color: #576079;
-	padding: 3px;
-	border-top-left-radius: 7px;
-    border-top-right-radius: 7px;
-}
-QHeaderView::section:vertical
-{
-    border: 1px solid #576079;
 }
 
 QToolTip {	
@@ -609,12 +614,17 @@ QToolTip {
                  </property>
                  <property name="font">
                   <font>
+                   <family>Arial</family>
+                   <pointsize>12</pointsize>
                    <weight>75</weight>
+                   <italic>false</italic>
                    <bold>true</bold>
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">color:black;</string>
+                  <string notr="true">font: 12pt &quot;Arial&quot;;
+font-weight: bold;
+color:black;</string>
                  </property>
                  <property name="text">
                   <string>Get labels by topics parameters</string>
@@ -645,6 +655,7 @@ QToolTip {
 	color:black;
 	selection-color: #C7CDDA; 
 	selection-background-color: #C7CDDA; 
+	font: 12pt &quot;Arial&quot;;
 }
 QTableView::item { 
 	background-color: #ABC2CB; 
@@ -922,12 +933,17 @@ QToolTip {
                  </property>
                  <property name="font">
                   <font>
+                   <family>Arial</family>
+                   <pointsize>12</pointsize>
                    <weight>75</weight>
+                   <italic>false</italic>
                    <bold>true</bold>
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">color:black;</string>
+                  <string notr="true">font: 12pt &quot;Arial&quot;;
+font-weight: bold;
+color:black;</string>
                  </property>
                  <property name="text">
                   <string>Weighted topic list:</string>
@@ -977,6 +993,7 @@ QToolTip {
 	gridline-color: #FFFFFF;
 	border-bottom: 1px solid #FFFFFF;
 	color:black;
+	font: 12pt &quot;Arial&quot;;
 }</string>
                  </property>
                 </widget>
@@ -1070,12 +1087,17 @@ QToolTip {
                  </property>
                  <property name="font">
                   <font>
+                   <family>Arial</family>
+                   <pointsize>12</pointsize>
                    <weight>75</weight>
+                   <italic>false</italic>
                    <bold>true</bold>
                   </font>
                  </property>
                  <property name="styleSheet">
-                  <string notr="true">color:black;</string>
+                  <string notr="true">font: 12pt &quot;Arial&quot;;
+font-weight: bold;
+color:black;</string>
                  </property>
                  <property name="text">
                   <string>Tag:</string>
@@ -1125,6 +1147,7 @@ QToolTip {
 	gridline-color: #FFFFFF;
 	border-bottom: 1px solid #FFFFFF;
 	color:black;
+	font: 12pt &quot;Arial&quot;;
 }</string>
                  </property>
                 </widget>
@@ -1160,6 +1183,7 @@ QToolTip {
 	border-radius: 5px;	
 	background-color: #ABC2CB;
 	color:black;
+	font: 12pt &quot;Arial&quot;;
 }
 QPushButton:hover {
 	background-color: #ABC2CB;
@@ -1168,7 +1192,9 @@ QPushButton:hover {
 QPushButton:pressed {	
 	background-color: #ABC2CB;
 	border: 2px solid #ABC2CB;
-}</string>
+}
+
+</string>
                  </property>
                  <property name="text">
                   <string>Select weighted topic list</string>

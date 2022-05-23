@@ -149,13 +149,14 @@
 	gridline-color: #FFFFFF;
 	border-bottom: 1px solid #FFFFFF;
 	color:black;
+	font: 12pt &quot;Arial&quot;;
 }
 
  QScrollBar:vertical {
 	border: none;
     background: #ABC2CB;
-    width: 14px;
-    margin: 21px 0 21px 0;
+    width: 2px;
+    margin: 2px 0 2px 0;
 	border-radius: 0px;
  }</string>
            </property>
@@ -293,12 +294,17 @@ QToolTip {
              </property>
              <property name="font">
               <font>
+               <family>Arial</family>
+               <pointsize>12</pointsize>
                <weight>75</weight>
+               <italic>false</italic>
                <bold>true</bold>
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">color:black;</string>
+              <string notr="true">font: 12pt &quot;Arial&quot;;
+font-weight: bold;
+color:black;</string>
              </property>
              <property name="text">
               <string>  Selected keywords and parameters configuration:</string>
@@ -426,6 +432,7 @@ QToolTip {
 	color:black;
 	selection-color: #C7CDDA; 
 	selection-background-color: #C7CDDA; 
+	font: 12pt &quot;Arial&quot;;
 }
 QTableView::item { 
 	background-color: #ABC2CB; 
@@ -658,12 +665,17 @@ QToolTip {
              </property>
              <property name="font">
               <font>
+               <family>Arial</family>
+               <pointsize>12</pointsize>
                <weight>75</weight>
+               <italic>false</italic>
                <bold>true</bold>
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">color:black;</string>
+              <string notr="true">font: 12pt &quot;Arial&quot;;
+font-weight: bold;
+color:black;</string>
              </property>
              <property name="text">
               <string>  Tag: </string>
@@ -691,6 +703,7 @@ QToolTip {
 	gridline-color: #FFFFFF;
 	border-bottom: 1px solid #FFFFFF;
 	color:black;
+	font: 12pt &quot;Arial&quot;;
 }</string>
              </property>
             </widget>
@@ -762,6 +775,7 @@ QToolTip {
 	border-radius: 5px;	
 	background-color: #ABC2CB;
 	color:black;
+	font: 12pt &quot;Arial&quot;;
 }
 QPushButton:hover {
 	background-color: #ABC2CB;
