@@ -138,6 +138,9 @@
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_4">
+           <property name="spacing">
+            <number>-1</number>
+           </property>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_9">
              <item>
@@ -251,161 +254,70 @@ color:black;</string>
             </layout>
            </item>
            <item>
+            <widget class="QFrame" name="frame_9">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>10</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>10</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QFrame { 
+  background-color: #CFCEC6;
+  border: 5px solid #CFCEC6
+} 
+</string>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_16"/>
+            </widget>
+           </item>
+           <item>
             <layout class="QHBoxLayout" name="horizontalLayout_10">
-             <item>
-              <widget class="QTableWidget" name="table_widget_topics_weight">
-               <property name="minimumSize">
-                <size>
-                 <width>300</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>300</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">QTableWidget {	
-	padding: 10px;
-	border-radius: 5px;
-	gridline-color: #DFE6ED;
-	color:black;
-	selection-color: #C7CDDA; 
-	selection-background-color: #C7CDDA; 
-	font: 12pt &quot;Arial&quot;;
-}
-QTableView::item { 
-	background-color: #ABC2CB; 
-	color:black;
-}
-QTableView::item:selected{ 
-	background-color: #ABC2CB; 
-	color:black;
-}
-
-QTableView::item:selected:active{ 
-	background-color: #ABC2CB; 
-}
-
-QScrollBar:horizontal {
-    border: none;
-    background: #A3A8AD;
-    height: 2px;
-    margin: 0px 2px 0 2px;
-	border-radius: 0px;
-}
-
- QScrollBar:vertical {
-	border: none;
-    background: #A3A8AD;
-    width: 2px;
-    margin: 2px 0 2px 0;
-	border-radius: 0px;
- }
-
-QHeaderView::section:horizontal
-{
-	background-color: #576079;
-	padding: 3px;
-    border-bottom: 1px solid #DFE6ED;
-    border-right: 1px solid #DFE6ED;
-    border-top: 1px solid #DFE6ED;
-    border-left: 1px solid #DFE6ED;
-}
-
-QTableWidget::horizontalHeader {	
-	background-color: #576079;
-}
-
-QTableWidget::verticalHeader {	
-	background-color: #576079;
-}
-
-QToolTip {	
-	background-color: #ABC2CB;
-	border: 2px solid #ABC2CB;
-	color:black;
-}</string>
-               </property>
-               <property name="editTriggers">
-                <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::CurrentChanged|QAbstractItemView::EditKeyPressed</set>
-               </property>
-               <attribute name="horizontalHeaderStretchLastSection">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderVisible">
-                <bool>false</bool>
-               </attribute>
-               <attribute name="verticalHeaderStretchLastSection">
-                <bool>true</bool>
-               </attribute>
-               <column>
-                <property name="text">
-                 <string>WEIGTH</string>
-                </property>
-                <property name="font">
-                 <font>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-               </column>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_4">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Fixed</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>7</width>
-                 <height>17</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
              <item>
               <widget class="QTableWidget" name="table_widget_topic_list">
                <property name="styleSheet">
                 <string notr="true">QTableWidget {	
-	padding: 10px;
+	background-color: #ABC2CB; 
+	padding: 0px;
 	border-radius: 5px;
 	gridline-color: #DFE6ED;
-	color:black;
-	selection-color: #C7CDDA; 
-	selection-background-color: #C7CDDA; 
-	font: 12pt &quot;Arial&quot;;
 }
-QTableView::item { 
+QTableWidget::item{
+	padding-left: 5px;
+	padding-right: 5px;
 	background-color: #ABC2CB; 
 	color:black;
 }
-QTableView::item:selected{ 
-	background-color: #ABC2CB; 
-	color:black;
+QTableWidget::item:selected{
+	background-color: #A3A8AD;
 }
-
-QTableView::item:selected:active{ 
-	background-color: #ABC2CB; 
-}
-
 QScrollBar:horizontal {
+	background: transparent;
     border: none;
-    background: #A3A8AD;
     height: 2px;
-    margin: 0px 2px 0 2px;
-	border-radius: 0px;
+	margin: 0px 2px 0 2px;
 }
-
  QScrollBar:vertical {
-	border: none;
-    background: #A3A8AD;
+    background: transparent;
+    border: none;
     width: 2px;
     margin: 2px 0 2px 0;
 	border-radius: 0px;
@@ -415,18 +327,10 @@ QHeaderView::section:horizontal
 {
 	background-color: #576079;
 	padding: 3px;
-    border-bottom: 1px solid #DFE6ED;
-    border-right: 1px solid #DFE6ED;
-    border-top: 1px solid #DFE6ED;
-    border-left: 1px solid #DFE6ED;
-}
-
-QTableWidget::horizontalHeader {	
-	background-color: #576079;
-}
-
-QTableWidget::verticalHeader {	
-	background-color: #576079;
+    border-bottom: 1px solid #FFFFFF;
+    border-right: 1px solid #FFFFFF;
+    border-top: 1px solid #FFFFFF;
+    border-left: 1px solid #FFFFFF;
 }
 
 QToolTip {	
@@ -435,12 +339,15 @@ QToolTip {
 	color:black;
 }</string>
                </property>
-               <property name="sizeAdjustPolicy">
-                <enum>QAbstractScrollArea::AdjustToContents</enum>
+               <property name="verticalScrollBarPolicy">
+                <enum>Qt::ScrollBarAlwaysOff</enum>
                </property>
                <property name="editTriggers">
                 <set>QAbstractItemView::NoEditTriggers</set>
                </property>
+               <attribute name="horizontalHeaderCascadingSectionResizes">
+                <bool>false</bool>
+               </attribute>
                <attribute name="horizontalHeaderStretchLastSection">
                 <bool>true</bool>
                </attribute>
@@ -452,7 +359,7 @@ QToolTip {
                </attribute>
                <column>
                 <property name="text">
-                 <string>ID</string>
+                 <string>TOPIC ID</string>
                 </property>
                 <property name="font">
                  <font>
@@ -464,6 +371,91 @@ QToolTip {
                <column>
                 <property name="text">
                  <string>TOPIC DESCRIPTION</string>
+                </property>
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+               </column>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTableWidget" name="table_widget_topics_weight">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QTableWidget {	
+	background-color: #ABC2CB; 
+	padding: 0px;
+	border-radius: 5px;
+	gridline-color: #DFE6ED;
+}
+QTableWidget::item{
+	padding-left: 5px;
+	padding-right: 5px;
+	background-color: #ABC2CB; 
+	color:black;
+}
+QTableWidget::item:selected{
+	background-color: #A3A8AD;
+}
+QScrollBar:horizontal {
+	background: #A3A8AD;
+    border: none;
+    height: 2px;
+	margin: 0px 2px 0 2px;
+}
+ QScrollBar:vertical {
+    background: #A3A8AD;
+    border: none;
+    width: 2px;
+    margin: 2px 0 2px 0;
+	border-radius: 0px;
+ }
+
+QHeaderView::section:horizontal
+{
+	background-color: #576079;
+	padding: 3px;
+    border-bottom: 1px solid #FFFFFF;
+    border-right: 1px solid #FFFFFF;
+    border-top: 1px solid #FFFFFF;
+    border-left: 1px solid #FFFFFF;
+}
+
+QToolTip {	
+	background-color: #ABC2CB;
+	border: 2px solid #ABC2CB;
+	color:black;
+}</string>
+               </property>
+               <property name="sizeAdjustPolicy">
+                <enum>QAbstractScrollArea::AdjustToContents</enum>
+               </property>
+               <attribute name="horizontalHeaderStretchLastSection">
+                <bool>true</bool>
+               </attribute>
+               <attribute name="verticalHeaderVisible">
+                <bool>false</bool>
+               </attribute>
+               <attribute name="verticalHeaderStretchLastSection">
+                <bool>true</bool>
+               </attribute>
+               <column>
+                <property name="text">
+                 <string>TOPIC WEIGTH</string>
                 </property>
                 <property name="font">
                  <font>
@@ -634,53 +626,68 @@ color:black;</string>
               </layout>
              </item>
              <item>
-              <widget class="QTableWidget" name="table_params">
+              <widget class="QFrame" name="frame_10">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="minimumSize">
                 <size>
-                 <width>550</width>
-                 <height>0</height>
+                 <width>0</width>
+                 <height>10</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>550</width>
-                 <height>150</height>
+                 <width>16777215</width>
+                 <height>10</height>
                 </size>
                </property>
                <property name="styleSheet">
+                <string notr="true">QFrame { 
+  background-color: #CFCEC6;
+  border: 5px solid #CFCEC6
+} 
+</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_17"/>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTableWidget" name="table_params">
+               <property name="styleSheet">
                 <string notr="true">QTableWidget {	
-	padding: 10px;
+	background-color: #ABC2CB; 
+	padding: 0px;
 	border-radius: 5px;
 	gridline-color: #DFE6ED;
-	color:black;
-	selection-color: #C7CDDA; 
-	selection-background-color: #C7CDDA; 
-	font: 12pt &quot;Arial&quot;;
 }
-QTableView::item { 
+QTableWidget::item{
+	padding-left: 5px;
+	padding-right: 5px;
 	background-color: #ABC2CB; 
 	color:black;
 }
-QTableView::item:selected{ 
-	background-color: #ABC2CB; 
-	color:black;
+QTableWidget::item:selected{
+	background-color: #A3A8AD;
 }
-
-QTableView::item:selected:active{ 
-	background-color: #ABC2CB; 
-}
-
 QScrollBar:horizontal {
+	background: transparent;
     border: none;
-    background: #A3A8AD;
     height: 2px;
-    margin: 0px 2px 0 2px;
-	border-radius: 0px;
+	margin: 0px 2px 0 2px;
 }
-
  QScrollBar:vertical {
-	border: none;
-    background: #A3A8AD;
+    background: transparent;
+    border: none;
     width: 2px;
     margin: 2px 0 2px 0;
 	border-radius: 0px;
@@ -690,18 +697,10 @@ QHeaderView::section:horizontal
 {
 	background-color: #576079;
 	padding: 3px;
-    border-bottom: 1px solid #DFE6ED;
-    border-right: 1px solid #DFE6ED;
-    border-top: 1px solid #DFE6ED;
-    border-left: 1px solid #DFE6ED;
-}
-
-QTableWidget::horizontalHeader {	
-	background-color: #576079;
-}
-
-QTableWidget::verticalHeader {	
-	background-color: #576079;
+    border-bottom: 1px solid #FFFFFF;
+    border-right: 1px solid #FFFFFF;
+    border-top: 1px solid #FFFFFF;
+    border-left: 1px solid #FFFFFF;
 }
 
 QToolTip {	
@@ -710,19 +709,10 @@ QToolTip {
 	color:black;
 }</string>
                </property>
-               <property name="editTriggers">
-                <set>QAbstractItemView::CurrentChanged</set>
-               </property>
-               <attribute name="horizontalHeaderHighlightSections">
-                <bool>false</bool>
-               </attribute>
                <attribute name="horizontalHeaderStretchLastSection">
                 <bool>true</bool>
                </attribute>
                <attribute name="verticalHeaderVisible">
-                <bool>false</bool>
-               </attribute>
-               <attribute name="verticalHeaderHighlightSections">
                 <bool>false</bool>
                </attribute>
                <attribute name="verticalHeaderStretchLastSection">
