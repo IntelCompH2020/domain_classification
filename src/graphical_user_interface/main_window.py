@@ -54,7 +54,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Load UI and configure default geometry of the window
         #######################################################################
-        uic.loadUi("UIS/DomainClassifier.ui", self)
+        uic.loadUi("UIs/DomainClassifier.ui", self)
         self.init_ui()
         self.animation = QtCore.QPropertyAnimation(self.frame_left_menu,
                                                    b"minimumWidth")
@@ -166,6 +166,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.table_pu_classification_results.resizeColumnsToContents()
         self.table_pu_classification_results.resizeRowsToContents()
+        self.table_pu_classification_results.verticalHeader().setVisible(True)
+
+        self.table_train_pu_model_params.horizontalHeader().setVisible(True)
 
         # GET FEEDBACK WIDGETS
         # #####################################################################
@@ -195,6 +198,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.table_reclassification_results.resizeColumnsToContents()
         self.table_reclassification_results.resizeRowsToContents()
+        self.table_reclassification_results.verticalHeader().setVisible(True)
 
         # Initialize the value for the number of documents to annotate based on the default value noted in the
         # configuration file
@@ -610,6 +614,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.table_train_pu_model_params.setItem(
             0, 1, QtWidgets.QTableWidgetItem(str(self.class_nmax)))
 
+        # Set horizontal header visible
+        self.table_train_pu_model_params.horizontalHeader().setVisible(True)
+
         return
 
     def update_params_train_pu_model(self):
@@ -771,6 +778,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.table_pu_classification_results.resizeColumnsToContents()
         self.table_pu_classification_results.resizeRowsToContents()
+        self.table_pu_classification_results.verticalHeader().setVisible(True)
 
         # Show informative message in pop up window
         QtWidgets.QMessageBox.information(
@@ -1116,6 +1124,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.table_reclassification_results.resizeColumnsToContents()
         self.table_reclassification_results.resizeRowsToContents()
+        self.table_pu_classification_results.verticalHeader().setVisible(True)
 
         # Show message in pop up window
         QtWidgets.QMessageBox.information(
