@@ -3,9 +3,7 @@
 
 """
 Main program
-
 Created on March 20 2019
-
 @author: Jesús Cid-Sueiro
 """
 
@@ -24,19 +22,19 @@ def main():
     # ####################
     # Read input arguments
 
-    # settings
+    # Read input arguments
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--p', type=str,
-        default="/Users/lbartolome/Documents/Intelcomp/project_folder",
+        default="../project_folder",
         help="path to a new or an existing project")
     parser.add_argument(
         '--source', type=str,
-        default="/Users/lbartolome/Documents/Intelcomp/datasets",
+        default="../datasets",
         help="path to the source data folder")
     parser.add_argument(
         '--zeroshot', type=str,
-        default='/Users/lbartolome/Documents/zero_shot_model/Sciro-Shot',
+        default='../zero_shot_model/Sciro-Shot',
         help="path to the zero-shot model folder")
     args = parser.parse_args()
 
