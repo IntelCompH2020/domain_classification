@@ -34,7 +34,7 @@ class GetCategoryNamesWindow(QtWidgets.QDialog):
 
         # Load UI and configure default geometry of the window
         # #####################################################################
-        uic.loadUi("UIs/get_labels_from_zeroshot.ui", self)
+        uic.loadUi("UIS/get_labels_from_zeroshot.ui", self)
         self.init_ui()
 
         # ATTRIBUTES

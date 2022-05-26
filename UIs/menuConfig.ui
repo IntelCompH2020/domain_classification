@@ -173,6 +173,14 @@
                  <height>20</height>
                 </size>
                </property>
+               <property name="styleSheet">
+                <string notr="true">QLabel { 
+  background-color: #CFCEC6;
+  border: 5px solid #CFCEC6
+} 
+
+</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -259,10 +267,10 @@
                </property>
                <property name="font">
                 <font>
-                 <family>Arial</family>
-                 <pointsize>12</pointsize>
+                 <family>Helvetica</family>
+                 <pointsize>13</pointsize>
                  <weight>50</weight>
-                 <italic>false</italic>
+                 <italic>true</italic>
                  <bold>false</bold>
                 </font>
                </property>
@@ -273,7 +281,6 @@
 	gridline-color: #FFFFFF;
 	border-bottom: 1px solid #FFFFFF;
 	color:black;
-	font: 12pt &quot;Arial&quot;;
 }</string>
                </property>
                <property name="text">
@@ -292,9 +299,8 @@
                <property name="font">
                 <font>
                  <family>Arial</family>
-                 <pointsize>12</pointsize>
+                 <pointsize>13</pointsize>
                  <weight>50</weight>
-                 <italic>false</italic>
                  <bold>false</bold>
                 </font>
                </property>
@@ -304,7 +310,6 @@
 	border-radius: 5px;	
 	background-color: #ABC2CB;
 	color:black;
-	font: 12pt &quot;Arial&quot;;
 }
 QPushButton:hover {
 	background-color: #ABC2CB;
@@ -334,10 +339,10 @@ QPushButton:pressed {
                </property>
                <property name="font">
                 <font>
-                 <family>Arial</family>
-                 <pointsize>12</pointsize>
+                 <family>Helvetica</family>
+                 <pointsize>13</pointsize>
                  <weight>50</weight>
-                 <italic>false</italic>
+                 <italic>true</italic>
                  <bold>false</bold>
                 </font>
                </property>
@@ -348,7 +353,6 @@ QPushButton:pressed {
 	gridline-color: #FFFFFF;
 	border-bottom: 1px solid #FFFFFF;
 	color:black;
-	font: 12pt &quot;Arial&quot;;
 }</string>
                </property>
                <property name="text">
@@ -367,9 +371,8 @@ QPushButton:pressed {
                <property name="font">
                 <font>
                  <family>Arial</family>
-                 <pointsize>12</pointsize>
+                 <pointsize>13</pointsize>
                  <weight>50</weight>
-                 <italic>false</italic>
                  <bold>false</bold>
                 </font>
                </property>
@@ -378,8 +381,7 @@ QPushButton:pressed {
 	border: 5px solid #ABC2CB;
 	border-radius: 5px;	
 	background-color: #ABC2CB;
-	color:black;
-	font: 12pt &quot;Arial&quot;;
+color:black;
 }
 QPushButton:hover {
 	background-color: #ABC2CB;
@@ -409,10 +411,10 @@ QPushButton:pressed {
                </property>
                <property name="font">
                 <font>
-                 <family>Arial</family>
-                 <pointsize>12</pointsize>
+                 <family>Helvetica</family>
+                 <pointsize>13</pointsize>
                  <weight>50</weight>
-                 <italic>false</italic>
+                 <italic>true</italic>
                  <bold>false</bold>
                 </font>
                </property>
@@ -423,7 +425,6 @@ QPushButton:pressed {
 	gridline-color: #FFFFFF;
 	border-bottom: 1px solid #FFFFFF;
 	color:black;
-	font: 12pt &quot;Arial&quot;;
 }</string>
                </property>
                <property name="text">
@@ -442,9 +443,8 @@ QPushButton:pressed {
                <property name="font">
                 <font>
                  <family>Arial</family>
-                 <pointsize>12</pointsize>
+                 <pointsize>13</pointsize>
                  <weight>50</weight>
-                 <italic>false</italic>
                  <bold>false</bold>
                 </font>
                </property>
@@ -453,8 +453,7 @@ QPushButton:pressed {
 	border: 5px solid #ABC2CB;
 	border-radius: 5px;	
 	background-color: #ABC2CB;
-	color:black;
-	font: 12pt &quot;Arial&quot;;
+color:black;
 }
 QPushButton:hover {
 	background-color: #ABC2CB;
@@ -575,9 +574,8 @@ QPushButton:pressed {
             <property name="font">
              <font>
               <family>Arial</family>
-              <pointsize>12</pointsize>
+              <pointsize>13</pointsize>
               <weight>75</weight>
-              <italic>false</italic>
               <bold>true</bold>
              </font>
             </property>
@@ -586,9 +584,7 @@ QPushButton:pressed {
 	border: 5px solid #ABC2CB;
 	border-radius: 5px;	
 	background-color: #ABC2CB;
-	color:black;
-	font: 12pt &quot;Arial&quot;;
-	font-weight: bold;
+color:black;
 }
 QPushButton:hover {
 	background-color: #ABC2CB;
