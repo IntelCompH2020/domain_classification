@@ -419,10 +419,10 @@ class MainWindow(QtWidgets.QMainWindow):
         Only one QRadioButton can be selected at a time.
         """
 
-        if self.corpus_selected_name is None:
+        if self.corpus_selected_name is None and self.tm.state['selected_corpus'] is False:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
-                Messages.INCORRECT_INPUT_PARAM_SELECTION)
+                Messages.INCORRECT_NO_CORPUS_SELECTED)
         else:
             if self.get_labels_radio_buttons.checkedId() == 1:
                 print("Import labels from a source file")
@@ -498,7 +498,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Show warning message indicating that a corpus needs to be selected first
         # in order to proceed with the labels' loading
-        if self.corpus_selected_name is None:
+        if self.corpus_selected_name is None and self.tm.state['selected_corpus'] is False:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
                 Messages.INCORRECT_NO_CORPUS_SELECTED)
@@ -519,7 +519,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
 
         # Show warning message if not corpus has been selected before asking for the labels' loading
-        if self.corpus_selected_name is None:
+        if self.corpus_selected_name is None and self.tm.state['selected_corpus'] is False:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
                 Messages.INCORRECT_NO_CORPUS_SELECTED)
@@ -552,7 +552,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
 
         # Show warning message if not corpus has been selected before asking for the labels' loading
-        if self.corpus_selected_name is None:
+        if self.corpus_selected_name is None and self.tm.state['selected_corpus'] is False:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
                 Messages.INCORRECT_NO_CORPUS_SELECTED)
@@ -710,7 +710,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """
 
         # Check if a corpus has been selected. Otherwise, the training cannot be carried out
-        if self.corpus_selected_name is not None and self.tm.df_labels is not None:
+        if self.corpus_selected_name is not None and self.tm.state['selected_corpus'] and\
+                self.tm.df_labels is not None:
 
             # Execute the PU model training in the secondary thread
             execute_in_thread(
@@ -799,7 +800,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Check if a corpus and a set of labels have been selected and a model trained.
         # Otherwise, the evaluation cannot be carried out
-        if self.corpus_selected_name is not None and self.tm.df_labels is not None:
+        if self.corpus_selected_name is not None and self.tm.state['selected_corpus'] and \
+                self.tm.df_labels is not None:
 
             # Execute the PU model evaluation in the secondary thread
             execute_in_thread(
@@ -1070,7 +1072,8 @@ class MainWindow(QtWidgets.QMainWindow):
         """
 
         # Check if a corpus has been selected. Otherwise, the retraining cannot be carried out
-        if self.corpus_selected_name is not None and self.tm.df_labels is not None:
+        if self.corpus_selected_name is not None and self.tm.state['selected_corpus'] and\
+                self.tm.df_labels is not None:
 
             # Execute the PU model retraining in the secondary thread
             execute_in_thread(
@@ -1141,8 +1144,9 @@ class MainWindow(QtWidgets.QMainWindow):
         """
 
         # Check if a corpus and a set of labels have been selected and a model trained.
-        # Otherwise, the reeevaluation cannot be carried out
-        if self.corpus_selected_name is not None and self.tm.df_labels is not None:
+        # Otherwise, the reevaluation cannot be carried out
+        if self.corpus_selected_name is not None and self.tm.state['selected_corpus'] and\
+                self.tm.df_labels is not None:
 
             # Execute the PU model reevaluation in the secondary thread
             execute_in_thread(
