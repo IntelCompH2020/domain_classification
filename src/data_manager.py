@@ -372,9 +372,8 @@ class DataManager(object):
         # Log and save
 
         # Log results
-        logging.info(
-            f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
-            f" documents loaded in {time() - t0:.2f} secs.")
+        logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
+                     f" documents loaded in {time() - t0:.2f} secs.")
 
         # Save to feather file
         if save_feather:
