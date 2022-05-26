@@ -149,16 +149,21 @@ class DataManager(object):
         path2feather = self.path2corpus / 'corpus' / 'corpus.feather'
         self.corpus_name = corpus_name
 
+        # By default, a feather file version of the corpus will be save
+        save_feather = True
+        # By default, no corpus cleaning is done
+        clean_corpus = False
         # If there is a feather file, load it
         t0 = time()
+
+        # ################
+        # Load corpus data
+
         if path2feather.is_file():
 
             logging.info(f'-- -- Feather file {path2feather} found...')
             df_corpus = pd.read_feather(path2feather)
-            logging.info(
-                f'-- -- Feather file loaded in {time() - t0:.2f} secs.')
-            logging.info(f'-- -- Corpus {corpus_name} loaded with '
-                         f'{len(df_corpus)} documents')
+            save_feather = False
 
         # if it doesn't exist, load the selected corpus in its original form
         elif corpus_name == 'EU_projects':
@@ -222,12 +227,6 @@ class DataManager(object):
             # Fill nan cells with empty strings
             df_corpus.fillna("", inplace=True)
 
-            logging.info(f"-- -- Corpus aggregated with {len(df_corpus)} "
-                         f" documents and loaded in {time() - t0:.2f} secs.")
-            logging.info(f'-- -- Writing feather file in {path2feather} '
-                         f'to speed up future loads')
-            df_corpus.to_feather(path2feather)
-
         elif corpus_name == 'AEI_projects':
 
             # ####################
@@ -243,16 +242,8 @@ class DataManager(object):
             # Load corpus 1
             path2corpus = self.path2corpus / corpus_fpath
             df_corpus = pd.read_excel(path2corpus, engine='openpyxl')
-            # Remove duplicates, if any
-            df_corpus.drop_duplicates(subset=['Referencia'], inplace=True)
-            logging.info(f'-- -- Raw corpus {corpus_name} loaded with '
+            logging.info(f'-- -- Raw corpus {corpus_name} read with '
                          f'{len(df_corpus)} documents')
-
-            # Remove documents with missing data, if any
-            ind_notna = df_corpus['title'].notna()
-            df_corpus = df_corpus[ind_notna]
-            ind_notna = df_corpus['abstract'] == 0
-            df_corpus = df_corpus[~ind_notna]
 
             # Original fields are:
             #     Año, Convocatoria, Referencia, Área, Subárea, Título,
@@ -271,69 +262,100 @@ class DataManager(object):
                        'Ind2017_TIC': 'target_tic',
                        'Ind2017_ENE': 'target_ene'}
             df_corpus.rename(columns=mapping, inplace=True)
-
-            # Fill nan cells with empty strings
-            df_corpus.fillna("", inplace=True)
-
-            # Remove special characters
-            df_corpus['title'] = df_corpus['title'].str.replace('\t', '')
-            df_corpus['description'] = (
-                df_corpus['description'].str.replace('\t', ''))
-
-            # Reset the index and drop the old index
-            df_corpus = df_corpus.reset_index(drop=True)
-
-            logging.info(
-                f"-- -- Corpus {corpus_name} reduced to {len(df_corpus)} "
-                f" documents")
-            logging.info(f"-- -- Loaded in {time() - t0:.2f} secs.")
-            logging.info(f'-- -- Writing feather file in {path2feather} '
-                         f'to speed up future loads')
-            df_corpus.to_feather(path2feather)
+            clean_corpus = True
 
         elif corpus_name == 'CORDIS.parquet':
 
             # ####################
             # Paths and file names
 
-            files = [f for f in self.path2corpus.glob('**/*') if f.is_file()]
-            print(files)
-            breakpoint()
+            path2texts = self.path2corpus / 'corpus'
+            fpaths = [f for f in path2texts.glob('**/*')
+                      if f.is_file() and f.suffix == '.parquet']
+            n_files = len(fpaths)
 
             # ###########
             # Load corpus
 
-            # Load corpus 1
-            path2corpus = self.path2corpus / corpus_fpath
-            df_corpus = pd.read_excel(path2corpus, engine='openpyxl')
+            for k, path_k in enumerate(fpaths):
+                print(f"-- -- Loading file {k + 1} out of {n_files}  \r",
+                      end="")
+                dfk = pd.read_parquet(path_k)
+
+                # Original fields are:
+                #   'id', 'title', 'objective', 'startDate',
+                #   'ecMaxContribution', 'euroSciVocCode', 'rawtext', 'lemmas'
+                dfk = dfk[['id', 'title', 'objective']]
+
+                if k == 0:
+                    df_corpus = dfk
+                else:
+                    df_corpus = df_corpus.append(dfk, ignore_index=True)
+
+            logging.info(f'-- -- Raw corpus {corpus_name} read with '
+                         f'{len(dfk)} documents')
+
+            # Map column names to normalized names
+            # We use "Referencia", renamed as "id", as the project id.
+            mapping = {'objective': 'description'}
+            df_corpus.rename(columns=mapping, inplace=True)
+            clean_corpus = True
+
+        elif corpus_name == 'S2CS.parquet':
+
+            # ####################
+            # Paths and file names
+
+            path2texts = self.path2corpus / 'corpus'
+            fpaths = [f for f in path2texts.glob('**/*')
+                      if f.is_file() and f.suffix == '.parquet']
+            n_files = len(fpaths)
+
+            # ###########
+            # Load corpus
+
+            for k, path_k in enumerate(fpaths):
+                print(f"-- -- Loading file {k + 1} out of {n_files}  \r",
+                      end="")
+                dfk = pd.read_parquet(path_k)
+
+                # Original fields are:
+                #   'id', 'title', 'paperAbstract', 'doi', 'year',
+                #   'fieldsOfStudy', 'rawtext', 'lemmas'
+                dfk = dfk[['id', 'title', 'paperAbstract', 'fieldsOfStudy']]
+
+                if k == 0:
+                    df_corpus = dfk
+                else:
+                    df_corpus = df_corpus.append(dfk, ignore_index=True)
+
+            logging.info(f'-- -- Raw corpus {corpus_name} read with '
+                         f'{len(dfk)} documents')
+
+            # Map column names to normalized names
+            # We use "Referencia", renamed as "id", as the project id.
+            mapping = {'paperAbstract': 'description',
+                       'fieldsOfStudy': 'keywords'}
+
+            df_corpus.rename(columns=mapping, inplace=True)
+            clean_corpus = True
+
+        else:
+            logging.warning("-- Unknown corpus")
+            df_corpus = None
+
+        # ############
+        # Clean corpus
+        if clean_corpus:
+
             # Remove duplicates, if any
-            df_corpus.drop_duplicates(subset=['Referencia'], inplace=True)
-            logging.info(f'-- -- Raw corpus {corpus_name} loaded with '
-                         f'{len(df_corpus)} documents')
+            df_corpus.drop_duplicates(subset=['id'], inplace=True)
 
             # Remove documents with missing data, if any
             ind_notna = df_corpus['title'].notna()
             df_corpus = df_corpus[ind_notna]
-            ind_notna = df_corpus['abstract'] == 0
+            ind_notna = df_corpus['description'] == 0
             df_corpus = df_corpus[~ind_notna]
-
-            # Original fields are:
-            #     Año, Convocatoria, Referencia, Área, Subárea, Título,
-            #     Palabras Clave, C.I.F., Entidad, CC.AA., Provincia,
-            #     € Conced., Resument, title, abstract, keywords,
-            #     Ind2017_BIO, Ind2017_TIC, Ind2017_ENE
-            df_corpus = df_corpus[[
-                'Referencia', 'title', 'abstract', 'Ind2017_BIO',
-                'Ind2017_TIC', 'Ind2017_ENE']]
-
-            # Map column names to normalized names
-            # We use "Referencia", renamed as "id", as the project id.
-            mapping = {'Referencia': 'id',
-                       'abstract': 'description',
-                       'Ind2017_BIO': 'target_bio',
-                       'Ind2017_TIC': 'target_tic',
-                       'Ind2017_ENE': 'target_ene'}
-            df_corpus.rename(columns=mapping, inplace=True)
 
             # Fill nan cells with empty strings
             df_corpus.fillna("", inplace=True)
@@ -346,17 +368,21 @@ class DataManager(object):
             # Reset the index and drop the old index
             df_corpus = df_corpus.reset_index(drop=True)
 
-            logging.info(
-                f"-- -- Corpus {corpus_name} reduced to {len(df_corpus)} "
-                f" documents")
-            logging.info(f"-- -- Loaded in {time() - t0:.2f} secs.")
-            logging.info(f'-- -- Writing feather file in {path2feather} '
-                         f'to speed up future loads')
-            df_corpus.to_feather(path2feather)
+        # ############
+        # Log and save
 
-        else:
-            logging.warning("-- Unknown corpus")
-            df_corpus = None
+        # Log results
+        logging.info(
+            f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
+            f" documents loaded in {time() - t0:.2f} secs.")
+
+        # Save to feather file
+        if save_feather:
+            logging.info(f'-- -- Writing feather file in {path2feather} '
+                         f'to speed up future loads...')
+            t0 = time()
+            df_corpus.to_feather(path2feather)
+            logging.info(f"-- -- Feather file saved in {time()-t0} secs")
 
         return df_corpus
 
