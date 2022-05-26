@@ -68,7 +68,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.widget = widget
 
         # Attributes for the maintenance of the options currently selected
-        self.corpus_selected_name = ""
+        self.corpus_selected_name = None
         self.labels_loaded = None
         self.get_label_option = 0
 
@@ -418,6 +418,7 @@ class MainWindow(QtWidgets.QMainWindow):
         each of the QRadioButtons associated with the labels' getting.
         Only one QRadioButton can be selected at a time.
         """
+
         if self.corpus_selected_name is None:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
