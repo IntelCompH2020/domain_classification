@@ -7,7 +7,7 @@
 # General imports
 import numpy as np
 from PyQt5 import uic, QtWidgets
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QSize, QObject
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QDesktopWidget
 
@@ -21,6 +21,7 @@ class GetTopicsListWindow(QtWidgets.QDialog):
     Class representing the window in charge of getting a subcorpus from a given
     list of topics, such a list being specified by the user.
     """
+
     def __init__(self, tm):
         """
         Initializes a "GetTopicsListWindow" window.
@@ -61,6 +62,11 @@ class GetTopicsListWindow(QtWidgets.QDialog):
             self.updated_topic_weighted_list)
         self.get_topic_list_push_button.clicked.connect(
             self.clicked_get_topic_list)
+
+        self.sliderBar1 = self.table_widget_topic_list.verticalScrollBar()
+        self.sliderBar2 = self.table_widget_topics_weight.verticalScrollBar()
+
+        self.sliderBar1.actionTriggered.connect(self.synchronize_scrolls)
 
     def initUI(self):
         """Configures the elements of the GUI window that are not configured in the UI, i.e. icon of the application,
@@ -223,3 +229,10 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         self.line_topic_list.setText("")
         self.line_edit_get_tag.setText("")
         return
+
+    def synchronize_scrolls(self):
+        """Method to connect the scroll bars of the top tables available in this window, so the user can keep track
+        of which topic is he writing the weight for.
+        """
+        sliderValue = self.sliderBar1.value()
+        self.sliderBar2.setValue(sliderValue)
