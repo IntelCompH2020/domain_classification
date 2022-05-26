@@ -291,6 +291,69 @@ class DataManager(object):
                          f'to speed up future loads')
             df_corpus.to_feather(path2feather)
 
+        elif corpus_name == 'CORDIS.parquet':
+
+            # ####################
+            # Paths and file names
+
+            files = [f for f in self.path2corpus.glob('**/*') if f.is_file()]
+            print(files)
+            breakpoint()
+
+            # ###########
+            # Load corpus
+
+            # Load corpus 1
+            path2corpus = self.path2corpus / corpus_fpath
+            df_corpus = pd.read_excel(path2corpus, engine='openpyxl')
+            # Remove duplicates, if any
+            df_corpus.drop_duplicates(subset=['Referencia'], inplace=True)
+            logging.info(f'-- -- Raw corpus {corpus_name} loaded with '
+                         f'{len(df_corpus)} documents')
+
+            # Remove documents with missing data, if any
+            ind_notna = df_corpus['title'].notna()
+            df_corpus = df_corpus[ind_notna]
+            ind_notna = df_corpus['abstract'] == 0
+            df_corpus = df_corpus[~ind_notna]
+
+            # Original fields are:
+            #     Año, Convocatoria, Referencia, Área, Subárea, Título,
+            #     Palabras Clave, C.I.F., Entidad, CC.AA., Provincia,
+            #     € Conced., Resument, title, abstract, keywords,
+            #     Ind2017_BIO, Ind2017_TIC, Ind2017_ENE
+            df_corpus = df_corpus[[
+                'Referencia', 'title', 'abstract', 'Ind2017_BIO',
+                'Ind2017_TIC', 'Ind2017_ENE']]
+
+            # Map column names to normalized names
+            # We use "Referencia", renamed as "id", as the project id.
+            mapping = {'Referencia': 'id',
+                       'abstract': 'description',
+                       'Ind2017_BIO': 'target_bio',
+                       'Ind2017_TIC': 'target_tic',
+                       'Ind2017_ENE': 'target_ene'}
+            df_corpus.rename(columns=mapping, inplace=True)
+
+            # Fill nan cells with empty strings
+            df_corpus.fillna("", inplace=True)
+
+            # Remove special characters
+            df_corpus['title'] = df_corpus['title'].str.replace('\t', '')
+            df_corpus['description'] = (
+                df_corpus['description'].str.replace('\t', ''))
+
+            # Reset the index and drop the old index
+            df_corpus = df_corpus.reset_index(drop=True)
+
+            logging.info(
+                f"-- -- Corpus {corpus_name} reduced to {len(df_corpus)} "
+                f" documents")
+            logging.info(f"-- -- Loaded in {time() - t0:.2f} secs.")
+            logging.info(f'-- -- Writing feather file in {path2feather} '
+                         f'to speed up future loads')
+            df_corpus.to_feather(path2feather)
+
         else:
             logging.warning("-- Unknown corpus")
             df_corpus = None
