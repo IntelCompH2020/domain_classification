@@ -3,9 +3,7 @@
 
 """
 Main program
-
 Created on March 20 2019
-
 @author: Jesús Cid-Sueiro
 """
 

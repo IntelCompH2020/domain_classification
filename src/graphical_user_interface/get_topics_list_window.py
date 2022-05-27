@@ -52,14 +52,13 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         # Significance threshold.
         self.s_min_default = self.tm.global_parameters['topics']['s_min']
         self.s_min = self.s_min_default
+        self.topic_weighted_list = ""
 
         # Initialize parameters in the GUI
         self.init_params()
 
         # CONNECTION WITH HANDLER FUNCTIONS
         #######################################################################
-        self.table_widget_topics_weight.cellChanged.connect(
-            self.updated_topic_weighted_list)
         self.get_topic_list_push_button.clicked.connect(
             self.clicked_get_topic_list)
 
@@ -162,44 +161,36 @@ class GetTopicsListWindow(QtWidgets.QDialog):
 
         return
 
-    def updated_topic_weighted_list(self):
-        """Generates the topic weighted list based on the weights that the user has introduced on the
-        "table_widget_topics_weight" table
-        """
-        # Get weights from the left table
-        topic_weighted_list = ""
-        for i in np.arange(0, self.table_widget_topics_weight.rowCount(), 1):
-            if self.table_widget_topics_weight.item(i, 0) is not None:
-                weight = self.table_widget_topics_weight.item(i, 0).text()
-                topic_weighted_list += str(i) + "," + weight + ","
-        # Remove empty space
-        topic_weighted_list = topic_weighted_list[:-1]
-
-        # Remove comma if needed
-        if topic_weighted_list[-1] == ",":
-            topic_weighted_list = topic_weighted_list[:-1]
-
-        # Write in table
-        self.line_topic_list.setText(topic_weighted_list)
-
     def clicked_get_topic_list(self):
         """Method to control the actions that are carried out at the time the "Select weighted topic list" button of
         the "Get topics window" is pressed by the user.
         """
-        # Update configuration parameters to take into account the changes that the user could have
-        # introduced
+        # Update configuration parameters to take into account the changes that the user could have introduced
         self.update_params()
+
+        # Get topic weighted listed from the "table_widget_topics_weight" table
+        self.topic_weighted_list = ""
+        for i in np.arange(0, self.table_widget_topics_weight.rowCount(), 1):
+            if self.table_widget_topics_weight.item(i, 0) is not None and\
+                    self.table_widget_topics_weight.item(i, 0).text() != "":
+                weight = self.table_widget_topics_weight.item(i, 0).text()
+                self.topic_weighted_list += str(i) + "," + weight + ","
+            else:
+                continue
+
+        # Remove comma if needed
+        if self.topic_weighted_list[-1] == ",":
+            self.topic_weighted_list = self.topic_weighted_list[:-1]
 
         # Show warning message in case the user clicks on the "Select weighted topic lists" button without having
         # previously written the weights that the user wants to use for the generation of the weighted topic list
-        if self.line_topic_list.text() == "":
+        if self.topic_weighted_list == "":
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE, Messages.NO_TOPIC_LIST_SELECTED)
             return
         else:
             # Get topic list
-            topic_list = str(self.line_topic_list.text())
-            tw_list = topic_list.split(',')
+            tw_list = self.topic_weighted_list.split(',')
 
             # Get topic indices as integers
             keys = [int(k) for k in tw_list[::2]]
@@ -226,7 +217,6 @@ class GetTopicsListWindow(QtWidgets.QDialog):
         # Hide window
         self.hide()
         # Clear QLineEdits
-        self.line_topic_list.setText("")
         self.line_edit_get_tag.setText("")
         return
 
