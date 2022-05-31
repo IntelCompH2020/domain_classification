@@ -216,7 +216,8 @@ class DataManager(object):
             #     fundingScheme, nature, objective, contentUpdateDate, rcn
             # WARNING: We DO NOT use "id" as the project id.
             #          We use "rcn" instead, renamed as "id"
-            df_corpus = df_corpus1.append(df_corpus2, ignore_index=True)
+            # df_corpus = df_corpus1.append(df_corpus2, ignore_index=True)
+            df_corpus = pd.concat([df_corpus1, df_corpus2])
             df_corpus = df_corpus[['acronym', 'title', 'objective', 'rcn']]
 
             # Map column names to normalized names
@@ -285,12 +286,13 @@ class DataManager(object):
                 # Original fields are:
                 #   'id', 'title', 'objective', 'startDate',
                 #   'ecMaxContribution', 'euroSciVocCode', 'rawtext', 'lemmas'
-                dfk = dfk[['id', 'title', 'objective']]
+                dfk = dfk[['id', 'title', 'objective', 'euroSciVocCode']]
 
                 if k == 0:
                     df_corpus = dfk
                 else:
-                    df_corpus = df_corpus.append(dfk, ignore_index=True)
+                    # df_corpus0 = df_corpus.append(dfk, ignore_index=True)
+                    df_corpus = pd.concat([df_corpus, dfk])
 
             logging.info(f'-- -- Raw corpus {corpus_name} read with '
                          f'{len(dfk)} documents')
@@ -300,6 +302,13 @@ class DataManager(object):
             mapping = {'objective': 'description'}
             df_corpus.rename(columns=mapping, inplace=True)
             clean_corpus = True
+
+            # Map list of euroSciVoc codes to a string (otherwise, no
+            # feather file can be saved)
+            col = 'euroSciVocCode'   # Just to abbreviate
+            if col in df_corpus:
+                df_corpus[col] = df_corpus['euroSciVocCode'].apply(
+                    lambda x: ','.join(x.astype(str)) if len(x) > 0 else '')
 
         elif corpus_name == 'S2CS.parquet':
 
@@ -327,7 +336,8 @@ class DataManager(object):
                 if k == 0:
                     df_corpus = dfk
                 else:
-                    df_corpus = df_corpus.append(dfk, ignore_index=True)
+                    # df_corpus = df_corpus.append(dfk, ignore_index=True)
+                    df_corpus = pd.concat([df_corpus, dfk])
 
             logging.info(f'-- -- Raw corpus {corpus_name} read with '
                          f'{len(dfk)} documents')
@@ -380,6 +390,7 @@ class DataManager(object):
             logging.info(f'-- -- Writing feather file in {path2feather} '
                          f'to speed up future loads...')
             t0 = time()
+            breakpoint()
             df_corpus.to_feather(path2feather)
             logging.info(f"-- -- Feather file saved in {time()-t0} secs")
 

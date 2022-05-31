@@ -15,24 +15,24 @@ keywords:
   # of the word in the description. (For method='count' only)
   wt: 1 
   # Maximum number of documents to be selected.
-  n_max: 2000
+  n_max: 4000
   # Minimum score. Only docs scored strictly above s_min are selected
   s_min: 0.6
-  # SBERT model (for method='count' only). See available pretrained models in 
+  # Name of the SBERT model. Available pretrained models can be found in 
   # https://www.sbert.net/docs/pretrained_models.html
   model_name: all-MiniLM-L6-v2
 
 # Parameter for the zero-shot document selector
 zeroshot:
   # Maximum number of documents to be selected.
-  n_max: 2000
+  n_max: 4000
   # Minimum score. Only docs scored strictly above s_min are selected
   s_min: 0.6
 
 # Parameter for the topic-based document selector
 topics:
   # Maximum number of documents to be selected.
-  n_max: 2000
+  n_max: 4000
   # Minimum score. Only docs scored strictly above s_min are selected
   s_min: 0.2
 

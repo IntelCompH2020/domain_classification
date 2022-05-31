@@ -17,6 +17,7 @@ from .domain_classifier.classifier import CorpusClassifier
 from .utils import plotter
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class TaskManager(baseTaskManager):
@@ -97,7 +98,6 @@ class TaskManager(baseTaskManager):
         self.path2dataset = self.path2project / self.f_struct['datasets']
         self.path2models = self.path2project / self.f_struct['models']
         self.path2embeddings = self.path2project / self.f_struct['embeddings']
-        self.path2output = self.path2project / self.f_struct['output']
 
         # Path to the folder containing the zero-shot model
         self.path2zeroshot = path2zeroshot
@@ -305,7 +305,8 @@ class TaskManager(baseTaskManager):
 
         return y, df_stats, kf_stats
 
-    def get_labels_by_keywords(self, wt=2, n_max=2000, s_min=1, tag="kwds"):
+    def get_labels_by_keywords(self, wt=2, n_max=2000, s_min=1, tag="kwds",
+                               method='count'):
         """
         Get a set of positive labels using keyword-based search
 
@@ -321,21 +322,19 @@ class TaskManager(baseTaskManager):
             Minimum score. Only elements strictly above s_min are selected
         tag: str, optional (default=1)
             Name of the output label set.
-
-        Returns
-        -------
-        msg : str
-            A log message that might be useful for a GUI application.
+        method: 'embedding' or 'count', optional
+            Selection method: 'count' (based on counting occurences of keywords
+            in docs) or 'embedding' (based on the computation of similarities
+            between doc and keyword embeddings)
         """
 
         logging.info(f'-- Selected keywords: {self.keywords}')
 
         # Take name of the SBERT model from the configuration parameters
         model_name = self.global_parameters['keywords']['model_name']
-        method = self.global_parameters['keywords']['method']
 
         # Find the documents with the highest scores given the keywords
-        ids, scores = self.CorpusProc.filter_by_keywords(
+        ids, eval_scores = self.CorpusProc.filter_by_keywords(
             self.keywords, wt=wt, n_max=n_max, s_min=s_min,
             model_name=model_name, method=method)
 
@@ -358,39 +357,38 @@ class TaskManager(baseTaskManager):
             'n_max': n_max,
             's_min': s_min,
             'keywords': self.keywords}
-        self._save_metadata()
 
-        # ##########
-        # Evaluation
-
-        # Evaluation is available for the following keywords and their
-        # corresponding target columns only
-        keyword_columns = {
-            'biomedicine': 'target_bio',
-            'information and communication technologies': 'target_tic',
-            'energy': 'target_ene'}
-        target_col = keyword_columns[self.keywords[0]]
-
-        if (len(self.keywords) == 1
-                and self.keywords[0] in keyword_columns
-                and target_col in self.df_corpus.columns):
-            # Evaluation
-            eval_scores = self.CorpusProc.evaluate_filter(
-                scores, target_col, n_max, s_min, verbose=True)
-
-            # Save tpr and fpr values
-            path2file = self.path2output / f'{method}_{tag}_ROC'
-            np.savez(path2file, tpr_roc=eval_scores['tpr_roc'],
+        # Metadata for evaluation
+        if eval_scores:
+            # Save tpr fpr and ROC curve
+            # FIXME: The name of the SBERT model should be read from the config
+            # file (parameters.default.yaml or metadata file (metadata.yaml))
+            model_name = 'all-MiniLM-L6-v2'
+            results_out_fname = f'results_{model_name}_{self.keywords}_ROC'
+            results_fname = self.path2labels / results_out_fname
+            np.savez(results_fname, tpr_roc=eval_scores['tpr_roc'],
                      fpr_roc=eval_scores['fpr_roc'])
 
-            # Plot ROC curve.
-            plotter.plot_roc(eval_scores['fpr_roc'], eval_scores['tpr_roc'],
-                             label=tag, path2figure=path2file)
+            fig, ax = plt.subplots()
+            plt.plot(eval_scores['fpr_roc'], eval_scores['tpr_roc'],
+                     lw=2.5, label=self.keywords)
+            plt.grid(b=True, which='major', color='gray', alpha=0.6,
+                     linestyle='dotted', lw=1.5)
+            plt.xlabel('False Positive Rate (FPR)')
+            plt.ylabel('True Positive Rate (TPR)')
+            plt.title('ROC curve')
+            plt.legend()
+            figure_out_fname = f'figure_{model_name}_{self.keywords}_ROC'
+            figure_fname = self.path2labels / figure_out_fname
+            plt.savefig(figure_fname)
 
-            # Store all but FPR and TPR values in metadata
+            # Save smin and nmax evaluation scores
+            # FIXME: The name of the SBERT model should be read from the config
+            # file (parameters.default.yaml or metadata file (metadata.yaml))
             del eval_scores['fpr_roc'], eval_scores['tpr_roc']
-            self.metadata[key][tag]['eval_scores'] = eval_scores
-            self._save_metadata()
+            self.metadata[key][tag].__setitem__('eval_scores', eval_scores)
+
+        self._save_metadata()
 
         return msg
 
@@ -835,6 +833,17 @@ class TaskManagerCMD(TaskManager):
             convert_to=float,
             default=self.global_parameters['keywords']['s_min'])
 
+        # Get method
+        method = self.QM.ask_value(
+            query=("Set method: (e)mbedding (default) or (c)ount (fast)"),
+            convert_to=str,
+            default=self.global_parameters['keywords']['method'])
+
+        if method == 'e':
+            method = 'embedding'
+        elif method == 'c':
+            method = 'count'
+
         # Get keywords and labels
         self.keywords = self._ask_keywords()
         tag = self._ask_label_tag()
@@ -842,7 +851,7 @@ class TaskManagerCMD(TaskManager):
         # ##########
         # Get labels
         msg = super().get_labels_by_keywords(
-            wt=wt, n_max=n_max, s_min=s_min, tag=tag)
+            wt=wt, n_max=n_max, s_min=s_min, tag=tag, method=method)
 
         logging.info(msg)
 
@@ -1051,8 +1060,12 @@ class TaskManagerGUI(TaskManager):
         # Keywords are received as arguments
         self.keywords = keywords
 
-        msg = super().get_labels_by_keywords(wt=wt, n_max=n_max, s_min=s_min,
-                                             tag=tag)
+        method = self.global_parameters['keywords']['method']
+
+        # ##########
+        # Get labels
+        msg = super().get_labels_by_keywords(
+            wt=wt, n_max=n_max, s_min=s_min, tag=tag, method=method)
 
         return msg
 
