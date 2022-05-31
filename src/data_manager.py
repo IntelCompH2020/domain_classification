@@ -306,9 +306,11 @@ class DataManager(object):
             # Map list of euroSciVoc codes to a string (otherwise, no
             # feather file can be saved)
             col = 'euroSciVocCode'   # Just to abbreviate
+            breakpoint()
             if col in df_corpus:
-                df_corpus[col] = df_corpus['euroSciVocCode'].apply(
-                    lambda x: ','.join(x.astype(str)) if len(x) > 0 else '')
+                df_corpus[col] = df_corpus[col].apply(
+                    lambda x: ','.join(
+                        x.astype(str)) if x is not None else '')
 
         elif corpus_name == 'S2CS.parquet':
 
