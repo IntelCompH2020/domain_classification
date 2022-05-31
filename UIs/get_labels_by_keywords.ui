@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>755</width>
-    <height>613</height>
+    <width>929</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -224,7 +224,7 @@
               </size>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Write your keywords separated by commas e.g.: gradient descent, Gibbs sampling, etc. on the left white box and configure the parameters needed for the labels import with the right table. To update them, tip a different value on its corresponding column. Each parameter refers to:&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600; color:#0e101a; background-color:transparent;&quot;&gt;- wt: &lt;/span&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Weight of the title. A word in the title is equivalent to the wt repetitions of the word in the description.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600; color:#0e101a; background-color:transparent;&quot;&gt;- n_max:&lt;/span&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt; Maximum number of elements in the output list.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600; color:#0e101a; background-color:transparent;&quot;&gt;- s_min: &lt;/span&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Minimum score. Only elements strictly above s_min are selected.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Write your keywords separated by commas e.g.: gradient descent, Gibbs sampling, etc. on the left white box and configure the parameters needed for the labels import with the right table. To update them, tip a different value on its corresponding column. Each parameter refers to:&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600; color:#0e101a; background-color:transparent;&quot;&gt;- wt: &lt;/span&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Weight of the title. A word in the title is equivalent to the wt repetitions of the word in the description.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600; color:#0e101a; background-color:transparent;&quot;&gt;- n_max:&lt;/span&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt; Maximum number of elements in the output list.&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600; color:#0e101a; background-color:transparent;&quot;&gt;- s_min: &lt;/span&gt;&lt;span style=&quot; color:#0e101a; background-color:transparent;&quot;&gt;Minimum score. Only elements strictly above s_min are selected.&lt;/span&gt;</string>
              </property>
              <property name="styleSheet">
               <string notr="true">QPushButton {
@@ -498,6 +498,17 @@ QToolTip {
              <column>
               <property name="text">
                <string>s_min</string>
+              </property>
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>method</string>
               </property>
               <property name="font">
                <font>

@@ -53,6 +53,9 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         # Minimum score. Only docs scored strictly above s_min are selected
         self.s_min_default = self.tm.global_parameters['keywords']['s_min']
         self.s_min = self.s_min_default
+        # Method
+        self.method_default = self.tm.global_parameters['keywords']['method']
+        self.method = self.method_default
 
         # Initialize parameters in the GUI
         self.init_params()
@@ -85,7 +88,7 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         """
         self.table_params.clearContents()
         self.table_params.setRowCount(1)
-        self.table_params.setColumnCount(3)
+        self.table_params.setColumnCount(4)
 
         self.table_params.setItem(
             0, 0, QtWidgets.QTableWidgetItem(str(self.wt)))
@@ -93,6 +96,8 @@ class GetKeywordsWindow(QtWidgets.QDialog):
             0, 1, QtWidgets.QTableWidgetItem(str(self.n_max)))
         self.table_params.setItem(
             0, 2, QtWidgets.QTableWidgetItem(str(self.s_min)))
+        self.table_params.setItem(
+            0, 3, QtWidgets.QTableWidgetItem(str(self.method)))
 
     def update_params(self):
         """Updates the keywords parameters that are going to be used in the getting of the keywords based on the
@@ -112,6 +117,9 @@ class GetKeywordsWindow(QtWidgets.QDialog):
             self.s_min = float(self.table_params.item(0, 2).text())
         else:
             self.s_min = self.s_min_default
+
+        if self.table_params.item(0, 3) is not None:
+            self.method = str(self.table_params.item(0, 3).text())
 
         self.init_params()
 

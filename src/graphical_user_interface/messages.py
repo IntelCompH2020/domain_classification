@@ -58,16 +58,21 @@ class Messages:
         "Select a set of labels and click the 'Load labels' button for\n" \
         "loading it into the current session. Alternatively, click the\n" \
         "'Reset labels' button to remove the previously selected labels."
+    NO_LABELS_TO_LOAD_SELECTED_LOAD = \
+        "You must select a set of labels before clicking the 'Load labels' button."
+    NO_LABELS_TO_LOAD_SELECTED_RESET = \
+        "You must select a set of labels before clicking the 'Reset labels' button."
 
     # Train and evaluate PU model
     ###########################################################################
     WARNING_TRAINING = \
         'To proceed with training: first select a corpus and set of labels.'
     WARNING_EVALUATION = \
-        'To proceed with evaluation: first select a corpus and set of labels, and train a PU model'
+        'To proceed with evaluation: first select a corpus and set of labels, and train a PU model.'
 
     # Getting relevance feedback messages
     ###########################################################################
+    WARNING_FEEDBACK = 'To give feedback: first select a corpus and set of labels, and train a PU model.'
 
     # Train and revaluate PU model
     ###########################################################################

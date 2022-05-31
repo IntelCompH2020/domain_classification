@@ -68,7 +68,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.widget = widget
 
         # Attributes for the maintenance of the options currently selected
-        self.corpus_selected_name = None
+        if self.tm.state['selected_corpus']:
+            self.corpus_selected_name = self.tm.metadata['corpus_name']
+        else:
+            self.corpus_selected_name = None
         self.labels_loaded = None
         self.get_label_option = 0
 
@@ -361,7 +364,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 wt=self.get_keywords_window.wt,
                 n_max=self.get_keywords_window.n_max,
                 s_min=self.get_keywords_window.s_min,
-                tag=self.get_keywords_window.selectedTag)
+                tag=self.get_keywords_window.selectedTag,
+                method=self.get_keywords_window.method)
         elif self.get_label_option == 4:
             message_out = self.tm.get_labels_by_topics(
                 topic_weights=self.get_topics_list_window.tw,
@@ -419,7 +423,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Only one QRadioButton can be selected at a time.
         """
 
-        if self.corpus_selected_name is None and self.tm.state['selected_corpus'] is False:
+        if self.tm.state['selected_corpus'] is False:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
                 Messages.INCORRECT_NO_CORPUS_SELECTED)
@@ -498,7 +502,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Show warning message indicating that a corpus needs to be selected first
         # in order to proceed with the labels' loading
-        if self.corpus_selected_name is None and self.tm.state['selected_corpus'] is False:
+        if self.tm.state['selected_corpus'] is False:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
                 Messages.INCORRECT_NO_CORPUS_SELECTED)
@@ -519,11 +523,18 @@ class MainWindow(QtWidgets.QMainWindow):
         """
 
         # Show warning message if not corpus has been selected before asking for the labels' loading
-        if self.corpus_selected_name is None and self.tm.state['selected_corpus'] is False:
+        if self.tm.state['selected_corpus'] is False:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
                 Messages.INCORRECT_NO_CORPUS_SELECTED)
         else:
+            # Exit if not labels selected
+            if self.tree_view_load_labels.currentItem() is None:
+                QtWidgets.QMessageBox.warning(
+                    self, Messages.DC_MESSAGE,
+                    Messages.NO_LABELS_TO_LOAD_SELECTED_LOAD)
+                return
+
             # Load labels by invoking the corresponding TM's function
             item = self.tree_view_load_labels.currentItem()
             self.labels_loaded = str(item.text())
@@ -538,7 +549,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 "The labels '" + self.labels_loaded + "' have been loaded"
                                                       " in the current session.")
 
-            # Write the name of the laoded set of labels in the "label_labels_loaded_are" QLineEdit
+            # Write the name of the loaded set of labels in the "label_labels_loaded_are" QLineEdit
             self.label_labels_loaded_are.setText(str(self.labels_loaded))
 
             # Show documents at the GET FEEDBACK if the conditions for it are satisfied
@@ -552,11 +563,18 @@ class MainWindow(QtWidgets.QMainWindow):
         """
 
         # Show warning message if not corpus has been selected before asking for the labels' loading
-        if self.corpus_selected_name is None and self.tm.state['selected_corpus'] is False:
+        if self.tm.state['selected_corpus'] is False:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
                 Messages.INCORRECT_NO_CORPUS_SELECTED)
         else:
+            # Exit if not labels selected
+            if self.tree_view_load_labels.currentItem() is None:
+                QtWidgets.QMessageBox.warning(
+                    self, Messages.DC_MESSAGE,
+                    Messages.NO_LABELS_TO_LOAD_SELECTED_RESET)
+                return
+
             # Reset labels by invoking the corresponding TM's function
             item = self.tree_view_load_labels.currentItem()
             self.labels_loaded = str(item.text())
@@ -710,8 +728,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
 
         # Check if a corpus has been selected. Otherwise, the training cannot be carried out
-        if self.corpus_selected_name is not None and self.tm.state['selected_corpus'] and\
-                self.tm.df_labels is not None:
+        if self.tm.state['selected_corpus'] and self.tm.df_labels is not None and self.labels_loaded is not None:
 
             # Execute the PU model training in the secondary thread
             execute_in_thread(
@@ -800,8 +817,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Check if a corpus and a set of labels have been selected and a model trained.
         # Otherwise, the evaluation cannot be carried out
-        if self.corpus_selected_name is not None and self.tm.state['selected_corpus'] and \
-                self.tm.df_labels is not None:
+        if self.tm.state['selected_corpus'] and self.tm.df_labels is not None and \
+                self.labels_loaded is not None and self.tm.dc is not None:
 
             # Execute the PU model evaluation in the secondary thread
             execute_in_thread(
@@ -1010,9 +1027,18 @@ class MainWindow(QtWidgets.QMainWindow):
         clicked by the user.
         """
 
-        # Carry out the feedback giving in the secondary thread
-        execute_in_thread(
-            self, self.execute_give_feedback, self.do_after_give_feedback, self.progress_bar_feedback_update)
+        # Check if a corpus and labels have been selected and whether a model related with them related has already been
+        # trained. Otherwise, the retraining cannot be carried out
+        if self.tm.state['selected_corpus'] and self.tm.df_labels is not None and \
+                self.labels_loaded is not None and self.tm.dc is not None:
+
+            # Carry out the feedback giving in the secondary thread
+            execute_in_thread(
+                self, self.execute_give_feedback, self.do_after_give_feedback, self.progress_bar_feedback_update)
+        else:
+
+            # Show warning message if the conditions for evaluating the model are not met
+            QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.WARNING_FEEDBACK)
 
         return
 
@@ -1071,9 +1097,10 @@ class MainWindow(QtWidgets.QMainWindow):
         clicked by the user.
         """
 
-        # Check if a corpus has been selected. Otherwise, the retraining cannot be carried out
-        if self.corpus_selected_name is not None and self.tm.state['selected_corpus'] and\
-                self.tm.df_labels is not None:
+        # Check if a corpus and labels have been selected and whether a model related with them related has already been
+        # trained. Otherwise, the retraining cannot be carried out
+        if self.tm.state['selected_corpus'] and self.tm.df_labels is not None and \
+                self.labels_loaded is not None and self.tm.dc is not None:
 
             # Execute the PU model retraining in the secondary thread
             execute_in_thread(
@@ -1143,10 +1170,10 @@ class MainWindow(QtWidgets.QMainWindow):
         clicked by the user.
         """
 
-        # Check if a corpus and a set of labels have been selected and a model trained.
-        # Otherwise, the reevaluation cannot be carried out
-        if self.corpus_selected_name is not None and self.tm.state['selected_corpus'] and\
-                self.tm.df_labels is not None:
+        # Check if a corpus and labels have been selected and whether a model related with them related has already been
+        # trained. Otherwise, the retraining cannot be carried out
+        if self.tm.state['selected_corpus'] and self.tm.df_labels is not None and \
+                self.labels_loaded is not None and self.tm.dc is not None:
 
             # Execute the PU model reevaluation in the secondary thread
             execute_in_thread(

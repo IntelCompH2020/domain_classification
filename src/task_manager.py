@@ -338,6 +338,8 @@ class TaskManager(baseTaskManager):
             self.keywords, wt=wt, n_max=n_max, s_min=s_min,
             model_name=model_name, method=method)
 
+        print(eval_scores)
+
         # Create dataframe of positive labels from the list of ids
         self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
         # Set the working class
@@ -1036,7 +1038,7 @@ class TaskManagerGUI(TaskManager):
 
         return suggested_keywords
 
-    def get_labels_by_keywords(self, keywords, wt, n_max, s_min, tag):
+    def get_labels_by_keywords(self, keywords, wt, n_max, s_min, tag, method):
         """
         Get a set of positive labels using keyword-based search through the
         MainWindow
@@ -1048,19 +1050,21 @@ class TaskManagerGUI(TaskManager):
         wt : float, optional (default=2)
             Weighting factor for the title components. Keyword matches with
             title words are weighted by this factor
-        n_max: int or None, optional (defaul=2000)
+        n_max: int or None, optional (default=2000)
             Maximum number of elements in the output list. The default is
-            a huge number that, in practice, means there is no loimit
+            a huge number that, in practice, means there is no limit
         s_min: float, optional (default=1)
             Minimum score. Only elements strictly above s_min are selected
         tag: str, optional (default=1)
             Name of the output label set.
+        method: 'embedding' or 'count', optional
+        Selection method: 'count' (based on counting occurrences of keywords
+        in docs) or 'embedding' (based on the computation of similarities
+        between doc and keyword embeddings)
         """
 
         # Keywords are received as arguments
         self.keywords = keywords
-
-        method = self.global_parameters['keywords']['method']
 
         # ##########
         # Get labels
