@@ -76,6 +76,10 @@ class PreConfig(QDialog):
         self.zeroshotFolder = (
             self.args.zeroshot if self.args.p is not None else "")
 
+        # Update image
+        pixmap = QPixmap('UIs/Images/dc_logo.png')
+        self.label.setPixmap(pixmap)
+
         # Update project and source folder in the GUI if provided through the
         # command line
         self.showProjectFolder.setText(

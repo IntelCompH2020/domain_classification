@@ -305,7 +305,8 @@ class TaskManager(baseTaskManager):
 
         return y, df_stats, kf_stats
 
-    def get_labels_by_keywords(self, wt=2, n_max=2000, s_min=1, tag="kwds"):
+    def get_labels_by_keywords(self, wt=2, n_max=2000, s_min=1, tag="kwds",
+                               method='count'):
         """
         Get a set of positive labels using keyword-based search
 
@@ -321,13 +322,16 @@ class TaskManager(baseTaskManager):
             Minimum score. Only elements strictly above s_min are selected
         tag: str, optional (default=1)
             Name of the output label set.
+        method: 'embedding' or 'count', optional
+            Selection method: 'count' (based on counting occurences of keywords
+            in docs) or 'embedding' (based on the computation of similarities
+            between doc and keyword embeddings)
         """
 
         logging.info(f'-- Selected keywords: {self.keywords}')
 
         # Take name of the SBERT model from the configuration parameters
         model_name = self.global_parameters['keywords']['model_name']
-        method = self.global_parameters['keywords']['method']
 
         # Find the documents with the highest scores given the keywords
         ids, eval_scores = self.CorpusProc.filter_by_keywords(
@@ -829,6 +833,17 @@ class TaskManagerCMD(TaskManager):
             convert_to=float,
             default=self.global_parameters['keywords']['s_min'])
 
+        # Get method
+        method = self.QM.ask_value(
+            query=("Set method: (e)mbedding (default) or (c)ount (fast)"),
+            convert_to=str,
+            default=self.global_parameters['keywords']['method'])
+
+        if method == 'e':
+            method = 'embedding'
+        elif method == 'c':
+            method = 'count'
+
         # Get keywords and labels
         self.keywords = self._ask_keywords()
         tag = self._ask_label_tag()
@@ -836,7 +851,7 @@ class TaskManagerCMD(TaskManager):
         # ##########
         # Get labels
         msg = super().get_labels_by_keywords(
-            wt=wt, n_max=n_max, s_min=s_min, tag=tag)
+            wt=wt, n_max=n_max, s_min=s_min, tag=tag, method=method)
 
         logging.info(msg)
 
@@ -1045,8 +1060,12 @@ class TaskManagerGUI(TaskManager):
         # Keywords are received as arguments
         self.keywords = keywords
 
-        msg = super().get_labels_by_keywords(wt=wt, n_max=n_max, s_min=s_min,
-                                             tag=tag)
+        method = self.global_parameters['keywords']['method']
+
+        # ##########
+        # Get labels
+        msg = super().get_labels_by_keywords(
+            wt=wt, n_max=n_max, s_min=s_min, tag=tag, method=method)
 
         return msg
 
