@@ -835,7 +835,7 @@ class TaskManagerCMD(TaskManager):
 
         # Get method
         method = self.QM.ask_value(
-            query=("Set method: (e)mbedding (default) or (c)ount (fast)"),
+            query=("Set method: (e)mbedding (slow) or (c)ount (fast)"),
             convert_to=str,
             default=self.global_parameters['keywords']['method'])
 
