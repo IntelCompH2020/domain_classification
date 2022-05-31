@@ -130,3 +130,5 @@ dmypy.json
 
 # Added by JCS
 *.DS_Store
+
+Dockerfile
