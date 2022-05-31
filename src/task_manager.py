@@ -338,8 +338,6 @@ class TaskManager(baseTaskManager):
             self.keywords, wt=wt, n_max=n_max, s_min=s_min,
             model_name=model_name, method=method)
 
-        print(eval_scores)
-
         # Create dataframe of positive labels from the list of ids
         self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
         # Set the working class
