@@ -524,8 +524,12 @@ class TaskManager(baseTaskManager):
         self.DM.reset_labels(tag=labelset)
 
         # Remove label info from metadata, it it exist
-        self.metadata['keyword_based_label_parameters'].pop(labelset, None)
-        self.metadata['topic_based_label_parameters'].pop(labelset, None)
+        for key in ['keyword_based_label_parameters',
+                    'topic_based_label_parameters',
+                    'zero_shot_parameters']:
+            if key in self.metadata and labelset in self.metadata[key]:
+                self.metadata[key].pop(labelset, None)
+
         self._save_metadata()
 
         return
