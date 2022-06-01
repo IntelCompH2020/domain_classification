@@ -334,7 +334,7 @@ class TaskManager(baseTaskManager):
         model_name = self.global_parameters['keywords']['model_name']
 
         # Find the documents with the highest scores given the keywords
-        ids, eval_scores = self.CorpusProc.filter_by_keywords(
+        ids, scores = self.CorpusProc.filter_by_keywords(
             self.keywords, wt=wt, n_max=n_max, s_min=s_min,
             model_name=model_name, method=method)
 
@@ -359,6 +359,8 @@ class TaskManager(baseTaskManager):
             'keywords': self.keywords}
 
         # Metadata for evaluation
+        # FIXME: the code below is not used. To be moved to another method.
+        eval_scores = False
         if eval_scores:
             # Save tpr fpr and ROC curve
             # FIXME: The name of the SBERT model should be read from the config
@@ -383,8 +385,6 @@ class TaskManager(baseTaskManager):
             plt.savefig(figure_fname)
 
             # Save smin and nmax evaluation scores
-            # FIXME: The name of the SBERT model should be read from the config
-            # file (parameters.default.yaml or metadata file (metadata.yaml))
             del eval_scores['fpr_roc'], eval_scores['tpr_roc']
             self.metadata[key][tag].__setitem__('eval_scores', eval_scores)
 

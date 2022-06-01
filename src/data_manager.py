@@ -306,7 +306,6 @@ class DataManager(object):
             # Map list of euroSciVoc codes to a string (otherwise, no
             # feather file can be saved)
             col = 'euroSciVocCode'   # Just to abbreviate
-            breakpoint()
             if col in df_corpus:
                 df_corpus[col] = df_corpus[col].apply(
                     lambda x: ','.join(
@@ -392,7 +391,6 @@ class DataManager(object):
             logging.info(f'-- -- Writing feather file in {path2feather} '
                          f'to speed up future loads...')
             t0 = time()
-            breakpoint()
             df_corpus.to_feather(path2feather)
             logging.info(f"-- -- Feather file saved in {time()-t0} secs")
 
