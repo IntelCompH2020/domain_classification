@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<meta content="How to use the domain classifier." lang="en" name="description" xml:lang="en" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started with Domain Classifier &mdash; domain_classification_doc  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Menu Navigator" href="mn_menu_navigator.html" />
+    <link rel="prev" title="Domain Classifier Docs" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> domain_classification_doc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started with Domain Classifier</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#terminal-mode">Terminal mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graphical-user-interface">Graphical User Interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#other-info-about-sphinx">Other info about  Sphinx</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quick-start">Quick start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-markdown-with-sphinx">Using Markdown with Sphinx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#external-resources">External resources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mn_menu_navigator.html">Menu Navigator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_base_taskmanager.html">Base Task Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_task_manager.html">Task Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_data_manager.html">Data Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_query_manager.html">Query Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_classifier.html">Classifier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_custom_model.html">Custom Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_preprocessor.html">Preprocessor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_main_window.html">Main Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_analyze_keywords_window.html">Analyze Keywords Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_constants.html">Constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_get_keywords_window.html">Get Keywords Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_get_topics_list_window.html">Get Topics List Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_messages.html">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_output_wrapper.html">Output Wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_util.html">Util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_worker_signals.html">Worker Signals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_worker.html">Worker</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">domain_classification_doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Getting Started with Domain Classifier</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started-with-domain-classifier">
+<h1>Getting Started with Domain Classifier<a class="headerlink" href="#getting-started-with-domain-classifier" title="Permalink to this headline"></a></h1>
+<p>There are two different versions of the Domain Classifier. They differ in the way to manage the user interaction:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>main_domain_classifier.py: user interacts through a terminal (command window).</p></li>
+<li><p>main_gui.py: user interacts through a Graphical User Interface (GUI).</p></li>
+</ol>
+</div></blockquote>
+<section id="terminal-mode">
+<h2>Terminal mode<a class="headerlink" href="#terminal-mode" title="Permalink to this headline"></a></h2>
+<p>To use te interaction through a command window, open a terminal, go to the root folder of the software and run</p>
+<p>where</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>[project_folder] is the path to a new or an existing project in which the application’s output will be saved.</p></li>
+<li><p>[dataset_folder] is the path to the source data folder.</p></li>
+<li><p>[zero_shot_folder] is the path to a folder containing a pre-trained zero-shot model utilized for the selection of a subcorpus from a category name.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="graphical-user-interface">
+<h2>Graphical User Interface<a class="headerlink" href="#graphical-user-interface" title="Permalink to this headline"></a></h2>
+<p>You will need a terminal window to launch the GUI: open a terminal, go to the roof folder of the software and run</p>
+<p>where</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>[project_folder] is the path to a new or an existing project in which the application’s output will be saved.</p></li>
+<li><p>[dataset_folder] is the path to the source data folder.</p></li>
+<li><p>[zero_shot_folder] is the path to a folder containing a pre-trained zero-shot model utilized for the selection of a subcorpus from a category name.</p></li>
+</ul>
+</div></blockquote>
+<p>All these parameters are optional. For instance, you can simply run</p>
+<p>and select the appropriate folders inside the GUI.</p>
+</section>
+</section>
+<section id="other-info-about-sphinx">
+<h1>Other info about  Sphinx<a class="headerlink" href="#other-info-about-sphinx" title="Permalink to this headline"></a></h1>
+<ul class="simple">
+<li><p>Generate web pages, printable PDFs, documents for e-readers (ePub),
+and more all from the same sources</p></li>
+<li><p>You can use reStructuredText or <span class="xref std std-ref">Markdown</span>
+to write documentation</p></li>
+<li><p>An extensive system of cross-referencing code and documentation</p></li>
+<li><p>Syntax highlighted code samples</p></li>
+<li><p>A vibrant ecosystem of first and third-party <span class="xref std std-doc">extensions</span></p></li>
+</ul>
+<p>If you want to learn more about how to create your first Sphinx project, read on.
+If you are interested in exploring the Read the Docs platform using an already existing Sphinx project,
+check out <span class="xref std std-doc">/tutorial/index</span>.</p>
+<section id="quick-start">
+<h2>Quick start<a class="headerlink" href="#quick-start" title="Permalink to this headline"></a></h2>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>If you already have a Sphinx project, check out our <span class="xref std std-doc">/intro/import-guide</span> guide.</p>
+</div>
+<p>Assuming you have Python already, <span class="xref std std-doc">install Sphinx</span>:</p>
+<p>Create a directory inside your project to hold your docs:</p>
+<p>Run <code class="docutils literal notranslate"><span class="pre">sphinx-quickstart</span></code> in there:</p>
+<p>This quick start will walk you through creating the basic configuration; in most cases, you
+can just accept the defaults. When it’s done, you’ll have an <code class="docutils literal notranslate"><span class="pre">index.rst</span></code>, a
+<code class="docutils literal notranslate"><span class="pre">conf.py</span></code> and some other files. Add these to revision control.</p>
+<p>Now, edit your <code class="docutils literal notranslate"><span class="pre">index.rst</span></code> and add some information about your project.
+Include as much detail as you like (refer to the <span class="xref std std-doc">reStructuredText syntax</span>
+or <a class="reference external" href="https://www.writethedocs.org/guide/writing/beginners-guide-to-docs/#id1">this template</a> if you need help). Build them to see how they look:</p>
+<p>Your <code class="docutils literal notranslate"><span class="pre">index.rst</span></code> has been built into <code class="docutils literal notranslate"><span class="pre">index.html</span></code>
+in your documentation output directory (typically <code class="docutils literal notranslate"><span class="pre">_build/html/index.html</span></code>).
+Open this file in your web browser to see your docs.</p>
+<figure class="align-center" id="id1" style="width: 500px">
+<img alt="_static/images/first-steps/sphinx-hello-world.png" src="_static/images/first-steps/sphinx-hello-world.png" />
+<figcaption>
+<p><span class="caption-text">Your Sphinx project is built</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Edit your files and rebuild until you like what you see, then commit your changes and push to your public repository.
+Once you have Sphinx documentation in a public repository, you can start using Read the Docs
+by <span class="xref std std-doc">importing your docs</span>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>We strongly recommend to <span class="xref std std-ref">pin the Sphinx version</span>
+used for your project to build the docs to avoid potential future incompatibilities.</p>
+</div>
+</section>
+<section id="using-markdown-with-sphinx">
+<h2>Using Markdown with Sphinx<a class="headerlink" href="#using-markdown-with-sphinx" title="Permalink to this headline"></a></h2>
+<p>You can use <a class="reference external" href="https://myst-parser.readthedocs.io/en/latest/using/intro.html">Markdown using MyST</a> and reStructuredText in the same Sphinx project.
+We support this natively on Read the Docs, and you can do it locally:</p>
+<p>Then in your <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;myst_parser&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>You can now continue writing your docs in <code class="docutils literal notranslate"><span class="pre">.md</span></code> files and it will work with Sphinx.
+Read the <a class="reference external" href="https://myst-parser.readthedocs.io/en/latest/sphinx/intro.html">Getting started with MyST in Sphinx</a> docs for additional instructions.</p>
+</section>
+<section id="external-resources">
+<h2>External resources<a class="headerlink" href="#external-resources" title="Permalink to this headline"></a></h2>
+<p>Here are some external resources to help you learn more about Sphinx.</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.sphinx-doc.org/">Sphinx documentation</a></p></li>
+<li><p><span class="xref std std-doc">RestructuredText primer</span></p></li>
+<li><p><a class="reference external" href="https://www.ericholscher.com/blog/2016/jul/1/sphinx-and-rtd-for-writers/">An introduction to Sphinx and Read the Docs for technical writers</a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Domain Classifier Docs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mn_menu_navigator.html" class="btn btn-neutral float-right" title="Menu Navigator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. Cid-Sueiro, L. Calvo, J.A. Espinosa, T. Ahlers, M. A. Vázquez.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

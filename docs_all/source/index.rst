@@ -10,6 +10,7 @@ Domain Classifier Docs
    :maxdepth: 2
    :caption: Contents:
 
+   usage.rst
    mn_menu_navigator.rst
    dc_base_taskmanager.rst
    dc_task_manager.rst

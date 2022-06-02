@@ -40,6 +40,8 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Getting Started with Domain Classifier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#other-info-about-sphinx">Other info about  Sphinx</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mn_menu_navigator.html">Menu Navigator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dc_base_taskmanager.html">Base Task Manager</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Task Manager</a><ul class="simple">
@@ -90,12 +92,9 @@
 <h1>Task Manager<a class="headerlink" href="#task-manager" title="Permalink to this headline"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<span class="target" id="module-src.task_manager"></span><dl class="simple">
-<dt>Contributors:</dt><dd><p>Jesus Cid-Sueiro,
-Lorena Calvo-Bartolome
-Ascension Gallardo-Antolin</p>
-</dd>
-</dl>
+<span class="target" id="module-src.task_manager"></span><p>Defines classes that defined methods to run the main tasks in the project,
+using the core processing classes and methods.</p>
+<p>&#64;author: J. Cid-Sueiro, L. Calvo-Bartolome, A. Gallardo-Antolin</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.task_manager.TaskManager">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.task_manager.</span></span><span class="sig-name descname"><span class="pre">TaskManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path2project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2zeroshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parameters.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'metadata.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_logs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager" title="Permalink to this definition"></a></dt>
@@ -160,7 +159,7 @@ title words are weighted by this factor</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.task_manager.TaskManager.get_labels_by_keywords">
-<span class="sig-name descname"><span class="pre">get_labels_by_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kwds'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.get_labels_by_keywords" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_labels_by_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kwds'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'count'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManager.get_labels_by_keywords" title="Permalink to this definition"></a></dt>
 <dd><p>Get a set of positive labels using keyword-based search</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -171,6 +170,9 @@ title words are weighted by this factor</p></li>
 a huge number that, in practice, means there is no loimit</p></li>
 <li><p><strong>s_min</strong> (<em>float, optional (default=1)</em>) – Minimum score. Only elements strictly above s_min are selected</p></li>
 <li><p><strong>tag</strong> (<em>str, optional (default=1)</em>) – Name of the output label set.</p></li>
+<li><p><strong>method</strong> (<em>‘embedding’ or ‘count’, optional</em>) – Selection method: ‘count’ (based on counting occurences of keywords
+in docs) or ‘embedding’ (based on the computation of similarities
+between doc and keyword embeddings)</p></li>
 </ul>
 </dd>
 </dl>
@@ -406,7 +408,7 @@ carried out directly through the GUI</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.task_manager.TaskManagerGUI.get_labels_by_keywords">
-<span class="sig-name descname"><span class="pre">get_labels_by_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerGUI.get_labels_by_keywords" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_labels_by_keywords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keywords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_max</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_min</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.task_manager.TaskManagerGUI.get_labels_by_keywords" title="Permalink to this definition"></a></dt>
 <dd><p>Get a set of positive labels using keyword-based search through the
 MainWindow</p>
 <dl class="simple">
@@ -415,14 +417,18 @@ MainWindow</p>
 <dt>wt<span class="classifier">float, optional (default=2)</span></dt><dd><p>Weighting factor for the title components. Keyword matches with
 title words are weighted by this factor</p>
 </dd>
-<dt>n_max: int or None, optional (defaul=2000)</dt><dd><p>Maximum number of elements in the output list. The default is
-a huge number that, in practice, means there is no loimit</p>
+<dt>n_max: int or None, optional (default=2000)</dt><dd><p>Maximum number of elements in the output list. The default is
+a huge number that, in practice, means there is no limit</p>
 </dd>
 <dt>s_min: float, optional (default=1)</dt><dd><p>Minimum score. Only elements strictly above s_min are selected</p>
 </dd>
 <dt>tag: str, optional (default=1)</dt><dd><p>Name of the output label set.</p>
 </dd>
 </dl>
+<p>method: ‘embedding’ or ‘count’, optional
+Selection method: ‘count’ (based on counting occurrences of keywords
+in docs) or ‘embedding’ (based on the computation of similarities
+between doc and keyword embeddings)</p>
 </dd></dl>
 
 <dl class="py method">
