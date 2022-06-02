@@ -334,7 +334,7 @@ class TaskManager(baseTaskManager):
         model_name = self.global_parameters['keywords']['model_name']
 
         # Find the documents with the highest scores given the keywords
-        ids, eval_scores = self.CorpusProc.filter_by_keywords(
+        ids, scores = self.CorpusProc.filter_by_keywords(
             self.keywords, wt=wt, n_max=n_max, s_min=s_min,
             model_name=model_name, method=method)
 
@@ -359,6 +359,8 @@ class TaskManager(baseTaskManager):
             'keywords': self.keywords}
 
         # Metadata for evaluation
+        # FIXME: the code below is not used. To be moved to another method.
+        eval_scores = False
         if eval_scores:
             # Save tpr fpr and ROC curve
             # FIXME: The name of the SBERT model should be read from the config
@@ -383,8 +385,6 @@ class TaskManager(baseTaskManager):
             plt.savefig(figure_fname)
 
             # Save smin and nmax evaluation scores
-            # FIXME: The name of the SBERT model should be read from the config
-            # file (parameters.default.yaml or metadata file (metadata.yaml))
             del eval_scores['fpr_roc'], eval_scores['tpr_roc']
             self.metadata[key][tag].__setitem__('eval_scores', eval_scores)
 
@@ -524,8 +524,12 @@ class TaskManager(baseTaskManager):
         self.DM.reset_labels(tag=labelset)
 
         # Remove label info from metadata, it it exist
-        self.metadata['keyword_based_label_parameters'].pop(labelset, None)
-        self.metadata['topic_based_label_parameters'].pop(labelset, None)
+        for key in ['keyword_based_label_parameters',
+                    'topic_based_label_parameters',
+                    'zero_shot_parameters']:
+            if key in self.metadata and labelset in self.metadata[key]:
+                self.metadata[key].pop(labelset, None)
+
         self._save_metadata()
 
         return
@@ -835,7 +839,7 @@ class TaskManagerCMD(TaskManager):
 
         # Get method
         method = self.QM.ask_value(
-            query=("Set method: (e)mbedding (default) or (c)ount (fast)"),
+            query=("Set method: (e)mbedding (slow) or (c)ount (fast)"),
             convert_to=str,
             default=self.global_parameters['keywords']['method'])
 
@@ -918,6 +922,10 @@ class TaskManagerCMD(TaskManager):
 
         # Load topics
         T, df_metadata, topic_words = self.DM.load_topics()
+
+        if T is None:
+            msg = "-- No topic model available for this corpus"
+            return msg
 
         # Remove all documents (rows) from the topic matrix, that are not
         # in self.df_corpus.
@@ -1041,24 +1049,24 @@ class TaskManagerGUI(TaskManager):
         Get a set of positive labels using keyword-based search through the
         MainWindow
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         keywords : list of str
             List of keywords
         wt : float, optional (default=2)
             Weighting factor for the title components. Keyword matches with
             title words are weighted by this factor
-        n_max: int or None, optional (default=2000)
+        n_max : int or None, optional (default=2000)
             Maximum number of elements in the output list. The default is
             a huge number that, in practice, means there is no limit
-        s_min: float, optional (default=1)
+        s_min : float, optional (default=1)
             Minimum score. Only elements strictly above s_min are selected
-        tag: str, optional (default=1)
+        tag : str, optional (default=1)
             Name of the output label set.
-        method: 'embedding' or 'count', optional
-        Selection method: 'count' (based on counting occurrences of keywords
-        in docs) or 'embedding' (based on the computation of similarities
-        between doc and keyword embeddings)
+        method : 'embedding' or 'count', optional
+            Selection method: 'count' (based on counting occurrences of
+            keywords in docs) or 'embedding' (based on the computation of
+            similarities between doc and keyword embeddings)
         """
 
         # Keywords are received as arguments
@@ -1124,16 +1132,17 @@ class TaskManagerGUI(TaskManager):
     def get_labels_by_zeroshot(self, keywords, n_max, s_min, tag):
         """
         Get a set of positive labels using a zero-shot classification model
-        Parameters:
-        -----------
+
+        Parameters
+        ----------
         keywords : list of str
             List of keywords
-        n_max: int or None, optional (defaul=2000)
+        n_max : int or None, optional (defaul=2000)
             Maximum number of elements in the output list. The default is
             a huge number that, in practice, means there is no loimit
-        s_min: float, optional (default=0.1)
+        s_min : float, optional (default=0.1)
             Minimum score. Only elements strictly above s_min are selected
-        tag: str, optional (default=1)
+        tag : str, optional (default=1)
             Name of the output label set.
         """
 
