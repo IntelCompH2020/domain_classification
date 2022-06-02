@@ -34,7 +34,7 @@ class PreConfig(QDialog):
              updated in the starting window, and the START button can be
              directly clicked, without the necessity of further configurations.
     2) python main_gui.py
-        ---> The needed folrders to be manually selected by
+        ---> The needed folders to be manually selected by
              clicking on their respective buttons.
     """
 

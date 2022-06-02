@@ -35,7 +35,7 @@ class GetKeywordsWindow(QtWidgets.QDialog):
 
         # Load UI and configure default geometry of the window
         # #####################################################################
-        uic.loadUi("UIS/get_labels_by_keywords.ui", self)
+        uic.loadUi("UIs/get_labels_by_keywords.ui", self)
         self.init_ui()
 
         # ATTRIBUTES
