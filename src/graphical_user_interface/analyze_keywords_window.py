@@ -35,7 +35,7 @@ class AnalyzeKeywordsWindow(QtWidgets.QDialog):
 
         # Load UI and configure default geometry of the window
         # ####################################################################
-        uic.loadUi("UIS/analyze_keywords.ui", self)
+        uic.loadUi("UIs/analyze_keywords.ui", self)
         self.initUI()
 
         # ATTRIBUTES

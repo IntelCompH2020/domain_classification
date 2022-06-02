@@ -923,6 +923,10 @@ class TaskManagerCMD(TaskManager):
         # Load topics
         T, df_metadata, topic_words = self.DM.load_topics()
 
+        if T is None:
+            msg = "-- No topic model available for this corpus"
+            return msg
+
         # Remove all documents (rows) from the topic matrix, that are not
         # in self.df_corpus.
         T, df_metadata = self.CorpusProc.remove_docs_from_topics(
@@ -1045,24 +1049,24 @@ class TaskManagerGUI(TaskManager):
         Get a set of positive labels using keyword-based search through the
         MainWindow
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         keywords : list of str
             List of keywords
         wt : float, optional (default=2)
             Weighting factor for the title components. Keyword matches with
             title words are weighted by this factor
-        n_max: int or None, optional (default=2000)
+        n_max : int or None, optional (default=2000)
             Maximum number of elements in the output list. The default is
             a huge number that, in practice, means there is no limit
-        s_min: float, optional (default=1)
+        s_min : float, optional (default=1)
             Minimum score. Only elements strictly above s_min are selected
-        tag: str, optional (default=1)
+        tag : str, optional (default=1)
             Name of the output label set.
-        method: 'embedding' or 'count', optional
-        Selection method: 'count' (based on counting occurrences of keywords
-        in docs) or 'embedding' (based on the computation of similarities
-        between doc and keyword embeddings)
+        method : 'embedding' or 'count', optional
+            Selection method: 'count' (based on counting occurrences of
+            keywords in docs) or 'embedding' (based on the computation of
+            similarities between doc and keyword embeddings)
         """
 
         # Keywords are received as arguments
@@ -1128,16 +1132,17 @@ class TaskManagerGUI(TaskManager):
     def get_labels_by_zeroshot(self, keywords, n_max, s_min, tag):
         """
         Get a set of positive labels using a zero-shot classification model
-        Parameters:
-        -----------
+
+        Parameters
+        ----------
         keywords : list of str
             List of keywords
-        n_max: int or None, optional (defaul=2000)
+        n_max : int or None, optional (defaul=2000)
             Maximum number of elements in the output list. The default is
             a huge number that, in practice, means there is no loimit
-        s_min: float, optional (default=0.1)
+        s_min : float, optional (default=0.1)
             Minimum score. Only elements strictly above s_min are selected
-        tag: str, optional (default=1)
+        tag : str, optional (default=1)
             Name of the output label set.
         """
 
