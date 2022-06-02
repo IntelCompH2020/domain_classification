@@ -40,7 +40,6 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Getting Started with Domain Classifier</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mn_menu_navigator.html">Menu Navigator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dc_base_taskmanager.html">Base Task Manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dc_task_manager.html">Task Manager</a></li>
@@ -91,7 +90,7 @@
 <h1>Main Window<a class="headerlink" href="#main-window" title="Permalink to this headline"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<span class="target" id="module-src.graphical_user_interface.main_window"></span><p>&#64;author: L. Calvo-Bartolome</p>
+<span class="target" id="module-src.graphical_user_interface.main_window"></span><p>&#64;author: lcalv</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.main_window.</span></span><span class="sig-name descname"><span class="pre">MainWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stderr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow" title="Permalink to this definition"></a></dt>
@@ -126,7 +125,7 @@ while the evaluation of a PU model is being performed.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.append_text_retrain_reval">
 <span class="sig-name descname"><span class="pre">append_text_retrain_reval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.append_text_retrain_reval" title="Permalink to this definition"></a></dt>
-<dd><p>Method to redirect the stdout and stderr in the “text_edit_results_reval_retrain”
+<dd><p>Method to redirect the stdout and stderr in the “text_edit_results_reval_retrain_pu_model”
 while the retraining of a PU model is being performed.</p>
 </dd></dl>
 
@@ -175,7 +174,7 @@ Only one QRadioButton can be selected at a time.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_give_feedback">
 <span class="sig-name descname"><span class="pre">clicked_give_feedback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_give_feedback" title="Permalink to this definition"></a></dt>
-<dd><p>Method that controls the actions that are carried out when the button “give_feedback_push_button” is
+<dd><p>Method that controls the actions that are carried out when the button “give_feedback_user_push_button” is
 clicked by the user.</p>
 </dd></dl>
 
@@ -200,7 +199,7 @@ TaskManager class</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_reevaluate_model">
 <span class="sig-name descname"><span class="pre">clicked_reevaluate_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_reevaluate_model" title="Permalink to this definition"></a></dt>
-<dd><p>Method that controls the actions that are carried out when the button “retrain_model_push_button” is
+<dd><p>Method that controls the actions that are carried out when the button “retrain_pu_model_push_button” is
 clicked by the user.</p>
 </dd></dl>
 
@@ -213,7 +212,7 @@ clicked by the user.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_retrain_model">
 <span class="sig-name descname"><span class="pre">clicked_retrain_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_retrain_model" title="Permalink to this definition"></a></dt>
-<dd><p>Method that controls the actions that are carried out when the button “retrain_model_push_button” is
+<dd><p>Method that controls the actions that are carried out when the button “retrain_pu_model_push_button” is
 clicked by the user.</p>
 </dd></dl>
 

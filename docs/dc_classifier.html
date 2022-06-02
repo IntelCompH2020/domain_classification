@@ -40,7 +40,6 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Getting Started with Domain Classifier</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mn_menu_navigator.html">Menu Navigator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dc_base_taskmanager.html">Base Task Manager</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dc_task_manager.html">Task Manager</a></li>
@@ -91,9 +90,7 @@
 <h1>Classifier<a class="headerlink" href="#classifier" title="Permalink to this headline"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<span class="target" id="module-src.domain_classifier.classifier"></span><p>Defines the main domain classification class</p>
-<p>&#64;author: J. Cid-Sueiro, J.A. Espinosa, A. Gallardo-Antolin</p>
-<dl class="py class">
+<span class="target" id="module-src.domain_classifier.classifier"></span><dl class="py class">
 <dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.domain_classifier.classifier.</span></span><span class="sig-name descname"><span class="pre">CorpusClassifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2transformers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -102,14 +99,16 @@
 <dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.AL_sample">
 <span class="sig-name descname"><span class="pre">AL_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'extremes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.AL_sample" title="Permalink to this definition"></a></dt>
 <dd><p>Returns a given number of samples for active learning (AL)</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
+<dd class="field-odd"><ul>
 <li><p><strong>n_samples</strong> (<em>int, optional (default=5)</em>) – Number of samples to return</p></li>
-<li><p><strong>sampler</strong> (<em>str, optional (default=”random”)</em>) – Sample selection algorithm.</p>
-<ul>
-<li><p>If “random”, samples are taken at random from all docs with
-predictions</p></li>
+<li><p><strong>sampler</strong> (<em>str, optional (default=”random”)</em>) – Sample selection algorithm.
+- If “random”, samples are taken at random from all docs with</p>
+<blockquote>
+<div><p>predictions</p>
+</div></blockquote>
+<ul class="simple">
 <li><p>If “extremes”, samples are taken stochastically, but with
 documents with the highest or smallest probability scores are
 selected with higher probability.</p></li>
