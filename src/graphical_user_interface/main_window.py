@@ -140,6 +140,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.clicked_get_labels_option)
         self.get_labels_push_button.clicked.connect(self.clicked_get_labels)
 
+        # Show only radio buttons related with the import functions available for the chosen corpus
+        if self.tm.state['selected_corpus']:
+            self.configure_import_labels_buttons()
+
         # LOAD LABELS WIDGETS
         # #####################################################################
         self.load_labels_push_button.clicked.connect(self.clicked_load_labels)
@@ -308,6 +312,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # Show associated labels
         self.show_labels()
 
+        # Show only radio buttons related with the import functions available for the chosen corpus
+        self.configure_import_labels_buttons()
+
         return
 
     def clicked_load_corpus(self):
@@ -350,6 +357,22 @@ class MainWindow(QtWidgets.QMainWindow):
     # #########################################################################
     # GET LABELS FUNCTIONS
     # #########################################################################
+    def configure_import_labels_buttons(self):
+        """
+        Makes visible only radio buttons that corresponds with the functions that
+        are available for each of the corpus
+        """
+        if self.tm.metadata['corpus_name'] not in Constants.AVAILABLE_CORPUS_FOR_OPTION_1:
+            self.get_labels_option_1.hide()
+        if self.tm.metadata['corpus_name'] not in Constants.AVAILABLE_CORPUS_FOR_OPTION_2:
+            self.get_labels_option_2.hide()
+        if self.tm.metadata['corpus_name'] not in Constants.AVAILABLE_CORPUS_FOR_OPTION_3:
+            self.get_labels_option_3.hide()
+        if self.tm.metadata['corpus_name'] not in Constants.AVAILABLE_CORPUS_FOR_OPTION_4:
+            self.get_labels_option_4.hide()
+        if self.tm.metadata['corpus_name'] not in Constants.AVAILABLE_CORPUS_FOR_OPTION_5:
+            self.get_labels_option_5.hide()
+
     def execute_import_labels(self):
         """
         Imports the labels by invoking the corresponding method in the Task Manager
