@@ -5,7 +5,7 @@ Main program for the graphical user interface
 
 @author: L. Calvo-Bartolome
 """
-
+import pathlib
 import sys
 import os
 import argparse
@@ -139,15 +139,15 @@ class PreConfig(QDialog):
         tm = TaskManagerGUI(
             self.projectFolder, path2source=self.sourceFolder,
             path2zeroshot=self.zeroshotFolder)
-        if len(os.listdir(self.projectFolder)) == 0:
+        if pathlib.Path(self.projectFolder).is_dir():
+            print("An existing project folder was selected. Proceeding with "
+                  "its loading...")
+            tm.load()
+        else:
             print("A new project folder was selected. Proceeding with "
                   "its configuration...")
             tm.create()
             tm.setup()
-        else:
-            print("An existing project folder was selected. Proceeding with "
-                  "its loading...")
-            tm.load()
 
         # Change to the main menu
         main_window = MainWindow(
