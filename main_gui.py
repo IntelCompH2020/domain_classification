@@ -141,10 +141,7 @@ class PreConfig(QDialog):
             path2zeroshot=self.zeroshotFolder)
         # Load or create new project depending on whether the selected project folder is a new project
         if pathlib.Path(self.projectFolder).is_dir():
-            print("An existing project folder was selected. Proceeding with "
-                  "its loading...")
-            tm.load()
-        else:
+            # In case the project folder was created with the GUI
             if len(os.listdir(self.projectFolder)) == 0:
                 print("A new project folder was selected. Proceeding with "
                       "its configuration...")
@@ -154,6 +151,11 @@ class PreConfig(QDialog):
                 print("An existing project folder was selected. Proceeding with "
                       "its loading...")
                 tm.load()
+        else:
+            print("A new project folder was selected. Proceeding with "
+                  "its configuration...")
+            tm.create()
+            tm.setup()
 
         # Change to the main menu
         main_window = MainWindow(
