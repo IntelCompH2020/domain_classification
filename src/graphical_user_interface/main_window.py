@@ -141,7 +141,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.get_labels_push_button.clicked.connect(self.clicked_get_labels)
 
         # Show only radio buttons related with the import functions available for the chosen corpus
-        self.configure_import_labels_buttons()
+        if self.tm.state['selected_corpus']:
+            self.configure_import_labels_buttons()
 
         # LOAD LABELS WIDGETS
         # #####################################################################
