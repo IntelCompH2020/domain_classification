@@ -131,6 +131,8 @@ class CustomClassificationHead(nn.Module):
         self.dense = nn.Linear(self.hidden_size, self.hidden_size)
         self.dropout = nn.Dropout(self.classifier_dropout)
         self.out_proj = nn.Linear(self.hidden_size, self.num_labels)
+        #self.out_proj_2 = nn.Linear(self.hidden_size,1)
+        #self.b = nn.Parameter(torch.empty(1,))
 
     def forward(self, features: torch.Tensor):
         """
@@ -146,6 +148,11 @@ class CustomClassificationHead(nn.Module):
         x = torch.tanh(x)
         x = self.dropout(x)
         x = self.out_proj(x)
+        #x = self.out_proj(x)
+        #x = 1/(1+self.out_b+torch.exp(-x))
+        #if self.out_b.requires_grad:
+        #else:
+        #    x = x*(1+self.out_b)
         return x
 
 
