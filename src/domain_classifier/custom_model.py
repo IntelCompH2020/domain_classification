@@ -305,6 +305,9 @@ class CustomModel(nn.Module):
 
         # Set criterion and optimizer
         criterion = nn.CrossEntropyLoss(weight=weights_train, reduction="none")
+        #criterion = nn.BCELoss(weight=weights_train, reduction="none")
+        # or it could include a lof in the forward and use NLLLoss but this would require exp if not training. 
+        # this way the output doesnt change (at least) in form  
         optimizer = torch.optim.AdamW(self.parameters(), lr=1e-4)
 
         # Set device
