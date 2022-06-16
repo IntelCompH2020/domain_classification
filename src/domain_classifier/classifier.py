@@ -24,7 +24,7 @@ from transformers import logging as hf_logging
 # Mnemonics for values in column 'train_test'
 TRAIN = 0
 TEST = 1
-# Equivalent to NaN for the integer columns in self.df_dataset:
+# UNUSED: equivalent to NaN for the integer columns in self.df_dataset:
 # (nan is not used because it converts the whole column to float)
 UNUSED = -99
 
@@ -350,7 +350,7 @@ class CorpusClassifier(object):
         ----------
         tag_score: str
             Prefix of the score names.
-            The scores will be save in the columns of self.df_dataset
+            The scores will be saved in the columns of self.df_dataset
             containing these scores.
 
         Notes

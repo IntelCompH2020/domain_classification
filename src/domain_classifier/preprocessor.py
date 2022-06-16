@@ -728,10 +728,10 @@ class CorpusDFProcessor(object):
             List of ids of the selected documents
         """
 
-        score = self.score_by_topics(T, doc_ids, topic_weights)
-        ids = self.get_top_scores(score, n_max=n_max, s_min=s_min)
+        scores = self.score_by_topics(T, doc_ids, topic_weights)
+        ids = self.get_top_scores(scores, n_max=n_max, s_min=s_min)
 
-        return ids
+        return ids, scores
 
     def filter_by_zeroshot(self, keyword, n_max, s_min):
 
@@ -739,42 +739,17 @@ class CorpusDFProcessor(object):
 
         ids = self.get_top_scores(scores, n_max=n_max, s_min=s_min)
 
-        return ids
+        return ids, scores
 
-    def make_pos_labels_df(self, ids):
-        """
-        Returns a dataframe with the given ids and a single, all-ones column
-
-        Parameters
-        ----------
-        ids: array-like
-            Values for the column 'ids'
-
-        Returns
-        -------
-        df_labels: pandas.DataFrame
-            A dataframe with two columns: 'id' and 'class'. All values in
-            class column are equal to one.
-        """
-
-        df_labels = pd.DataFrame(columns=["id", "class"])
-        df_labels['id'] = ids
-        df_labels['class'] = 1
-
-        return df_labels
-
-    def make_PU_dataset(self, df_labels):
+    def make_PU_dataset(self, ids):
         """
         Returns the labeled dataframe in the format required by the
         CorpusClassifier class
 
         Parameters
         ----------
-        df_corpus: pandas.DataFrame
-            Text corpus, with at least three columns: id, title and description
-        df_labels: pandas.DataFrame
-            Dataframe of positive labels. It should contain column id. All
-            labels are assumed to be positive
+        ids: array-like
+            ids of documents with positive labels
 
         Returns
         -------
@@ -794,7 +769,12 @@ class CorpusDFProcessor(object):
         df_dataset['PUlabels'] = 0
 
         # Add positive labels
-        df_dataset.loc[df_dataset.id.isin(df_labels.id), 'PUlabels'] = 1
+        # df_labels = pd.DataFrame(columns=["id", "class"])
+        # df_labels['id'] = ids
+        # df_labels['class'] = 1
+        # df_dataset.loc[df_dataset.id.isin(df_labels.id), 'PUlabels'] = 1
+        # Add positive labels
+        df_dataset.loc[df_dataset.id.isin(ids), 'PUlabels'] = 1
 
         return df_dataset
 

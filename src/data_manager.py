@@ -24,7 +24,7 @@ class DataManager(object):
     It assumes that source and destination data will be stored in files.
     """
 
-    def __init__(self, path2source, path2labels, path2datasets, path2models,
+    def __init__(self, path2source, path2datasets, path2models,
                  path2embeddings=None):
         """
         Initializes the data manager object
@@ -33,16 +33,16 @@ class DataManager(object):
         ----------
         path2source: str or pathlib.Path
             Path to the folder containing all external source data
-        path2labels: str or pathlib.Path
-            Path to the folder containing sets of labels
         path2datasets: str or pathlib.Path
             Path to the folder containing datasets
+        path2models: str or pathlib.Path
+            Path to the folder containing classifier models
         path2embeddings: str or pathlib.Path
             Path to the folder containing the document embeddings
         """
 
         self.path2source = pathlib.Path(path2source)
-        self.path2labels = pathlib.Path(path2labels)
+        # self.path2labels = pathlib.Path(path2labels)   # No longer used
         self.path2datasets = pathlib.Path(path2datasets)
         self.path2models = pathlib.Path(path2models)
         if path2embeddings is not None:
@@ -56,6 +56,25 @@ class DataManager(object):
 
         return
 
+    def is_model(self, class_name):
+        """
+        Checks if a model exist for the given class_name in the folder of
+        models
+
+        Parameters
+        ----------
+        class_name : str
+            Name of the class
+
+        Returns
+        -------
+            True if the model folder exists
+        """
+
+        path2model = self.path2models / class_name
+
+        return path2model.is_dir()
+
     def get_corpus_list(self):
         """
         Returns the list of available corpus
@@ -65,19 +84,6 @@ class DataManager(object):
                        if e.is_dir()]
 
         return corpus_list
-
-    def get_labelset_list(self):
-        """
-        Returns the list of available labels
-        """
-
-        prefix = f"labels_{self.corpus_name}_"
-        labelset_list = [e.stem for e in self.path2labels.iterdir()
-                         if e.is_file() and e.stem.startswith(prefix)]
-        # Remove prefixes and get tags only:
-        labelset_list = [e[len(prefix):] for e in labelset_list]
-
-        return labelset_list
 
     def get_dataset_list(self):
         """
@@ -479,24 +485,6 @@ class DataManager(object):
         # The log message is returned to be shown in a GUI, if needed
         return df_dataset, msg
 
-    def load_labels(self, tag=""):
-        """
-        Loads a set or PU labels
-        """
-
-        logging.info(f"-- Loading labelset {tag}")
-
-        # Read labels from csv file
-        fname = f'labels_{self.corpus_name}_{tag}.csv'
-        path2labels = self.path2labels / fname
-        df_labels = pd.read_csv(path2labels)
-
-        msg = f"-- -- {len(df_labels)} labels loaded from {path2labels}"
-        logging.info(msg)
-
-        # The log message is returned to be shown in a GUI, if needed
-        return df_labels, msg
-
     def reset_labels(self, tag=""):
         """
         Delete all files related to a given class
@@ -508,9 +496,9 @@ class DataManager(object):
         """
 
         # Remove csv file
-        fname = f"labels_{self.corpus_name}_{tag}.csv"
-        path2labelset = self.path2labels / fname
-        path2labelset.unlink()
+        # fname = f"labels_{self.corpus_name}_{tag}.csv"
+        # path2labelset = self.path2labels / fname
+        # path2labelset.unlink()
 
         # Remove dataset
         fstem = f"dataset_{self.corpus_name}_{tag}"
@@ -520,9 +508,9 @@ class DataManager(object):
         # Remove model
         path2model = self.path2models / tag
         if path2model.is_dir():
-            shutil.rmtree(self.path2models / tag)
+            shutil.rmtree(path2model)
 
-        logging.info(f"-- -- Labelset {tag} removed")
+        logging.info(f"-- -- Labels {tag} removed")
 
     def import_labels(self, ids_corpus=None, tag="imported"):
         """
@@ -538,10 +526,8 @@ class DataManager(object):
 
         Returns
         -------
-        df_labels: pandas.DataFrame
-            Dataframe of labels, with two columns: id and class.
-            id identifies the document corresponding to the label.
-            class identifies the class. All documents are assumed to be class 1
+        ids_pos: list
+            List of ids of documents from the positive class
         """
 
         # ####################
@@ -588,29 +574,14 @@ class DataManager(object):
                 f"labeled dataset that do not belong to the corpus.")
             df_labels = df_labels[df_labels.id.isin(ids_corpus)]
 
-        # ########################
-        # Saving id and class only
+        # Only the ids of the docs with positive labels are returned
+        ids_pos = df_labels.id.tolist()
 
-        msg = self.save_labels(df_labels, tag=tag)
-
-        # The log message is returned to be shown in a GUI, if needed
-        return df_labels, msg
-
-    def save_labels(self, df_labels, tag=""):
-
-        # ########################
-        # Saving id and class only
-
-        labels_out_fname = f'labels_{self.corpus_name}_{tag}.csv'
-        path2labels = self.path2labels / labels_out_fname
-        df_labels.to_csv(path2labels, index=False)
-
-        msg = (f"-- File with {len(df_labels)} positive labels saved in "
-               f"{path2labels}")
-        logging.info(msg)
+        # This is for backward compatibility only
+        msg = ""
 
         # The log message is returned to be shown in a GUI, if needed
-        return msg
+        return ids_pos, msg
 
     def save_dataset(self, df_dataset, tag="", save_csv=False):
         """
