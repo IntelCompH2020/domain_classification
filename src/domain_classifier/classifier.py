@@ -300,7 +300,7 @@ class CorpusClassifier(object):
                 predictions, total_loss, result = self.model.eval_model(
                     df_test, self.device)
 
-                if result["f1"] > best_result:
+                if result["f1"] >= best_result:
                     best_epoch = e
                     best_result = result["f1"]
                     best_predictions = predictions
