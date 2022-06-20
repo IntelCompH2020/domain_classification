@@ -130,9 +130,9 @@ class CustomClassificationHead(nn.Module):
         # Classification layers
         self.dense = nn.Linear(self.hidden_size, self.hidden_size)
         self.dropout = nn.Dropout(self.classifier_dropout)
-        self.out_proj = nn.Linear(self.hidden_size, self.num_labels)
-        #self.out_proj_2 = nn.Linear(self.hidden_size,1)
-        #self.b = nn.Parameter(torch.empty(1,))
+        #self.out_proj = nn.Linear(self.hidden_size, self.num_labels)
+        self.out_proj_2 = nn.Linear(self.hidden_size,1)
+        self.out_b = nn.Parameter(torch.empty(1,))
 
     def forward(self, features: torch.Tensor):
         """
@@ -147,12 +147,12 @@ class CustomClassificationHead(nn.Module):
         x = self.dense(x)
         x = torch.tanh(x)
         x = self.dropout(x)
-        x = self.out_proj(x)
         #x = self.out_proj(x)
-        #x = 1/(1+self.out_b+torch.exp(-x))
-        #if self.out_b.requires_grad:
-        #else:
-        #    x = x*(1+self.out_b)
+        x = self.out_proj_2(x)
+        x = 1/(1+(self.out_b**2)+torch.exp(-x))
+        if not x.requires_grad:
+            x = x * (1 + (self.out_b) ** 2)
+            x = torch.squeeze(torch.stack((x,1-x),dim=1))
         return x
 
 
@@ -304,10 +304,9 @@ class CustomModel(nn.Module):
             weights_train = torch.tensor([1.0, 1.0])
 
         # Set criterion and optimizer
-        criterion = nn.CrossEntropyLoss(weight=weights_train, reduction="none")
-        #criterion = nn.BCELoss(weight=weights_train, reduction="none")
-        # or it could include a lof in the forward and use NLLLoss but this would require exp if not training. 
-        # this way the output doesnt change (at least) in form  
+        #criterion = nn.CrossEntropyLoss(weight=weights_train, reduction="none")
+        # i could give the results in two columns from the begining and use CELoss
+        criterion = nn.BCELoss(weight=weights_train, reduction="none")  
         optimizer = torch.optim.AdamW(self.parameters(), lr=1e-4)
 
         # Set device
