@@ -152,7 +152,7 @@ class CustomClassificationHead(nn.Module):
         x = 1/(1+(self.out_b**2)+torch.exp(-x))
         if not x.requires_grad:
             x = x * (1 + (self.out_b) ** 2)
-            x = torch.squeeze(torch.stack((x,1-x),dim=1))
+        x = torch.squeeze(torch.stack((x,1-x),dim=1))
         return x
 
 
@@ -304,9 +304,9 @@ class CustomModel(nn.Module):
             weights_train = torch.tensor([1.0, 1.0])
 
         # Set criterion and optimizer
-        #criterion = nn.CrossEntropyLoss(weight=weights_train, reduction="none")
+        criterion = nn.CrossEntropyLoss(weight=weights_train, reduction="none")
         # i could give the results in two columns from the begining and use CELoss
-        criterion = nn.BCELoss(weight=weights_train, reduction="none")  
+        #criterion = nn.BCELoss(weight=weights_train, reduction="none")  
         optimizer = torch.optim.AdamW(self.parameters(), lr=1e-4)
 
         # Set device
