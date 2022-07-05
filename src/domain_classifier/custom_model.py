@@ -202,14 +202,15 @@ class CustomModel(nn.Module):
         self.load_embeddings()
         self.load_tokenizer()
 
-    def create_data_loader(self, df, batch_size=8):
+    def create_data_loader(self, df, batch_size=8, shuffle=True):
         """
         Creates a DataLoader from a DataFrame to train/eval model
         """
 
         df_set = CustomDataset(df)
         loader = DataLoader(
-            dataset=df_set, batch_size=batch_size, shuffle=True, num_workers=0
+            dataset=df_set, batch_size=batch_size, shuffle=shuffle,
+            num_workers=0
         )
 
         return loader
@@ -360,7 +361,7 @@ class CustomModel(nn.Module):
         """
 
         # Convert DataFrame to DataLoader
-        eval_data = self.create_data_loader(df_eval)
+        eval_data = self.create_data_loader(df_eval, shuffle=False)
 
         self.to(device)
         self.embeddings.to(device)

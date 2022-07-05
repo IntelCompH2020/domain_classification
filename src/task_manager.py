@@ -359,7 +359,7 @@ class TaskManager(baseTaskManager):
         # Set the working class
         self.class_name = tag
         # Generate dataset dataframe
-        self.df_dataset = self.CorpusProc.make_PU_dataset(ids)
+        self.df_dataset = self.CorpusProc.make_PU_dataset(ids, scores)
 
         # ############
         # Save dataset
@@ -434,7 +434,7 @@ class TaskManager(baseTaskManager):
         self.class_name = tag
 
         # Generate dataset dataframe
-        self.df_dataset = self.CorpusProc.make_PU_dataset(ids)
+        self.df_dataset = self.CorpusProc.make_PU_dataset(ids, scores)
 
         # ############
         # Save dataset
@@ -485,7 +485,7 @@ class TaskManager(baseTaskManager):
         self.class_name = tag
 
         # Generate dataset dataframe
-        self.df_dataset = self.CorpusProc.make_PU_dataset(ids)
+        self.df_dataset = self.CorpusProc.make_PU_dataset(ids, scores)
 
         # ############
         # Save dataset

@@ -6,7 +6,6 @@ selection through keywords, a category name or a weighted list of topics.
 """
 
 import numpy as np
-import pandas as pd
 import pathlib
 import pickle
 import logging
@@ -553,8 +552,8 @@ class CorpusDFProcessor(object):
 
         # Check if embeddings have been provided
         if method == 'count' or self.path2embeddings is None:
-            score = self.score_by_keyword_count(keywords, wt)
-            return score
+            scores = self.score_by_keyword_count(keywords, wt)
+            return scores
 
         # Copy relevant columns only
         df_dataset = self.df_corpus.loc[:, ['id', 'title', 'description']]
@@ -565,10 +564,10 @@ class CorpusDFProcessor(object):
 
         df_dataset.drop(columns=['description', 'title'], inplace=True)
 
-        score = self.prep.score_docs_by_keywords(
+        scores = self.prep.score_docs_by_keywords(
             df_dataset['text'], keywords, model_name)
 
-        return score
+        return scores
 
     def score_by_zeroshot(self, keyword):
         """
@@ -698,7 +697,6 @@ class CorpusDFProcessor(object):
         scores = self.score_by_keywords(keywords, wt, model_name, method)
         ids = self.get_top_scores(scores, n_max=n_max, s_min=s_min)
 
-        # ## return ids
         return ids, scores
 
     def filter_by_topics(self, T, doc_ids, topic_weights, n_max=1e100,
@@ -741,7 +739,7 @@ class CorpusDFProcessor(object):
 
         return ids, scores
 
-    def make_PU_dataset(self, ids):
+    def make_PU_dataset(self, ids, scores=None):
         """
         Returns the labeled dataframe in the format required by the
         CorpusClassifier class
@@ -750,6 +748,12 @@ class CorpusDFProcessor(object):
         ----------
         ids: array-like
             ids of documents with positive labels
+        scores: array-like or None, optional
+            A list or np.array of score values, one per row in self.df_corpus.
+            It is used to fill the base_scores column in the output dataframe.
+            They are expected to contain the scores used to select the
+            positive labels for PU learning. Thus, the docs listed in ids
+            should be those with the highest scores.
 
         Returns
         -------
@@ -764,6 +768,10 @@ class CorpusDFProcessor(object):
         df_dataset.loc[:, 'text'] = (df_dataset['title'] + '. '
                                      + df_dataset['description'])
         df_dataset.drop(columns=['description', 'title'], inplace=True)
+
+        # Add scores, if available.
+        if scores is not None:
+            df_dataset['base_scores'] = scores
 
         # Default class is 0
         df_dataset['PUlabels'] = 0
