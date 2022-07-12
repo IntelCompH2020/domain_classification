@@ -10,8 +10,8 @@
 #conda create --name start python=3.7.3
 #conda install -c anaconda pandas
 
-#conda activate start
-#cd TFM/acl22-revisiting-uncertainty-based-query-strategies-for-active-learning-with-transformers/MyActiveLearning/git
+#conda activate al
+#cd TFM\git\domain_classification\src\tests
 #python start.py
 ##############################imports##############################
 import pandas as pd
@@ -27,7 +27,6 @@ from simpletransformers.classification import ClassificationModel, Classificatio
 from sklearn import model_selection
 import torch
 import pdb
-import ClassificationModelExt
 import classification_model_ext
 ##############################declaration##############################
 projectName = 'MyProject'
@@ -39,7 +38,7 @@ bTest = False
 ##############################functions##############################
 def getPath(key,tag = None, dtype = 'csv'):
 	path = { 
-		 'corpus': Path(f'corpus/EU_projects_dl.feather'), 
+		 'corpus': Path(f'corpus/dataset_EU_projects.feather'), 
 	     'keywords' : Path(f'masterdata/IA_keywords_SEAD_REV_JAG.txt'),
 	     'embeddings': Path(f'corpus/corpus_embed_{ model_name }.pkl'), 
 	     'histogram': Path(f'corpus/histogram.png'),
@@ -109,6 +108,11 @@ if __name__ == '__main__':
 	##############################Read Corpus##############################
 	inputUser(f"Let's assume we take the corpus { corpus_name } to train our models. Click Enter to presume")
 	df_corpus = pd.read_feather(getPath('corpus'))
+
+	# pdb.set_trace()
+	# data = { 'id': df_corpus[['id']],'text': df_corpus[['title']] }
+	# df_corpus = pd.DataFrame(data)
+
 	logging.info(f'The corpus contains following data')
 	df_print = df_corpus.iloc[np.r_[0:5,-5:0]][['id','text']]
 	logging.info(f'{ df_print }')
