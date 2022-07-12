@@ -3,13 +3,10 @@
 
 """
 Main program
-
 Created on March 20 2019
-
-@author: Jesús Cid Sueiro
+@author: Jesús Cid-Sueiro
 """
 
-import os
 import pathlib
 import argparse
 
@@ -25,15 +22,20 @@ def main():
     # ####################
     # Read input arguments
 
-    # settings
+    # Read input arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--p', type=str, default=None,
-                        help="path to a new or an existing project")
-    parser.add_argument('--source', type=str, default='../datasets',
-                        help="path to the source data folder")
-    parser.add_argument('--zeroshot', type=str,
-                        default='../zero_shot_model/Sciro-Shot',
-                        help="path to the zero-shot model folder")
+    parser.add_argument(
+        '--p', type=str,
+        default="../project_folder",
+        help="path to a new or an existing project")
+    parser.add_argument(
+        '--source', type=str,
+        default="../datasets",
+        help="path to the source data folder")
+    parser.add_argument(
+        '--zeroshot', type=str,
+        default='../zero_shot_model/Sciro-Shot',
+        help="path to the zero-shot model folder")
     args = parser.parse_args()
 
     # Read project_path
@@ -42,7 +44,9 @@ def main():
         while project_path is None or project_path == "":
             project_path = input('-- Write the path to the project to load or '
                                  'create: ')
-    if os.path.isdir(args.p):
+    project_path = pathlib.Path(project_path)
+
+    if project_path.is_dir():
         option = 'load'
     else:
         option = 'create'
@@ -66,7 +70,7 @@ def main():
     # ##############
 
     menu = MenuNavigator(tm, path2menu, paths2data)
-    menu.front_page(title="An Application example using menuNavigator")
+    menu.front_page(title="Domain Classifier")
     menu.navigate(option, active_options)
 
 

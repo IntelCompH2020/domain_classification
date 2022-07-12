@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-"""
-@author: lcalv
-"""
 
+"""
+Main program for the graphical user interface
+
+@author: L. Calvo-Bartolome
+"""
+import pathlib
 import sys
 import os
 import argparse
@@ -31,7 +34,7 @@ class PreConfig(QDialog):
              updated in the starting window, and the START button can be
              directly clicked, without the necessity of further configurations.
     2) python main_gui.py
-        ---> The needed folrders to be manually selected by
+        ---> The needed folders to be manually selected by
              clicking on their respective buttons.
     """
 
@@ -74,7 +77,7 @@ class PreConfig(QDialog):
             self.args.zeroshot if self.args.p is not None else "")
 
         # Update image
-        pixmap = QPixmap('Images/dc_logo.png')
+        pixmap = QPixmap('UIs/Images/dc_logo.png')
         self.label.setPixmap(pixmap)
 
         # Update project and source folder in the GUI if provided through the
@@ -136,15 +139,23 @@ class PreConfig(QDialog):
         tm = TaskManagerGUI(
             self.projectFolder, path2source=self.sourceFolder,
             path2zeroshot=self.zeroshotFolder)
-        if len(os.listdir(self.projectFolder)) == 0:
+        # Load or create new project depending on whether the selected project folder is a new project
+        if pathlib.Path(self.projectFolder).is_dir():
+            # In case the project folder was created with the GUI
+            if len(os.listdir(self.projectFolder)) == 0:
+                print("A new project folder was selected. Proceeding with "
+                      "its configuration...")
+                tm.create()
+                tm.setup()
+            else:
+                print("An existing project folder was selected. Proceeding with "
+                      "its loading...")
+                tm.load()
+        else:
             print("A new project folder was selected. Proceeding with "
                   "its configuration...")
             tm.create()
             tm.setup()
-        else:
-            print("An existing project folder was selected. Proceeding with "
-                  "its loading...")
-            tm.load()
 
         # Change to the main menu
         main_window = MainWindow(
@@ -178,7 +189,7 @@ def main():
 
     # Create application
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon('Images/dc_logo.png'))
+    app.setWindowIcon(QIcon('UIs/Images/dc_logo.png'))
 
     # Configure widgets
     widget = QtWidgets.QStackedWidget()

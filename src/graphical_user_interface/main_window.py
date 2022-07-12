@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+
 """
-@author: lcalv
+@author: L. Calvo-Bartolome
 """
 
 import numpy as np
@@ -53,7 +54,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Load UI and configure default geometry of the window
         #######################################################################
-        uic.loadUi("UIS/DomainClassifier.ui", self)
+        uic.loadUi("UIs/DomainClassifier.ui", self)
         self.init_ui()
         self.animation = QtCore.QPropertyAnimation(self.frame_left_menu,
                                                    b"minimumWidth")
@@ -67,7 +68,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.widget = widget
 
         # Attributes for the maintenance of the options currently selected
-        self.corpus_selected_name = ""
+        if self.tm.state['selected_corpus']:
+            self.corpus_selected_name = self.tm.metadata['corpus_name']
+        else:
+            self.corpus_selected_name = None
         self.labels_loaded = None
         self.get_label_option = 0
 
@@ -111,62 +115,6 @@ class MainWindow(QtWidgets.QMainWindow):
               " %d threads" % self.thread_pool.maxThreadCount())
 
         # #####################################################################
-        # INFORMATION BUTTONS: Set image and size
-        # #####################################################################
-        # TAB LOADING
-        self.info_button_select_corpus.setIcon(QIcon('Images/help2.png'))
-        self.info_button_select_corpus.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_select_corpus.width(),
-                                            self.info_button_select_corpus.height()))
-
-        self.info_button_get_labels.setIcon(QIcon('Images/help2.png'))
-        self.info_button_get_labels.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_get_labels.width(),
-                                            self.info_button_get_labels.height()))
-
-        self.info_button_load_reset_labels.setIcon(QIcon('Images/help2.png'))
-        self.info_button_load_reset_labels.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
-                                            self.info_button_load_reset_labels.height()))
-
-        # TAB TRAINING-EVALUATION
-        self.info_button_train_pu_model.setIcon(QIcon('Images/help2.png'))
-        self.info_button_train_pu_model.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
-                                            self.info_button_load_reset_labels.height()))
-
-        self.info_button_eval_pu_classifier.setIcon(QIcon('Images/help2.png'))
-        self.info_button_eval_pu_classifier.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
-                                            self.info_button_load_reset_labels.height()))
-
-        self.info_button_params_classifier.setIcon(QIcon('Images/help2.png'))
-        self.info_button_params_classifier.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
-                                            self.info_button_load_reset_labels.height()))
-
-        self.info_button_pu_classification_results.setIcon(QIcon('Images/help2.png'))
-        self.info_button_pu_classification_results.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
-                                            self.info_button_load_reset_labels.height()))
-
-        # TAB FEEDBACK
-        self.info_button_give_feedback.setIcon(QIcon('Images/help2.png'))
-        self.info_button_give_feedback.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
-                                            self.info_button_load_reset_labels.height()))
-
-        self.info_button_ndocs_al.setIcon(QIcon('Images/help2.png'))
-        self.info_button_ndocs_al.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
-                                            self.info_button_load_reset_labels.height()))
-
-        self.info_button_pu_reclassification_results.setIcon(QIcon('Images/help2.png'))
-        self.info_button_pu_reclassification_results.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_load_reset_labels.width(),
-                                            self.info_button_load_reset_labels.height()))
-
-        # #####################################################################
         # CONFIGURE ELEMENTS IN THE "LOAD CORPUS VIEW"
         # #####################################################################
         # The loading bar is initially not visible
@@ -191,6 +139,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.get_labels_radio_buttons.buttonClicked.connect(
             self.clicked_get_labels_option)
         self.get_labels_push_button.clicked.connect(self.clicked_get_labels)
+
+        # Show only radio buttons related with the import functions available for the chosen corpus
+        if self.tm.state['selected_corpus']:
+            self.configure_import_labels_buttons()
 
         # LOAD LABELS WIDGETS
         # #####################################################################
@@ -221,15 +173,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.table_pu_classification_results.resizeColumnsToContents()
         self.table_pu_classification_results.resizeRowsToContents()
+        self.table_pu_classification_results.verticalHeader().setVisible(True)
+
+        self.table_train_pu_model_params.horizontalHeader().setVisible(True)
 
         # GET FEEDBACK WIDGETS
         # #####################################################################
-        self.give_feedback_user_push_button.clicked.connect(
+        self.give_feedback_push_button.clicked.connect(
             self.clicked_give_feedback)
         self.update_ndocs_al_push_button.clicked.connect(self.clicked_update_ndocs_al)
-        self.retrain_pu_model_push_button.clicked.connect(
+        self.retrain_model_push_button.clicked.connect(
             self.clicked_retrain_model)
-        self.reevaluate_pu_model_push_button.clicked.connect(
+        self.reevaluate_model_push_button.clicked.connect(
             self.clicked_reevaluate_model)
 
         checkboxes_predictions = []
@@ -248,8 +203,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.progress_bar_feedback_update.setVisible(False)
         self.progress_bar_feedback_update.setValue(0)
 
-        self.table_pu_reclassification_results.resizeColumnsToContents()
-        self.table_pu_reclassification_results.resizeRowsToContents()
+        self.table_reclassification_results.resizeColumnsToContents()
+        self.table_reclassification_results.resizeRowsToContents()
+        self.table_reclassification_results.verticalHeader().setVisible(True)
 
         # Initialize the value for the number of documents to annotate based on the default value noted in the
         # configuration file
@@ -259,42 +215,27 @@ class MainWindow(QtWidgets.QMainWindow):
         # TOGGLE MENU
         # #####################################################################
         self.toggleButton.clicked.connect(lambda: toggle_menu(self, 250))
-        self.toggleButton.setIcon(QIcon('Images/menu.png'))
-        self.toggleButton.setIconSize(Constants.BUTTONS_SCALE * QSize(self.toggleButton.width(),
-                                                                      self.toggleButton.height()))
 
         # PAGES
         # #####################################################################
         # PAGE 1: Load corpus/ labels
         self.pushButtonLoad.clicked.connect(
             lambda: self.tabs.setCurrentWidget(self.page_load))
-        self.pushButtonLoad.setIcon(QIcon('Images/settings.png'))
-        self.pushButtonLoad.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.pushButtonLoad.width(),
-                                            self.pushButtonLoad.height()))
+
         # PAGE 2: Train classifier
         self.pushButtonTrain.clicked.connect(
             lambda: self.tabs.setCurrentWidget(self.page_train))
-        self.pushButtonTrain.setIcon(QIcon('Images/training.png'))
-        self.pushButtonTrain.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.pushButtonTrain.width(),
-                                            self.pushButtonTrain.height()))
+
         # PAGE 3: Get relevance feedback
         self.pushButtonGetFeedback.clicked.connect(
             lambda: self.tabs.setCurrentWidget(self.page_feedback))
-        self.pushButtonGetFeedback.setIcon(QIcon('Images/feedback.png'))
-        self.pushButtonGetFeedback.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.pushButtonTrain.width(),
-                                            self.pushButtonTrain.height()))
 
     def init_ui(self):
         """
         Configures the elements of the GUI window that are not configured in the UI, i.e. icon of the application,
         the application's title, and the position of the window at its opening.
         """
-        pixmap = QPixmap('Images/dc_logo2.png')
-        self.label_logo.setPixmap(pixmap)
-        self.setWindowIcon(QIcon('Images/dc_logo.png'))
+        self.setWindowIcon(QIcon('UIs/Images/dc_logo.png'))
         self.setWindowTitle(Messages.WINDOW_TITLE)
         self.resize(self.minimumSizeHint())
         self.center()
@@ -371,6 +312,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # Show associated labels
         self.show_labels()
 
+        # Show only radio buttons related with the import functions available for the chosen corpus
+        self.configure_import_labels_buttons()
+
         return
 
     def clicked_load_corpus(self):
@@ -392,7 +336,6 @@ class MainWindow(QtWidgets.QMainWindow):
             # a different project folder in case he chooses a different corpus for
             # an already existing project
             if self.tm.state['selected_corpus'] and corpus_name != current_corpus:
-
                 # Show warning message
                 warning = "The corpus of this project is " + current_corpus + \
                           ". Run another project to use " + corpus_name + "."
@@ -414,6 +357,22 @@ class MainWindow(QtWidgets.QMainWindow):
     # #########################################################################
     # GET LABELS FUNCTIONS
     # #########################################################################
+    def configure_import_labels_buttons(self):
+        """
+        Makes visible only radio buttons that corresponds with the functions that
+        are available for each of the corpus
+        """
+        if self.tm.metadata['corpus_name'] not in Constants.AVAILABLE_CORPUS_FOR_OPTION_1:
+            self.get_labels_option_1.hide()
+        if self.tm.metadata['corpus_name'] not in Constants.AVAILABLE_CORPUS_FOR_OPTION_2:
+            self.get_labels_option_2.hide()
+        if self.tm.metadata['corpus_name'] not in Constants.AVAILABLE_CORPUS_FOR_OPTION_3:
+            self.get_labels_option_3.hide()
+        if self.tm.metadata['corpus_name'] not in Constants.AVAILABLE_CORPUS_FOR_OPTION_4:
+            self.get_labels_option_4.hide()
+        if self.tm.metadata['corpus_name'] not in Constants.AVAILABLE_CORPUS_FOR_OPTION_5:
+            self.get_labels_option_5.hide()
+
     def execute_import_labels(self):
         """
         Imports the labels by invoking the corresponding method in the Task Manager
@@ -424,11 +383,12 @@ class MainWindow(QtWidgets.QMainWindow):
             message_out = self.tm.import_labels()
         elif self.get_label_option == 2 or self.get_label_option == 3:
             message_out = self.tm.get_labels_by_keywords(
-                keywords = self.get_keywords_window.selectedKeywords,
-                wt = self.get_keywords_window.wt,
-                n_max = self.get_keywords_window.n_max,
-                s_min = self.get_keywords_window.s_min,
-                tag = self.get_keywords_window.selectedTag)
+                keywords=self.get_keywords_window.selectedKeywords,
+                wt=self.get_keywords_window.wt,
+                n_max=self.get_keywords_window.n_max,
+                s_min=self.get_keywords_window.s_min,
+                tag=self.get_keywords_window.selectedTag,
+                method=self.get_keywords_window.method)
         elif self.get_label_option == 4:
             message_out = self.tm.get_labels_by_topics(
                 topic_weights=self.get_topics_list_window.tw,
@@ -439,10 +399,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 tag=self.get_topics_list_window.selectedTag)
         elif self.get_label_option == 5:
             message_out = self.tm.get_labels_by_zeroshot(
-                keywords = self.get_category_names_window.selectedKeywords,
-                n_max = self.get_category_names_window.n_max,
-                s_min = self.get_category_names_window.s_min,
-                tag = self.get_category_names_window.selectedTag)
+                keywords=self.get_category_names_window.selectedKeywords,
+                n_max=self.get_category_names_window.n_max,
+                s_min=self.get_category_names_window.s_min,
+                tag=self.get_category_names_window.selectedTag)
 
         self.message_out = message_out[3:]
 
@@ -485,10 +445,11 @@ class MainWindow(QtWidgets.QMainWindow):
         each of the QRadioButtons associated with the labels' getting.
         Only one QRadioButton can be selected at a time.
         """
-        if self.corpus_selected_name is None:
+
+        if self.tm.state['selected_corpus'] is False:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
-                Messages.INCORRECT_INPUT_PARAM_SELECTION)
+                Messages.INCORRECT_NO_CORPUS_SELECTED)
         else:
             if self.get_labels_radio_buttons.checkedId() == 1:
                 print("Import labels from a source file")
@@ -564,7 +525,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Show warning message indicating that a corpus needs to be selected first
         # in order to proceed with the labels' loading
-        if self.corpus_selected_name is None:
+        if self.tm.state['selected_corpus'] is False:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
                 Messages.INCORRECT_NO_CORPUS_SELECTED)
@@ -585,11 +546,18 @@ class MainWindow(QtWidgets.QMainWindow):
         """
 
         # Show warning message if not corpus has been selected before asking for the labels' loading
-        if self.corpus_selected_name is None:
+        if self.tm.state['selected_corpus'] is False:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
                 Messages.INCORRECT_NO_CORPUS_SELECTED)
         else:
+            # Exit if not labels selected
+            if self.tree_view_load_labels.currentItem() is None:
+                QtWidgets.QMessageBox.warning(
+                    self, Messages.DC_MESSAGE,
+                    Messages.NO_LABELS_TO_LOAD_SELECTED_LOAD)
+                return
+
             # Load labels by invoking the corresponding TM's function
             item = self.tree_view_load_labels.currentItem()
             self.labels_loaded = str(item.text())
@@ -604,7 +572,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 "The labels '" + self.labels_loaded + "' have been loaded"
                                                       " in the current session.")
 
-            # Write the name of the laoded set of labels in the "label_labels_loaded_are" QLineEdit
+            # Write the name of the loaded set of labels in the "label_labels_loaded_are" QLineEdit
             self.label_labels_loaded_are.setText(str(self.labels_loaded))
 
             # Show documents at the GET FEEDBACK if the conditions for it are satisfied
@@ -618,11 +586,18 @@ class MainWindow(QtWidgets.QMainWindow):
         """
 
         # Show warning message if not corpus has been selected before asking for the labels' loading
-        if self.corpus_selected_name is None:
+        if self.tm.state['selected_corpus'] is False:
             QtWidgets.QMessageBox.warning(
                 self, Messages.DC_MESSAGE,
                 Messages.INCORRECT_NO_CORPUS_SELECTED)
         else:
+            # Exit if not labels selected
+            if self.tree_view_load_labels.currentItem() is None:
+                QtWidgets.QMessageBox.warning(
+                    self, Messages.DC_MESSAGE,
+                    Messages.NO_LABELS_TO_LOAD_SELECTED_RESET)
+                return
+
             # Reset labels by invoking the corresponding TM's function
             item = self.tree_view_load_labels.currentItem()
             self.labels_loaded = str(item.text())
@@ -680,6 +655,9 @@ class MainWindow(QtWidgets.QMainWindow):
             0, 0, QtWidgets.QTableWidgetItem(str(self.class_max_imbalance)))
         self.table_train_pu_model_params.setItem(
             0, 1, QtWidgets.QTableWidgetItem(str(self.class_nmax)))
+
+        # Set horizontal header visible
+        self.table_train_pu_model_params.horizontalHeader().setVisible(True)
 
         return
 
@@ -763,7 +741,7 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.information(
             self, Messages.DC_MESSAGE,
             "The PU model has been trained.")
-        
+
         return
 
     def clicked_train_PU_model(self):
@@ -773,18 +751,18 @@ class MainWindow(QtWidgets.QMainWindow):
         """
 
         # Check if a corpus has been selected. Otherwise, the training cannot be carried out
-        if self.corpus_selected_name is not None and self.tm.df_labels is not None:
-            
+        if self.tm.state['selected_corpus'] and self.tm.df_labels is not None and self.labels_loaded is not None:
+
             # Execute the PU model training in the secondary thread
             execute_in_thread(
                 self, self.execute_train_classifier, self.do_after_train_classifier,
                 self.progress_bar_train)
         else:
-            
+
             # Show warning message if training could not be carried out as either no corpus or
             # not labels were selected at the time the request was made
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.WARNING_TRAINING)
-            
+
         return
 
     # #########################################################################
@@ -837,10 +815,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 results.append(v)
             for i in np.arange(self.table_pu_classification_results.rowCount()):
                 self.table_pu_classification_results.setItem(
-                    i-1, 3, QtWidgets.QTableWidgetItem(str(results[i])))
+                    i - 1, 3, QtWidgets.QTableWidgetItem(str(results[i])))
+        print(results)
 
         self.table_pu_classification_results.resizeColumnsToContents()
         self.table_pu_classification_results.resizeRowsToContents()
+        self.table_pu_classification_results.verticalHeader().setVisible(True)
 
         # Show informative message in pop up window
         QtWidgets.QMessageBox.information(
@@ -860,7 +840,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Check if a corpus and a set of labels have been selected and a model trained.
         # Otherwise, the evaluation cannot be carried out
-        if self.corpus_selected_name is not None and self.tm.df_labels is not None:
+        if self.tm.state['selected_corpus'] and self.tm.df_labels is not None and \
+                self.labels_loaded is not None and self.tm.dc is not None:
 
             # Execute the PU model evaluation in the secondary thread
             execute_in_thread(
@@ -1065,13 +1046,22 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def clicked_give_feedback(self):
         """
-        Method that controls the actions that are carried out when the button "give_feedback_user_push_button" is
+        Method that controls the actions that are carried out when the button "give_feedback_push_button" is
         clicked by the user.
         """
 
-        # Carry out the feedback giving in the secondary thread
-        execute_in_thread(
-            self, self.execute_give_feedback, self.do_after_give_feedback, self.progress_bar_feedback_update)
+        # Check if a corpus and labels have been selected and whether a model related with them related has already been
+        # trained. Otherwise, the retraining cannot be carried out
+        if self.tm.state['selected_corpus'] and self.tm.df_labels is not None and \
+                self.labels_loaded is not None and self.tm.dc is not None:
+
+            # Carry out the feedback giving in the secondary thread
+            execute_in_thread(
+                self, self.execute_give_feedback, self.do_after_give_feedback, self.progress_bar_feedback_update)
+        else:
+
+            # Show warning message if the conditions for evaluating the model are not met
+            QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.WARNING_FEEDBACK)
 
         return
 
@@ -1081,12 +1071,12 @@ class MainWindow(QtWidgets.QMainWindow):
     @pyqtSlot(str)
     def append_text_retrain_reval(self, text):
         """
-        Method to redirect the stdout and stderr in the "text_edit_results_reval_retrain_pu_model"
+        Method to redirect the stdout and stderr in the "text_edit_results_reval_retrain"
         while the retraining of a PU model is being performed.
         """
 
-        self.text_edit_results_reval_retrain_pu_model.moveCursor(QTextCursor.End)
-        self.text_edit_results_reval_retrain_pu_model.insertPlainText(text)
+        self.text_edit_results_reval_retrain.moveCursor(QTextCursor.End)
+        self.text_edit_results_reval_retrain.insertPlainText(text)
 
         return
 
@@ -1126,12 +1116,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def clicked_retrain_model(self):
         """
-        Method that controls the actions that are carried out when the button "retrain_pu_model_push_button" is
+        Method that controls the actions that are carried out when the button "retrain_model_push_button" is
         clicked by the user.
         """
 
-        # Check if a corpus has been selected. Otherwise, the retraining cannot be carried out
-        if self.corpus_selected_name is not None and self.tm.df_labels is not None:
+        # Check if a corpus and labels have been selected and whether a model related with them related has already been
+        # trained. Otherwise, the retraining cannot be carried out
+        if self.tm.state['selected_corpus'] and self.tm.df_labels is not None and \
+                self.labels_loaded is not None and self.tm.dc is not None:
 
             # Execute the PU model retraining in the secondary thread
             execute_in_thread(
@@ -1180,12 +1172,13 @@ class MainWindow(QtWidgets.QMainWindow):
             results = []
             for r, v in self.result_reevaluation_pu_model.items():
                 results.append(v)
-            for i in np.arange(self.table_pu_reclassification_results.rowCount()):
-                self.table_pu_reclassification_results.setItem(
+            for i in np.arange(self.table_reclassification_results.rowCount()):
+                self.table_reclassification_results.setItem(
                     i - 1, 3, QtWidgets.QTableWidgetItem(str(results[i])))
 
-        self.table_pu_reclassification_results.resizeColumnsToContents()
-        self.table_pu_reclassification_results.resizeRowsToContents()
+        self.table_reclassification_results.resizeColumnsToContents()
+        self.table_reclassification_results.resizeRowsToContents()
+        self.table_pu_classification_results.verticalHeader().setVisible(True)
 
         # Show message in pop up window
         QtWidgets.QMessageBox.information(
@@ -1196,13 +1189,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def clicked_reevaluate_model(self):
         """
-        Method that controls the actions that are carried out when the button "retrain_pu_model_push_button" is
+        Method that controls the actions that are carried out when the button "retrain_model_push_button" is
         clicked by the user.
         """
 
-        # Check if a corpus and a set of labels have been selected and a model trained.
-        # Otherwise, the reeevaluation cannot be carried out
-        if self.corpus_selected_name is not None and self.tm.df_labels is not None:
+        # Check if a corpus and labels have been selected and whether a model related with them related has already been
+        # trained. Otherwise, the retraining cannot be carried out
+        if self.tm.state['selected_corpus'] and self.tm.df_labels is not None and \
+                self.labels_loaded is not None and self.tm.dc is not None:
 
             # Execute the PU model reevaluation in the secondary thread
             execute_in_thread(
@@ -1212,6 +1206,3 @@ class MainWindow(QtWidgets.QMainWindow):
             # Show warning message if the conditions for evaluating the model are not met
             QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.WARNING_REEVALUATION)
         return
-
-
-

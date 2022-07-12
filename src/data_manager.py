@@ -1,4 +1,9 @@
-# Contributors: Jesus Cid-Sueiro, Ascension Gallardo-Antolin
+"""
+Defines a data manager class to provide basic read-write functionality for
+the project.
+
+@author: J. Cid-Sueiro, A. Gallardo-Antolin
+"""
 
 import pathlib
 import pandas as pd
@@ -19,7 +24,7 @@ class DataManager(object):
     It assumes that source and destination data will be stored in files.
     """
 
-    def __init__(self, path2source, path2labels, path2datasets, path2models,
+    def __init__(self, path2source, path2datasets, path2models,
                  path2embeddings=None):
         """
         Initializes the data manager object
@@ -28,16 +33,16 @@ class DataManager(object):
         ----------
         path2source: str or pathlib.Path
             Path to the folder containing all external source data
-        path2labels: str or pathlib.Path
-            Path to the folder containing sets of labels
         path2datasets: str or pathlib.Path
             Path to the folder containing datasets
+        path2models: str or pathlib.Path
+            Path to the folder containing classifier models
         path2embeddings: str or pathlib.Path
             Path to the folder containing the document embeddings
         """
 
         self.path2source = pathlib.Path(path2source)
-        self.path2labels = pathlib.Path(path2labels)
+        # self.path2labels = pathlib.Path(path2labels)   # No longer used
         self.path2datasets = pathlib.Path(path2datasets)
         self.path2models = pathlib.Path(path2models)
         if path2embeddings is not None:
@@ -51,6 +56,25 @@ class DataManager(object):
 
         return
 
+    def is_model(self, class_name):
+        """
+        Checks if a model exist for the given class_name in the folder of
+        models
+
+        Parameters
+        ----------
+        class_name : str
+            Name of the class
+
+        Returns
+        -------
+            True if the model folder exists
+        """
+
+        path2model = self.path2models / class_name
+
+        return path2model.is_dir()
+
     def get_corpus_list(self):
         """
         Returns the list of available corpus
@@ -60,19 +84,6 @@ class DataManager(object):
                        if e.is_dir()]
 
         return corpus_list
-
-    def get_labelset_list(self):
-        """
-        Returns the list of available labels
-        """
-
-        prefix = f"labels_{self.corpus_name}_"
-        labelset_list = [e.stem for e in self.path2labels.iterdir()
-                         if e.is_file() and e.stem.startswith(prefix)]
-        # Remove prefixes and get tags only:
-        labelset_list = [e[len(prefix):] for e in labelset_list]
-
-        return labelset_list
 
     def get_dataset_list(self):
         """
@@ -144,16 +155,21 @@ class DataManager(object):
         path2feather = self.path2corpus / 'corpus' / 'corpus.feather'
         self.corpus_name = corpus_name
 
+        # By default, a feather file version of the corpus will be save
+        save_feather = True
+        # By default, no corpus cleaning is done
+        clean_corpus = False
         # If there is a feather file, load it
         t0 = time()
+
+        # ################
+        # Load corpus data
+
         if path2feather.is_file():
 
             logging.info(f'-- -- Feather file {path2feather} found...')
             df_corpus = pd.read_feather(path2feather)
-            logging.info(
-                f'-- -- Feather file loaded in {time() - t0:.2f} secs.')
-            logging.info(f'-- -- Corpus {corpus_name} loaded with '
-                         f'{len(df_corpus)} documents')
+            save_feather = False
 
         # if it doesn't exist, load the selected corpus in its original form
         elif corpus_name == 'EU_projects':
@@ -206,7 +222,8 @@ class DataManager(object):
             #     fundingScheme, nature, objective, contentUpdateDate, rcn
             # WARNING: We DO NOT use "id" as the project id.
             #          We use "rcn" instead, renamed as "id"
-            df_corpus = df_corpus1.append(df_corpus2, ignore_index=True)
+            # df_corpus = df_corpus1.append(df_corpus2, ignore_index=True)
+            df_corpus = pd.concat([df_corpus1, df_corpus2])
             df_corpus = df_corpus[['acronym', 'title', 'objective', 'rcn']]
 
             # Map column names to normalized names
@@ -216,12 +233,6 @@ class DataManager(object):
 
             # Fill nan cells with empty strings
             df_corpus.fillna("", inplace=True)
-
-            logging.info(f"-- -- Corpus aggregated with {len(df_corpus)} "
-                         f" documents and loaded in {time() - t0:.2f} secs.")
-            logging.info(f'-- -- Writing feather file in {path2feather} '
-                         f'to speed up future loads')
-            df_corpus.to_feather(path2feather)
 
         elif corpus_name == 'AEI_projects':
 
@@ -238,16 +249,8 @@ class DataManager(object):
             # Load corpus 1
             path2corpus = self.path2corpus / corpus_fpath
             df_corpus = pd.read_excel(path2corpus, engine='openpyxl')
-            # Remove duplicates, if any
-            df_corpus.drop_duplicates(subset=['Referencia'], inplace=True)
-            logging.info(f'-- -- Raw corpus {corpus_name} loaded with '
+            logging.info(f'-- -- Raw corpus {corpus_name} read with '
                          f'{len(df_corpus)} documents')
-
-            # Remove documents with missing data, if any
-            ind_notna = df_corpus['title'].notna()
-            df_corpus = df_corpus[ind_notna]
-            ind_notna = df_corpus['abstract'] == 0
-            df_corpus = df_corpus[~ind_notna]
 
             # Original fields are:
             #     Año, Convocatoria, Referencia, Área, Subárea, Título,
@@ -266,6 +269,110 @@ class DataManager(object):
                        'Ind2017_TIC': 'target_tic',
                        'Ind2017_ENE': 'target_ene'}
             df_corpus.rename(columns=mapping, inplace=True)
+            clean_corpus = True
+
+        elif corpus_name == 'CORDIS.parquet':
+
+            # ####################
+            # Paths and file names
+
+            path2texts = self.path2corpus / 'corpus'
+            fpaths = [f for f in path2texts.glob('**/*')
+                      if f.is_file() and f.suffix == '.parquet']
+            n_files = len(fpaths)
+
+            # ###########
+            # Load corpus
+
+            for k, path_k in enumerate(fpaths):
+                print(f"-- -- Loading file {k + 1} out of {n_files}  \r",
+                      end="")
+                dfk = pd.read_parquet(path_k)
+
+                # Original fields are:
+                #   'id', 'title', 'objective', 'startDate',
+                #   'ecMaxContribution', 'euroSciVocCode', 'rawtext', 'lemmas'
+                dfk = dfk[['id', 'title', 'objective', 'euroSciVocCode']]
+
+                if k == 0:
+                    df_corpus = dfk
+                else:
+                    # df_corpus0 = df_corpus.append(dfk, ignore_index=True)
+                    df_corpus = pd.concat([df_corpus, dfk])
+
+            logging.info(f'-- -- Raw corpus {corpus_name} read with '
+                         f'{len(dfk)} documents')
+
+            # Map column names to normalized names
+            # We use "Referencia", renamed as "id", as the project id.
+            mapping = {'objective': 'description'}
+            df_corpus.rename(columns=mapping, inplace=True)
+            clean_corpus = True
+
+            # Map list of euroSciVoc codes to a string (otherwise, no
+            # feather file can be saved)
+            col = 'euroSciVocCode'   # Just to abbreviate
+            if col in df_corpus:
+                df_corpus[col] = df_corpus[col].apply(
+                    lambda x: ','.join(
+                        x.astype(str)) if x is not None else '')
+
+        elif corpus_name == 'S2CS.parquet':
+
+            # ####################
+            # Paths and file names
+
+            path2texts = self.path2corpus / 'corpus'
+            fpaths = [f for f in path2texts.glob('**/*')
+                      if f.is_file() and f.suffix == '.parquet']
+            n_files = len(fpaths)
+
+            # ###########
+            # Load corpus
+
+            for k, path_k in enumerate(fpaths):
+                print(f"-- -- Loading file {k + 1} out of {n_files}  \r",
+                      end="")
+                dfk = pd.read_parquet(path_k)
+
+                # Original fields are:
+                #   'id', 'title', 'paperAbstract', 'doi', 'year',
+                #   'fieldsOfStudy', 'rawtext', 'lemmas'
+                dfk = dfk[['id', 'title', 'paperAbstract', 'fieldsOfStudy']]
+
+                if k == 0:
+                    df_corpus = dfk
+                else:
+                    # df_corpus = df_corpus.append(dfk, ignore_index=True)
+                    df_corpus = pd.concat([df_corpus, dfk])
+
+            logging.info(f'-- -- Raw corpus {corpus_name} read with '
+                         f'{len(dfk)} documents')
+
+            # Map column names to normalized names
+            # We use "Referencia", renamed as "id", as the project id.
+            mapping = {'paperAbstract': 'description',
+                       'fieldsOfStudy': 'keywords'}
+
+            df_corpus.rename(columns=mapping, inplace=True)
+            clean_corpus = True
+
+        else:
+            logging.warning("-- Unknown corpus")
+            df_corpus = None
+
+        # ############
+        # Clean corpus
+        if clean_corpus:
+
+            # Remove duplicates, if any
+            df_corpus.drop_duplicates(subset=['id'], inplace=True)
+
+            # Remove documents with missing data, if any
+            ind_notna = df_corpus['title'].notna()
+            df_corpus = df_corpus[ind_notna]
+            ind_notna = df_corpus['description'] == 0
+            df_corpus = df_corpus[~ind_notna]
 
             # Fill nan cells with empty strings
             df_corpus.fillna("", inplace=True)
@@ -278,17 +385,20 @@ class DataManager(object):
             # Reset the index and drop the old index
             df_corpus = df_corpus.reset_index(drop=True)
 
-            logging.info(
-                f"-- -- Corpus {corpus_name} reduced to {len(df_corpus)} "
-                f" documents")
-            logging.info(f"-- -- Loaded in {time() - t0:.2f} secs.")
-            logging.info(f'-- -- Writing feather file in {path2feather} '
-                         f'to speed up future loads')
-            df_corpus.to_feather(path2feather)
+        # ############
+        # Log and save
 
-        else:
-            logging.warning("-- Unknown corpus")
-            df_corpus = None
+        # Log results
+        logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
+                     f" documents loaded in {time() - t0:.2f} secs.")
+
+        # Save to feather file
+        if save_feather:
+            logging.info(f'-- -- Writing feather file in {path2feather} '
+                         f'to speed up future loads...')
+            t0 = time()
+            df_corpus.to_feather(path2feather)
+            logging.info(f"-- -- Feather file saved in {time()-t0} secs")
 
         return df_corpus
 
@@ -375,24 +485,6 @@ class DataManager(object):
         # The log message is returned to be shown in a GUI, if needed
         return df_dataset, msg
 
-    def load_labels(self, tag=""):
-        """
-        Loads a set or PU labels
-        """
-
-        logging.info(f"-- Loading labelset {tag}")
-
-        # Read labels from csv file
-        fname = f'labels_{self.corpus_name}_{tag}.csv'
-        path2labels = self.path2labels / fname
-        df_labels = pd.read_csv(path2labels)
-
-        msg = f"-- -- {len(df_labels)} labels loaded from {path2labels}"
-        logging.info(msg)
-
-        # The log message is returned to be shown in a GUI, if needed
-        return df_labels, msg
-
     def reset_labels(self, tag=""):
         """
         Delete all files related to a given class
@@ -404,9 +496,9 @@ class DataManager(object):
         """
 
         # Remove csv file
-        fname = f"labels_{self.corpus_name}_{tag}.csv"
-        path2labelset = self.path2labels / fname
-        path2labelset.unlink()
+        # fname = f"labels_{self.corpus_name}_{tag}.csv"
+        # path2labelset = self.path2labels / fname
+        # path2labelset.unlink()
 
         # Remove dataset
         fstem = f"dataset_{self.corpus_name}_{tag}"
@@ -416,9 +508,9 @@ class DataManager(object):
         # Remove model
         path2model = self.path2models / tag
         if path2model.is_dir():
-            shutil.rmtree(self.path2models / tag)
+            shutil.rmtree(path2model)
 
-        logging.info(f"-- -- Labelset {tag} removed")
+        logging.info(f"-- -- Labels {tag} removed")
 
     def import_labels(self, ids_corpus=None, tag="imported"):
         """
@@ -434,10 +526,8 @@ class DataManager(object):
 
         Returns
         -------
-        df_labels: pandas.DataFrame
-            Dataframe of labels, with two columns: id and class.
-            id identifies the document corresponding to the label.
-            class identifies the class. All documents are assumed to be class 1
+        ids_pos: list
+            List of ids of documents from the positive class
         """
 
         # ####################
@@ -484,29 +574,14 @@ class DataManager(object):
                 f"labeled dataset that do not belong to the corpus.")
             df_labels = df_labels[df_labels.id.isin(ids_corpus)]
 
-        # ########################
-        # Saving id and class only
+        # Only the ids of the docs with positive labels are returned
+        ids_pos = df_labels.id.tolist()
 
-        msg = self.save_labels(df_labels, tag=tag)
-
-        # The log message is returned to be shown in a GUI, if needed
-        return df_labels, msg
-
-    def save_labels(self, df_labels, tag=""):
-
-        # ########################
-        # Saving id and class only
-
-        labels_out_fname = f'labels_{self.corpus_name}_{tag}.csv'
-        path2labels = self.path2labels / labels_out_fname
-        df_labels.to_csv(path2labels, index=False)
-
-        msg = (f"-- File with {len(df_labels)} positive labels saved in "
-               f"{path2labels}")
-        logging.info(msg)
+        # This is for backward compatibility only
+        msg = ""
 
         # The log message is returned to be shown in a GUI, if needed
-        return msg
+        return ids_pos, msg
 
     def save_dataset(self, df_dataset, tag="", save_csv=False):
         """

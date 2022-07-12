@@ -1,3 +1,8 @@
+"""
+Defines the main domain classification class
+
+@author: J. Cid-Sueiro, J.A. Espinosa, A. Gallardo-Antolin
+"""
 import logging
 import pathlib
 import sys
@@ -19,7 +24,7 @@ from transformers import logging as hf_logging
 # Mnemonics for values in column 'train_test'
 TRAIN = 0
 TEST = 1
-# Equivalent to NaN for the integer columns in self.df_dataset:
+# UNUSED: equivalent to NaN for the integer columns in self.df_dataset:
 # (nan is not used because it converts the whole column to float)
 UNUSED = -99
 
@@ -295,7 +300,7 @@ class CorpusClassifier(object):
                 predictions, total_loss, result = self.model.eval_model(
                     df_test, self.device)
 
-                if result["f1"] > best_result:
+                if result["f1"] >= best_result:
                     best_epoch = e
                     best_result = result["f1"]
                     best_predictions = predictions
@@ -345,7 +350,7 @@ class CorpusClassifier(object):
         ----------
         tag_score: str
             Prefix of the score names.
-            The scores will be save in the columns of self.df_dataset
+            The scores will be saved in the columns of self.df_dataset
             containing these scores.
 
         Notes
@@ -419,11 +424,13 @@ class CorpusClassifier(object):
             Number of samples to return
         sampler : str, optional (default="random")
             Sample selection algorithm.
+
             - If "random", samples are taken at random from all docs with
               predictions
             - If "extremes", samples are taken stochastically, but with
               documents with the highest or smallest probability scores are
               selected with higher probability.
+
         p_ratio : float, optional (default=0.8)
             Ratio of high-score samples. The rest will be low-score samples.
             (Only for sampler='extremes')

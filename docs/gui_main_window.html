@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Main Window &mdash; domain_classification_doc  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Analyze Keywords Window" href="gui_analyze_keywords_window.html" />
+    <link rel="prev" title="Preprocessor" href="dc_preprocessor.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> domain_classification_doc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Getting Started with Domain Classifier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mn_menu_navigator.html">Menu Navigator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_base_taskmanager.html">Base Task Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_task_manager.html">Task Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_data_manager.html">Data Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_query_manager.html">Query Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_classifier.html">Classifier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_custom_model.html">Custom Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_preprocessor.html">Preprocessor</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Main Window</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gui_analyze_keywords_window.html">Analyze Keywords Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_constants.html">Constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_get_keywords_window.html">Get Keywords Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_get_topics_list_window.html">Get Topics List Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_messages.html">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_output_wrapper.html">Output Wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_util.html">Util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_worker_signals.html">Worker Signals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_worker.html">Worker</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">domain_classification_doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Main Window</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/gui_main_window.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="main-window">
+<h1>Main Window<a class="headerlink" href="#main-window" title="Permalink to this headline"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-src.graphical_user_interface.main_window"></span><p>&#64;author: L. Calvo-Bartolome</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.main_window.</span></span><span class="sig-name descname"><span class="pre">MainWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stderr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QMainWindow</span></code></p>
+<p>Class representing the main window of the application.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stderr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the application’s main window based on the parameters received
+from the application’s starting window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_folder</strong> (<em>pathlib.Path</em>) – Path to the application project</p></li>
+<li><p><strong>source_folder</strong> (<em>pathlib.Path</em>) – Path to the folder containing the data sources</p></li>
+<li><p><strong>tm</strong> (<em>TaskManager</em>) – TaskManager object associated with the project</p></li>
+<li><p><strong>widget</strong> (<em>QtWidgets.QStackedWidget</em>) – Window to which the application’s main window is attached to</p></li>
+<li><p><strong>stdout</strong> (<em>sys.stdout</em>) – Output file object</p></li>
+<li><p><strong>stderr</strong> (<em>sys.stderr</em>) – Standard Error file object</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.append_text_evaluate">
+<span class="sig-name descname"><span class="pre">append_text_evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.append_text_evaluate" title="Permalink to this definition"></a></dt>
+<dd><p>Method to redirect the stdout and stderr in the “text_edit_results_eval_pu_classifier”
+while the evaluation of a PU model is being performed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.append_text_retrain_reval">
+<span class="sig-name descname"><span class="pre">append_text_retrain_reval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.append_text_retrain_reval" title="Permalink to this definition"></a></dt>
+<dd><p>Method to redirect the stdout and stderr in the “text_edit_results_reval_retrain”
+while the retraining of a PU model is being performed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.append_text_train">
+<span class="sig-name descname"><span class="pre">append_text_train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.append_text_train" title="Permalink to this definition"></a></dt>
+<dd><p>Method to redirect the stdout and stderr in the “text_logs_train_pu_model”
+while the training of a PU model is being performed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.center">
+<span class="sig-name descname"><span class="pre">center</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.center" title="Permalink to this definition"></a></dt>
+<dd><p>Centers the window at the middle of the screen at which the application is being executed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_change_predicted_class">
+<span class="sig-name descname"><span class="pre">clicked_change_predicted_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkbox</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_change_predicted_class" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the checking or unchecking of the QCheckboxes that represented
+the predicted class that the user has associated to each of the documents to annotate.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_evaluate_PU_model">
+<span class="sig-name descname"><span class="pre">clicked_evaluate_PU_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_evaluate_PU_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method that controls the actions that are carried out when the button “eval_pu_classifier_push_button” is
+clicked by the user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_get_labels">
+<span class="sig-name descname"><span class="pre">clicked_get_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_get_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Method for performing the getting of the labels according to the
+method selected for it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_get_labels_option">
+<span class="sig-name descname"><span class="pre">clicked_get_labels_option</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_get_labels_option" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the functionality associated with the selection of
+each of the QRadioButtons associated with the labels’ getting.
+Only one QRadioButton can be selected at a time.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_give_feedback">
+<span class="sig-name descname"><span class="pre">clicked_give_feedback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_give_feedback" title="Permalink to this definition"></a></dt>
+<dd><p>Method that controls the actions that are carried out when the button “give_feedback_push_button” is
+clicked by the user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_load_corpus">
+<span class="sig-name descname"><span class="pre">clicked_load_corpus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_load_corpus" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the selection of a new corpus by double-clicking
+one of the items of the corpus list within the selected source folder,
+as well as its loading as dataframe into the TaskManager object.
+Important is that the corpus cannot be changed inside the same project,
+so if a corpus was used before me must keep the same one.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_load_labels">
+<span class="sig-name descname"><span class="pre">clicked_load_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_load_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Method for controlling the loading of the labels into the session.
+It is equivalent to the “_get_labelset_list” method from the
+TaskManager class</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_reevaluate_model">
+<span class="sig-name descname"><span class="pre">clicked_reevaluate_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_reevaluate_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method that controls the actions that are carried out when the button “retrain_model_push_button” is
+clicked by the user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_reset_labels">
+<span class="sig-name descname"><span class="pre">clicked_reset_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_reset_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Method for controlling the resetting of the current session’s labels.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_retrain_model">
+<span class="sig-name descname"><span class="pre">clicked_retrain_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_retrain_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method that controls the actions that are carried out when the button “retrain_model_push_button” is
+clicked by the user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_train_PU_model">
+<span class="sig-name descname"><span class="pre">clicked_train_PU_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_train_PU_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method that controls the actions that are carried out when the button “train_pu_model_push_button” is
+clicked by the user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_update_ndocs_al">
+<span class="sig-name descname"><span class="pre">clicked_update_ndocs_al</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_update_ndocs_al" title="Permalink to this definition"></a></dt>
+<dd><p>Updates the AL parameter that is going to be used for the resampling of the documents to be labelled based
+on the value specified by the user and shows the id, title, abstract and predicted class (if available) of each
+of the documents in a QTextEdit widget.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.do_after_evaluate_pu_model">
+<span class="sig-name descname"><span class="pre">do_after_evaluate_pu_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.do_after_evaluate_pu_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method to be executed after the evaluation of the PU model has been
+completed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.do_after_give_feedback">
+<span class="sig-name descname"><span class="pre">do_after_give_feedback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.do_after_give_feedback" title="Permalink to this definition"></a></dt>
+<dd><p>Method to be executed after annotating the labels given by the user in their corresponding positions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.do_after_import_labels">
+<span class="sig-name descname"><span class="pre">do_after_import_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.do_after_import_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Function to be executed after the labels’ importing has been completed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.do_after_load_corpus">
+<span class="sig-name descname"><span class="pre">do_after_load_corpus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.do_after_load_corpus" title="Permalink to this definition"></a></dt>
+<dd><p>Method to be executed after the loading of the corpus has been
+completed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.do_after_reevaluate_model">
+<span class="sig-name descname"><span class="pre">do_after_reevaluate_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.do_after_reevaluate_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method to be executed once the reevaluation of the model based on the feedback of the user has been completed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.do_after_retrain_model">
+<span class="sig-name descname"><span class="pre">do_after_retrain_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.do_after_retrain_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method to be executed once the retraining of the model based on the feedback of the user has been completed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.do_after_train_classifier">
+<span class="sig-name descname"><span class="pre">do_after_train_classifier</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.do_after_train_classifier" title="Permalink to this definition"></a></dt>
+<dd><p>Method to be executed after the training of the classifier has been
+completed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.execute_evaluate_pu_model">
+<span class="sig-name descname"><span class="pre">execute_evaluate_pu_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.execute_evaluate_pu_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the execution of the evaluation of a classifier on a
+secondary thread while the MainWindow execution is maintained in the
+main thread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.execute_give_feedback">
+<span class="sig-name descname"><span class="pre">execute_give_feedback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.execute_give_feedback" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the annotation of a selected subset of documents based on the labels introduced by the
+user on a secondary thread while the MainWindow execution is maintained in the main thread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.execute_import_labels">
+<span class="sig-name descname"><span class="pre">execute_import_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.execute_import_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Imports the labels by invoking the corresponding method in the Task Manager
+object associated with the GUI.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.execute_load_corpus">
+<span class="sig-name descname"><span class="pre">execute_load_corpus</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.execute_load_corpus" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the execution of the loading of a corpus on a
+secondary thread while the MainWindow execution is maintained in the
+main thread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.execute_reevaluate_model">
+<span class="sig-name descname"><span class="pre">execute_reevaluate_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.execute_reevaluate_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the execution of the reevaluation of a classifier on a
+secondary thread while the MainWindow execution is maintained in the
+main thread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.execute_retrain_model">
+<span class="sig-name descname"><span class="pre">execute_retrain_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.execute_retrain_model" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the execution of the retraining of a classifier on a
+secondary thread while the MainWindow execution is maintained in the
+main thread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.execute_train_classifier">
+<span class="sig-name descname"><span class="pre">execute_train_classifier</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.execute_train_classifier" title="Permalink to this definition"></a></dt>
+<dd><p>Method to control the execution of the training of a classifier on a
+secondary thread while the MainWindow execution is maintained in the
+main thread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.init_feedback_elements">
+<span class="sig-name descname"><span class="pre">init_feedback_elements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.init_feedback_elements" title="Permalink to this definition"></a></dt>
+<dd><p>Method for showing the documents to be annotated in the FEEDBACK TAB.
+The number of documents that is shown depends on the value assigned to
+self.n_docs_al; the remaining widgets that exist for showing documents
+until Constants.MAX_N_DOCS are hided while they are not used.
+The widgets that represent the document are displayed as empty spaces
+until the conditions for the annotation of the documents are met, i.e.
+a corpus and a set of labels have been selected</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.init_ndocs_al">
+<span class="sig-name descname"><span class="pre">init_ndocs_al</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.init_ndocs_al" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the AL parameter in the text edit within the third tab of the main GUI
+window, i.e. n_docs. The default configuration of this parameter is read from the
+configuration file ‘/config/parameters.default.yaml’.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.init_params_train_pu_model">
+<span class="sig-name descname"><span class="pre">init_params_train_pu_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.init_params_train_pu_model" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes the classifier parameters in the parameters’ table within the second tab of the main GUI
+window, i.e. max_imbalance and nmax. The default configuration of these parameters is read from the
+configuration file ‘/config/parameters.default.yaml’.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.init_ui">
+<span class="sig-name descname"><span class="pre">init_ui</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.init_ui" title="Permalink to this definition"></a></dt>
+<dd><p>Configures the elements of the GUI window that are not configured in the UI, i.e. icon of the application,
+the application’s title, and the position of the window at its opening.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.reset_params_train_pu_model">
+<span class="sig-name descname"><span class="pre">reset_params_train_pu_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.reset_params_train_pu_model" title="Permalink to this definition"></a></dt>
+<dd><p>Resets the PU model training parameters to its default value based on the values
+that were read initially from the configuration file</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.show_corpora">
+<span class="sig-name descname"><span class="pre">show_corpora</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.show_corpora" title="Permalink to this definition"></a></dt>
+<dd><p>List all corpora contained in the source folder selected by the user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.show_labels">
+<span class="sig-name descname"><span class="pre">show_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.show_labels" title="Permalink to this definition"></a></dt>
+<dd><p>Method for showing the labels associated with the selected corpus.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.show_sampled_docs_for_labeling">
+<span class="sig-name descname"><span class="pre">show_sampled_docs_for_labeling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.show_sampled_docs_for_labeling" title="Permalink to this definition"></a></dt>
+<dd><p>Visualizes the documents from which the user is going to give feedback for the updating of a model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.update_params_train_pu_model">
+<span class="sig-name descname"><span class="pre">update_params_train_pu_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.update_params_train_pu_model" title="Permalink to this definition"></a></dt>
+<dd><p>Updates the classifier parameters that are going to be used for the training of the PU model based on the
+values read from the table within the second tab of the main GUI
+window that have been specified by the user.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dc_preprocessor.html" class="btn btn-neutral float-left" title="Preprocessor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gui_analyze_keywords_window.html" class="btn btn-neutral float-right" title="Analyze Keywords Window" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. Cid-Sueiro, L. Calvo, J.A. Espinosa, T. Ahlers, M. A. Vázquez.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

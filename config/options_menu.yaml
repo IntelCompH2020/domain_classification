@@ -86,16 +86,17 @@ get_labels:
     - analyze_keywords
     - get_labels_by_topics
     - get_labels_by_zeroshot
+    - evaluate_PUlabels
 
 load_labels:
   title: Load labels
   options:
-    - get_method: _get_labelset_list
+    - get_method: _get_dataset_list
 
 reset_labels:
   title: Reset labels
   options:
-    - get_method: _get_labelset_list
+    - get_method: _get_dataset_list
 
 PU_learning:
   title: PU learning
@@ -128,6 +129,11 @@ get_labels_by_topics:
 
 get_labels_by_zeroshot:
     title: Get subcorpus from a category name
+
+evaluate_PUlabels:
+    title: Evaluate subcorpus with respect to a gold standard
+    options:
+      - get_method: _get_gold_standard_labels
 
 # #######################
 # Options for PU_learning
@@ -183,18 +189,3 @@ reevaluate_model:
 #     - path: input    # This must be one of the keys in paths2data (see main)
 #     - get_method: get_model   # A method with this name must exist in the
 #                               # taskmanager
-
-# # #####################
-# # Options for resetData
-# reset_features:
-#   title: Reset the features
-
-# reset_labels:
-#   title: Reset the labels
-#   options:
-#     - get_method: get_labels
-
-# reset_images:
-#   title: Reset the images
-#   options:
-#     - get_method: get_images

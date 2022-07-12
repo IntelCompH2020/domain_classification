@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+
 """
-@author: lcalv
+@author: L. Calvo-Bartolome
 """
+
 
 # General imports
 from PyQt5 import uic, QtWidgets
@@ -33,7 +35,7 @@ class GetKeywordsWindow(QtWidgets.QDialog):
 
         # Load UI and configure default geometry of the window
         # #####################################################################
-        uic.loadUi("UIS/get_labels_by_keywords.ui", self)
+        uic.loadUi("UIs/get_labels_by_keywords.ui", self)
         self.init_ui()
 
         # ATTRIBUTES
@@ -51,20 +53,12 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         # Minimum score. Only docs scored strictly above s_min are selected
         self.s_min_default = self.tm.global_parameters['keywords']['s_min']
         self.s_min = self.s_min_default
+        # Method
+        self.method_default = self.tm.global_parameters['keywords']['method']
+        self.method = self.method_default
 
         # Initialize parameters in the GUI
         self.init_params()
-
-        # INFORMATION BUTTONS
-        # #####################################################################
-        self.info_button_selected_keywords.setIcon(QIcon('Images/help2.png'))
-        self.info_button_selected_keywords.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_selected_keywords.width(),
-                                            self.info_button_selected_keywords.height()))
-        self.info_button_selected_tag.setIcon(QIcon('Images/help2.png'))
-        self.info_button_selected_tag.setIconSize(
-            Constants.BUTTONS_SCALE * QSize(self.info_button_selected_tag.width(),
-                                            self.info_button_selected_tag.height()))
 
         # CONNECTION WITH HANDLER FUNCTIONS
         # #####################################################################
@@ -75,7 +69,7 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         """Configures the elements of the GUI window that are not configured in the UI, i.e. icon of the application,
         the application's title, and the position of the window at its opening.
         """
-        self.setWindowIcon(QIcon('Images/dc_logo.png'))
+        self.setWindowIcon(QIcon('UIs/Images/dc_logo.png'))
         self.setWindowTitle(Messages.WINDOW_TITLE)
         self.center()
 
@@ -94,7 +88,7 @@ class GetKeywordsWindow(QtWidgets.QDialog):
         """
         self.table_params.clearContents()
         self.table_params.setRowCount(1)
-        self.table_params.setColumnCount(3)
+        self.table_params.setColumnCount(4)
 
         self.table_params.setItem(
             0, 0, QtWidgets.QTableWidgetItem(str(self.wt)))
@@ -102,6 +96,8 @@ class GetKeywordsWindow(QtWidgets.QDialog):
             0, 1, QtWidgets.QTableWidgetItem(str(self.n_max)))
         self.table_params.setItem(
             0, 2, QtWidgets.QTableWidgetItem(str(self.s_min)))
+        self.table_params.setItem(
+            0, 3, QtWidgets.QTableWidgetItem(str(self.method)))
 
     def update_params(self):
         """Updates the keywords parameters that are going to be used in the getting of the keywords based on the
@@ -121,6 +117,9 @@ class GetKeywordsWindow(QtWidgets.QDialog):
             self.s_min = float(self.table_params.item(0, 2).text())
         else:
             self.s_min = self.s_min_default
+
+        if self.table_params.item(0, 3) is not None:
+            self.method = str(self.table_params.item(0, 3).text())
 
         self.init_params()
 

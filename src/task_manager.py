@@ -1,8 +1,8 @@
 """
-Contributors:
-    Jesus Cid-Sueiro,
-    Lorena Calvo-Bartolome
-    Ascension Gallardo-Antolin
+Defines classes that define methods to run the main tasks in the project,
+using the core processing classes and methods.
+
+@author: J. Cid-Sueiro, L. Calvo-Bartolome, A. Gallardo-Antolin
 """
 
 import logging
@@ -84,18 +84,18 @@ class TaskManager(baseTaskManager):
         # This list can be modified within an active project by adding new
         # folders. Every time a new entry is found in this list, a new folder
         # is created automatically.
-        self.f_struct = {'labels': 'labels',
-                         'datasets': 'datasets',
+        self.f_struct = {'datasets': 'datasets',
                          'models': 'models',
                          'output': 'output',
-                         'embeddings': 'embeddings'}
+                         'embeddings': 'embeddings',
+                         # 'labels': 'labels',     # No longer used
+                         }
 
         # Main paths
         # Path to the folder with the corpus files
         self.path2corpus = None
         # Path to the folder with label files
-        self.path2labels = self.path2project / self.f_struct['labels']
-        self.path2dataset = self.path2project / self.f_struct['datasets']
+        self.path2datasets = self.path2project / self.f_struct['datasets']
         self.path2models = self.path2project / self.f_struct['models']
         self.path2embeddings = self.path2project / self.f_struct['embeddings']
 
@@ -104,42 +104,39 @@ class TaskManager(baseTaskManager):
 
         # Corpus dataframe
         self.df_corpus = None      # Corpus dataframe
-        self.df_labels = None      # Labels
+        self.df_dataset = None     # Datasets of inputs, labels and outputs
         self.class_name = None     # Name of the working category
         self.keywords = None
         self.CorpusProc = None
 
-        # Classifier results:
-        self.result = None
-        self.model_outputs = None
-
         # Extend base variables (defined in the base class) for state and
         # metadata with additional fields
         self.state['selected_corpus'] = False  # True if corpus was selected
-        # self.state['trained_model'] = False    # True if model was trained
         self.metadata['corpus_name'] = None
 
         # Datamanager
-        self.DM = DataManager(
-            self.path2source, self.path2labels, self.path2dataset,
-            self.path2models, self.path2embeddings)
+        self.DM = DataManager(self.path2source, self.path2datasets,
+                              self.path2models, self.path2embeddings)
 
         return
 
-    def _is_model(self):
+    def _is_model(self, verbose=True):
         """
         Check is labels have been loaded and a domain classifier object has
         been created.
         """
 
-        if self.df_labels is None:
-            logging.warning("-- No labels loaded. "
-                            "You must load or create a set of labels first")
+        if self.df_dataset is None:
+            if verbose:
+                logging.warning("-- No labels loaded. You must load or create "
+                                "a set of labels first")
             return False
 
-        elif self.dc is None:
-            logging.warning(f"-- No model has been trained for class "
-                            f"{self.class_name}. You must train a model first")
+        elif not self.DM.is_model(self.class_name):
+            if verbose:
+                logging.warning(
+                    f"-- No model exists for class {self.class_name}. You "
+                    f"must train a model first")
             return False
 
         else:
@@ -152,7 +149,7 @@ class TaskManager(baseTaskManager):
 
         return self.DM.get_corpus_list()
 
-    def _get_labelset_list(self):
+    def _get_dataset_list(self):
         """
         Returns the list of available corpus
         """
@@ -164,11 +161,27 @@ class TaskManager(baseTaskManager):
             logging.warning("\n")
             logging.warning(
                 "-- No corpus loaded. You must load a corpus first")
-            labelset_list = []
+            dataset_list = []
         else:
-            labelset_list = self.DM.get_labelset_list()
+            dataset_list = self.DM.get_dataset_list()
 
-        return labelset_list
+        return dataset_list
+
+    def _get_gold_standard_labels(self):
+        """
+        Returns the list of gold-standard labels or labelsets available
+        in the current corpus.
+
+        Gold-standard labels are those whose name starts with 'target_'
+
+        Gold-standard labels will be used for evaluation only, not for
+        learning.
+        """
+
+        gs_labels = [x for x in self.df_corpus.columns
+                     if x.startswith('target_')]
+
+        return gs_labels
 
     def _save_dataset(self):
         """
@@ -266,9 +279,14 @@ class TaskManager(baseTaskManager):
 
             ids_corpus = self.df_corpus['id']
             self.class_name = 'AIimported'
-            self.df_labels, msg = self.DM.import_labels(
+            # Import ids of docs from the positive class
+            ids_pos, msg = self.DM.import_labels(
                 ids_corpus=ids_corpus, tag=self.class_name)
 
+            # Generate dataset dataframe
+            self.df_dataset = self.CorpusProc.make_PU_dataset(ids_pos)
+            self.DM.save_dataset(
+                self.df_dataset, tag=self.class_name, save_csv=True)
         else:
             logging.error("-- No label files available for importation from "
                           f"corpus {self.metadata['corpus_name']}")
@@ -305,7 +323,8 @@ class TaskManager(baseTaskManager):
 
         return y, df_stats, kf_stats
 
-    def get_labels_by_keywords(self, wt=2, n_max=2000, s_min=1, tag="kwds"):
+    def get_labels_by_keywords(self, wt=2, n_max=2000, s_min=1, tag="kwds",
+                               method='count'):
         """
         Get a set of positive labels using keyword-based search
 
@@ -321,27 +340,31 @@ class TaskManager(baseTaskManager):
             Minimum score. Only elements strictly above s_min are selected
         tag: str, optional (default=1)
             Name of the output label set.
+        method: 'embedding' or 'count', optional
+            Selection method: 'count' (based on counting occurences of keywords
+            in docs) or 'embedding' (based on the computation of similarities
+            between doc and keyword embeddings)
         """
 
         logging.info(f'-- Selected keywords: {self.keywords}')
 
         # Take name of the SBERT model from the configuration parameters
         model_name = self.global_parameters['keywords']['model_name']
-        method = self.global_parameters['keywords']['method']
 
         # Find the documents with the highest scores given the keywords
-        ids, eval_scores = self.CorpusProc.filter_by_keywords(
+        ids, scores = self.CorpusProc.filter_by_keywords(
             self.keywords, wt=wt, n_max=n_max, s_min=s_min,
             model_name=model_name, method=method)
 
-        # Create dataframe of positive labels from the list of ids
-        self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
         # Set the working class
         self.class_name = tag
+        # Generate dataset dataframe
+        self.df_dataset = self.CorpusProc.make_PU_dataset(ids, scores)
 
         # ############
-        # Save labels
-        msg = self.DM.save_labels(self.df_labels, tag=tag)
+        # Save dataset
+        msg = self.DM.save_dataset(
+            self.df_dataset, tag=self.class_name, save_csv=True)
 
         # ################################
         # Save parameters in metadata file
@@ -355,6 +378,8 @@ class TaskManager(baseTaskManager):
             'keywords': self.keywords}
 
         # Metadata for evaluation
+        # FIXME: the code below is not used. To be moved to another method.
+        eval_scores = False
         if eval_scores:
             # Save tpr fpr and ROC curve
             # FIXME: The name of the SBERT model should be read from the config
@@ -379,8 +404,6 @@ class TaskManager(baseTaskManager):
             plt.savefig(figure_fname)
 
             # Save smin and nmax evaluation scores
-            # FIXME: The name of the SBERT model should be read from the config
-            # file (parameters.default.yaml or metadata file (metadata.yaml))
             del eval_scores['fpr_roc'], eval_scores['tpr_roc']
             self.metadata[key][tag].__setitem__('eval_scores', eval_scores)
 
@@ -404,16 +427,19 @@ class TaskManager(baseTaskManager):
         """
 
         # Filter documents by zero-shot classification
-        ids = self.CorpusProc.filter_by_zeroshot(
+        ids, scores = self.CorpusProc.filter_by_zeroshot(
             self.keywords, n_max=n_max, s_min=s_min)
 
-        # Create dataframe of positive labels from the list of ids
-        self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
+        # Set the working class
         self.class_name = tag
 
-        # ###########
-        # Save labels
-        msg = self.DM.save_labels(self.df_labels, tag=tag)
+        # Generate dataset dataframe
+        self.df_dataset = self.CorpusProc.make_PU_dataset(ids, scores)
+
+        # ############
+        # Save dataset
+        msg = self.DM.save_dataset(
+            self.df_dataset, tag=self.class_name, save_csv=True)
 
         # ################################
         # Save parameters in metadata file
@@ -451,17 +477,20 @@ class TaskManager(baseTaskManager):
         """
 
         # Filter documents by topics
-        ids = self.CorpusProc.filter_by_topics(
+        ids, scores = self.CorpusProc.filter_by_topics(
             T, df_metadata['corpusid'], topic_weights, n_max=n_max,
             s_min=s_min)
 
-        # Create dataframe of positive labels from the list of ids
-        self.df_labels = self.CorpusProc.make_pos_labels_df(ids)
+        # Set the working class
         self.class_name = tag
 
-        # ###########
-        # Save labels
-        msg = self.DM.save_labels(self.df_labels, tag=tag)
+        # Generate dataset dataframe
+        self.df_dataset = self.CorpusProc.make_PU_dataset(ids, scores)
+
+        # ############
+        # Save dataset
+        msg = self.DM.save_dataset(
+            self.df_dataset, tag=self.class_name, save_csv=True)
 
         # ################################
         # Save parameters in metadata file
@@ -476,6 +505,23 @@ class TaskManager(baseTaskManager):
 
         return msg
 
+    def evaluate_PUlabels(self, gold_standard):
+        """
+        Evaluate the current set of PU labels
+        """
+
+        if self.df_dataset is None:
+            logging.warning("-- No labels loaded. "
+                            "You must load or create a set of labels first")
+            return
+
+        breakpoint()
+
+        a = 1
+        print(a)
+
+        return
+
     def load_labels(self, class_name):
         """
         Load a set of labels and its corresponding dataset (if it exists)
@@ -486,13 +532,13 @@ class TaskManager(baseTaskManager):
             Name of the target category
         """
 
-        self.df_labels, msg = self.DM.load_labels(class_name)
         self.class_name = class_name
 
+        # Load dataset
+        df_dataset, msg = self.DM.load_dataset(self.class_name)
+
         # If a model has been already trained for the given class, load it.
-        if self.class_name in self.DM.get_dataset_list():
-            # Load dataset from the last trained model
-            df_dataset, msg = self.DM.load_dataset(self.class_name)
+        if self._is_model(verbose=False):
 
             logging.info("-- Loading classification model")
             path2model = self.path2models / self.class_name
@@ -520,8 +566,12 @@ class TaskManager(baseTaskManager):
         self.DM.reset_labels(tag=labelset)
 
         # Remove label info from metadata, it it exist
-        self.metadata['keyword_based_label_parameters'].pop(labelset, None)
-        self.metadata['topic_based_label_parameters'].pop(labelset, None)
+        for key in ['keyword_based_label_parameters',
+                    'topic_based_label_parameters',
+                    'zero_shot_parameters']:
+            if key in self.metadata and labelset in self.metadata[key]:
+                self.metadata[key].pop(labelset, None)
+
         self._save_metadata()
 
         return
@@ -540,21 +590,19 @@ class TaskManager(baseTaskManager):
             Maximum size of the whole (train+test) dataset
         """
 
-        if self.df_labels is None:
+        if self.df_dataset is None:
             logging.warning("-- No labels loaded. "
                             "You must load or create a set of labels first")
             return
 
-        logging.info("-- Loading PU dataset")
-        df_dataset = self.CorpusProc.make_PU_dataset(self.df_labels)
-
         # Labels from the PU dataset are stored in column "PUlabels". We must
         # copy them to column "labels" which is the name required by
         # simpletransformers
-        df_dataset[['labels']] = df_dataset[['PUlabels']]
+        self.df_dataset[['labels']] = self.df_dataset[['PUlabels']]
 
         path2model = self.path2models / self.class_name
-        self.dc = CorpusClassifier(df_dataset, path2transformers=path2model)
+        self.dc = CorpusClassifier(
+            self.df_dataset, path2transformers=path2model)
 
         # Select data for training and testing
         self.dc.train_test_split(max_imbalance=max_imbalance, nmax=nmax)
@@ -607,8 +655,7 @@ class TaskManager(baseTaskManager):
             n_samples=self.global_parameters['active_learning']['n_docs'],
             sampler=self.global_parameters['active_learning']['sampler'],
             p_ratio=self.global_parameters['active_learning']['p_ratio'],
-            top_prob=self.global_parameters['active_learning']['top_prob']
-            )
+            top_prob=self.global_parameters['active_learning']['top_prob'])
 
         if selected_docs is None:
             return
@@ -829,6 +876,17 @@ class TaskManagerCMD(TaskManager):
             convert_to=float,
             default=self.global_parameters['keywords']['s_min'])
 
+        # Get method
+        method = self.QM.ask_value(
+            query=("Set method: (e)mbedding (slow) or (c)ount (fast)"),
+            convert_to=str,
+            default=self.global_parameters['keywords']['method'])
+
+        if method == 'e':
+            method = 'embedding'
+        elif method == 'c':
+            method = 'count'
+
         # Get keywords and labels
         self.keywords = self._ask_keywords()
         tag = self._ask_label_tag()
@@ -836,7 +894,7 @@ class TaskManagerCMD(TaskManager):
         # ##########
         # Get labels
         msg = super().get_labels_by_keywords(
-            wt=wt, n_max=n_max, s_min=s_min, tag=tag)
+            wt=wt, n_max=n_max, s_min=s_min, tag=tag, method=method)
 
         logging.info(msg)
 
@@ -903,6 +961,10 @@ class TaskManagerCMD(TaskManager):
 
         # Load topics
         T, df_metadata, topic_words = self.DM.load_topics()
+
+        if T is None:
+            msg = "-- No topic model available for this corpus"
+            return msg
 
         # Remove all documents (rows) from the topic matrix, that are not
         # in self.df_corpus.
@@ -1021,32 +1083,38 @@ class TaskManagerGUI(TaskManager):
 
         return suggested_keywords
 
-    def get_labels_by_keywords(self, keywords, wt, n_max, s_min, tag):
+    def get_labels_by_keywords(self, keywords, wt, n_max, s_min, tag, method):
         """
         Get a set of positive labels using keyword-based search through the
         MainWindow
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         keywords : list of str
             List of keywords
         wt : float, optional (default=2)
             Weighting factor for the title components. Keyword matches with
             title words are weighted by this factor
-        n_max: int or None, optional (defaul=2000)
+        n_max : int or None, optional (default=2000)
             Maximum number of elements in the output list. The default is
-            a huge number that, in practice, means there is no loimit
-        s_min: float, optional (default=1)
+            a huge number that, in practice, means there is no limit
+        s_min : float, optional (default=1)
             Minimum score. Only elements strictly above s_min are selected
-        tag: str, optional (default=1)
+        tag : str, optional (default=1)
             Name of the output label set.
+        method : 'embedding' or 'count', optional
+            Selection method: 'count' (based on counting occurrences of
+            keywords in docs) or 'embedding' (based on the computation of
+            similarities between doc and keyword embeddings)
         """
 
         # Keywords are received as arguments
         self.keywords = keywords
 
-        msg = super().get_labels_by_keywords(wt=wt, n_max=n_max, s_min=s_min,
-                                             tag=tag)
+        # ##########
+        # Get labels
+        msg = super().get_labels_by_keywords(
+            wt=wt, n_max=n_max, s_min=s_min, tag=tag, method=method)
 
         return msg
 
@@ -1103,16 +1171,17 @@ class TaskManagerGUI(TaskManager):
     def get_labels_by_zeroshot(self, keywords, n_max, s_min, tag):
         """
         Get a set of positive labels using a zero-shot classification model
-        Parameters:
-        -----------
+
+        Parameters
+        ----------
         keywords : list of str
             List of keywords
-        n_max: int or None, optional (defaul=2000)
+        n_max : int or None, optional (defaul=2000)
             Maximum number of elements in the output list. The default is
             a huge number that, in practice, means there is no loimit
-        s_min: float, optional (default=0.1)
+        s_min : float, optional (default=0.1)
             Minimum score. Only elements strictly above s_min are selected
-        tag: str, optional (default=1)
+        tag : str, optional (default=1)
             Name of the output label set.
         """
 

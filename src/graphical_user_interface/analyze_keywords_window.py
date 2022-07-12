@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""
-@author: lcalv
 
+"""
+@author: L. Calvo-Bartolome
 """
 
 # General imports
@@ -35,7 +35,7 @@ class AnalyzeKeywordsWindow(QtWidgets.QDialog):
 
         # Load UI and configure default geometry of the window
         # ####################################################################
-        uic.loadUi("UIS/analyze_keywords.ui", self)
+        uic.loadUi("UIs/analyze_keywords.ui", self)
         self.initUI()
 
         # ATTRIBUTES
@@ -55,7 +55,7 @@ class AnalyzeKeywordsWindow(QtWidgets.QDialog):
         Configures the elements of the GUI window that are not configured in the UI,
         i.e. icon of the application, the application's title, and the position of the window at its opening.
         """
-        self.setWindowIcon(QIcon('Images/dc_logo.png'))
+        self.setWindowIcon(QIcon('UIs/Images/dc_logo.png'))
         self.setWindowTitle(Messages.WINDOW_TITLE)
         self.center()
 
