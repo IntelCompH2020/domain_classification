@@ -96,7 +96,7 @@ class ActiveLearner(object):
             clf.load('base_model.pt')
             self.clfs = [{ 'weak_label_threshold': weak_label_threshold, 'idx': 0, 'clf': clf, 'f1_cont': 0 }]
         else:
-            clf = deepcopy(self.clfs[-1])
+            clf = deepcopy(self.clfs[-1]['clf'])
             weak_label_threshold = self._get_weak_label_threshold()
             self.clfs = [{ 'weak_label_threshold': weak_label_threshold, 'idx': 0, 'clf': clf, 'f1_cont': 0 }]
 
