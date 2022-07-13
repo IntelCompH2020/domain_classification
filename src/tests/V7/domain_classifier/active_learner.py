@@ -89,7 +89,7 @@ class ActiveLearner(object):
         self.df_dataset.loc[self.indices_queried,['annotation_idx']] = (np.max(self.df_dataset['annotation_idx'].to_numpy()) + 1)
 
         var = len(self._get_sub_set('train_annotation'))
-        print(f'1.{ var }')
+        print(f'1.{ var }{y}')
 
         #UPDATE CLASSIFIER
         if len(self.clfs) == 0:
@@ -110,6 +110,7 @@ class ActiveLearner(object):
         self.df_dataset.loc[df_test.index,['is_validation']] = True
         var = len(self._get_sub_set('train_annotation'))
         print(f'2.{ var }')
+        print(f'3.{ df_train_true }')
 
         df_train_true = self._get_sub_set('train_annotation')
         df_train_true,_ = self._oversample_minority_class(df_train_true)
