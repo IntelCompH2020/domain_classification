@@ -116,7 +116,7 @@ class ActiveLearner(object):
 
         dclf = self.clfs[-1]
 
-        last_history = clf.train_loop(df_train_true,df_validation)
+        last_history = dclf['clf'].train_loop(df_train_true,df_validation)
         dclf['f1_cont'] = last_history['f1_cont']
         dclf['last_history'] = last_history
 
