@@ -99,11 +99,11 @@ class CorpusClassifier(object):
 
                     #no early stopping => no break up condition
                     if is_early_stopping == False:
-                        f1_cont = loss_history[-1]['f1_cont']
+                        last_history = loss_history[-1]
                         continue
                     #first epoch => nothing to compare => no break up condition
                     if len(loss_history) == 1:
-                        f1_cont = loss_history[-1]['f1_cont']
+                        last_history = loss_history[-1]
                         last_model = copy.deepcopy(self.model)
                         continue
                     #current loss smaller than previous loss => continue
@@ -114,7 +114,7 @@ class CorpusClassifier(object):
                             f1_current = loss_history[-1]['f1_cont']
                             f1_old = loss_history[-2]['f1_cont']
                             print(f'Current F1 score ({f1_current}) > then old f1 score ({f1_old})=>continue' )
-                        f1_cont = loss_history[-1]['f1_cont']
+                        last_history = loss_history[-1]
                         last_model = copy.deepcopy(self.model)
                         continue
 
@@ -122,7 +122,7 @@ class CorpusClassifier(object):
                     bStop = True
                     self.model = last_model
                     if 1 == 1:
-                        f1_current = loss_history[-1]['f1_cont']
+                        f1_current = loss_history[-1]
                         f1_old = loss_history[-2]['f1_cont']
                         print(f'Current F1 score ({f1_current}) is not ( or just slighty ) better than old f1 score ({f1_old})=>stop' )
                         
@@ -137,7 +137,7 @@ class CorpusClassifier(object):
             if is_early_stopping == False and epoch == epochs:
                 break   
 
-        return f1_cont  
+        return last_history  
 
 
     # delta = predictions[:, 1] - predictions[:, 0]

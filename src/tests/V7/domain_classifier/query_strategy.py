@@ -67,8 +67,6 @@ class BalancedRandomSampling(QueryStrategy):
 class WeakSoftLabelTrustSampling(QueryStrategy):
     def query(self, clf, df_dataset, n, weak_soft_label_trust = 1): #def query(self, clf, _dataset, indices_unlabeled, indices_labeled, y, n=10):
 
-        sample_amount = 1000
-
         negative_count = n//2 #n_classes[0]
         positive_count = n//2 #n_classes[1]
         positive_indices,negative_indices = [],[]
@@ -86,33 +84,38 @@ class WeakSoftLabelTrustSampling(QueryStrategy):
             negative_indices = sorted_indices[-negative_count:]
             predict_proba_positive = predict_proba[:positive_count]
             predict_proba_negative = predict_proba[-negative_count:]
+            query_indices = (np.hstack([negative_indices,positive_indices]))
+            predict_proba = (np.hstack([predict_proba_positive,predict_proba_negative]))
         else:
-            positive_sample_idxs = []
-            while len(positive_sample_idxs) < sample_amount:
-                sample_idxs = np.random.exponential(scale=len(df_dataset)/(2*10), size=(sample_amount-len(positive_sample_idxs))).astype(int)
-                sample_idxs = np.unique(sample_idxs)
-                positive_sample_idxs = np.append(positive_sample_idxs,sample_idxs)
-            positive_sample_idxs = positive_sample_idxs[:sample_amount]
-            negative_sample_idxs = []
-            while len(negative_sample_idxs) < sample_amount:
-                sample_idxs = np.random.exponential(scale=len(df_dataset)/(2*10), size=(sample_amount-len(negative_sample_idxs))).astype(int)
-                sample_idxs = np.unique(sample_idxs)
-                negative_sample_idxs = np.append(negative_sample_idxs,sample_idxs)
-            negative_sample_idxs = negative_sample_idxs[:sample_amount]
-
-
-            # print(f'Query top {positive_count} and bottom {positive_count} documents by result of predictions of the classifier which has the query lead')
-            if negative_count > 0:
-                predict_proba_negative = clf.predict_proba(df_dataset[-1000:])
-                negative_indices = df_dataset[-1000:].index[(predict_proba_negative).argsort()[:negative_count]]
-                predict_proba_negative = predict_proba_negative[(predict_proba_negative).argsort()[:negative_count]]
-            if positive_count > 0:
-                predict_proba_positive = clf.predict_proba(df_dataset[:1000])
-                positive_indices = df_dataset[:1000].index[(-predict_proba_positive).argsort()[:positive_count]]
-                predict_proba_positive = predict_proba_positive[(-predict_proba_positive).argsort()[:positive_count]]
+            predict_proba = clf.predict_proba(df_dataset)
+            query_indices = np.argsort(np.abs(predict_proba - 0.5))[:n]
+             
             
-        query_indices = (np.hstack([negative_indices,positive_indices]))
-        predict_proba = (np.hstack([predict_proba_positive,predict_proba_negative]))
+            # positive_sample_idxs = []
+            # while len(positive_sample_idxs) < sample_amount:
+            #     sample_idxs = np.random.exponential(scale=len(df_dataset)/(2*10), size=(sample_amount-len(positive_sample_idxs))).astype(int)
+            #     sample_idxs = np.unique(sample_idxs)
+            #     positive_sample_idxs = np.append(positive_sample_idxs,sample_idxs)
+            # positive_sample_idxs = positive_sample_idxs[:sample_amount]
+            # negative_sample_idxs = []
+            # while len(negative_sample_idxs) < sample_amount:
+            #     sample_idxs = np.random.exponential(scale=len(df_dataset)/(2*10), size=(sample_amount-len(negative_sample_idxs))).astype(int)
+            #     sample_idxs = np.unique(sample_idxs)
+            #     negative_sample_idxs = np.append(negative_sample_idxs,sample_idxs)
+            # negative_sample_idxs = negative_sample_idxs[:sample_amount]
+
+
+            # # print(f'Query top {positive_count} and bottom {positive_count} documents by result of predictions of the classifier which has the query lead')
+            # if negative_count > 0:
+            #     predict_proba_negative = clf.predict_proba(df_dataset[-1000:])
+            #     negative_indices = df_dataset[-1000:].index[(predict_proba_negative).argsort()[:negative_count]]
+            #     predict_proba_negative = predict_proba_negative[(predict_proba_negative).argsort()[:negative_count]]
+            # if positive_count > 0:
+            #     predict_proba_positive = clf.predict_proba(df_dataset[:1000])
+            #     positive_indices = df_dataset[:1000].index[(-predict_proba_positive).argsort()[:positive_count]]
+            #     predict_proba_positive = predict_proba_positive[(-predict_proba_positive).argsort()[:positive_count]]
+            
+        
 
         return [query_indices, predict_proba]
 

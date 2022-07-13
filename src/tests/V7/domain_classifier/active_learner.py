@@ -26,7 +26,7 @@ class ActiveLearner(object):
 
         self.df_dataset.loc[:,['labels']] = -1
         self.df_dataset.loc[:,['weak_label']] = -1
-        self.df_dataset.loc[:,['is_test']] = False
+        self.df_dataset.loc[:,['is_validation']] = False
         self.df_dataset = self.df_dataset.sort_values(by=['weak_soft_label'], ascending = False)
 
         self.clf = clf
@@ -62,18 +62,17 @@ class ActiveLearner(object):
           
     def query(self, num_samples=10):
 
-        if len(self.clfs) > 0:
-            dClf = self._getClf('is_query_lead')
+        # if len(self.clfs) > 0:
+        #     dClf = self._getClf('is_query_lead')
 
-        clf = None if len(self.clfs) == 0 else dClf['clf']
-        weak_soft_label_trust = 1 if len(self.clfs) == 0 else dClf['weak_label_ratio']
+        clf = None if len(self.clfs) == 0 else self._getClf()['clf']
         
-        df_dataset_unlabeled = self._get_sub_set('unlabeled')
+        df_unlabeled = self._get_sub_set('unlabeled')
 
         self.indices_queried, predict_proba = self.queryStrategy.query(clf = clf, 
-                                                                       df_dataset = df_dataset_unlabeled,
+                                                                       df_dataset = df_unlabeled,
                                                                        n = num_samples, #self._getRequestedClasses(num_samples),
-                                                                       weak_soft_label_trust = weak_soft_label_trust )
+                                                                       weak_soft_label_trust = 1 )
 
         self._printIt(f'Queried new indices{self.indices_queried} with proba {predict_proba}')
 
@@ -82,41 +81,75 @@ class ActiveLearner(object):
     def update(self, y, bSave=True):
 
 ###########################UPDATE DATASET###########################
+
+        #UPDATE DATASET
         self.df_dataset.loc[self.indices_queried,['labels']] = y
         self.df_dataset.loc[self.indices_queried,['annotation_idx']] = (np.max(self.df_dataset['annotation_idx'].to_numpy()) + 1)
 
-###########################EVALUATE CLFS###########################
-        if len(self.clfs) > 0:
-            n_classifier = len(self.clfs)
-            #f1_conts = self._evaluateClfs() #true
-            #self._printIt(f'The f1_scores of the classifiers are {f1_conts}')
-            #self._createMainClfByF1Scores(f1_conts)
-            self._removeNoneBaseClassifier()
-            self._printIt(f'Base Classifier 0:{self.clfs[-1]}')          
+        #UPDATE CLASSIFIER
+        if len(self.clfs) == 0:
+            weak_label_threshold = self._get_weak_label_threshold()
+            clf = deepcopy(self.clf)
+            clf.load('base_model.pt')
+            self.clfs = [{ 'weak_label_threshold': weak_label_threshold, 'idx': 0, 'clf': clf, 'f1_cont': 0 }]
         else:
-            self._createMainClfInit()
-            self._printIt(f'Initial Base Classifier 0:{self.clfs[-1]}')
+            clf = deepcopy(self.clfs[-1])
+            weak_label_threshold = self._get_weak_label_threshold()
+            self.clfs = [{ 'weak_label_threshold': weak_label_threshold, 'idx': 0, 'clf': clf, 'f1_cont': 0 }]
+
+        clf = self.clfs[-1]['clf']
+
+        #EXPLOIT TRUE ANNOTATIONS
+        df_fresh_annotated = self._get_sub_set('fresh_annotated') 
+        df_train_true1, df_test = train_test_split( df_fresh_annotated, test_size=0.5, random_state=42, stratify = df_fresh_annotated['labels'].to_numpy())
+        self.df_dataset.loc[df_test.index,['is_validation']] = True
+
+        df_train_true = self._get_sub_set('train_annotation')
+        df_train_true,_ = self._oversample_minority_class(df_train_true)
+
+        df_validation = self._get_sub_set('validation')
+        df_validation = self._buildTestSet(df_validation,weak_label_threshold)
+
+        dclf = self.clfs[-1]
+
+        last_history = clf.train_loop(df_train_true,df_validation)
+        dclf['f1_cont'] = last_history['f1_cont']
+        dclf['last_history'] = last_history
+
+
+# ###########################EVALUATE CLFS###########################
+#         if len(self.clfs) > 0:
+#             n_classifier = len(self.clfs)
+#             #f1_conts = self._evaluateClfs() #true
+#             #self._printIt(f'The f1_scores of the classifiers are {f1_conts}')
+#             #self._createMainClfByF1Scores(f1_conts)
+#             self._removeNoneBaseClassifier()
+#             self._printIt(f'Base Classifier 0:{self.clfs[-1]}')          
+#         else:
+#             self._createMainClfInit()
+#             self._printIt(f'Initial Base Classifier 0:{self.clfs[-1]}')
             
         
         
 
-###########################create mutations###########################
-        for idx,mutationAttribute in enumerate(['weak_label_ratio','weak_label_threshold','oversampling_rate']):
-            self._mutateBaseClf(mutationAttribute)
-            self._printIt(f'Mutation Classifier {idx+1}:{self.clfs[-1]}')
+# ###########################create mutations###########################
+#         for idx,mutationAttribute in enumerate(['weak_label_ratio','weak_label_threshold','oversampling_rate']):
+#             self._mutateBaseClf(mutationAttribute)
+#             self._printIt(f'Mutation Classifier {idx+1}:{self.clfs[-1]}')
 
-###########################train all classifier###########################
-        for dClf in self.clfs:
-            df_train_true_label, df_test_true_label, df_weak_label = self._buildTrueAndWeakLabelDataset(dClf['weak_label_threshold'],dClf['oversampling_rate'])
-            dClf['df_test_true_label'] = df_test_true_label
-            self._train_classifier(df_train_true_label, df_test_true_label, df_weak_label,dClf)
+# ###########################train all classifier###########################
+#         for dClf in self.clfs:
+#             df_train_true_label, df_test_true_label, df_weak_label = self._buildTrueAndWeakLabelDataset(dClf['weak_label_threshold'],dClf['oversampling_rate'])
+#             dClf['df_test_true_label'] = df_test_true_label
+#             self._train_classifier(df_train_true_label, df_test_true_label, df_weak_label,dClf)
 
-        self._determineQueryClf()
+#         self._determineQueryClf()
 
 #returns either the base classifier (the classifier who won't be mutated)
 #        or the query classifier when attribute ='is_query_lead'
     def _getClf(self,attribute='is_base'): #is_query_lead
-        return list(filter(lambda dclf: dclf[attribute], self.clfs))[0]
+        return self.clfs[-1]
+        #return list(filter(lambda dclf: dclf[attribute], self.clfs))[0]
 
     def _createMainClfInit(self):
         weak_label_threshold = self._get_weak_label_threshold()
@@ -190,26 +223,61 @@ class ActiveLearner(object):
                  'unlabeled': (self.df_dataset['labels'] == -1),
                  'positive': (self.df_dataset['labels'] == 1),
                  'negative': (self.df_dataset['labels'] == 0),
+                 'validation': (self.df_dataset['is_validation']),
+                 'train_annotation': (self.df_dataset['is_validation'] == False) & (self.df_dataset['annotation_idx'] > -1),
                  'fresh_annotated': (self.df_dataset['annotation_idx'] == np.max(self.df_dataset['annotation_idx'].to_numpy()))}[name]
     def _get_sub_set(self,name):
         return self.df_dataset[self._get_condition(name)]
 
-    def _oversample(self,df_oversample, oversampling_rate):
+    def _oversample_minority_class(self,df_dataset,oversampling_rate=-1,col_label='labels'):
         if oversampling_rate < 0:
             oversampling_rate = 10**10
-        condition_oversample = (df_oversample['labels'] != -1)
-        iPositiveCount = df_oversample['labels'].sum()
-        iNegativeCount = len(df_oversample)-iPositiveCount
-        #iClassCount = int(np.min([np.max([iPositiveCount,iNegativeCount]),iPositiveCount*max_oversampling,iNegativeCount*max_oversampling]))
+        iPositiveCount = df_dataset.loc[:][col_label].sum()
+        iNegativeCount = len(df_dataset)-iPositiveCount
         iClassCount = int(oversampling_rate * np.min([iPositiveCount,iNegativeCount]))
         iClassCount = int(np.min([iClassCount,np.max([iPositiveCount,iNegativeCount])]))
-
-        condition_positive = df_oversample['labels'] == 1
-        condition_negative = df_oversample['labels'] == 0
-        idx_positive = df_oversample[condition_positive].sample(iClassCount, replace = True).index 
-        idx_negative = df_oversample[condition_negative].sample(iClassCount, replace = True).index
+        oversampling_rate = iClassCount/np.min([iPositiveCount,iNegativeCount])
+        
+        condition_positive = df_dataset.loc[:][col_label]==1
+        condition_negative = df_dataset.loc[:][col_label]==0
+        df_positive = df_dataset[condition_positive]
+        df_negative = df_dataset[condition_negative]
+        
+        n_repeat = iClassCount // len(df_positive)
+        idx_positive = df_positive.loc[df_positive.index.repeat(n_repeat)].index
+        n_sample = np.mod(iClassCount,len(df_positive))
+        idx_positive = np.concatenate([idx_positive,df_positive[:n_sample].index])
+        #idx_positive = np.concatenate([idx_positive,df_positive.sample(n_sample).index])
+        
+        n_repeat = iClassCount // len(df_negative)
+        idx_negative = df_negative.loc[df_negative.index.repeat(n_repeat)].index
+        n_sample = np.mod(iClassCount,len(df_negative))
+        idx_negative = np.concatenate([idx_negative,df_negative[:n_sample].index])
+        #idx_negative = np.concatenate([idx_negative,df_negative.sample(n_sample).index])
+        
         indices = np.hstack([idx_positive,idx_negative])
-        return df_oversample.loc[indices]
+        return [df_dataset.loc[indices].reset_index(drop=True),oversampling_rate]   #[df_dataset.loc[indices].sample(frac=1).reset_index(drop=True),oversampling_rate]
+
+    def  _buildTestSet(self,df_annotated,threshold):
+
+        df_dataset = self.df_dataset
+
+        n_positive = len(df_dataset[df_dataset['weak_soft_label']>threshold])
+        n_negative = len(df_dataset[df_dataset['weak_soft_label']<=threshold])
+        negative_ratio = n_negative/n_positive
+        
+        df_positive = df_annotated[df_annotated['labels']==1]
+        df_negative = df_annotated[df_annotated['labels']==0]
+
+        if negative_ratio > 1:
+            n = int(len(df_positive) * negative_ratio)
+            df_negative_samples = df_negative.sample(n,replace=True)
+            df_positive_samples = df_positive
+        else:
+            n = int(len(df_negative) / negative_ratio)
+            df_positive_samples = df_negative.sample(n,replace=True)
+            df_negative_samples = df_positive
+        return pd.concat([df_positive_samples,df_negative_samples])
 
     def _train_test_split(self,df):
 
@@ -279,7 +347,9 @@ class ActiveLearner(object):
 
         dClf['true_weak_test_idxs'] = {'true': df_train_true_label.index, 'weak': df_weak_label_extract.index, 'test': df_test_true_label.index}
 
-        dClf['f1_cont'] = dClf['clf'].train_loop(df_train_mix, df_test_true_label)
+        last_history = dClf['clf'].train_loop(df_train_mix, df_test_true_label)
+        dClf['f1_cont'] = last_history['f1_cont']
+        dClf['last_history'] = last_history
 
     def _getNoiseFactorByF1Score(self,f1_score=0):
         
@@ -312,13 +382,13 @@ class ActiveLearner(object):
         self.protocol.append({'annotations': str(len(self._get_sub_set('labeled'))), 
                               'f1_score': str(result['f1_cont']), 
                               'classifiers': [{'weak_label_threshold': str(clf['weak_label_threshold']),
-                                               'weak_label_ratio': str(clf['weak_label_ratio']),
-                                               'oversampling_rate': str(clf['oversampling_rate']),
-                                               'is_query_lead': clf['is_query_lead'],
+                                               #'weak_label_ratio': str(clf['weak_label_ratio']),
+                                               #'oversampling_rate': str(clf['oversampling_rate']),
+                                               #'is_query_lead': clf['is_query_lead'],
                                                'f1_score': str(clf['f1_cont']) ,
-                                               'test_idxs': [int(x) for x in clf['true_weak_test_idxs']['test'].to_numpy()],
-                                               'true_idxs': [int(x) for x in clf['true_weak_test_idxs']['true'].to_numpy()], 
-                                               'weak_idxs': [int(x) for x in clf['true_weak_test_idxs']['weak'].to_numpy()]  
+                                               #'test_idxs': [int(x) for x in clf['true_weak_test_idxs']['test'].to_numpy()],
+                                               #'true_idxs': [int(x) for x in clf['true_weak_test_idxs']['true'].to_numpy()], 
+                                               #'weak_idxs': [int(x) for x in clf['true_weak_test_idxs']['weak'].to_numpy()]  
                                                } for clf in self.clfs] }) 
 
     def getProtocol(self):
