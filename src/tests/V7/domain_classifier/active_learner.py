@@ -100,8 +100,6 @@ class ActiveLearner(object):
             weak_label_threshold = self._get_weak_label_threshold()
             self.clfs = [{ 'weak_label_threshold': weak_label_threshold, 'idx': 0, 'clf': clf, 'f1_cont': 0 }]
 
-        clf = self.clfs[-1]['clf']
-
         #EXPLOIT TRUE ANNOTATIONS
         df_fresh_annotated = self._get_sub_set('fresh_annotated') 
         _, df_test = train_test_split( df_fresh_annotated, test_size=0.5, random_state=42, stratify = df_fresh_annotated['labels'].to_numpy())
@@ -115,8 +113,9 @@ class ActiveLearner(object):
         df_validation = self._buildTestSet(df_validation,weak_label_threshold)
 
         dclf = self.clfs[-1]
+        clf = self.clfs[-1]['clf']
 
-        last_history = dclf['clf'].train_loop(df_train_true,df_validation)
+        last_history = clf.train_loop(df_train_true,df_validation)
         dclf['f1_cont'] = last_history['f1_cont']
         dclf['last_history'] = last_history
 
