@@ -88,8 +88,8 @@ class WeakSoftLabelTrustSampling(QueryStrategy):
             predict_proba = (np.hstack([predict_proba_positive,predict_proba_negative]))
         else:
             predict_proba = clf.predict_proba(df_dataset)
-            query_indices = np.argsort(np.abs(predict_proba - 0.5))[:n]
-             
+            indices = np.argsort(np.abs(predict_proba - 0.5))[:n]
+            query_indices = df_dataset.index[query_indices]
             
             # positive_sample_idxs = []
             # while len(positive_sample_idxs) < sample_amount:
