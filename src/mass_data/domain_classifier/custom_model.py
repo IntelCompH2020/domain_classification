@@ -352,6 +352,9 @@ class CustomModel(nn.Module):
             data_id = data.get("id")
             labels = data.get("labels").to(device)
 
+            import pdb
+            pdb.set_trace()
+
             text = data.get("text")
             sample_weight = data.get(
                 "sample_weight", torch.tensor(1)).to(device)
