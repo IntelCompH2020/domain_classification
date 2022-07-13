@@ -356,8 +356,11 @@ class CustomModel(nn.Module):
             sample_weight = data.get(
                 "sample_weight", torch.tensor(1)).to(device)
 
+            # import pdb
+            # pdb.set_trace()
+
             # Tokenize
-            tokenized = self.Tokenizer(
+            tokenized = self.tokenizer(
                 text, padding="max_length", truncation=True)
             # print(tokenized["input_ids"])
             input_ids = torch.tensor(tokenized["input_ids"]).to(device)
