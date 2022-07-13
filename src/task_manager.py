@@ -19,8 +19,13 @@ from .utils import plotter
 import numpy as np
 import matplotlib.pyplot as plt
 
+# A message that is used twice in different parts of the code. It is defined
+# here because the same message must be used in both cases.
+NO_GOLD_STANDARD = 'Do not use a Gold Standard.'
+
 
 class TaskManager(baseTaskManager):
+
     """
     This class extends the functionality of the baseTaskManager class for a
     specific example application
@@ -98,6 +103,7 @@ class TaskManager(baseTaskManager):
         self.path2datasets = self.path2project / self.f_struct['datasets']
         self.path2models = self.path2project / self.f_struct['models']
         self.path2embeddings = self.path2project / self.f_struct['embeddings']
+        self.path2output = self.path2project / self.f_struct['output']
 
         # Path to the folder containing the zero-shot model
         self.path2zeroshot = path2zeroshot
@@ -122,7 +128,7 @@ class TaskManager(baseTaskManager):
 
     def _is_model(self, verbose=True):
         """
-        Check is labels have been loaded and a domain classifier object has
+        Check if labels have been loaded and a domain classifier object has
         been created.
         """
 
@@ -181,11 +187,22 @@ class TaskManager(baseTaskManager):
         gs_labels = [x for x in self.df_corpus.columns
                      if x.startswith('target_')]
 
+        if gs_labels == []:
+            logging.warning('No Gold Standard is available. Please choose the '
+                            'unique option in the menu')
+            gs_labels = [NO_GOLD_STANDARD]
+
         return gs_labels
 
     def _save_dataset(self):
         """
-        Saves the dataset.
+        Saves the dataset used by the last classifier object.
+
+        Note that this method saves self.dc.df_dataset, not self.df_dataset
+
+        self.dc.df_dataset contains results of the classifier training, as
+        well as annotations, that are missed in self.df_dataset
+
         The task is done by the self.DM clas. This method is just a caller to
         self.DM, used to simplify (just a bit) the code of methods saving the
         dataset.
@@ -515,10 +532,12 @@ class TaskManager(baseTaskManager):
                             "You must load or create a set of labels first")
             return
 
-        breakpoint()
+        if gold_standard != NO_GOLD_STANDARD:
+            pass
 
-        a = 1
-        print(a)
+        p2fig = self.path2output / 'sorted_PUscores.png'
+        y = self.df_dataset.base_scores
+        plotter.plot_doc_scores(y, path2figure=p2fig)
 
         return
 
@@ -535,7 +554,7 @@ class TaskManager(baseTaskManager):
         self.class_name = class_name
 
         # Load dataset
-        df_dataset, msg = self.DM.load_dataset(self.class_name)
+        self.df_dataset, msg = self.DM.load_dataset(self.class_name)
 
         # If a model has been already trained for the given class, load it.
         if self._is_model(verbose=False):
@@ -543,7 +562,7 @@ class TaskManager(baseTaskManager):
             logging.info("-- Loading classification model")
             path2model = self.path2models / self.class_name
             self.dc = CorpusClassifier(
-                df_dataset, path2transformers=path2model)
+                self.df_dataset, path2transformers=path2model)
             self.dc.load_model()
 
         else:
@@ -605,7 +624,8 @@ class TaskManager(baseTaskManager):
             self.df_dataset, path2transformers=path2model)
 
         # Select data for training and testing
-        self.dc.train_test_split(max_imbalance=max_imbalance, nmax=nmax)
+        self.dc.train_test_split(max_imbalance=max_imbalance, nmax=nmax,
+                                 random_state=0)
 
         # Train the model using simpletransformers
         self.dc.train_model()
@@ -794,6 +814,9 @@ class TaskManagerCMD(TaskManager):
         kw_library = self.DM.get_keywords_list()
         # Ask keywords through the query manager
         keywords = self.QM.ask_keywords(kw_library)
+
+        if keywords == ['__all_AI']:
+            keywords = self.DM.get_keywords_list()
 
         return keywords
 

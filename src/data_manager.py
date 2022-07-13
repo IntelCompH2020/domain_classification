@@ -11,9 +11,13 @@ import numpy as np
 import scipy.sparse as scp
 import logging
 import shutil
+import yaml
 
 from time import time
 from sklearn.preprocessing import normalize
+
+import dask.dataframe as dd
+from dask.diagnostics import ProgressBar
 
 
 class DataManager(object):
@@ -356,6 +360,29 @@ class DataManager(object):
 
             df_corpus.rename(columns=mapping, inplace=True)
             clean_corpus = True
+
+        elif corpus_name == 'SemanticScholar':
+
+            path2metadata = self.path2corpus / 'metadata.yaml'
+
+            if not path2metadata.is_file():
+                logging.error(
+                    f"-- A metadata file in {path2metadata} is missed. It is "
+                    "required for this corpus. Corpus not loaded")
+
+            with open(path2metadata, 'r', encoding='utf8') as f:
+                metadata = yaml.safe_load(f)
+            path2texts = pathlib.Path(metadata['corpus'])
+
+            df = dd.read_parquet(path2texts)
+            dfsmall = df.sample(frac=1e-6)
+
+            with ProgressBar():
+                df_corpus = dfsmall.compute()
+
+            clean_corpus = True
+
+            breakpoint()
 
         else:
             logging.warning("-- Unknown corpus")

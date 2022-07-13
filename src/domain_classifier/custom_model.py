@@ -208,6 +208,13 @@ class CustomModel(nn.Module):
         """
 
         df_set = CustomDataset(df)
+
+        # Note that shuffle is taken as an input argument. It should be True
+        # in training mode and False for evaluation.
+        # The nn.Module class contains attribute self.training that
+        # (possibly) can be used (shuffle=self.training). However, I am not
+        # 100% sure of the implications, so I have preferred to take shuffle
+        # from the args.
         loader = DataLoader(
             dataset=df_set, batch_size=batch_size, shuffle=shuffle,
             num_workers=0

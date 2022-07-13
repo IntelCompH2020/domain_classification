@@ -39,10 +39,12 @@ def plot_top_values(stats, n_top=25, title="", xlabel="", ylabel="",
     return
 
 
-def plot_doc_scores(y):
+def plot_doc_scores(y, path2figure=None):
     """
     Plot sorted document scores
     """
+
+    breakpoint()
 
     plt.figure()
     plt.plot(sorted(y))
@@ -50,6 +52,9 @@ def plot_doc_scores(y):
     plt.xlabel('Document')
     plt.ylabel('Score')
     plt.show(block=False)
+
+    if path2figure is not None:
+        plt.savefig(path2figure)
 
     return
 
