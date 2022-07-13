@@ -88,7 +88,6 @@ class ActiveLearner(object):
         self.df_dataset.loc[self.indices_queried,['annotation_idx']] = (np.max(self.df_dataset['annotation_idx'].to_numpy()) + 1)
 
         var = len(self._get_sub_set('train_annotation'))
-        print(f'1.{ var }{y}')
 
         #UPDATE CLASSIFIER
         if len(self.clfs) == 0:
@@ -108,10 +107,8 @@ class ActiveLearner(object):
         _, df_test = train_test_split( df_fresh_annotated, test_size=0.5, random_state=42, stratify = df_fresh_annotated['labels'].to_numpy())
         self.df_dataset.loc[df_test.index,['is_validation']] = True
         var = len(self._get_sub_set('train_annotation'))
-        print(f'2.{ var }')
 
         df_train_true = self._get_sub_set('train_annotation')
-        print(f'3.{ df_train_true }') 
         df_train_true,_ = self._oversample_minority_class(df_train_true)
 
         df_validation = self._get_sub_set('validation')
