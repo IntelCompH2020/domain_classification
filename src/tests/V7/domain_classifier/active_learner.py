@@ -28,9 +28,7 @@ class ActiveLearner(object):
         self.df_dataset.loc[:,['weak_label']] = -1
         self.df_dataset.loc[:,['is_validation']] = False
         self.df_dataset = self.df_dataset.sort_values(by=['weak_soft_label'], ascending = False)
-        self.df_dataset.reset_index(inplace=True)
-        import pdb
-        pdb.set_trace()
+        self.df_dataset.reset_index(inplace=True) 
 
         self.clf = clf
         self.clfs = []
