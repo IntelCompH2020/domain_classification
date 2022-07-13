@@ -110,7 +110,7 @@ class ActiveLearner(object):
         self.df_dataset.loc[df_test.index,['is_validation']] = True
         var = len(self._get_sub_set('train_annotation'))
         print(f'2.{ var }')
-        print(f'3.{ df_train_true }')
+        print(f'3.{ df_train_true }') 
 
         df_train_true = self._get_sub_set('train_annotation')
         df_train_true,_ = self._oversample_minority_class(df_train_true)
