@@ -29,6 +29,8 @@ class ActiveLearner(object):
         self.df_dataset.loc[:,['is_validation']] = False
         self.df_dataset = self.df_dataset.sort_values(by=['weak_soft_label'], ascending = False)
         self.df_dataset.reset_index(inplace=True)
+        import pdb
+        pdb.set_trace()
 
         self.clf = clf
         self.clfs = []
@@ -87,6 +89,9 @@ class ActiveLearner(object):
         self.df_dataset.loc[self.indices_queried,['labels']] = y
         self.df_dataset.loc[self.indices_queried,['annotation_idx']] = (np.max(self.df_dataset['annotation_idx'].to_numpy()) + 1)
 
+        var = len(self._get_sub_set('train_annotation'))
+        print(f'1.{ var }')
+
         #UPDATE CLASSIFIER
         if len(self.clfs) == 0:
             weak_label_threshold = self._get_weak_label_threshold()
@@ -102,8 +107,10 @@ class ActiveLearner(object):
 
         #EXPLOIT TRUE ANNOTATIONS
         df_fresh_annotated = self._get_sub_set('fresh_annotated') 
-        df_train_true1, df_test = train_test_split( df_fresh_annotated, test_size=0.5, random_state=42, stratify = df_fresh_annotated['labels'].to_numpy())
+        _, df_test = train_test_split( df_fresh_annotated, test_size=0.5, random_state=42, stratify = df_fresh_annotated['labels'].to_numpy())
         self.df_dataset.loc[df_test.index,['is_validation']] = True
+        var = len(self._get_sub_set('train_annotation'))
+        print(f'2.{ var }')
 
         df_train_true = self._get_sub_set('train_annotation')
         df_train_true,_ = self._oversample_minority_class(df_train_true)
