@@ -278,7 +278,10 @@ class TaskManager(baseTaskManager):
             return
 
         # Load corpus in a dataframe.
-        self.df_corpus = self.DM.load_corpus(corpus_name, frac=frac)
+        remove_non_en = corpus_name in {'SemanticScholar'}
+        self.df_corpus = self.DM.load_corpus(
+            corpus_name, frac=frac, remove_non_en=remove_non_en)
+
         self.CorpusProc = CorpusDFProcessor(
             self.df_corpus, self.path2embeddings, self.path2zeroshot)
 

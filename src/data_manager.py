@@ -15,9 +15,32 @@ import yaml
 
 from time import time
 from sklearn.preprocessing import normalize
+from langdetect import detect
 
 import dask.dataframe as dd
 from dask.diagnostics import ProgressBar
+
+
+def detect_english(x):
+    """
+    Returns True is x contains text in English.
+
+    Parameters
+    ----------
+    x : str
+        Input string
+
+    Returns
+    -------
+    True if x contains English text, False otherwise.
+    """
+
+    # Check if the string contains at least one alphabetic character
+    # (otherwise, the lang detector raises an error)
+    if x.lower().islower():
+        return detect(x) == 'en'
+    else:
+        return False
 
 
 class DataManager(object):
@@ -141,9 +164,13 @@ class DataManager(object):
 
         return keywords
 
-    def load_corpus(self, corpus_name, frac=1e-3):
+    def load_corpus(self, corpus_name, frac=1e-3, remove_non_en=False):
         """
         Loads a dataframe of documents from a given corpus.
+
+        When available, the names of the relevant dataframe components are
+        mapped to normalized names: id, title, description, keywords and
+        target_xxx
 
         Parameters
         ----------
@@ -154,6 +181,9 @@ class DataManager(object):
         frac : float, optional (default=1e-3)
             Fraction of documents to be taken from the original corpus.
             This is used for very large corpus only.
+
+        remove_non_en : bool, optional (default=False)
+            If true, documents with non-English text are removed
         """
 
         # Loading corpus
@@ -358,7 +388,6 @@ class DataManager(object):
                          f'{len(dfk)} documents')
 
             # Map column names to normalized names
-            # We use "Referencia", renamed as "id", as the project id.
             mapping = {'paperAbstract': 'description',
                        'fieldsOfStudy': 'keywords'}
 
@@ -381,10 +410,17 @@ class DataManager(object):
             df = dd.read_parquet(path2texts)
             dfsmall = df.sample(frac=frac)
 
-            breakpoint()
-
             with ProgressBar():
                 df_corpus = dfsmall.compute()
+
+            # Remove unrelevant fields
+            df_corpus = df_corpus[[
+                'id', 'title', 'paperAbstract', 'fieldsOfStudy']]
+
+            # Map column names to normalized names
+            mapping = {'paperAbstract': 'description',
+                       'fieldsOfStudy': 'keywords'}
+            df_corpus.rename(columns=mapping, inplace=True)
 
             clean_corpus = True
 
@@ -395,6 +431,8 @@ class DataManager(object):
         # ############
         # Clean corpus
         if clean_corpus:
+
+            l0 = len(df_corpus)
 
             # Remove duplicates, if any
             df_corpus.drop_duplicates(subset=['id'], inplace=True)
@@ -408,6 +446,10 @@ class DataManager(object):
             # Fill nan cells with empty strings
             df_corpus.fillna("", inplace=True)
 
+            # Remove documents with zero-length title or description
+            df_corpus = df_corpus[df_corpus['title'] != ""]
+            df_corpus = df_corpus[df_corpus['description'] != ""]
+
             # Remove special characters
             df_corpus['title'] = df_corpus['title'].str.replace('\t', '')
             df_corpus['description'] = (
@@ -415,6 +457,29 @@ class DataManager(object):
 
             # Reset the index and drop the old index
             df_corpus = df_corpus.reset_index(drop=True)
+
+            # Log results
+            logging.info(f"-- -- {len(df_corpus) - l0} documents with "
+                         "emtpy title or description: removed")
+
+        breakpoint()
+
+        # ###############################################
+        # Remove documents without description in english
+        if remove_non_en:
+            l0 = len(df_corpus)
+            df_corpus = df_corpus.iloc[:1000]
+            logging.info("-- -- Applying language filter. This may take "
+                         "a while")
+            df_corpus['eng'] = (
+                df_corpus['title'] + ' ' + df_corpus['description']).apply(
+                    detect_english)
+            df_corpus = df_corpus[df_corpus['eng']]
+            df_corpus.drop(columns='eng')
+
+            # Log results
+            logging.info(f"-- -- {len(df_corpus) - l0} non-English "
+                         "documents: removed")
 
         # ############
         # Log and save
