@@ -56,6 +56,16 @@ def plot_doc_scores(y, path2figure=None):
     if path2figure is not None:
         plt.savefig(path2figure)
 
+    plt.figure()
+    plt.semilogx(-np.sort(-y))
+    plt.title('Sorted document scores (log-scale, descending order)')
+    plt.xlabel('Document')
+    plt.ylabel('Score')
+    plt.show(block=False)
+
+    if path2figure is not None:
+        plt.savefig(path2figure)
+
     return
 
 

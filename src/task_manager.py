@@ -264,6 +264,10 @@ class TaskManager(baseTaskManager):
             self.path2source
         """
 
+        # Fraction of documents to be taken from the original corpus.
+        # This parameter is used for very large corpus only.
+        frac = 1e-3
+
         # The corpus cannot be changed inside the same project. If a corpus
         # was used before we must keep the same one.
         current_corpus = self.metadata['corpus_name']
@@ -274,7 +278,7 @@ class TaskManager(baseTaskManager):
             return
 
         # Load corpus in a dataframe.
-        self.df_corpus = self.DM.load_corpus(corpus_name)
+        self.df_corpus = self.DM.load_corpus(corpus_name, frac=frac)
         self.CorpusProc = CorpusDFProcessor(
             self.df_corpus, self.path2embeddings, self.path2zeroshot)
 

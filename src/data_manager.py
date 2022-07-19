@@ -141,7 +141,7 @@ class DataManager(object):
 
         return keywords
 
-    def load_corpus(self, corpus_name):
+    def load_corpus(self, corpus_name, frac=1e-3):
         """
         Loads a dataframe of documents from a given corpus.
 
@@ -150,6 +150,10 @@ class DataManager(object):
         corpus_name : str
             Name of the corpus. It should be the name of a folder in
             self.path2source
+
+        frac : float, optional (default=1e-3)
+            Fraction of documents to be taken from the original corpus.
+            This is used for very large corpus only.
         """
 
         # Loading corpus
@@ -375,14 +379,14 @@ class DataManager(object):
             path2texts = pathlib.Path(metadata['corpus'])
 
             df = dd.read_parquet(path2texts)
-            dfsmall = df.sample(frac=1e-6)
+            dfsmall = df.sample(frac=frac)
+
+            breakpoint()
 
             with ProgressBar():
                 df_corpus = dfsmall.compute()
 
             clean_corpus = True
-
-            breakpoint()
 
         else:
             logging.warning("-- Unknown corpus")
