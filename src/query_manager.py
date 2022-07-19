@@ -39,6 +39,7 @@ class QueryManager(object):
         if kw_library is not None:
             logging.info(
                 f"-- Suggested list of keywords: {', '.join(kw_library)}\n")
+            logging.info("-- Type '__all_AI' to select all these keywords\n")
 
         str_keys = input('-- Write your keyword/s (separated by commas, '
                          'e.g., "gradient descent, gibbs sampling") ')

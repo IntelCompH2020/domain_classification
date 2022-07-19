@@ -413,6 +413,7 @@ class DataManager(object):
             with ProgressBar():
                 df_corpus = dfsmall.compute()
 
+            breakpoint()
             # Remove unrelevant fields
             df_corpus = df_corpus[[
                 'id', 'title', 'paperAbstract', 'fieldsOfStudy']]
@@ -421,6 +422,12 @@ class DataManager(object):
             mapping = {'paperAbstract': 'description',
                        'fieldsOfStudy': 'keywords'}
             df_corpus.rename(columns=mapping, inplace=True)
+
+            # Map list of keywords to a string (otherwise, no feather file can
+            # be saved)
+            col = 'keywords'   # Just to abbreviate
+            df_corpus[col] = df_corpus[col].apply(
+                lambda x: ','.join(x.astype(str)) if x is not None else '')
 
             clean_corpus = True
 
@@ -462,20 +469,17 @@ class DataManager(object):
             logging.info(f"-- -- {len(df_corpus) - l0} documents with "
                          "emtpy title or description: removed")
 
-        breakpoint()
-
         # ###############################################
         # Remove documents without description in english
         if remove_non_en:
             l0 = len(df_corpus)
-            df_corpus = df_corpus.iloc[:1000]
             logging.info("-- -- Applying language filter. This may take "
                          "a while")
             df_corpus['eng'] = (
                 df_corpus['title'] + ' ' + df_corpus['description']).apply(
                     detect_english)
             df_corpus = df_corpus[df_corpus['eng']]
-            df_corpus.drop(columns='eng')
+            df_corpus.drop(columns='eng', inplace=True)
 
             # Log results
             logging.info(f"-- -- {len(df_corpus) - l0} non-English "
