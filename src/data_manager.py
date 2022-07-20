@@ -438,7 +438,7 @@ class DataManager(object):
 
             clean_corpus = True
 
-        elif corpus_name == 'Patstats':
+        elif corpus_name == 'patstat':
 
             path2metadata = self.path2corpus / 'metadata.yaml'
 
@@ -486,7 +486,7 @@ class DataManager(object):
             # Remove duplicates, if any
             df_corpus.drop_duplicates(subset=['id'], inplace=True)
             l1 = len(df_corpus)
-            logging.info(f"-- -- {l1 - l0} duplicated documents removed")
+            logging.info(f"-- -- {l0 - l1} duplicated documents removed")
 
             # Remove documents with missing data, if any
             ind_notna = df_corpus['title'].notna()
@@ -511,7 +511,7 @@ class DataManager(object):
 
             # Log results
             l2 = len(df_corpus)
-            logging.info(f"-- -- {l2 - l1} documents with empty title or "
+            logging.info(f"-- -- {l1 - l2} documents with empty title or "
                          "description: removed")
 
         # ###############################################
@@ -528,7 +528,7 @@ class DataManager(object):
 
             # Log results
             l3 = len(df_corpus)
-            logging.info(f"-- -- {l3 - l2} non-English documents: removed")
+            logging.info(f"-- -- {l2 - l3} non-English documents: removed")
 
         # ############
         # Log and save
@@ -536,8 +536,6 @@ class DataManager(object):
         # Log results
         logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
                      f" documents loaded in {time() - t0:.2f} secs.")
-
-        breakpoint()
 
         # Save to feather file
         if save_feather:
