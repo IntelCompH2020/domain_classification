@@ -35,12 +35,20 @@ def detect_english(x):
     True if x contains English text, False otherwise.
     """
 
-    # Check if the string contains at least one alphabetic character
-    # (otherwise, the lang detector raises an error)
-    if x.lower().islower():
-        return detect(x) == 'en'
-    else:
-        return False
+    # Default output value. Only if langdetect detects english, y will be True
+    y = False
+
+    # A try-except is required because detect() raises execution errors for
+    # invalid strings that may appear for some inputs x.
+    try:
+        # Check if the string contains at least one alphabetic character
+        # (otherwise, the lang detector raises an error)
+        if x.lower().islower():
+            y = detect(x) == 'en'
+    except:
+        logging.warning(f"-- Language detection error in string {x}")
+
+    return y
 
 
 class DataManager(object):
@@ -395,6 +403,43 @@ class DataManager(object):
             clean_corpus = True
 
         elif corpus_name == 'SemanticScholar':
+
+            path2metadata = self.path2corpus / 'metadata.yaml'
+
+            if not path2metadata.is_file():
+                logging.error(
+                    f"-- A metadata file in {path2metadata} is missed. It is "
+                    "required for this corpus. Corpus not loaded")
+
+            with open(path2metadata, 'r', encoding='utf8') as f:
+                metadata = yaml.safe_load(f)
+            path2texts = pathlib.Path(metadata['corpus'])
+
+            df = dd.read_parquet(path2texts)
+            dfsmall = df.sample(frac=frac)
+
+            with ProgressBar():
+                df_corpus = dfsmall.compute()
+
+            breakpoint()
+            # Remove unrelevant fields
+            df_corpus = df_corpus[[
+                'id', 'title', 'paperAbstract', 'fieldsOfStudy']]
+
+            # Map column names to normalized names
+            mapping = {'paperAbstract': 'description',
+                       'fieldsOfStudy': 'keywords'}
+            df_corpus.rename(columns=mapping, inplace=True)
+
+            # Map list of keywords to a string (otherwise, no feather file can
+            # be saved)
+            col = 'keywords'   # Just to abbreviate
+            df_corpus[col] = df_corpus[col].apply(
+                lambda x: ','.join(x.astype(str)) if x is not None else '')
+
+            clean_corpus = True
+
+        elif corpus_name == 'Patstats':
 
             path2metadata = self.path2corpus / 'metadata.yaml'
 
