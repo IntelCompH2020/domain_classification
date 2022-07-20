@@ -172,7 +172,7 @@ class DataManager(object):
 
         return keywords
 
-    def load_corpus(self, corpus_name, sampling_factor=None):
+    def load_corpus(self, corpus_name, sampling_factor=1):
         """
         Loads a dataframe of documents from a given corpus.
 
@@ -186,7 +186,7 @@ class DataManager(object):
             Name of the corpus. It should be the name of a folder in
             self.path2source
 
-        frac : float, optional (default=1e-3)
+        sampling_factor : float, optional (default=1e-3)
             Fraction of documents to be taken from the original corpus.
             This is used for very large corpus only.
         """
@@ -196,7 +196,15 @@ class DataManager(object):
         t0 = time()
 
         self.path2corpus = self.path2source / corpus_name
-        path2feather = self.path2corpus / 'corpus' / 'corpus.feather'
+
+        breakpoint()
+        if sampling_factor == 1:
+            path2feather = self.path2corpus / 'corpus' / 'corpus.feather'
+        else:
+            # Generate label (docs per million)
+            dpm = str(int(sampling_factor * 1e6))
+            path2feather = (self.path2corpus / 'corpus'
+                            / f'corpus_{dpm}.feather')
         self.corpus_name = corpus_name
 
         # #################################################

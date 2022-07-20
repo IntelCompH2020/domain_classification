@@ -9,10 +9,11 @@ logformat:
 
 # Parameter for the corpus loaders
 corpus:
-  # Fraction of documents to be taken from some corpora
+  # Fraction of documents to be taken from the corpora
+  # Warning: do not use exponential notation (e.g. use 0.01 and not 1e-2)
   sampling_factor:
-    SemanticScholar': 2e-3
-    patstat: 3e-3
+    SemanticScholar: 0.002
+    patstat: 0.003
 
 # Parameter for the keyword-based document selector
 keywords:
