@@ -421,7 +421,6 @@ class DataManager(object):
             with ProgressBar():
                 df_corpus = dfsmall.compute()
 
-            breakpoint()
             # Remove unrelevant fields
             df_corpus = df_corpus[[
                 'id', 'title', 'paperAbstract', 'fieldsOfStudy']]
@@ -485,9 +484,12 @@ class DataManager(object):
         if clean_corpus:
 
             l0 = len(df_corpus)
+            logging.info(f"-- -- {l0} base documents loaded")
 
             # Remove duplicates, if any
             df_corpus.drop_duplicates(subset=['id'], inplace=True)
+            l1 = len(df_corpus)
+            logging.info(f"-- -- {l1 - l0} duplicated documents removed")
 
             # Remove documents with missing data, if any
             ind_notna = df_corpus['title'].notna()
@@ -511,15 +513,16 @@ class DataManager(object):
             df_corpus = df_corpus.reset_index(drop=True)
 
             # Log results
-            logging.info(f"-- -- {len(df_corpus) - l0} documents with "
-                         "emtpy title or description: removed")
+            l2 = len(df_corpus)
+            logging.info(f"-- -- {l2 - l1} documents with empty title or "
+                         "description: removed")
 
         # ###############################################
         # Remove documents without description in english
         if remove_non_en:
             l0 = len(df_corpus)
-            logging.info("-- -- Applying language filter. This may take "
-                         "a while")
+            logging.info("-- -- Applying language filter. This may take a "
+                         "while")
             df_corpus['eng'] = (
                 df_corpus['title'] + ' ' + df_corpus['description']).apply(
                     detect_english)
@@ -527,8 +530,11 @@ class DataManager(object):
             df_corpus.drop(columns='eng', inplace=True)
 
             # Log results
-            logging.info(f"-- -- {len(df_corpus) - l0} non-English "
-                         "documents: removed")
+            l3 = len(df_corpus)
+            logging.info(f"-- -- {l3 - l2} non-English documents: removed")
+
+        with ProgressBar():
+            df_corpus = df_corpus.compute()
 
         # ############
         # Log and save
@@ -536,6 +542,8 @@ class DataManager(object):
         # Log results
         logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
                      f" documents loaded in {time() - t0:.2f} secs.")
+
+        breakpoint()
 
         # Save to feather file
         if save_feather:
