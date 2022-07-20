@@ -416,7 +416,7 @@ class DataManager(object):
             path2texts = pathlib.Path(metadata['corpus'])
 
             df = dd.read_parquet(path2texts)
-            dfsmall = df.sample(frac=frac)
+            dfsmall = df.sample(frac=frac, random_state=0)
 
             with ProgressBar():
                 df_corpus = dfsmall.compute()
@@ -452,26 +452,23 @@ class DataManager(object):
             path2texts = pathlib.Path(metadata['corpus'])
 
             df = dd.read_parquet(path2texts)
-            dfsmall = df.sample(frac=frac)
+            dfsmall = df.sample(frac=frac, random_state=0)
 
             with ProgressBar():
                 df_corpus = dfsmall.compute()
 
-            breakpoint()
             # Remove unrelevant fields
-            df_corpus = df_corpus[[
-                'id', 'title', 'paperAbstract', 'fieldsOfStudy']]
+            # Available fields are: appln_id, docdb_family_id, appln_title,
+            # appln_abstract, appln_filing_year, earliest_filing_year,
+            # granted, appln_auth, receiving_office, ipr_type
+            df_corpus = df_corpus[['appln_id', 'appln_title',
+                                   'appln_abstract']]
 
             # Map column names to normalized names
-            mapping = {'paperAbstract': 'description',
-                       'fieldsOfStudy': 'keywords'}
+            mapping = {'appln_id': 'id',
+                       'appln_title': 'title',
+                       'appln_abstract': 'description'}
             df_corpus.rename(columns=mapping, inplace=True)
-
-            # Map list of keywords to a string (otherwise, no feather file can
-            # be saved)
-            col = 'keywords'   # Just to abbreviate
-            df_corpus[col] = df_corpus[col].apply(
-                lambda x: ','.join(x.astype(str)) if x is not None else '')
 
             clean_corpus = True
 
@@ -532,9 +529,6 @@ class DataManager(object):
             # Log results
             l3 = len(df_corpus)
             logging.info(f"-- -- {l3 - l2} non-English documents: removed")
-
-        with ProgressBar():
-            df_corpus = df_corpus.compute()
 
         # ############
         # Log and save
