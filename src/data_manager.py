@@ -197,7 +197,6 @@ class DataManager(object):
 
         self.path2corpus = self.path2source / corpus_name
 
-        breakpoint()
         if sampling_factor == 1:
             path2feather = self.path2corpus / 'corpus' / 'corpus.feather'
         else:
