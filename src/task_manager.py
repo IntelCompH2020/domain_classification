@@ -264,9 +264,12 @@ class TaskManager(baseTaskManager):
             self.path2source
         """
 
-        # Fraction of documents to be taken from the original corpus.
-        # This parameter is used for very large corpus only.
-        frac = 1e-3
+        # Dictionary of sampling factor for the corpus loader.
+        sampling_factors = self.global_parameters['corpus']['sampling_factor']
+        # Default sampling factor: 1 (loads the whole corpus)
+        frac = 1
+        if corpus_name in sampling_factors:
+            frac = sampling_factors[corpus_name]
 
         # The corpus cannot be changed inside the same project. If a corpus
         # was used before we must keep the same one.
@@ -386,6 +389,7 @@ class TaskManager(baseTaskManager):
 
         # ############
         # Save dataset
+        breakpoint()
         msg = self.DM.save_dataset(
             self.df_dataset, tag=self.class_name, save_csv=True)
 
@@ -922,10 +926,8 @@ class TaskManagerCMD(TaskManager):
 
         # ##########
         # Get labels
-        msg = super().get_labels_by_keywords(
+        super().get_labels_by_keywords(
             wt=wt, n_max=n_max, s_min=s_min, tag=tag, method=method)
-
-        logging.info(msg)
 
         return
 

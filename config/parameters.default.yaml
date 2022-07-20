@@ -7,6 +7,13 @@ logformat:
   cons_level:  DEBUG
   cons_format: '%(levelname)-8s %(message)s'
 
+# Parameter for the corpus loaders
+corpus:
+  # Fraction of documents to be taken from some corpora
+  sampling_factor:
+    SemanticScholar': 2e-3
+    patstat: 3e-3
+
 # Parameter for the keyword-based document selector
 keywords:
   # Selection method: 'embedding' or 'count'

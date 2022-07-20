@@ -172,7 +172,7 @@ class DataManager(object):
 
         return keywords
 
-    def load_corpus(self, corpus_name, frac=1e-3, remove_non_en=False):
+    def load_corpus(self, corpus_name, sampling_factor=None):
         """
         Loads a dataframe of documents from a given corpus.
 
@@ -417,7 +417,7 @@ class DataManager(object):
             path2texts = pathlib.Path(metadata['corpus'])
 
             df = dd.read_parquet(path2texts)
-            dfsmall = df.sample(frac=frac, random_state=0)
+            dfsmall = df.sample(frac=sampling_factor, random_state=0)
 
             with ProgressBar():
                 df_corpus = dfsmall.compute()
@@ -451,7 +451,7 @@ class DataManager(object):
             path2texts = pathlib.Path(metadata['corpus'])
 
             df = dd.read_parquet(path2texts)
-            dfsmall = df.sample(frac=frac, random_state=0)
+            dfsmall = df.sample(frac=sampling_factor, random_state=0)
 
             with ProgressBar():
                 df_corpus = dfsmall.compute()
@@ -532,7 +532,6 @@ class DataManager(object):
         # ############
         # Log and save
 
-        breakpoint()
         # Save to feather file
         logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
                      f" documents loaded in {time() - t0:.2f} secs.")
