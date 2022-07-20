@@ -189,36 +189,40 @@ class DataManager(object):
         frac : float, optional (default=1e-3)
             Fraction of documents to be taken from the original corpus.
             This is used for very large corpus only.
-
-        remove_non_en : bool, optional (default=False)
-            If true, documents with non-English text are removed
         """
 
         # Loading corpus
         logging.info(f'-- Loading corpus {corpus_name}')
+        t0 = time()
 
         self.path2corpus = self.path2source / corpus_name
         path2feather = self.path2corpus / 'corpus' / 'corpus.feather'
         self.corpus_name = corpus_name
 
-        # By default, a feather file version of the corpus will be save
-        save_feather = True
-        # By default, no corpus cleaning is done
-        clean_corpus = False
-        # If there is a feather file, load it
-        t0 = time()
-
-        # ################
-        # Load corpus data
-
+        # #################################################
+        # Load corpus data from feather file (if it exists)
         if path2feather.is_file():
 
             logging.info(f'-- -- Feather file {path2feather} found...')
             df_corpus = pd.read_feather(path2feather)
-            save_feather = False
 
-        # if it doesn't exist, load the selected corpus in its original form
-        elif corpus_name == 'EU_projects':
+            # Log results
+            logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
+                         f" documents loaded in {time() - t0:.2f} secs.")
+
+            return df_corpus
+
+        # #########################################
+        # Load corpus data from its original source
+
+        # By default, neither corpus cleaning nor language filtering are done
+        clean_corpus = corpus_name in {
+            'AEI_projects', 'SemanticScholar', 'patstat', 'CORDIS.parquet',
+            'S2CS.parquet'}
+        remove_non_en = corpus_name in {
+            'SemanticScholar', 'patstat'}
+
+        if corpus_name == 'EU_projects':
 
             # ####################
             # Paths and file names
@@ -315,7 +319,6 @@ class DataManager(object):
                        'Ind2017_TIC': 'target_tic',
                        'Ind2017_ENE': 'target_ene'}
             df_corpus.rename(columns=mapping, inplace=True)
-            clean_corpus = True
 
         elif corpus_name == 'CORDIS.parquet':
 
@@ -353,7 +356,6 @@ class DataManager(object):
             # We use "Referencia", renamed as "id", as the project id.
             mapping = {'objective': 'description'}
             df_corpus.rename(columns=mapping, inplace=True)
-            clean_corpus = True
 
             # Map list of euroSciVoc codes to a string (otherwise, no
             # feather file can be saved)
@@ -400,7 +402,6 @@ class DataManager(object):
                        'fieldsOfStudy': 'keywords'}
 
             df_corpus.rename(columns=mapping, inplace=True)
-            clean_corpus = True
 
         elif corpus_name == 'SemanticScholar':
 
@@ -436,8 +437,6 @@ class DataManager(object):
             df_corpus[col] = df_corpus[col].apply(
                 lambda x: ','.join(x.astype(str)) if x is not None else '')
 
-            clean_corpus = True
-
         elif corpus_name == 'patstat':
 
             path2metadata = self.path2corpus / 'metadata.yaml'
@@ -470,11 +469,9 @@ class DataManager(object):
                        'appln_abstract': 'description'}
             df_corpus.rename(columns=mapping, inplace=True)
 
-            clean_corpus = True
-
         else:
             logging.warning("-- Unknown corpus")
-            df_corpus = None
+            return None
 
         # ############
         # Clean corpus
@@ -506,9 +503,6 @@ class DataManager(object):
             df_corpus['description'] = (
                 df_corpus['description'].str.replace('\t', ''))
 
-            # Reset the index and drop the old index
-            df_corpus = df_corpus.reset_index(drop=True)
-
             # Log results
             l2 = len(df_corpus)
             logging.info(f"-- -- {l1 - l2} documents with empty title or "
@@ -516,7 +510,9 @@ class DataManager(object):
 
         # ###############################################
         # Remove documents without description in english
+        # Note that if save_feather is False, non-english removal mu
         if remove_non_en:
+
             l0 = len(df_corpus)
             logging.info("-- -- Applying language filter. This may take a "
                          "while")
@@ -527,23 +523,21 @@ class DataManager(object):
             df_corpus.drop(columns='eng', inplace=True)
 
             # Log results
-            l3 = len(df_corpus)
-            logging.info(f"-- -- {l2 - l3} non-English documents: removed")
+            l1 = len(df_corpus)
+            logging.info(f"-- -- {l0 - l1} non-English documents: removed")
+
+        # Reset the index and drop the old index
+        df_corpus = df_corpus.reset_index(drop=True)
 
         # ############
         # Log and save
 
-        # Log results
+        breakpoint()
+        # Save to feather file
         logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
                      f" documents loaded in {time() - t0:.2f} secs.")
-
-        # Save to feather file
-        if save_feather:
-            logging.info(f'-- -- Writing feather file in {path2feather} '
-                         f'to speed up future loads...')
-            t0 = time()
-            df_corpus.to_feather(path2feather)
-            logging.info(f"-- -- Feather file saved in {time()-t0} secs")
+        df_corpus.to_feather(path2feather)
+        logging.info(f"-- -- Corpus saved in feather file {path2feather}")
 
         return df_corpus
 
