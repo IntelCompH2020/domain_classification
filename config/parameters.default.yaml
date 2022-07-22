@@ -46,6 +46,11 @@ topics:
 
 # Parameters for the classifier
 classifier:
+  # Type of transformer for ClassificationModel (e.g. roberta, mpnet), see
+  # https://simpletransformers.ai/docs/classification-specifics/#supported-model-types
+  model_type: mpnet
+  # Name of the simpletransformer model (e.g. roberta_base, all-mpnet-base-v2)
+  model_name: sentence-transformers/all-mpnet-base-v2
   # Maximum ratio negative vs positive samples in the training set
   max_imbalance: 3
   # Maximum number of documents in the training set.

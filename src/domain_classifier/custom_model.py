@@ -21,6 +21,10 @@ from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 from transformers import RobertaTokenizerFast
 from transformers.models.roberta.modeling_roberta import RobertaEmbeddings
+
+from transformers import MPNetTokenizerFast
+from transformers.models.mpnet.modeling_mpnet import MPNetEmbeddings
+
 from transformers import logging as hf_logging
 
 # Remove message when loading transformers model
@@ -156,7 +160,7 @@ class CustomModel(nn.Module):
     Head for sentence-level classification tasks.
     """
 
-    def __init__(self, config, path_model):
+    def __init__(self, config, path_model, model_type, model_name):
         super().__init__()
 
         # Configuration
@@ -182,6 +186,10 @@ class CustomModel(nn.Module):
 
         # Model location
         self.path_model = path_model
+
+        # Type of model
+        self.model_type = model_type
+        self.model_name = model_name
 
         # Transformer encoder
         self.encoderTransform = CustomEncoderLayer(
@@ -223,7 +231,12 @@ class CustomModel(nn.Module):
         return loader
 
     def load_tokenizer(self):
-        tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
+
+        if self.model_type == 'roberta':
+            tokenizer = RobertaTokenizerFast.from_pretrained(self.model_name)
+        elif self.model_type == 'mpnet':
+            tokenizer = MPNetTokenizerFast.from_pretrained(self.model_name)
+
         logging.info("-- -- Tokenizer loaded")
         # logging.info(f" -- Max length: {tokenizer.model_max_length}")
         self.tokenizer = tokenizer
@@ -237,28 +250,38 @@ class CustomModel(nn.Module):
         """
         path2embeddings_state = self.path_model / "embeddings.pt"
 
+        # Load default config from the transformer model
+        use_cuda = torch.cuda.is_available()
+        breakpoint()
         # Save model config if not saved before
         if not path2embeddings_state.exists():
             # Load TransformerModel
             logging.info(
                 f"-- -- No available embeddings. Loading embeddings from "
-                "roberta model.")
+                f"{self.model_type} model.")
             model = ClassificationModel(
-                "roberta", "roberta-base", use_cuda=False)
+                self.model_type, self.model_name, use_cuda=use_cuda)
 
-            embeddings = copy.deepcopy(model.model.roberta.embeddings)
+            if self.model_type == 'roberta':
+                embeddings = copy.deepcopy(model.model.roberta.embeddings)
+            elif self.model_type == 'mpnet':
+                embeddings = copy.deepcopy(model.model.mpnet.embeddings)
 
             # Save model
             torch.save(embeddings.state_dict(), path2embeddings_state)
-            logging.info("-- -- Embeddings model saved")
+            logging.info("-- -- Embedding model saved")
 
             del model
 
         else:
             # Load model
-            embeddings = RobertaEmbeddings(self.config)
+            if self.model_type == 'roberta':
+                embeddings = RobertaEmbeddings(self.config)
+            elif self.model_type == 'mpnet':
+                embeddings = MPNetEmbeddings(self.config)
+
             embeddings.load_state_dict(torch.load(path2embeddings_state))
-            logging.info("-- -- Embeddings model loaded from file")
+            logging.info("-- -- Embedding model loaded from file")
 
         # Set grad to false to freeze layer
         for param in embeddings.parameters():

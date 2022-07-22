@@ -13,11 +13,15 @@ import pandas as pd
 import numpy as np
 import torch
 import copy
-from simpletransformers.classification import ClassificationModel
-from transformers.models.roberta.configuration_roberta import RobertaConfig
-from .custom_model import CustomModel
+
 from sklearn import model_selection
 from tqdm import tqdm
+
+from simpletransformers.classification import ClassificationModel
+from transformers.models.roberta.configuration_roberta import RobertaConfig
+from transformers.models.mpnet.configuration_mpnet import MPNetConfig
+
+from .custom_model import CustomModel
 
 from transformers import logging as hf_logging
 
@@ -36,9 +40,11 @@ class CorpusClassifier(object):
     A container of corpus classification methods
     """
 
-    def __init__(self, df_dataset, path2transformers=".", use_cuda=True):
+    def __init__(self, df_dataset, model_type="roberta",
+                 model_name="roberta_base", path2transformers=".",
+                 use_cuda=True):
         """
-        Initializes a preprocessor object
+        Initializes a classifier object
 
         Parameters
         ----------
@@ -46,6 +52,12 @@ class CorpusClassifier(object):
             Dataset with text and labels. It must contain at least two columns
             with names "text" and "labels", with the input and the target
             labels for classification.
+
+        model_type : str, optional (default="roberta")
+            Type of transformer model.
+
+        model_name : str, optional (default="roberta-base")
+            Name of the simpletransformer model
 
         path2transformers : pathlib.Path or str, optional (default=".")
             Path to the folder that will store all files produced by the
@@ -64,6 +76,8 @@ class CorpusClassifier(object):
 
         logging.info("-- Initializing classifier object")
         self.path2transformers = pathlib.Path(path2transformers)
+        self.model_type = model_type
+        self.model_name = model_name
         self.model = None
         self.df_dataset = df_dataset
         self.config = None
@@ -79,17 +93,16 @@ class CorpusClassifier(object):
                 )
                 self.device = torch.device("cpu")
                 logging.info(
-                    f"-- -- Cuda unavailable: training model without GPU")
+                    f"-- -- Cuda unavailable: model will be trained with CPU")
         else:
             self.device = torch.device("cpu")
-            logging.info(f"-- -- Cuda unavailable: training model without GPU")
+            logging.info(f"-- -- Model will be trained with CPU")
 
         if 'labels' not in self.df_dataset:
             logging.error(" ")
             logging.error(f"-- -- Column 'labels' does not exist in the input "
                           "dataframe")
             logging.error(" ")
-            sys.exit()
 
         return
 
@@ -171,31 +184,35 @@ class CorpusClassifier(object):
         """
 
         path2model_config = self.path2transformers / "config.json"
-
-        # Save model config if not saved before
+        # The if model config file is available
         if not path2model_config.exists():
-            # Load TransformerModel
             logging.info("-- -- No available configuration. Loading "
-                         "configuration from roberta model.")
+                         f"configuration from {self.model_name} model.")
 
+            # Load default config from the transformer model
             use_cuda = torch.cuda.is_available()
             model = ClassificationModel(
-                "roberta", "roberta-base", use_cuda=use_cuda)
-
-            config = copy.deepcopy(model.config)
+                self.model_type, self.model_name, use_cuda=use_cuda)
+            self.config = copy.deepcopy(model.config)
 
             # Save config
-            config.to_json_file(path2model_config)
+            self.config.to_json_file(path2model_config)
             logging.info("-- -- Model configuration saved")
 
             del model
 
         else:
             # Load config
-            config = RobertaConfig.from_json_file(path2model_config)
-            logging.info("-- -- Model configuration loaded from file")
+            if self.model_type == "roberta":
+                self.config = RobertaConfig.from_json_file(path2model_config)
+            elif self.model_type == "mpnet":
+                self.config = MPNetConfig.from_json_file(path2model_config)
+            else:
+                logging.error("-- -- Config loading not available for "
+                              + self.model_type)
+                exit()
 
-        self.config = config
+            logging.info("-- -- Model configuration loaded from file")
 
         return
 
@@ -218,7 +235,8 @@ class CorpusClassifier(object):
         self.load_model_config()
 
         # Load model
-        self.model = CustomModel(self.config, self.path2transformers)
+        self.model = CustomModel(self.config, self.path2transformers,
+                                 self.model_type, self.model_name)
         self.model.load(model_dir)
 
         logging.info(f"-- Model loaded from {model_dir}")
@@ -265,10 +283,8 @@ class CorpusClassifier(object):
         self.load_model_config()
 
         # Create model
-        self.model = CustomModel(self.config, self.path2transformers)
-
-        # # FIXME: Base model 'roberta' should be configurable. Move it to
-        # #        the config file (parameters.default.yaml)
+        self.model = CustomModel(self.config, self.path2transformers,
+                                 self.model_type, self.model_name)
 
         # Best model selection
         best_epoch = 0

@@ -186,9 +186,9 @@ class DataManager(object):
             Name of the corpus. It should be the name of a folder in
             self.path2source
 
-        sampling_factor : float, optional (default=1e-3)
+        sampling_factor : float, optional (default=1)
             Fraction of documents to be taken from the original corpus.
-            This is used for very large corpus only.
+            (Used for SemanticScholar and patstat only)
         """
 
         # Loading corpus

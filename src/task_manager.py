@@ -389,7 +389,6 @@ class TaskManager(baseTaskManager):
 
         # ############
         # Save dataset
-        breakpoint()
         msg = self.DM.save_dataset(
             self.df_dataset, tag=self.class_name, save_csv=True)
 
@@ -545,10 +544,12 @@ class TaskManager(baseTaskManager):
         if gold_standard != NO_GOLD_STANDARD:
             pass
 
-        p2fig = self.path2output / 'sorted_PUscores.png'
+        p2fig = self.path2output / f'{self.class_name}_sorted_PUscores.png'
         y = self.df_dataset.base_scores
         plotter.plot_doc_scores(y, path2figure=p2fig)
 
+        breakpoint()
+        print("WORK IN PROGRESS")
         return
 
     def load_labels(self, class_name):
@@ -571,8 +572,12 @@ class TaskManager(baseTaskManager):
 
             logging.info("-- Loading classification model")
             path2model = self.path2models / self.class_name
+            model_type = self.global_parameters['classifier']['model_type']
+            model_name = self.global_parameters['classifier']['model_name']
+            breakpoint()
             self.dc = CorpusClassifier(
-                self.df_dataset, path2transformers=path2model)
+                self.df_dataset, model_type=model_type, model_name=model_name,
+                path2transformers=path2model)
             self.dc.load_model()
 
         else:
@@ -631,7 +636,10 @@ class TaskManager(baseTaskManager):
 
         path2model = self.path2models / self.class_name
         self.dc = CorpusClassifier(
-            self.df_dataset, path2transformers=path2model)
+            self.df_dataset,
+            model_type=self.global_parameters['classifier']['model_type'],
+            model_name=self.global_parameters['classifier']['model_name'],
+            path2transformers=path2model)
 
         # Select data for training and testing
         self.dc.train_test_split(max_imbalance=max_imbalance, nmax=nmax,
