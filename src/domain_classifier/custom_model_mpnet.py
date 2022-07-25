@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-A custom classifier based on the RobertaModel class from transformers.
+A custom classifier based on the MPNetModel class from transformers.
 
 Created on February 2022
 
-@author: José Antonio Espinosa
+@author: José Antonio Espinosa, Jesús Cid-Sueiro
 """
 
 import copy
@@ -19,12 +19,8 @@ from torch import nn
 from torch.nn.functional import cross_entropy
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
-from transformers import RobertaTokenizerFast
-from transformers.models.roberta.modeling_roberta import RobertaEmbeddings
-
 from transformers import MPNetTokenizerFast
 from transformers.models.mpnet.modeling_mpnet import MPNetEmbeddings
-
 from transformers import logging as hf_logging
 
 # Remove message when loading transformers model
@@ -63,9 +59,14 @@ class CustomEncoderLayer(nn.Module):
     Custom encoder layer of transformer for classification.
     """
 
-    def __init__(self, hidden_act="gelu", hidden_size=768,
-                 intermediate_size=3072, layer_norm_eps=1e-05,
-                 num_attention_heads=12, num_hidden_layers=1):
+    def __init__(
+            self,
+            hidden_act="gelu",
+            hidden_size=768,
+            intermediate_size=3072,
+            layer_norm_eps=1e-05,
+            num_attention_heads=12,
+            num_hidden_layers=1):
 
         super().__init__()
 
@@ -146,14 +147,14 @@ class CustomClassificationHead(nn.Module):
         return x
 
 
-class CustomModel(nn.Module):
+class MPNetCustomModel(nn.Module):
     """
-    Copy of class RobertaClassificationHead
-    (from transformers.models.roberta.modeling_roberta)
+    Copy of class MPNetClassificationHead
+    (from transformers.models.mpnet.modeling_mpnet)
     Head for sentence-level classification tasks.
     """
 
-    def __init__(self, config, path_model, model_type, model_name):
+    def __init__(self, config, path_model, model_name):
         super().__init__()
 
         # Configuration
@@ -169,9 +170,6 @@ class CustomModel(nn.Module):
 
         # Model location
         self.path_model = path_model
-
-        # Type of model
-        self.model_type = model_type
         self.model_name = model_name
 
         # Transformer encoder
@@ -212,11 +210,7 @@ class CustomModel(nn.Module):
 
     def load_tokenizer(self):
 
-        if self.model_type == 'roberta':
-            tokenizer = RobertaTokenizerFast.from_pretrained(self.model_name)
-        elif self.model_type == 'mpnet':
-            tokenizer = MPNetTokenizerFast.from_pretrained(self.model_name)
-
+        tokenizer = MPNetTokenizerFast.from_pretrained(self.model_name)
         logging.info("-- -- Tokenizer loaded")
         # logging.info(f" -- Max length: {tokenizer.model_max_length}")
         self.tokenizer = tokenizer
@@ -235,31 +229,23 @@ class CustomModel(nn.Module):
             # Load TransformerModel
             logging.info(
                 f"-- -- No available embeddings. Loading embeddings from "
-                f"{self.model_type} model.")
-            model = ClassificationModel(
-                self.model_type, self.model_name,
-                use_cuda=torch.cuda.is_available())
+                "mpnet model.")
+            model = ClassificationModel("mpnet", self.model_name,
+                                        use_cuda=torch.cuda.is_available())
 
-            if self.model_type == 'roberta':
-                embeddings = copy.deepcopy(model.model.roberta.embeddings)
-            elif self.model_type == 'mpnet':
-                embeddings = copy.deepcopy(model.model.mpnet.embeddings)
+            embeddings = copy.deepcopy(model.model.mpnet.embeddings)
 
             # Save model
             torch.save(embeddings.state_dict(), path2embeddings_state)
-            logging.info("-- -- Embedding model saved")
+            logging.info("-- -- Embeddings model saved")
 
             del model
 
         else:
             # Load model
-            if self.model_type == 'roberta':
-                embeddings = RobertaEmbeddings(self.config)
-            elif self.model_type == 'mpnet':
-                embeddings = MPNetEmbeddings(self.config)
-
+            embeddings = MPNetEmbeddings(self.config)
             embeddings.load_state_dict(torch.load(path2embeddings_state))
-            logging.info("-- -- Embedding model loaded from file")
+            logging.info("-- -- Embeddings model loaded from file")
 
         # Set grad to false to freeze layer
         for param in embeddings.parameters():
