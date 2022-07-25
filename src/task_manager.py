@@ -267,9 +267,9 @@ class TaskManager(baseTaskManager):
         # Dictionary of sampling factor for the corpus loader.
         sampling_factors = self.global_parameters['corpus']['sampling_factor']
         # Default sampling factor: 1 (loads the whole corpus)
-        sampling_factor = 1
+        sf = 1
         if corpus_name in sampling_factors:
-            sampling_factor = sampling_factors[corpus_name]
+            sf = sampling_factors[corpus_name]
 
         # The corpus cannot be changed inside the same project. If a corpus
         # was used before we must keep the same one.
@@ -281,8 +281,7 @@ class TaskManager(baseTaskManager):
             return
 
         # Load corpus in a dataframe.
-        self.df_corpus = self.DM.load_corpus(
-            corpus_name, sampling_factor=sampling_factor)
+        self.df_corpus = self.DM.load_corpus(corpus_name, sampling_factor=sf)
 
         self.CorpusProc = CorpusDFProcessor(
             self.df_corpus, self.path2embeddings, self.path2zeroshot)
@@ -574,10 +573,10 @@ class TaskManager(baseTaskManager):
             path2model = self.path2models / self.class_name
             model_type = self.global_parameters['classifier']['model_type']
             model_name = self.global_parameters['classifier']['model_name']
-            breakpoint()
             self.dc = CorpusClassifier(
                 self.df_dataset, model_type=model_type, model_name=model_name,
                 path2transformers=path2model)
+            breakpoint()
             self.dc.load_model()
 
         else:

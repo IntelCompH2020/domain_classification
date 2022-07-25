@@ -5,7 +5,6 @@ Defines the main domain classification class
 """
 import logging
 import pathlib
-import sys
 from time import time
 from datetime import datetime
 
@@ -22,6 +21,8 @@ from transformers.models.roberta.configuration_roberta import RobertaConfig
 from transformers.models.mpnet.configuration_mpnet import MPNetConfig
 
 from .custom_model import CustomModel
+# from .custom_model_roberta import RobertaCustomModel
+# from .custom_model_mpnet import MPNetCustomModel
 
 from transformers import logging as hf_logging
 
@@ -40,8 +41,9 @@ class CorpusClassifier(object):
     A container of corpus classification methods
     """
 
-    def __init__(self, df_dataset, model_type="roberta",
-                 model_name="roberta_base", path2transformers=".",
+    def __init__(self, df_dataset, model_type="mpnet",
+                 model_name="sentence-transformers/all-mpnet-base-v2",
+                 path2transformers=".",
                  use_cuda=True):
         """
         Initializes a classifier object
@@ -237,6 +239,13 @@ class CorpusClassifier(object):
         # Load model
         self.model = CustomModel(self.config, self.path2transformers,
                                  self.model_type, self.model_name)
+        # if self.model_type == 'roberta':
+        #     self.model = RobertaCustomModel(
+        #         self.config, self.path2transformers, self.model_name)
+        # elif self.model_type == 'mpnet':
+        #     self.model = MPNetCustomModel(
+        #         self.config, self.path2transformers, self.model_name)
+
         self.model.load(model_dir)
 
         logging.info(f"-- Model loaded from {model_dir}")
@@ -285,6 +294,12 @@ class CorpusClassifier(object):
         # Create model
         self.model = CustomModel(self.config, self.path2transformers,
                                  self.model_type, self.model_name)
+        # if self.model_type == 'roberta':
+        #     self.model = RobertaCustomModel(
+        #         self.config, self.path2transformers, self.model_name)
+        # elif self.model_type == 'mpnet':
+        #     self.model = MPNetCustomModel(
+        #         self.config, self.path2transformers, self.model_name)
 
         # Best model selection
         best_epoch = 0
