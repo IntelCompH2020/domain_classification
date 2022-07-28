@@ -103,7 +103,7 @@ PU_learning:
   options:
     - train_PUmodel
     - evaluate_PUmodel
-    - performance_metrics
+    - performance_metrics_PU
 
 get_feedback:
   title: Get relevance feedback from user
@@ -113,7 +113,7 @@ update_model:
   options:
     - retrain_model
     - reevaluate_model
-    - performance_metrics
+    - performance_metrics_PN
 
 # ######################
 # Options for get_labels

@@ -489,7 +489,6 @@ class CorpusClassifier(object):
             bmetrics_train = metrics.binary_metrics(preds, labels)
             metrics.print_binary_metrics(
                 bmetrics_train, title="-- -- Metrics based on TRAIN data:")
-            pprint(bmetrics_train)
 
             roc_train = metrics.score_based_metrics(pscores, labels)
             # metrics.plot_score_based_metrics(pscores, labels)

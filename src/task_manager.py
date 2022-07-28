@@ -607,7 +607,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def train_PUmodel(self, max_imbalance=3, nmax=400):
+    def train_PUmodel(self, max_imbalance=3, nmax=400, epochs=3):
         """
         Train a domain classifiers
 
@@ -628,7 +628,6 @@ class TaskManager(baseTaskManager):
 
         # Configuration parameters
         freeze_encoder = self.global_parameters['classifier']['freeze_encoder']
-        epochs = self.global_parameters['classifier']['epochs']
 
         # Labels from the PU dataset are stored in column "PUlabels". We must
         # copy them to column "labels" which is the name required by
@@ -654,6 +653,7 @@ class TaskManager(baseTaskManager):
         # in files
         self._save_dataset()
         self.state['trained_model'] = True
+
         self._save_metadata()
 
         return
@@ -680,13 +680,13 @@ class TaskManager(baseTaskManager):
 
         return result
 
-    def performance_metrics(self):
+    def _performance_metrics(self, tag):
         """
         Compute all performance metrics based on the data available at the
         current dataset.
         """
 
-        bmetrics_train, bmetrics_test, roc_train, roc_test = (
+        metrics_train, metrics_test, roc_train, roc_test = (
             self.dc.performance_metrics())
 
         # Plot rocs
@@ -694,8 +694,8 @@ class TaskManager(baseTaskManager):
             p2fig = self.path2output / f'{self.class_name}_PU_ROC_train.png'
             plotter.plot_roc(
                 roc_train['fpr_roc'], roc_train['tpr_roc'],
-                fpr0=bmetrics_train['fpr'],
-                tpr0=bmetrics_train['tpr'],
+                fpr0=metrics_train['fpr'],
+                tpr0=metrics_train['tpr'],
                 title="ROC (train)",
                 label=f"Train (AUC = {roc_train['auc']:.2f})",
                 path2figure=p2fig)
@@ -703,11 +703,43 @@ class TaskManager(baseTaskManager):
             p2fig = self.path2output / f'{self.class_name}_PU_ROC_test.png'
             plotter.plot_roc(
                 roc_test['fpr_roc'], roc_test['tpr_roc'],
-                fpr0=bmetrics_test['fpr'],
-                tpr0=bmetrics_test['tpr'],
+                fpr0=metrics_test['fpr'],
+                tpr0=metrics_test['tpr'],
                 title="ROC (test)",
                 label=f"Test (AUC = {roc_test['auc']:.2f})",
                 path2figure=p2fig)
+
+        # Add AUC in roc to the metrics dictionary:
+        if metrics_train is not None and roc_train is not None:
+            metrics_train['AUC'] = roc_train['AUC']
+        if metrics_test is not None and roc_train is not None:
+            metrics_test['AUC'] = roc_test['AUC']
+
+        if self.class_name not in self.metadata:
+            self.metadata[self.class_name] = {}
+        self.metadata[self.class_name]['PU_model'] = {
+            'train': metrics_train,
+            'test': metrics_test}
+
+        return
+
+    def performance_metrics_PU(self):
+        """
+        Compute all performance metrics for the PU model, based on the data
+        available at the current dataset
+        """
+
+        self._performance_metrics('PU_model')
+
+        return
+
+    def performance_metrics_PN(self):
+        """
+        Compute all performance metrics based on the data available at the
+        current dataset.
+        """
+
+        self._performance_metrics('PN_model')
 
         return
 
@@ -1121,11 +1153,17 @@ class TaskManagerCMD(TaskManager):
 
         # Get score threshold
         nmax = self.QM.ask_value(
-            query=("Maximum number of documents in the training set."),
+            query=("Maximum number of documents in the training set"),
             convert_to=int,
             default=self.global_parameters['classifier']['nmax'])
 
-        super().train_PUmodel(max_imbalance, nmax)
+        # Get score threshold
+        epochs = self.QM.ask_value(
+            query=("Number of training epochs"),
+            convert_to=int,
+            default=self.global_parameters['classifier']['epochs'])
+
+        super().train_PUmodel(max_imbalance, nmax, epochs)
 
         return
 
