@@ -543,12 +543,11 @@ class TaskManager(baseTaskManager):
         if gold_standard != NO_GOLD_STANDARD:
             pass
 
-        p2fig = self.path2output / f'{self.class_name}_sorted_PUscores.png'
-        y = self.df_dataset.base_scores
-        plotter.plot_doc_scores(y, path2figure=p2fig)
+        p2fig = self.path2output / f'{self.class_name}_PUscores.png'
+        scores = self.df_dataset.base_scores
+        n_pos = np.sum(self.df_dataset.PUlabels == 1)
+        plotter.plot_doc_scores(scores, n_pos, path2figure=p2fig)
 
-        breakpoint()
-        print("WORK IN PROGRESS")
         return
 
     def load_labels(self, class_name):
@@ -576,7 +575,6 @@ class TaskManager(baseTaskManager):
             self.dc = CorpusClassifier(
                 self.df_dataset, model_type=model_type, model_name=model_name,
                 path2transformers=path2model)
-            breakpoint()
             self.dc.load_model()
 
         else:
@@ -628,6 +626,9 @@ class TaskManager(baseTaskManager):
                             "You must load or create a set of labels first")
             return
 
+        # Configuration parameters
+        freeze_encoder = self.global_parameters['classifier']['freeze_encoder']
+
         # Labels from the PU dataset are stored in column "PUlabels". We must
         # copy them to column "labels" which is the name required by
         # simpletransformers
@@ -645,7 +646,7 @@ class TaskManager(baseTaskManager):
                                  random_state=0)
 
         # Train the model using simpletransformers
-        self.dc.train_model()
+        self.dc.train_model(freeze_encoder=freeze_encoder)
 
         # Update status.
         # Since training takes much time, we store the classification results
@@ -677,6 +678,16 @@ class TaskManager(baseTaskManager):
         self._save_dataset()
 
         return result
+
+    def performance_metrics(self):
+        """
+        Compute all performance metrics based on the data available at the
+        current dataset.
+        """
+
+        self.dc.performance_metrics()
+
+        return
 
     def get_feedback(self):
         """
@@ -742,7 +753,7 @@ class TaskManager(baseTaskManager):
             return
 
         # Retrain model using the new labels
-        self.dc.retrain_model()
+        self.dc.retrain_model(freeze_encoder=True)
 
         # Update status.
         # Since training takes much time, we store the classification results

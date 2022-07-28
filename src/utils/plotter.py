@@ -1,5 +1,26 @@
+import logging
 import numpy as np
 import matplotlib.pyplot as plt
+import pathlib
+
+
+def add_tag_2_path(tag, path):
+    """
+    Add a tag at the end of the name of the file in the given path
+
+    Parameters
+    ----------
+    suffix : str
+    pathlib.Path
+        suffix to add to the filename
+
+    path : pathlib.Path
+        A file name or a path to a file
+    """
+
+    path = pathlib.Path(path)
+
+    return path.parent / f'{path.stem}_{tag}{path.suffix}'
 
 
 def plot_top_values(stats, n_top=25, title="", xlabel="", ylabel="",
@@ -39,32 +60,78 @@ def plot_top_values(stats, n_top=25, title="", xlabel="", ylabel="",
     return
 
 
-def plot_doc_scores(y, path2figure=None):
+def plot_doc_scores(scores, n_pos, path2figure=None):
     """
     Plot sorted document scores
+
+    Parameters
+    ----------
+    scores : list
+        A list of scores
+
+    n_pos : float
+        The position to mark in the plot.
     """
 
-    breakpoint()
+    # Parameters
+    N = len(scores)
+    s_max = np.max(scores)
 
+    # Sort scores in ascending order
+    sorted_scores = sorted(scores)
+
+    # #############
+    # Sorted scores
+
+    # Plot sorted scores in linear scale
     plt.figure()
-    plt.plot(sorted(y))
+    plt.plot(sorted_scores, label='score')
+    # Plot score threshold
+    z = N - n_pos
+    plt.plot([z, z], [0, s_max], ':r', label='threshold')
     plt.title('Sorted document scores')
     plt.xlabel('Document')
     plt.ylabel('Score')
+    plt.legend()
     plt.show(block=False)
 
     if path2figure is not None:
         plt.savefig(path2figure)
+        logging.info(f"-- Figure saved in {path2figure}")
+        plt.savefig(path2figure)
 
+    # Plot sorted scores in xlog scale and descending order
     plt.figure()
-    plt.semilogx(-np.sort(-y))
+    plt.semilogx(range(1, N + 1), -np.sort(-scores), label='score')
+    # Plot score threshold
+    plt.semilogx([n_pos, n_pos], [0, s_max], ':r', label='threshold')
     plt.title('Sorted document scores (log-scale, descending order)')
     plt.xlabel('Document')
     plt.ylabel('Score')
+    plt.legend()
     plt.show(block=False)
 
     if path2figure is not None:
-        plt.savefig(path2figure)
+        path2figure_log = add_tag_2_path('log', path2figure)
+        logging.info(f"-- Figure saved in {path2figure_log}")
+        plt.savefig(path2figure_log)
+
+    # ###############
+    # Score histogram
+
+    # Plot sorted scores in xlog scale and descending order
+    plt.figure()
+    # Set log=True to show bar heights in log scale.
+    plt.hist(scores, bins=20, log=False)
+    plt.title('Score distribution')
+    plt.xlabel('Score')
+    plt.ylabel('Number of items')
+    plt.show(block=False)
+
+    if path2figure is not None:
+        path2figure_hist = add_tag_2_path('hist', path2figure)
+        logging.info(f"-- Figure saved in {path2figure_hist}")
+        plt.savefig(path2figure_hist)
 
     return
 

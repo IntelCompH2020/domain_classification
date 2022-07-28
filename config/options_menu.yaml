@@ -103,6 +103,7 @@ PU_learning:
   options:
     - train_PUmodel
     - evaluate_PUmodel
+    - performance_metrics
 
 get_feedback:
   title: Get relevance feedback from user
@@ -112,6 +113,7 @@ update_model:
   options:
     - retrain_model
     - reevaluate_model
+    - performance_metrics
 
 # ######################
 # Options for get_labels
@@ -147,6 +149,9 @@ predict_PU:
 evaluate_PUmodel:
   title: Evaluate PU classifier model with the available labels
 
+performance_metrics:
+  title: Show all performance metrics
+
 # ########################
 # Options for update_model
 retrain_model:
@@ -154,6 +159,9 @@ retrain_model:
 
 reevaluate_model:
   title: Evaluate retrained model.
+
+performance_metrics:
+  title: Show all performance metrics
 
 # ####################
 # ####################

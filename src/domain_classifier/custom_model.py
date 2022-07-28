@@ -490,11 +490,13 @@ class CustomModel(nn.Module):
         self.load_state_dict(torch.load(load_path))
 
     def freeze_encoder_layer(self):
+
         for param in self.encoderTransform.parameters():
             # print(param.requires_grad)
             param.requires_grad = False
 
     def unfreeze_encoder_layer(self):
+
         for param in self.encoderTransform.parameters():
             # print(param.requires_grad)
             param.requires_grad = True

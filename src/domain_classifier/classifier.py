@@ -12,6 +12,7 @@ import pandas as pd
 import numpy as np
 import torch
 import copy
+from pprint import pprint
 
 from sklearn import model_selection
 from tqdm import tqdm
@@ -20,11 +21,13 @@ from simpletransformers.classification import ClassificationModel
 from transformers.models.roberta.configuration_roberta import RobertaConfig
 from transformers.models.mpnet.configuration_mpnet import MPNetConfig
 
+from transformers import logging as hf_logging
+
 from .custom_model import CustomModel
 # from .custom_model_roberta import RobertaCustomModel
 # from .custom_model_mpnet import MPNetCustomModel
+from . import metrics
 
-from transformers import logging as hf_logging
 
 # Mnemonics for values in column 'train_test'
 TRAIN = 0
@@ -252,9 +255,20 @@ class CorpusClassifier(object):
 
         return
 
-    def train_model(self, epochs=3, evaluate=True):
+    def train_model(self, epochs=3, evaluate=True, freeze_encoder=True):
         """
         Train binary text classification model based on transformers
+
+        Parameters
+        ----------
+        epochs : int, optional (default=3)
+            Number of training epochs
+        evaluate : bool, optional (default=True)
+            If True, the model is selected based on the training data
+        freeze_encoder : bool, optional (default=True)
+            If True, the embedding layer is frozen, so that only the
+            classification layers is updated. This is useful to use
+            precomputed embedings for large datasets.
 
         Notes
         -----
@@ -301,6 +315,10 @@ class CorpusClassifier(object):
         #     self.model = MPNetCustomModel(
         #         self.config, self.path2transformers, self.model_name)
 
+        # Freeze encoder layer if needed
+        if freeze_encoder:
+            self.model.freeze_encoder_layer()
+
         # Best model selection
         best_epoch = 0
         best_result = 0
@@ -310,14 +328,16 @@ class CorpusClassifier(object):
         # Train the model
         logging.info(f"-- Training model with {len(df_train)} documents...")
         t0 = time()
-        for e in tqdm(range(epochs), desc="Train epoch"):
+        for i, e in enumerate(tqdm(range(epochs), desc="Train epoch")):
 
             # Train epoch
             epoch_loss, epoch_time = self.model.train_model(
                 df_train, self.device)
 
+            logging.info(f"-- -- Epoch: {i} completed. loss: {epoch_loss:.3f}")
+
             if evaluate:
-                # #########################
+                # ##########
                 # Evaluation
 
                 # Get test data (rows with value 1 in column 'train_test')
@@ -364,7 +384,7 @@ class CorpusClassifier(object):
                                 f"prob_pred"] = 1 / (1 + np.exp(-delta))
 
         # Freeze middle layers
-        self.model.freeze_encoder_layer()
+        # self.model.freeze_encoder_layer()
 
         # Save model
         self.model.save(model_dir)
@@ -401,8 +421,9 @@ class CorpusClassifier(object):
 
         # Get test data (rows with value 1 in column 'train_test')
         # Note that we select the columns required for training only
-        df_test = self.df_dataset[
-            self.df_dataset.train_test == TEST][['id', 'text', 'labels']]
+        train_test_entries = ((self.df_dataset.train_test == TRAIN)
+                              | (self.df_dataset.train_test == TEST))
+        df_test = self.df_dataset[train_test_entries][['id', 'text', 'labels']]
 
         if tag_score == "PUscore":
             df_test["sample_weight"] = 1
@@ -421,21 +442,21 @@ class CorpusClassifier(object):
 
         # SCORES: Fill scores for the evaluated data
         self.df_dataset.loc[
-            self.df_dataset['train_test'] == TEST,
+            train_test_entries,
             [f"{tag_score}_0", f"{tag_score}_1"]] = predictions
 
         # PREDICTIONS: Fill predictions for the evaluated data
         delta = predictions[:, 1] - predictions[:, 0]
 
         self.df_dataset["prediction"] = UNUSED
-        self.df_dataset.loc[self.df_dataset['train_test'] == TEST,
+        self.df_dataset.loc[train_test_entries,
                             "prediction"] = (delta > 0).astype(int)
 
         # Fill probabilistic predictions for the evaluated data
         # Scores are mapped to probabilities thoudh a logistic function.
         # FIXME: Check training loss in simpletransformers documentation or
         #        code, to see if logistic loss is appropriate here.
-        self.df_dataset.loc[self.df_dataset['train_test'] == TEST,
+        self.df_dataset.loc[train_test_entries,
                             f"prob_pred"] = 1 / (1 + np.exp(-delta))
 
         # TODO: redefine output of evaluation
@@ -443,6 +464,65 @@ class CorpusClassifier(object):
         wrong_predictions = []
 
         return result, wrong_predictions
+
+    def performance_metrics(self, verbose=True):
+        """
+        Compute performance metrics
+
+        Parameters
+        ----------
+        verbose : boolean, optional (default=True)
+            If True, the output metrics are printed
+        """
+
+        # ################
+        # Training metrics
+
+        df_train = self.df_dataset[self.df_dataset.train_test == TRAIN]
+        # df_test = self.df_dataset[self.df_dataset.train_test == TEST]
+
+        pscores = df_train.prob_pred.to_numpy()
+        preds = df_train.prediction.to_numpy()
+        labels = df_train.PUlabels.to_numpy()
+
+        if set(labels).issubset({0, 1}) and set(preds).issubset({0, 1}):
+            bmetrics_train = metrics.binary_metrics(preds, labels)
+            metrics.print_binary_metrics(
+                bmetrics_train, title="-- -- Metrics based on TRAIN data:")
+            pprint(bmetrics_train)
+
+            eval_scores = metrics.score_based_metrics(pscores, labels)
+            metrics.plot_score_based_metrics(pscores, labels)
+            pprint(eval_scores)
+
+        else:
+            logging.warning(
+                "-- -- There are no predictions for the training samples")
+            bmetrics_train = None
+
+        # ############
+        # Test metrics
+        df_test = self.df_dataset[self.df_dataset.train_test == TEST]
+
+        pscores = df_test.prob_pred.to_numpy()
+        preds = df_test.prediction.to_numpy()
+        labels = df_test.PUlabels.to_numpy()
+
+        if set(labels).issubset({0, 1}) and set(preds).issubset({0, 1}):
+            bmetrics_test = metrics.binary_metrics(preds, labels)
+            metrics.print_binary_metrics(
+                bmetrics_test, title="-- -- Metrics based on TEST data:")
+
+            eval_scores = metrics.score_based_metrics(pscores, labels)
+            metrics.plot_score_based_metrics(pscores, labels)
+            pprint(eval_scores)
+
+        else:
+            logging.warning(
+                "-- -- There are no predictions for the test samples")
+            bmetrics_test = None
+
+        return bmetrics_train, bmetrics_test
 
     def AL_sample(self, n_samples=5, sampler='extremes', p_ratio=0.8,
                   top_prob=0.1):
@@ -568,7 +648,7 @@ class CorpusClassifier(object):
 
         return
 
-    def retrain_model(self):
+    def retrain_model(self, freeze_encoder=True):
         """
         Re-train the classifier model using annotations
         """
@@ -617,6 +697,9 @@ class CorpusClassifier(object):
 
         # ##############
         # Classification
+
+        if freeze_encoder:
+            self.model.freeze_encoder_layer()
 
         # Train the model
         t0 = time()
