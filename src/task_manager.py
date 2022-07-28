@@ -628,6 +628,7 @@ class TaskManager(baseTaskManager):
 
         # Configuration parameters
         freeze_encoder = self.global_parameters['classifier']['freeze_encoder']
+        epochs = self.global_parameters['classifier']['epochs']
 
         # Labels from the PU dataset are stored in column "PUlabels". We must
         # copy them to column "labels" which is the name required by
@@ -646,7 +647,7 @@ class TaskManager(baseTaskManager):
                                  random_state=0)
 
         # Train the model using simpletransformers
-        self.dc.train_model(freeze_encoder=freeze_encoder)
+        self.dc.train_model(freeze_encoder=freeze_encoder, epochs=epochs)
 
         # Update status.
         # Since training takes much time, we store the classification results
@@ -685,7 +686,28 @@ class TaskManager(baseTaskManager):
         current dataset.
         """
 
-        self.dc.performance_metrics()
+        bmetrics_train, bmetrics_test, roc_train, roc_test = (
+            self.dc.performance_metrics())
+
+        # Plot rocs
+        if roc_train is not None:
+            p2fig = self.path2output / f'{self.class_name}_PU_ROC_train.png'
+            plotter.plot_roc(
+                roc_train['fpr_roc'], roc_train['tpr_roc'],
+                fpr0=bmetrics_train['fpr'],
+                tpr0=bmetrics_train['tpr'],
+                title="ROC (train)",
+                label=f"Train (AUC = {roc_train['auc']:.2f})",
+                path2figure=p2fig)
+        if roc_test is not None:
+            p2fig = self.path2output / f'{self.class_name}_PU_ROC_test.png'
+            plotter.plot_roc(
+                roc_test['fpr_roc'], roc_test['tpr_roc'],
+                fpr0=bmetrics_test['fpr'],
+                tpr0=bmetrics_test['tpr'],
+                title="ROC (test)",
+                label=f"Test (AUC = {roc_test['auc']:.2f})",
+                path2figure=p2fig)
 
         return
 

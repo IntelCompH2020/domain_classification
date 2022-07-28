@@ -491,14 +491,14 @@ class CorpusClassifier(object):
                 bmetrics_train, title="-- -- Metrics based on TRAIN data:")
             pprint(bmetrics_train)
 
-            eval_scores = metrics.score_based_metrics(pscores, labels)
-            metrics.plot_score_based_metrics(pscores, labels)
-            pprint(eval_scores)
+            roc_train = metrics.score_based_metrics(pscores, labels)
+            # metrics.plot_score_based_metrics(pscores, labels)
 
         else:
             logging.warning(
                 "-- -- There are no predictions for the training samples")
             bmetrics_train = None
+            roc_train = None
 
         # ############
         # Test metrics
@@ -513,16 +513,16 @@ class CorpusClassifier(object):
             metrics.print_binary_metrics(
                 bmetrics_test, title="-- -- Metrics based on TEST data:")
 
-            eval_scores = metrics.score_based_metrics(pscores, labels)
-            metrics.plot_score_based_metrics(pscores, labels)
-            pprint(eval_scores)
+            roc_test = metrics.score_based_metrics(pscores, labels)
+            # metrics.plot_score_based_metrics(pscores, labels)
 
         else:
             logging.warning(
                 "-- -- There are no predictions for the test samples")
             bmetrics_test = None
+            roc_test = None
 
-        return bmetrics_train, bmetrics_test
+        return bmetrics_train, bmetrics_test, roc_train, roc_test
 
     def AL_sample(self, n_samples=5, sampler='extremes', p_ratio=0.8,
                   top_prob=0.1):

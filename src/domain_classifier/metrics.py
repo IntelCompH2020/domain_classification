@@ -9,8 +9,9 @@ import numpy as np
 # Some libraries required for evaluation
 # from sklearn.metrics import precision_recall_fscore_support
 # from sklearn.metrics import average_precision_score, precision_recall_curve
-from sklearn.metrics import confusion_matrix, roc_curve, RocCurveDisplay
+from sklearn.metrics import confusion_matrix, roc_curve, RocCurveDisplay, auc
 import matplotlib.pyplot as plt
+
 
 def binary_metrics(preds, labels):
     """
@@ -121,19 +122,20 @@ def score_based_metrics(scores, labels):
     # Dictionary with the evaluation results
     tpr_roc_float = [float(k) for k in tpr_roc]
     fpr_roc_float = [float(k) for k in fpr_roc]
+
     m = {'tpr_roc': tpr_roc_float,
-         'fpr_roc': fpr_roc_float}
+         'fpr_roc': fpr_roc_float,
+         'auc': auc(fpr_roc_float, tpr_roc_float)}
 
     return m
 
 
 def plot_score_based_metrics(scores, labels):
 
-    display = RocCurveDisplay.from_predictions(
+    RocCurveDisplay.from_predictions(
         labels, scores, sample_weight=None, drop_intermediate=True,
         pos_label=None, name=None, ax=None)
 
-    display.plot()
     plt.show(block=False)
 
     return

@@ -136,7 +136,8 @@ def plot_doc_scores(scores, n_pos, path2figure=None):
     return
 
 
-def plot_roc(fpr, tpr, label="", path2figure=None):
+def plot_roc(fpr, tpr, fpr0=None, tpr0=None, label="", path2figure=None,
+             title='ROC curve'):
     """
     Plots a ROC curve from two lists of fpr and tpr values
 
@@ -146,6 +147,10 @@ def plot_roc(fpr, tpr, label="", path2figure=None):
         False positive rate values
     tpr : array-like
         True positive rate values
+    fpr0 : float or None, optional (default=None)
+        FPR of the operating point. If none no operation point is plotted
+    tpr0 : float or None, optional (default=None)
+        TPR of the operating point. If none no operation point is plotted
     label : str, optional (default="")
         Label for the plot
     path2figure : str or pathlib.Path or None
@@ -153,13 +158,17 @@ def plot_roc(fpr, tpr, label="", path2figure=None):
     """
 
     fig, ax = plt.subplots()
-    plt.plot(fpr, tpr, lw=2.5, label=label)
+    plt.plot(fpr, tpr, lw=2.0, label=label)
+    if fpr0 is not None and tpr0 is not None:
+        plt.plot([fpr0], [tpr0], '.', color='red', markersize=10,
+                 label='Op. point')
     plt.grid(b=True, which='major', color='gray', alpha=0.6,
              linestyle='dotted', lw=1.5)
     plt.xlabel('False Positive Rate (FPR)')
     plt.ylabel('True Positive Rate (TPR)')
     plt.title('ROC curve')
     plt.legend()
+    plt.show(block=False)
 
     if path2figure is not None:
         plt.savefig(path2figure)

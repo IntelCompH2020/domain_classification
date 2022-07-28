@@ -50,6 +50,8 @@ classifier:
   # During learning, only the layers aftert the encoder of the sentence
   # transformer are updated.
   freeze_encoder: True
+  # Number of epochs
+  epochs: 5
 
 # Parameters for the active learning (AL)
 active_learning:
