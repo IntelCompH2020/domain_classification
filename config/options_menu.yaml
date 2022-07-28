@@ -149,7 +149,7 @@ predict_PU:
 evaluate_PUmodel:
   title: Evaluate PU classifier model with the available labels
 
-performance_metrics:
+performance_metrics_PU:
   title: Show all performance metrics
 
 # ########################
@@ -160,7 +160,7 @@ retrain_model:
 reevaluate_model:
   title: Evaluate retrained model.
 
-performance_metrics:
+performance_metrics_PN:
   title: Show all performance metrics
 
 # ####################
