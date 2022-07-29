@@ -64,9 +64,9 @@ active_learning:
   p_ratio: 0.8
   # (Approximate) probability of selecting the doc with the highest score in a
   # single sampling. This parameter is used to control the randomness of the
-  # randomness of the stochastic sampling: if top_prob=1, the highest score
-  # samples are taken deterministically. top_prob=0 is equivalent to random
-  # sampling. (Used for sampler='extremes' only)
+  # stochastic sampling: if top_prob=1, the samples with the highest score are 
+  # are taken deterministically. top_prob=0 is equivalent to random sampling.
+  # (Used for sampler='extremes' only)
   top_prob: 0.1
 
 # Specify format for the log outputs

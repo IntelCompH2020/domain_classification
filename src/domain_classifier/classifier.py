@@ -12,7 +12,6 @@ import pandas as pd
 import numpy as np
 import torch
 import copy
-from pprint import pprint
 
 from sklearn import model_selection
 from tqdm import tqdm
@@ -392,7 +391,7 @@ class CorpusClassifier(object):
 
         return
 
-    def eval_model(self, tag_score='score'):
+    def eval_model(self, tag_score='score', samples='train_test'):
         """
         Compute predictions of the classification model over the input dataset
         and compute performance metrics.
@@ -421,9 +420,16 @@ class CorpusClassifier(object):
 
         # Get test data (rows with value 1 in column 'train_test')
         # Note that we select the columns required for training only
-        train_test_entries = ((self.df_dataset.train_test == TRAIN)
-                              | (self.df_dataset.train_test == TEST))
-        df_test = self.df_dataset[train_test_entries][['id', 'text', 'labels']]
+        if samples == 'train_test':
+            train_test = ((self.df_dataset.train_test == TRAIN)
+                          | (self.df_dataset.train_test == TEST))
+            df_test = self.df_dataset[train_test][['id', 'text', 'labels']]
+        elif samples == 'all':
+            df_test = self.df_dataset[['id', 'text', 'labels']]
+        else:
+            msg = "-- -- Unknown value of parameter 'samples'"
+            logging.error(msg)
+            raise ValueError(msg)
 
         if tag_score == "PUscore":
             df_test["sample_weight"] = 1
@@ -440,24 +446,33 @@ class CorpusClassifier(object):
             df_test, self.device)
         logging.info(f"-- -- Model tested in {time() - t0} seconds")
 
-        # SCORES: Fill scores for the evaluated data
-        self.df_dataset.loc[
-            train_test_entries,
-            [f"{tag_score}_0", f"{tag_score}_1"]] = predictions
-
-        # PREDICTIONS: Fill predictions for the evaluated data
+        # Compute probabilistic predicitons
         delta = predictions[:, 1] - predictions[:, 0]
+        # Scores are mapped to probabilities through a logistic function.
+        prob_preds = 1 / (1 + np.exp(-delta))
 
-        self.df_dataset["prediction"] = UNUSED
-        self.df_dataset.loc[train_test_entries,
-                            "prediction"] = (delta > 0).astype(int)
+        breakpoint()
 
-        # Fill probabilistic predictions for the evaluated data
-        # Scores are mapped to probabilities thoudh a logistic function.
-        # FIXME: Check training loss in simpletransformers documentation or
-        #        code, to see if logistic loss is appropriate here.
-        self.df_dataset.loc[train_test_entries,
-                            f"prob_pred"] = 1 / (1 + np.exp(-delta))
+        # Fill dataset with the evaluation data:
+        if samples == 'train_test':
+            # Scores
+            self.df_dataset.loc[train_test, [f"{tag_score}_0",
+                                             f"{tag_score}_1"]] = predictions
+            # Class predictions
+            self.df_dataset["prediction"] = UNUSED
+            self.df_dataset.loc[train_test, "prediction"] = (
+                (delta > 0).astype(int))
+            # Probabilistic predictions
+            self.df_dataset.loc[train_test, "prob_pred"] = prob_preds
+
+        elif samples == 'all':
+            # Scores
+            self.df_dataset[[f"{tag_score}_0",
+                             f"{tag_score}_1"]] = predictions
+            # Class predictions
+            self.df_dataset["prediction"] = (delta > 0).astype(int)
+            # Probabilistic predictions
+            self.df_dataset["prob_pred"] = prob_preds
 
         # TODO: redefine output of evaluation
         # result = {}
@@ -595,52 +610,83 @@ class CorpusClassifier(object):
             self.df_dataset[['sampling_prob']] = UNUSED
 
         if sampler == 'random':
-            # Sampling probability for each selected doc
-            p = len(selected_docs)   # Population size
-            selected_docs = selected_docs.sample(n_samples)
-            idx = selected_docs.index
-            self.dataset[idx, 'sampling_prob'] = p
+
+            if len(selected_docs > 0):
+                # ##############################
+                # Compute sampling probabilities
+                p = 1 / len(selected_docs)   # Population size
+
+                # ###########
+                # Sample docs
+                selected_docs = selected_docs.sample(n_samples)
+                selected_docs['sampling_prob'] = p
 
         elif sampler == 'extremes':
-            # Parameters
-            # Number of positive an negative samples to take
-            n_pos = int(p_ratio * n_samples)
-            n_neg = n_samples - n_pos
 
-            # Generate exponentially decreasing selection probabilities
-            n_doc = len(selected_docs)
-            p = (1 - top_prob) ** np.array(range(n_doc))
-            p = p / np.sum(p)
+            if len(selected_docs > 0):
+                # ##############################
+                # Compute sampling probabilities
 
-            # Sample documents with the highest scores
-            inds = np.argsort(- selected_docs['prob_pred'])
-            selected_inds = np.random.choice(
-                inds, size=n_pos, replace=False, p=p)
-            selected_pos = selected_docs.iloc[selected_inds]
+                # Number of positive an negative samples to take
+                n_pos = int(p_ratio * n_samples)
+                n_neg = n_samples - n_pos
 
-            # Sample documents with the smallest scores
-            inds = np.argsort(selected_docs['prob_pred'])
-            selected_inds = np.random.choice(
-                inds, size=n_neg, replace=False, p=p)
-            selected_neg = selected_docs.iloc[selected_inds]
+                # Generate exponentially decreasing selection probabilities
+                n_doc = len(selected_docs)
+                p = (1 - top_prob) ** np.array(range(n_doc))
+                p = p / np.sum(p)
 
-            selected_docs = pd.concat((selected_pos, selected_neg))
+                # ###########
+                # Sample docs
+
+                # Sample documents with the highest scores
+                # Sort selected docs by score
+                selected_docs = selected_docs.sort_values(
+                    'prob_pred', axis=0, ascending=False)
+                selected_docs['sampling_prob'] = p
+                selected_pos = selected_docs.sample(
+                    n=n_pos, replace=False, weights='sampling_prob', axis=0)
+
+                # Sample documents with the smallest scores
+                selected_docs = selected_docs.sort_values(
+                    'prob_pred', axis=0, ascending=True)
+                selected_docs['sampling_prob'] = p
+                selected_neg = selected_docs.sample(
+                    n=n_neg, replace=False, weights='sampling_prob', axis=0)
+
+                # Join samples
+                selected_docs = pd.concat((selected_pos, selected_neg))
 
         elif sampler == 'full_rs':
-            n_half = n_samples // 2
-            selected_docs = selected_docs.sample(n_half)
-            unused_docs = unused_docs.sample(n_samples - n_half)
-            selected_docs = pd.concat((selected_docs, unused_docs))
 
-            idx = selected_docs.index
-            selected_docs[idx, 'sampling_prob'] = 1 / len(selected_docs)
+            # ##############################
+            # Compute sampling probabilities
+
+            # ###########
+            # Sample docs
+
+            n_half = n_samples // 2
+            if len(selected_docs) >= n_half:
+                p_selected = 1 / len(selected_docs)
+                selected_docs = selected_docs.sample(n_half)
+                selected_docs['sampling_prob'] = p_selected
+            if len(unused_docs) >= n_samples - n_half:
+                p_unused = 1 / len(unused_docs)
+                unused_docs = unused_docs.sample(n_samples - n_half)
+                unused_docs['sampling_prob'] = p_unused
+
+            selected_docs = pd.concat((selected_docs, unused_docs))
 
         else:
             logging.warning(f"-- Unknown sampling algorithm: {sampler}")
             return None
 
         idx = selected_docs.index
+        # Register sampling mode
         selected_docs.loc[idx, 'sampler'] = sampler
+        # Register sampling probabilities
+        cols = ['sampler', 'sampling_prob']
+        self.df_dataset.loc[idx, cols] = selected_docs[cols]
 
         return selected_docs
 
@@ -681,6 +727,41 @@ class CorpusClassifier(object):
         now = datetime.now()
         date_str = now.strftime("%d/%m/%Y %H:%M:%S")
         self.df_dataset.loc[idx, 'date'] = date_str
+
+        return
+
+    def update_annotations(self, df_annotations, label_name):
+        """
+        Updates self.df_dataset with the annotation data and metadata in
+        the input dataframe.
+
+        Parameters
+        ----------
+        df_annotations : pandas.dataFrame
+            A dataframe of annotations.
+        label_name : Name of the column containing the class annotations
+        """
+
+        breakpoint()
+
+        # Select from the input dataframe the columns related to annotations
+        valid_cols = ['id', label_name, 'sampler', 'sampling_prob', 'date',
+                      'train_test']
+        cols = [c for c in valid_cols if c in self.df_dataset.columns]
+        df_annotations = df_annotations[cols]
+
+        # Remove rows that are not in the current dataset
+        df_annotations = df_annotations.loc[
+            df_annotations['id'].isin(self.df_dataset['id'])]
+
+        # Create columns that did not exist
+        new_cols = [c for c in df_annotations.cols if c not in self.df_dataset]
+        for col in new_cols:
+            self.df_dataset[col] = UNUSED
+
+        # Merge into the current dataset
+        self.df_dataset = self.df_dataset.set_index('id').update(
+            df_annotations.set_index('id'), join='left', overwrite=True)
 
         return
 

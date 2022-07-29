@@ -80,8 +80,10 @@ class DataManager(object):
         # self.path2labels = pathlib.Path(path2labels)   # No longer used
         self.path2datasets = pathlib.Path(path2datasets)
         self.path2models = pathlib.Path(path2models)
+
         if path2embeddings is not None:
             self.path2embeddings = pathlib.Path(path2embeddings)
+
         # The path to the corpus is given when calling the load_corpus method
         self.path2corpus = None
 
@@ -136,6 +138,32 @@ class DataManager(object):
         dataset_list = list(set(dataset_list))
 
         return dataset_list
+
+    def get_annotation_list(self):
+        """
+        Returns the list of available corpus
+        """
+
+        # Data location
+        prefix = f"labels_{self.corpus_name}_"
+        folder = self.path2corpus / 'annotations'
+
+        # If there is no annotation folder, return an empty list.
+        if not folder.is_dir():
+            return []
+
+        # Read files
+        files = [e.stem for e in folder.iterdir()
+                 if e.is_file() and e.stem.startswith(prefix)]
+
+        # Remove prefixes and get tags only:
+        tags = [e[len(prefix):] for e in files]
+
+        # Since the dataset folder might contain diferent file formats of the
+        # same annotation file, we take unique names
+        tags = list(set(tags))
+
+        return tags
 
     def get_model_list(self):
         """
@@ -657,7 +685,7 @@ class DataManager(object):
 
         logging.info(f"-- -- Labels {tag} removed")
 
-    def import_labels(self, ids_corpus=None, tag="imported"):
+    def import_AI_subcorpus(self, ids_corpus=None, tag="imported"):
         """
         Loads a subcorpus of positive labels from file.
 
@@ -727,6 +755,56 @@ class DataManager(object):
 
         # The log message is returned to be shown in a GUI, if needed
         return ids_pos, msg
+
+    def import_annotations(self, tag):
+        """
+        Loads a file with annotations.
+
+        Parameters
+        ----------
+        tag: str
+            Name used to identify the annmotation file.
+
+        Returns
+        -------
+        df_annotations: pandas.dataFrame
+            Dataframe of annotations.
+        """
+
+        # Read labels file
+        path2labels = (self.path2corpus / 'annotations'
+                       / f"labels_{self.corpus_name}_{tag}.xlsx")
+        df_annotations = pd.read_excel(path2labels)
+
+        return df_annotations
+
+    def export_annotations(self, df_annotations, tag):
+        """
+        Saves a file with annotations.
+
+        Parameters
+        ----------
+        ids_corpus: list
+            List of ids of the documents in the corpus. Only the labels with
+            ids in ids_corpus are imported and saved into the output file.
+        tag: str, optional (default="imported")
+            Name for the category defined by the positive labels.
+
+        Returns
+        -------
+        ids_pos: list
+            List of ids of documents from the positive class
+        """
+
+        # Create folder if it does not exist
+        folder = self.path2corpus / 'annotations'
+        if not folder.is_dir():
+            folder.mkdir()
+
+        path2labels = folder / f"labels_{self.corpus_name}_{tag}.xlsx"
+        df_annotations.to_excel(path2labels)
+
+        return
 
     def save_dataset(self, df_dataset, tag="", save_csv=False):
         """

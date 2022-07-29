@@ -23,6 +23,8 @@ import matplotlib.pyplot as plt
 # here because the same message must be used in both cases.
 NO_GOLD_STANDARD = 'Do not use a Gold Standard.'
 
+# Name of the column of annotations in the datasets of manual labels
+ANNOTATIONS = 'annotations'
 
 class TaskManager(baseTaskManager):
 
@@ -77,7 +79,6 @@ class TaskManager(baseTaskManager):
         self.ready2setup = None
         self.set_logs = None
         self.logger = None
-        self.dc = None
 
         super().__init__(path2project, path2source, config_fname=config_fname,
                          metadata_fname=metadata_fname, set_logs=set_logs)
@@ -110,10 +111,21 @@ class TaskManager(baseTaskManager):
 
         # Corpus dataframe
         self.df_corpus = None      # Corpus dataframe
-        self.df_dataset = None     # Datasets of inputs, labels and outputs
         self.class_name = None     # Name of the working category
         self.keywords = None
         self.CorpusProc = None
+
+        # CorpusClassifier object.
+        self.dc = None
+
+        # Temporary datasets of inputs, labels and outputs
+        # WARNING: the content of this attribute will be a dataframe that
+        #          will be loaded into the corpus_classifier object (self.dc).
+        #          There, the dataset (in self.dc.dataset) will be modified
+        #          and enriched with labels and predictions. The most updated
+        #          version of the dataset should be taken from self.dc.dataset,
+        #          when available.
+        self.df_dataset = None
 
         # Extend base variables (defined in the base class) for state and
         # metadata with additional fields
@@ -172,6 +184,26 @@ class TaskManager(baseTaskManager):
             dataset_list = self.DM.get_dataset_list()
 
         return dataset_list
+
+    def _get_annotation_list(self):
+        """
+        Returns the list of available files with class annotations
+        (i.e. class labels, likely obtained from annotations by humans in
+        previous active learning sessions)
+        """
+
+        # Just to abbreviate
+        corpus_name = self.metadata['corpus_name']
+
+        if corpus_name is None:
+            logging.warning("\n")
+            logging.warning(
+                "-- No corpus loaded. You must load a corpus first")
+            annotations_list = []
+        else:
+            annotations_list = self.DM.get_annotation_list()
+
+        return annotations_list
 
     def _get_gold_standard_labels(self):
         """
@@ -295,9 +327,13 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def import_labels(self):
+    def import_AI_subcorpus(self):
         """
-        Import labels from file
+        Import a subcorpus of documents related to AI.
+
+        This method is very specific. Loads a subcorpus from EU_projects that
+        is available from file. Not to be used for other corpora or other
+        target domains.
         """
 
         if self.metadata['corpus_name'] == "EU_projects":
@@ -305,7 +341,7 @@ class TaskManager(baseTaskManager):
             ids_corpus = self.df_corpus['id']
             self.class_name = 'AIimported'
             # Import ids of docs from the positive class
-            ids_pos, msg = self.DM.import_labels(
+            ids_pos, msg = self.DM.import_AI_subcorpus(
                 ids_corpus=ids_corpus, tag=self.class_name)
 
             # Generate dataset dataframe
@@ -388,6 +424,9 @@ class TaskManager(baseTaskManager):
 
         # ############
         # Save dataset
+        # (note that we do not call self._save_dataset() here, because we
+        #  are saving self.df_dataset, and not self.dc.df_dataset (the
+        #  classifier object has not been created yet))
         msg = self.DM.save_dataset(
             self.df_dataset, tag=self.class_name, save_csv=True)
 
@@ -629,12 +668,20 @@ class TaskManager(baseTaskManager):
         # Configuration parameters
         freeze_encoder = self.global_parameters['classifier']['freeze_encoder']
 
+        if self.dc is not None:
+            # If there exists a classifier object, update the local dataset,
+            # to generate the new classifier objetc.
+            # This is to prevent label losses if the user trains a model,
+            # annotates labels and then trains for a second time.
+            self.df_dataset = self.dc.df_dataset
+
         # Labels from the PU dataset are stored in column "PUlabels". We must
         # copy them to column "labels" which is the name required by
         # simpletransformers
         self.df_dataset[['labels']] = self.df_dataset[['PUlabels']]
 
         path2model = self.path2models / self.class_name
+
         self.dc = CorpusClassifier(
             self.df_dataset,
             model_type=self.global_parameters['classifier']['model_type'],
@@ -658,7 +705,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def evaluate_PUmodel(self):
+    def evaluate_PUmodel(self, samples="train_test"):
         """
         Evaluate a domain classifiers
         """
@@ -668,7 +715,8 @@ class TaskManager(baseTaskManager):
             return
 
         # Evaluate the model over the test set
-        result, wrong_predictions = self.dc.eval_model(tag_score='PUscore')
+        result, wrong_predictions = self.dc.eval_model(
+            tag_score='PUscore', samples=samples)
 
         # Pretty print dictionary of results
         logging.info(f"-- Classification results: {result}")
@@ -711,9 +759,9 @@ class TaskManager(baseTaskManager):
 
         # Add AUC in roc to the metrics dictionary:
         if metrics_train is not None and roc_train is not None:
-            metrics_train['AUC'] = roc_train['AUC']
+            metrics_train['AUC'] = roc_train['auc']
         if metrics_test is not None and roc_train is not None:
-            metrics_test['AUC'] = roc_test['AUC']
+            metrics_test['AUC'] = roc_test['auc']
 
         if self.class_name not in self.metadata:
             self.metadata[self.class_name] = {}
@@ -773,7 +821,9 @@ class TaskManager(baseTaskManager):
         labels = self.get_labels_from_docs(selected_docs)
 
         # STEP 3: Annotate
-        self.dc.annotate(idx, labels)
+        self.dc.annotate(idx, labels, col=ANNOTATIONS)
+
+        breakpoint()
 
         # Update dataset file to include new labels
         self._save_dataset()
@@ -847,6 +897,40 @@ class TaskManager(baseTaskManager):
         self._save_dataset()
 
         return result
+
+    def import_annotations(self, domain_name):
+        """
+        Imports / exports annotations from / to a file in the dataset folder.
+
+        This will be useful to share annotations from different projects.
+        """
+
+        df_annotations = self.DM.import_annotations(domain_name, ANNOTATIONS)
+
+        # Integrate annotations into dataset...
+        self.dc.update_annotations(df_annotations)
+        self._save_dataset()
+
+        return
+
+    def export_annotations(self, mode, domain_name):
+        """
+        Imports / exports annotations from / to a file in the dataset folder.
+
+        This will be useful to share annotations from different projects.
+        """
+
+        # Extract label dataframe from the dataset.
+        cols = ['id', ANNOTATIONS, 'sampler', 'sampling_prob',
+                'date', 'train_test']
+        cols = [c for c in cols if c in self.dc.df_dataset.columns]
+
+        df_annotations = self.dc.df_dataset[cols]
+
+        logging.info("-- Saving annotations in source folder")
+        self.DM.export_annotations(df_annotations, domain_name)
+
+        return
 
 
 class TaskManagerCMD(TaskManager):
@@ -1143,6 +1227,18 @@ class TaskManagerCMD(TaskManager):
             labels = []
 
         return labels
+
+    def export_annotations(self):
+
+        # Get domain_name
+        domain_name = self.QM.ask_value(
+            query=("Write the name of the domain"),
+            convert_to=str,
+            default="unknown_domain")
+
+        super().export_annotations(domain_name)
+
+        return
 
     def train_PUmodel(self):
         """

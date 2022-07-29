@@ -16,6 +16,7 @@ root:
     - PU_learning
     - get_feedback
     - update_model
+    - import_export_annotations
 
 # In the following, each menu option is described.
 # GENERIC FORMAT OF AN OPTION DESCRIPTOR:
@@ -34,10 +35,10 @@ root:
 #      arguments are needed.
 #      The single key of each dictionary specifes the way to get the input
 #      arguments. There are thres possible ways: >
-#     <1: 'parameter': in that case, the options are defined in another
+#     <1: 'parameters': in that case, the options are defined in another
 #                      dictionary, where the keys are the input arguments and
 #                      the values describe the meaning of the input argument>
-#     - parameter:
+#     - parameters:
 #         param0: description
 #         param1: description
 #         ...
@@ -81,7 +82,7 @@ load_corpus:
 get_labels:
   title: Select a preliminary subcorpus from the positive class
   options:
-    - import_labels
+    - import_AI_subcorpus
     - get_labels_by_keywords
     - analyze_keywords
     - get_labels_by_topics
@@ -108,7 +109,7 @@ PU_learning:
 get_feedback:
   title: Get relevance feedback from user
   options:
-    - parameter:
+    - parameters:
         random: Random sampling over the test-train split, for retraining 
         extremes: Sampling biased towards confident predictions, for retraining
         full_rs: Fully random sampling over the whole dataset, for testing
@@ -120,9 +121,15 @@ update_model:
     - reevaluate_model
     - performance_metrics_PN
 
+import_export_annotations:
+  title: Import / export annotations
+  options:
+    - import: "Import annotations (warning: annotations from this session will be lost)"
+    - export: "Export annotations (warning: deletes older annotation files)"
+
 # ######################
 # Options for get_labels
-import_labels:
+import_AI_subcorpus:
     title: Import labels from a source file
 
 get_labels_by_keywords:
@@ -153,6 +160,10 @@ predict_PU:
 
 evaluate_PUmodel:
   title: Evaluate PU classifier model with the available labels
+  options:
+    - parameters:
+        train_test: Evaluate samples used for training and test only
+        all: Evaluate all samples in the local dataset
 
 performance_metrics_PU:
   title: Show all performance metrics
@@ -167,6 +178,17 @@ reevaluate_model:
 
 performance_metrics_PN:
   title: Show all performance metrics
+
+
+# ########################
+# Options for import_export_annotations
+import_annotations:
+  title: "Import annotations (warning: annotations from this session will be lost)"
+  options:
+    - get_method: _get_annotation_list
+
+export_annotations:
+  title: "Export annotations (warning: deletes older annotation files)"
 
 # ####################
 # ####################

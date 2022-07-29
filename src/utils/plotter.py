@@ -166,7 +166,7 @@ def plot_roc(fpr, tpr, fpr0=None, tpr0=None, label="", path2figure=None,
              linestyle='dotted', lw=1.5)
     plt.xlabel('False Positive Rate (FPR)')
     plt.ylabel('True Positive Rate (TPR)')
-    plt.title('ROC curve')
+    plt.title(title)
     plt.legend()
     plt.show(block=False)
 
