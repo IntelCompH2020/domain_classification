@@ -902,7 +902,8 @@ class TaskManagerCMD(TaskManager):
         keywords = self.QM.ask_keywords(kw_library)
 
         if keywords == ['__all_AI']:
-            keywords = 'artificial intelligence' + self.DM.get_keywords_list()
+            keywords = (
+                ['artificial intelligence'] + self.DM.get_keywords_list())
 
         return keywords
 
