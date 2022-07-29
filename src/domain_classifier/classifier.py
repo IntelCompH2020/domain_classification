@@ -540,6 +540,10 @@ class CorpusClassifier(object):
             - If "extremes", samples are taken stochastically, but with
               documents with the highest or smallest probability scores are
               selected with higher probability.
+            - If "full_rs", samples are taken at random from the whole dataset
+              for testing purposes. Half samples are taken at random from the
+              train-test split, while the rest is taken from the other
+              documents
 
         p_ratio : float, optional (default=0.8)
             Ratio of high-score samples. The rest will be low-score samples.
@@ -555,29 +559,50 @@ class CorpusClassifier(object):
         -------
         df_out : pandas.dataFrame
             Selected samples
+
+        Notes
+        -----
+        Besides the output dataframe, this method updates columns 'sampler' and
+        'sampling_prob' from self.dataframe.
+            - 'sampler' stores the sampling method that selected the doc.
+            - 'sampling_prob' is the probability with which each doc was
+        selected. This is approximate, since the sampling of multiple documents
+        is done without replacement, but it is reasonably accurate if the
+        population sizes are large enough.
         """
 
         # Select documents with predictions only
         selected_docs = self.df_dataset.loc[
             self.df_dataset.prediction != UNUSED]
 
-        # Select documents without annotations only
-        if 'annotations' in selected_docs.columns:
-            selected_docs = selected_docs.loc[
-                selected_docs.annotations == UNUSED]
+        if sampler == 'full_rs':
+            unused_docs = self.df_dataset.loc[
+                self.df_dataset.prediction == UNUSED]
+        else:
+            # Select documents without annotations only
+            if 'annotations' in selected_docs.columns:
+                selected_docs = selected_docs.loc[
+                    selected_docs.annotations == UNUSED]
 
         if len(selected_docs) < n_samples:
             logging.warning(
                 "-- Not enough documents with predictions in the dataset")
             return selected_docs
 
+        if 'sampler' not in self.df_dataset:
+            self.df_dataset[['sampler']] = UNUSED
+        if 'sampling_prob' not in self.df_dataset:
+            self.df_dataset[['sampling_prob']] = UNUSED
+
         if sampler == 'random':
+            # Sampling probability for each selected doc
+            p = len(selected_docs)   # Population size
             selected_docs = selected_docs.sample(n_samples)
-            # FIXME: Try intelligent sample selection based on the scores or
-            #        the probabilistic predictions in the self.df_dataset.
+            idx = selected_docs.index
+            self.dataset[idx, 'sampling_prob'] = p
+
         elif sampler == 'extremes':
             # Parameters
-            # FIXME: Consider taking some of these parameters as input args.
             # Number of positive an negative samples to take
             n_pos = int(p_ratio * n_samples)
             n_neg = n_samples - n_pos
@@ -601,9 +626,21 @@ class CorpusClassifier(object):
 
             selected_docs = pd.concat((selected_pos, selected_neg))
 
+        elif sampler == 'full_rs':
+            n_half = n_samples // 2
+            selected_docs = selected_docs.sample(n_half)
+            unused_docs = unused_docs.sample(n_samples - n_half)
+            selected_docs = pd.concat((selected_docs, unused_docs))
+
+            idx = selected_docs.index
+            selected_docs[idx, 'sampling_prob'] = 1 / len(selected_docs)
+
         else:
             logging.warning(f"-- Unknown sampling algorithm: {sampler}")
             return None
+
+        idx = selected_docs.index
+        selected_docs.loc[idx, 'sampler'] = sampler
 
         return selected_docs
 
@@ -684,6 +721,7 @@ class CorpusClassifier(object):
         #  Get new annotated samples, not used for retraining yet
         df_clean_new = self.df_dataset[
             self.df_dataset.learned == 0][['id', 'text', 'labels']]
+
         # ##################
         # Integrate datasets
 

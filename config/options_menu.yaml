@@ -107,6 +107,11 @@ PU_learning:
 
 get_feedback:
   title: Get relevance feedback from user
+  options:
+    - parameter:
+        random: Random sampling over the test-train split, for retraining 
+        extremes: Sampling biased towards confident predictions, for retraining
+        full_rs: Fully random sampling over the whole dataset, for testing
 
 update_model: 
   title: Update the classifier model with the latest relevance feedback

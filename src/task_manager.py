@@ -743,10 +743,14 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def get_feedback(self):
+    def get_feedback(self, sampler=None):
         """
         Gets some labels from a user for a selected subset of documents
         """
+
+        # This is for compatibility with the GUI
+        if sampler is None:
+            sampler = self.global_parameters['active_learning']['sampler']
 
         # Check if a classifier object exists
         if not self._is_model():
@@ -755,7 +759,7 @@ class TaskManager(baseTaskManager):
         # STEP 1: Select bunch of documents at random
         selected_docs = self.dc.AL_sample(
             n_samples=self.global_parameters['active_learning']['n_docs'],
-            sampler=self.global_parameters['active_learning']['sampler'],
+            sampler=sampler,
             p_ratio=self.global_parameters['active_learning']['p_ratio'],
             top_prob=self.global_parameters['active_learning']['top_prob'])
 
@@ -898,7 +902,7 @@ class TaskManagerCMD(TaskManager):
         keywords = self.QM.ask_keywords(kw_library)
 
         if keywords == ['__all_AI']:
-            keywords = self.DM.get_keywords_list()
+            keywords = 'artificial intelligence' + self.DM.get_keywords_list()
 
         return keywords
 
