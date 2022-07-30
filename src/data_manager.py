@@ -773,8 +773,8 @@ class DataManager(object):
 
         # Read labels file
         path2labels = (self.path2corpus / 'annotations'
-                       / f"labels_{self.corpus_name}_{tag}.xlsx")
-        df_annotations = pd.read_excel(path2labels)
+                       / f"labels_{self.corpus_name}_{tag}.feather")
+        df_annotations = pd.read_feather(path2labels)
 
         return df_annotations
 
@@ -801,8 +801,11 @@ class DataManager(object):
         if not folder.is_dir():
             folder.mkdir()
 
-        path2labels = folder / f"labels_{self.corpus_name}_{tag}.xlsx"
-        df_annotations.to_excel(path2labels)
+        path2labels = folder / f"labels_{self.corpus_name}_{tag}.feather"
+        df_annotations.to_feather(path2labels)
+
+        path2labels = folder / f"labels_{self.corpus_name}_{tag}.csv"
+        df_annotations.to_csv(path2labels)
 
         return
 

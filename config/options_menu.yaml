@@ -124,8 +124,8 @@ update_model:
 import_export_annotations:
   title: Import / export annotations
   options:
-    - import: "Import annotations (warning: annotations from this session will be lost)"
-    - export: "Export annotations (warning: deletes older annotation files)"
+    - import_annotations
+    - export_annotations
 
 # ######################
 # Options for get_labels

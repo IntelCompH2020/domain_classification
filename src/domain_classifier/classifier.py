@@ -451,8 +451,6 @@ class CorpusClassifier(object):
         # Scores are mapped to probabilities through a logistic function.
         prob_preds = 1 / (1 + np.exp(-delta))
 
-        breakpoint()
-
         # Fill dataset with the evaluation data:
         if samples == 'train_test':
             # Scores
@@ -605,13 +603,13 @@ class CorpusClassifier(object):
             return selected_docs
 
         if 'sampler' not in self.df_dataset:
-            self.df_dataset[['sampler']] = UNUSED
+            self.df_dataset[['sampler']] = "unsampled"
         if 'sampling_prob' not in self.df_dataset:
             self.df_dataset[['sampling_prob']] = UNUSED
 
         if sampler == 'random':
 
-            if len(selected_docs > 0):
+            if len(selected_docs) > n_samples:
                 # ##############################
                 # Compute sampling probabilities
                 p = 1 / len(selected_docs)   # Population size
@@ -623,7 +621,7 @@ class CorpusClassifier(object):
 
         elif sampler == 'extremes':
 
-            if len(selected_docs > 0):
+            if len(selected_docs) > n_samples:
                 # ##############################
                 # Compute sampling probabilities
 
@@ -666,11 +664,11 @@ class CorpusClassifier(object):
             # Sample docs
 
             n_half = n_samples // 2
-            if len(selected_docs) >= n_half:
+            if len(selected_docs) > n_half:
                 p_selected = 1 / len(selected_docs)
                 selected_docs = selected_docs.sample(n_half)
                 selected_docs['sampling_prob'] = p_selected
-            if len(unused_docs) >= n_samples - n_half:
+            if len(unused_docs) > n_samples - n_half:
                 p_unused = 1 / len(unused_docs)
                 unused_docs = unused_docs.sample(n_samples - n_half)
                 unused_docs['sampling_prob'] = p_unused
@@ -741,8 +739,6 @@ class CorpusClassifier(object):
             A dataframe of annotations.
         label_name : Name of the column containing the class annotations
         """
-
-        breakpoint()
 
         # Select from the input dataframe the columns related to annotations
         valid_cols = ['id', label_name, 'sampler', 'sampling_prob', 'date',
