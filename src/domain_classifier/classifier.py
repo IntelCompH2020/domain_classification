@@ -484,7 +484,7 @@ class CorpusClassifier(object):
 
         return result, wrong_predictions
 
-    def performance_metrics(self, tag="", verbose=True):
+    def performance_metrics(self, true_label_name, tag="", verbose=True):
         """
         Compute performance metrics
 

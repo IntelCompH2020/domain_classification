@@ -736,8 +736,11 @@ class TaskManager(baseTaskManager):
         current dataset.
         """
 
+        if tag == 'PU':
+            true_label_name = "PUlabels"
+
         metrics_train, metrics_test, roc_train, roc_test = (
-            self.dc.performance_metrics(tag))
+            self.dc.performance_metrics(true_label_name, tag))
 
         # Plot rocs
         if roc_train is not None:
@@ -779,7 +782,7 @@ class TaskManager(baseTaskManager):
         available at the current dataset
         """
 
-        self._performance_metrics('PU_model')
+        self._performance_metrics('PU')
 
         return
 
