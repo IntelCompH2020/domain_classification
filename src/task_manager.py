@@ -737,7 +737,7 @@ class TaskManager(baseTaskManager):
         """
 
         breakpoint()
-        self.update_names()
+        self.dc.update_names()
         self._save_dataset()
 
         metrics_train, metrics_test, roc_train, roc_test = (
