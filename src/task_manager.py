@@ -737,7 +737,7 @@ class TaskManager(baseTaskManager):
         """
 
         metrics_train, metrics_test, roc_train, roc_test = (
-            self.dc.performance_metrics())
+            self.dc.performance_metrics(tag))
 
         # Plot rocs
         if roc_train is not None:
@@ -767,7 +767,7 @@ class TaskManager(baseTaskManager):
 
         if self.class_name not in self.metadata:
             self.metadata[self.class_name] = {}
-        self.metadata[self.class_name]['PU_model'] = {
+        self.metadata[self.class_name][f'{tag}_model'] = {
             'train': metrics_train,
             'test': metrics_test}
 
