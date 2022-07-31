@@ -382,9 +382,11 @@ class CorpusClassifier(object):
             #        code, to see if logistic loss is appropriate here.
             prob_preds = 1 / (1 + np.exp(-delta))
             self.df_dataset.loc[test_rows, f"{tag}_prob_pred"] = prob_preds
-            # A duplicate of the probablitistic predictions is stored in a
-            # column without the tag, to be identified by the sampler of the
-            # active learning algorithm as the last computed scores
+            # A duplicate of the predictions is stored in columns without the
+            # tag, to be identified by the sampler of the active learning
+            # algorithm as the last computed scores
+            self.df_dataset[f"prediction"] = (
+                self.df_dataset[f"{tag}_prediction"])
             self.df_dataset.loc[test_rows, f"prob_pred"] = prob_preds
 
         # Freeze middle layers
@@ -470,6 +472,13 @@ class CorpusClassifier(object):
             # Probabilistic predictions
             self.df_dataset.loc[train_test, f"{tag}_prob_pred"] = prob_preds
 
+            # A duplicate of the predictions is stored in columns without the
+            # tag, to be identified by the sampler of the active learning
+            # algorithm as the last computed scores
+            self.df_dataset[train_test, f"prediction"] = (
+                delta > 0).astype(int)
+            self.df_dataset.loc[train_test, f"prob_pred"] = prob_preds
+
         elif samples == 'all':
             # Scores
             self.df_dataset[[f"{tag}_score_0", f"{tag}_score_1"]] = scores
@@ -477,6 +486,13 @@ class CorpusClassifier(object):
             self.df_dataset[f"{tag}_prediction"] = (delta > 0).astype(int)
             # Probabilistic predictions
             self.df_dataset[f"{tag}_prob_pred"] = prob_preds
+
+            # A duplicate of the predictions is stored in columns without the
+            # tag, to be identified by the sampler of the active learning
+            # algorithm as the last computed scores
+            self.df_dataset[f"prediction"] = (
+                self.df_dataset[f"{tag}_prediction"])
+            self.df_dataset.loc[f"prob_pred"] = prob_preds
 
         # TODO: redefine output of evaluation
         # result = {}
@@ -592,9 +608,13 @@ class CorpusClassifier(object):
         population sizes are large enough.
         """
 
+        # This is for backward compatibility
+        if 'prediction' not in self.df_dataset:
+            self.df_dataset['prediction'] = self.df_dataset['PU_prediction']
+
         # Select documents with predictions only
         selected_docs = self.df_dataset.loc[
-            self.df_dataset.prediction != UNUSED]
+            self.df_dataset['prediction'] != UNUSED]
 
         if sampler == 'full_rs':
             unused_docs = self.df_dataset.loc[
