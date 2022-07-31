@@ -179,6 +179,13 @@ class CorpusClassifier(object):
 
         return
 
+    def update_names(self):
+
+        breakpoint()
+        print("test")
+
+        return
+
     def load_model_config(self):
         """
         Load configuration for model.
