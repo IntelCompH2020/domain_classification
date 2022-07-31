@@ -254,7 +254,8 @@ class CorpusClassifier(object):
 
         return
 
-    def train_model(self, epochs=3, evaluate=True, freeze_encoder=True):
+    def train_model(self, epochs=3, validate=True, freeze_encoder=True,
+                    tag=""):
         """
         Train binary text classification model based on transformers
 
@@ -262,12 +263,17 @@ class CorpusClassifier(object):
         ----------
         epochs : int, optional (default=3)
             Number of training epochs
-        evaluate : bool, optional (default=True)
-            If True, the model is selected based on the training data
+        validate : bool, optional (default=True)
+            If True, the model epoch is selected based on the F1 score computed
+            over the test data. Otherwise, the model after the last epoch is
+            taken
         freeze_encoder : bool, optional (default=True)
             If True, the embedding layer is frozen, so that only the
             classification layers is updated. This is useful to use
             precomputed embedings for large datasets.
+        tag : str, optional (default="")
+            A preffix that will be used for all result variables (scores and
+            predictions) saved in the dataset dataframe 
 
         Notes
         -----
@@ -307,12 +313,6 @@ class CorpusClassifier(object):
         # Create model
         self.model = CustomModel(self.config, self.path2transformers,
                                  self.model_type, self.model_name)
-        # if self.model_type == 'roberta':
-        #     self.model = RobertaCustomModel(
-        #         self.config, self.path2transformers, self.model_name)
-        # elif self.model_type == 'mpnet':
-        #     self.model = MPNetCustomModel(
-        #         self.config, self.path2transformers, self.model_name)
 
         # Freeze encoder layer if needed
         if freeze_encoder:
@@ -321,7 +321,7 @@ class CorpusClassifier(object):
         # Best model selection
         best_epoch = 0
         best_result = 0
-        best_predictions = None
+        best_scores = None
         best_model = None
 
         # Train the model
@@ -335,10 +335,7 @@ class CorpusClassifier(object):
 
             logging.info(f"-- -- Epoch: {i} completed. loss: {epoch_loss:.3f}")
 
-            if evaluate:
-                # ##########
-                # Evaluation
-
+            if validate:
                 # Get test data (rows with value 1 in column 'train_test')
                 # Note that we select the columns required for training only
                 df_test = self.df_dataset[
@@ -347,40 +344,44 @@ class CorpusClassifier(object):
                 df_test["sample_weight"] = 1
 
                 # Evaluate the model
-                predictions, total_loss, result = self.model.eval_model(
+                # (Note that scores contain the (non-binary, non probabilistic)
+                # classifier outputs).
+                scores, total_loss, result = self.model.eval_model(
                     df_test, self.device)
 
+                # Keep the best model
                 if result["f1"] >= best_result:
                     best_epoch = e
                     best_result = result["f1"]
-                    best_predictions = predictions
+                    best_scores = scores
                     best_model = copy.deepcopy(self.model)
 
         logging.info(f"-- -- Model trained in {time() - t0:.3f} seconds")
 
-        if evaluate:
+        if validate:
+            # Replace the last model by the best model
             self.model = best_model
             logging.info(f"-- Best model in epoch {best_epoch} with "
                          f"F1: {best_result:.3f}")
 
             # SCORES: Fill scores for the evaluated data
+            test_rows = self.df_dataset['train_test'] == TEST
             self.df_dataset.loc[
-                self.df_dataset['train_test'] == TEST,
-                ["PUscore_0", "PUscore_1"]] = best_predictions
+                test_rows, [f"{tag}_score0", f"{tag}_score1"]] = best_scores
 
             # PREDICTIONS: Fill predictions for the evaluated data
-            delta = predictions[:, 1] - predictions[:, 0]
-
-            self.df_dataset["prediction"] = UNUSED
-            self.df_dataset.loc[self.df_dataset['train_test'] == TEST,
-                                "prediction"] = (delta > 0).astype(int)
+            delta = scores[:, 1] - scores[:, 0]
+            # Column "prediction" stores the binary class prediction.
+            self.df_dataset[f"{tag}_prediction"] = UNUSED
+            self.df_dataset.loc[test_rows, f"{tag}_prediction"] = (
+                delta > 0).astype(int)
 
             # Fill probabilistic predictions for the evaluated data
-            # Scores are mapped to probabilities thoudh a logistic function.
+            # Scores are mapped to probabilities through a logistic function.
             # FIXME: Check training loss in simpletransformers documentation or
             #        code, to see if logistic loss is appropriate here.
-            self.df_dataset.loc[self.df_dataset['train_test'] == TEST,
-                                f"prob_pred"] = 1 / (1 + np.exp(-delta))
+            self.df_dataset.loc[
+                test_rows, f"{tag}_prob_pred"] = 1 / (1 + np.exp(-delta))
 
         # Freeze middle layers
         # self.model.freeze_encoder_layer()
@@ -391,23 +392,21 @@ class CorpusClassifier(object):
 
         return
 
-    def eval_model(self, tag_score='score', samples='train_test'):
+    def eval_model(self, samples="train_test", tag=""):
         """
         Compute predictions of the classification model over the input dataset
         and compute performance metrics.
 
         Parameters
         ----------
-        tag_score: str
-            Prefix of the score names.
+        samples : str, optional (default="train_test")
+            Samples to evaluate. If "train_test" only training and test samples
+            are evaluated. Otherwise, all samples in df_dataset attribute
+            are evaluated
+        tag : str
+            Prefix of the score and prediction names.
             The scores will be saved in the columns of self.df_dataset
             containing these scores.
-
-        Notes
-        -----
-        The use of simpletransformers follows the example code in
-        https://towardsdatascience.com/simple-transformers-introducing-the-
-        easiest-bert-roberta-xlnet-and-xlm-library-58bf8c59b2a3
         """
 
         # #############
@@ -423,15 +422,19 @@ class CorpusClassifier(object):
         if samples == 'train_test':
             train_test = ((self.df_dataset.train_test == TRAIN)
                           | (self.df_dataset.train_test == TEST))
-            df_test = self.df_dataset[train_test][['id', 'text', 'labels']]
+            df_test = (
+                self.df_dataset[train_test][['id', 'text', 'labels']].copy())
         elif samples == 'all':
-            df_test = self.df_dataset[['id', 'text', 'labels']]
+            df_test = self.df_dataset[['id', 'text', 'labels']].copy()
         else:
             msg = "-- -- Unknown value of parameter 'samples'"
             logging.error(msg)
             raise ValueError(msg)
 
-        if tag_score == "PUscore":
+        # FIXME: This condition should not be applied as a function of the tag,
+        #        because the tag name can be arbitrarily modified. Maybe this
+        #        weight should be passed as parameter.
+        if tag == "PU":
             df_test["sample_weight"] = 1
         else:
             df_test["sample_weight"] = 10
@@ -442,35 +445,34 @@ class CorpusClassifier(object):
         # Evaluate the model
         logging.info(f"-- -- Testing model with {len(df_test)} documents...")
         t0 = time()
-        predictions, total_loss, result = self.model.eval_model(
+        scores, total_loss, result = self.model.eval_model(
             df_test, self.device)
         logging.info(f"-- -- Model tested in {time() - t0} seconds")
 
         # Compute probabilistic predicitons
-        delta = predictions[:, 1] - predictions[:, 0]
         # Scores are mapped to probabilities through a logistic function.
+        delta = scores[:, 1] - scores[:, 0]
         prob_preds = 1 / (1 + np.exp(-delta))
 
         # Fill dataset with the evaluation data:
         if samples == 'train_test':
             # Scores
-            self.df_dataset.loc[train_test, [f"{tag_score}_0",
-                                             f"{tag_score}_1"]] = predictions
+            self.df_dataset.loc[
+                train_test, [f"{tag}_score_0", f"{tag}_score_1"]] = scores
             # Class predictions
-            self.df_dataset["prediction"] = UNUSED
-            self.df_dataset.loc[train_test, "prediction"] = (
-                (delta > 0).astype(int))
+            self.df_dataset[f"{tag}_prediction"] = UNUSED
+            self.df_dataset.loc[train_test, f"{tag}_prediction"] = (
+                delta > 0).astype(int)
             # Probabilistic predictions
-            self.df_dataset.loc[train_test, "prob_pred"] = prob_preds
+            self.df_dataset.loc[train_test, f"{tag}_prob_pred"] = prob_preds
 
         elif samples == 'all':
             # Scores
-            self.df_dataset[[f"{tag_score}_0",
-                             f"{tag_score}_1"]] = predictions
+            self.df_dataset[[f"{tag}_score_0", f"{tag}_score_1"]] = scores
             # Class predictions
-            self.df_dataset["prediction"] = (delta > 0).astype(int)
+            self.df_dataset[f"{tag}_prediction"] = (delta > 0).astype(int)
             # Probabilistic predictions
-            self.df_dataset["prob_pred"] = prob_preds
+            self.df_dataset[f"{tag}_prob_pred"] = prob_preds
 
         # TODO: redefine output of evaluation
         # result = {}
@@ -478,12 +480,14 @@ class CorpusClassifier(object):
 
         return result, wrong_predictions
 
-    def performance_metrics(self, verbose=True):
+    def performance_metrics(self, true_label_name, tag="", verbose=True):
         """
         Compute performance metrics
 
         Parameters
         ----------
+        true_label_name : str
+            Name of the column tu be used as a reference for evaluation
         verbose : boolean, optional (default=True)
             If True, the output metrics are printed
         """
@@ -494,9 +498,9 @@ class CorpusClassifier(object):
         df_train = self.df_dataset[self.df_dataset.train_test == TRAIN]
         # df_test = self.df_dataset[self.df_dataset.train_test == TEST]
 
-        pscores = df_train.prob_pred.to_numpy()
-        preds = df_train.prediction.to_numpy()
-        labels = df_train.PUlabels.to_numpy()
+        pscores = df_train[f"{tag}_prob_pred"].to_numpy()
+        preds = df_train[f"{tag}_prediction"].to_numpy()
+        labels = df_train[true_label_name].to_numpy()
 
         if set(labels).issubset({0, 1}) and set(preds).issubset({0, 1}):
             bmetrics_train = metrics.binary_metrics(preds, labels)
@@ -516,9 +520,9 @@ class CorpusClassifier(object):
         # Test metrics
         df_test = self.df_dataset[self.df_dataset.train_test == TEST]
 
-        pscores = df_test.prob_pred.to_numpy()
-        preds = df_test.prediction.to_numpy()
-        labels = df_test.PUlabels.to_numpy()
+        pscores = df_test[f"{tag}_prob_pred"].to_numpy()
+        preds = df_test[f"{tag}_prediction"].to_numpy()
+        labels = df_test[true_label_name].to_numpy()
 
         if set(labels).issubset({0, 1}) and set(preds).issubset({0, 1}):
             bmetrics_test = metrics.binary_metrics(preds, labels)

@@ -433,6 +433,7 @@ class CustomModel(nn.Module):
         return predictions, total_loss, result
 
     def _compute_scores_(self, orig, pred):
+
         scores = {"tp": 0, "fp": 0, "tn": 0, "fn": 0}
         # Inputs to boolean
         pred = torch.tensor(pred.tolist()).bool()

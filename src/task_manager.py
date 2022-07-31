@@ -26,6 +26,7 @@ NO_GOLD_STANDARD = 'Do not use a Gold Standard.'
 # Name of the column of annotations in the datasets of manual labels
 ANNOTATIONS = 'annotations'
 
+
 class TaskManager(baseTaskManager):
 
     """
@@ -693,7 +694,8 @@ class TaskManager(baseTaskManager):
                                  random_state=0)
 
         # Train the model using simpletransformers
-        self.dc.train_model(freeze_encoder=freeze_encoder, epochs=epochs)
+        self.dc.train_model(epochs=epochs, validate=True,
+                            freeze_encoder=freeze_encoder, tag="PU")
 
         # Update status.
         # Since training takes much time, we store the classification results
@@ -716,7 +718,7 @@ class TaskManager(baseTaskManager):
 
         # Evaluate the model over the test set
         result, wrong_predictions = self.dc.eval_model(
-            tag_score='PUscore', samples=samples)
+            samples=samples, tag='PU')
 
         # Pretty print dictionary of results
         logging.info(f"-- Classification results: {result}")
@@ -884,7 +886,7 @@ class TaskManager(baseTaskManager):
             return
 
         # Evaluate the model over the test set
-        result, wrong_predictions = self.dc.eval_model(tag_score='PNscore')
+        result, wrong_predictions = self.dc.eval_model(tag='PN')
 
         # Pretty print dictionary of results
         logging.info(f"-- Classification results: {result}")
