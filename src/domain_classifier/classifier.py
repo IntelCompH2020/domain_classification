@@ -273,7 +273,7 @@ class CorpusClassifier(object):
             precomputed embedings for large datasets.
         tag : str, optional (default="")
             A preffix that will be used for all result variables (scores and
-            predictions) saved in the dataset dataframe 
+            predictions) saved in the dataset dataframe
 
         Notes
         -----
@@ -380,8 +380,12 @@ class CorpusClassifier(object):
             # Scores are mapped to probabilities through a logistic function.
             # FIXME: Check training loss in simpletransformers documentation or
             #        code, to see if logistic loss is appropriate here.
-            self.df_dataset.loc[
-                test_rows, f"{tag}_prob_pred"] = 1 / (1 + np.exp(-delta))
+            prob_preds = 1 / (1 + np.exp(-delta))
+            self.df_dataset.loc[test_rows, f"{tag}_prob_pred"] = prob_preds
+            # A duplicate of the probablitistic predictions is stored in a
+            # column without the tag, to be identified by the sampler of the
+            # active learning algorithm as the last computed scores
+            self.df_dataset.loc[test_rows, f"prob_pred"] = prob_preds
 
         # Freeze middle layers
         # self.model.freeze_encoder_layer()
