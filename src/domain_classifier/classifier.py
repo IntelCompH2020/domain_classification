@@ -184,10 +184,10 @@ class CorpusClassifier(object):
         breakpoint()
         print("test")
         self.df_dataset.rename(
-            {'PUscore_0': 'PU_score0',
-             'PUscore_1': 'PU_score1',
-             'prediction': 'PU_prediction',
-             'prob_pred': 'PU_prob_pred'}, inplace=True)
+            columns={'PUscore_0': 'PU_score0',
+                     'PUscore_1': 'PU_score1',
+                     'prediction': 'PU_prediction',
+                     'prob_pred': 'PU_prob_pred'}, inplace=True)
         self.df_dataset['prob_pred'] = self.df_dataset['PU_prob_pred']
 
         return
