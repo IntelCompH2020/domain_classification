@@ -179,19 +179,6 @@ class CorpusClassifier(object):
 
         return
 
-    def update_names(self):
-
-        breakpoint()
-        print("test")
-        self.df_dataset.rename(
-            columns={'PUscore_0': 'PU_score0',
-                     'PUscore_1': 'PU_score1',
-                     'prediction': 'PU_prediction',
-                     'prob_pred': 'PU_prob_pred'}, inplace=True)
-        self.df_dataset['prob_pred'] = self.df_dataset['PU_prob_pred']
-
-        return
-
     def load_model_config(self):
         """
         Load configuration for model.
@@ -497,7 +484,7 @@ class CorpusClassifier(object):
 
         return result, wrong_predictions
 
-    def performance_metrics(self, true_label_name, tag="", verbose=True):
+    def performance_metrics(self, tag="", verbose=True):
         """
         Compute performance metrics
 
