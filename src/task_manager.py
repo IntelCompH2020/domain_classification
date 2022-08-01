@@ -917,7 +917,7 @@ class TaskManager(baseTaskManager):
             logging.error("-- No annotations to export. Load labels first")
             return
 
-        df_annotations = self.DM.import_annotations(domain_name, ANNOTATIONS)
+        df_annotations = self.DM.import_annotations(domain_name)
 
         # Integrate annotations into dataset...
         self.dc.update_annotations(df_annotations)
@@ -936,14 +936,10 @@ class TaskManager(baseTaskManager):
             logging.error("-- No annotations to export. Load labels first")
             return
 
+        # Get the annotation sub-dataframe
+        df_annotations = self.dc.get_annotations(annot_name=ANNOTATIONS)
+
         # Extract label dataframe from the dataset.
-        cols = ['id', ANNOTATIONS, 'sampler', 'sampling_prob',
-                'date', 'train_test']
-        cols = [c for c in cols if c in self.dc.df_dataset.columns]
-
-        df_annotations = self.dc.df_dataset[cols]
-        breakpoint()
-
         logging.info("-- Saving annotations in source folder")
         self.DM.export_annotations(df_annotations, domain_name)
 

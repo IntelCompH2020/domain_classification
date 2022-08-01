@@ -756,6 +756,35 @@ class CorpusClassifier(object):
 
         return
 
+    def get_annotations(self, annot_name='annotations'):
+        """
+        Returns the portion of self.dataset that contains annotated data
+
+        Parameters
+        ----------
+        annot_name : str, optional (default='annotations')
+            Name of the column in the pandas dataframe containing the
+            annotation
+
+        Returns
+        -------
+        df_annotation : pandas.dataFrame
+            The dataframe containing the annotations. All columns related
+            to the annotation are returned.
+        """
+
+        breakpoint()
+        # Extract label dataframe from the dataset.
+        cols = ['id', annot_name, 'sampler', 'sampling_prob', 'date',
+                'train_test']
+        cols = [c for c in cols if c in self.dc.df_dataset.columns]
+
+        # Identify annotated docs:
+        annotated_docs = self.df_dataset['sampler'] != 'unsampled'
+        df_annotations = self.df_dataset.loc[annotated_docs, cols]
+
+        return df_annotations
+
     def update_annotations(self, df_annotations, label_name):
         """
         Updates self.df_dataset with the annotation data and metadata in
