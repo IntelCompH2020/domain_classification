@@ -1215,6 +1215,7 @@ class TaskManagerCMD(TaskManager):
 
         print(width * "=")
         for i, doc in selected_docs.iterrows():
+            print(f"Document {i + 1} out of {len(selected_docs)}")
             print(f"ID: {doc.id}")
             if self.metadata['corpus_name'] == 'EU_projects':
                 # Locate document in corpus
@@ -1232,6 +1233,8 @@ class TaskManagerCMD(TaskManager):
             # Get and print prediction
             if 'prediction' in doc:
                 print(f"PREDICTED CLASS: {doc.prediction}")
+            if 'prob_pred' in doc:
+                print(f"SCORE: {doc.prob_pred}")
 
             labels.append(self.QM.ask_label())
             print(width * "=")
