@@ -777,7 +777,7 @@ class CorpusClassifier(object):
         # Extract label dataframe from the dataset.
         cols = ['id', annot_name, 'sampler', 'sampling_prob', 'date',
                 'train_test']
-        cols = [c for c in cols if c in self.dc.df_dataset.columns]
+        cols = [c for c in cols if c in self.df_dataset.columns]
 
         # Identify annotated docs:
         annotated_docs = self.df_dataset['sampler'] != 'unsampled'

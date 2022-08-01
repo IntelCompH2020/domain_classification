@@ -792,7 +792,7 @@ class TaskManager(baseTaskManager):
         current dataset.
         """
 
-        self._performance_metrics('PN_model')
+        self._performance_metrics('PN')
 
         return
 
