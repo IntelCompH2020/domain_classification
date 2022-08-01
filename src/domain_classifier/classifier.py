@@ -612,13 +612,13 @@ class CorpusClassifier(object):
         if 'prediction' not in self.df_dataset:
             self.df_dataset['prediction'] = self.df_dataset['PU_prediction']
 
-        # Select documents with predictions only
-        selected_docs = self.df_dataset.loc[
-            self.df_dataset['prediction'] != UNUSED]
+        # Documents used for train or test (validation)
+        train_test = ((self.df_dataset.train_test == TRAIN)
+                      | (self.df_dataset.train_test == TEST))
+        selected_docs = self.df_dataset.loc[train_test]
 
         if sampler == 'full_rs':
-            unused_docs = self.df_dataset.loc[
-                self.df_dataset.prediction == UNUSED]
+            unused_docs = self.df_dataset.loc[~train_test]
         else:
             # Select documents without annotations only
             if 'annotations' in selected_docs.columns:
