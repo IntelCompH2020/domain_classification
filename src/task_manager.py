@@ -942,6 +942,7 @@ class TaskManager(baseTaskManager):
         cols = [c for c in cols if c in self.dc.df_dataset.columns]
 
         df_annotations = self.dc.df_dataset[cols]
+        breakpoint()
 
         logging.info("-- Saving annotations in source folder")
         self.DM.export_annotations(df_annotations, domain_name)
