@@ -773,27 +773,22 @@ class DataManager(object):
 
         # Read labels file
         path2labels = (self.path2corpus / 'annotations'
-                       / f"labels_{self.corpus_name}_{tag}.feather")
-        df_annotations = pd.read_feather(path2labels)
+                       / f"labels_{self.corpus_name}_{tag}.csv")
+        df_annotations = pd.read_csv(path2labels)
 
         return df_annotations
 
     def export_annotations(self, df_annotations, tag):
         """
-        Saves a file with annotations.
+        Export a dataframe of annotations to csv file.
 
         Parameters
         ----------
-        ids_corpus: list
-            List of ids of the documents in the corpus. Only the labels with
-            ids in ids_corpus are imported and saved into the output file.
+        df_annotations: pandas.dataFrame
+            A dataframse of annotations
         tag: str, optional (default="imported")
-            Name for the category defined by the positive labels.
+            Name for the domain. To be included as a suffix of the file name.
 
-        Returns
-        -------
-        ids_pos: list
-            List of ids of documents from the positive class
         """
 
         # Create folder if it does not exist
@@ -801,9 +796,7 @@ class DataManager(object):
         if not folder.is_dir():
             folder.mkdir()
 
-        path2labels = folder / f"labels_{self.corpus_name}_{tag}.feather"
-        df_annotations.to_feather(path2labels)
-
+        # Export annotations
         path2labels = folder / f"labels_{self.corpus_name}_{tag}.csv"
         df_annotations.to_csv(path2labels)
 

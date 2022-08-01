@@ -773,7 +773,6 @@ class CorpusClassifier(object):
             to the annotation are returned.
         """
 
-        breakpoint()
         # Extract label dataframe from the dataset.
         cols = ['id', annot_name, 'sampler', 'sampling_prob', 'date',
                 'train_test']
@@ -782,6 +781,7 @@ class CorpusClassifier(object):
         # Identify annotated docs:
         annotated_docs = self.df_dataset['sampler'] != 'unsampled'
         df_annotations = self.df_dataset.loc[annotated_docs, cols]
+        df_annotations.reset_index(drop=True, inplace=True)
 
         return df_annotations
 
