@@ -752,7 +752,7 @@ class TaskManager(baseTaskManager):
         fname = (f'{self.class_name}_{tag_model}_vs_{true_label_name}_ROC_'
                  f'{subset}.png')
         p2fig = self.path2output / fname
-        plotter.plot_roc(metrics, roc, tag=subset, path2figure=p2fig)
+        plotter.plot_roc(roc, metrics, tag=subset, path2figure=p2fig)
 
         # Add AUC in roc to the metrics dictionary:
         if metrics is not None and roc is not None:
