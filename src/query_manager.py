@@ -197,8 +197,12 @@ class QueryManager(object):
         """
 
         logging.info("")
-        label = input("-- Press 'y' to confirm the anotation. Otherwise all "
-                      "labels in this session will be removed: ")
 
-        return label == 'y'
+        label = 'xxx'
+        while label not in {'yes', 'no'}:
+            label = input(
+                "-- Press 'yes' to confirm the anotation, or 'no' to remove "
+                "all labels in this session: ")
+
+        return label == 'yes'
 

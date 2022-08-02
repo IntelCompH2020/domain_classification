@@ -433,44 +433,15 @@ class TaskManager(baseTaskManager):
 
         # ################################
         # Save parameters in metadata file
-        key = 'keyword_based_label_parameters'
-        if key not in self.metadata:
-            self.metadata[key] = {}
-        self.metadata[key][tag] = {
-            'wt': wt,
-            'n_max': n_max,
-            's_min': s_min,
-            'keywords': self.keywords}
-
-        # Metadata for evaluation
-        # FIXME: the code below is not used. To be moved to another method.
-        eval_scores = False
-        if eval_scores:
-            # Save tpr fpr and ROC curve
-            # FIXME: The name of the SBERT model should be read from the config
-            # file (parameters.default.yaml or metadata file (metadata.yaml))
-            model_name = 'all-MiniLM-L6-v2'
-            results_out_fname = f'results_{model_name}_{self.keywords}_ROC'
-            results_fname = self.path2labels / results_out_fname
-            np.savez(results_fname, tpr_roc=eval_scores['tpr_roc'],
-                     fpr_roc=eval_scores['fpr_roc'])
-
-            fig, ax = plt.subplots()
-            plt.plot(eval_scores['fpr_roc'], eval_scores['tpr_roc'],
-                     lw=2.5, label=self.keywords)
-            plt.grid(b=True, which='major', color='gray', alpha=0.6,
-                     linestyle='dotted', lw=1.5)
-            plt.xlabel('False Positive Rate (FPR)')
-            plt.ylabel('True Positive Rate (TPR)')
-            plt.title('ROC curve')
-            plt.legend()
-            figure_out_fname = f'figure_{model_name}_{self.keywords}_ROC'
-            figure_fname = self.path2labels / figure_out_fname
-            plt.savefig(figure_fname)
-
-            # Save smin and nmax evaluation scores
-            del eval_scores['fpr_roc'], eval_scores['tpr_roc']
-            self.metadata[key][tag].__setitem__('eval_scores', eval_scores)
+        self.metadata[tag] = {
+            'doc_selection': {
+                'method': method,
+                'wt': wt,
+                'n_max': n_max,
+                's_min': s_min,
+                'keywords': self.keywords}}
+        if method == 'embedding':
+            self.metadata[tag]['doc_selection']['model'] = model_name
 
         self._save_metadata()
 
@@ -517,6 +488,15 @@ class TaskManager(baseTaskManager):
             's_min': s_min}
         self._save_metadata()
 
+        # ################################
+        # Save parameters in metadata file
+        self.metadata[tag] = {
+            'doc_selection': {
+                'method': 'zeroshot',
+                'keyword': self.keywords,
+                'n_max': n_max,
+                's_min': s_min}}
+
         return msg
 
     def get_labels_by_topics(self, topic_weights, T, df_metadata, n_max=2000,
@@ -559,13 +539,13 @@ class TaskManager(baseTaskManager):
 
         # ################################
         # Save parameters in metadata file
-        key = 'topic_based_label_parameters'
-        if key not in self.metadata:
-            self.metadata[key] = {}
-        self.metadata[key][tag] = {
-            'topic_weights': topic_weights,
-            'n_max': n_max,
-            's_min': s_min}
+        self.metadata[tag] = {
+            'doc_selection': {
+                'method': 'filter by topics',
+                'topic_weights': topic_weights,
+                'n_max': n_max,
+                's_min': s_min}}
+
         self._save_metadata()
 
         return msg
@@ -636,12 +616,9 @@ class TaskManager(baseTaskManager):
         # Remove files
         self.DM.reset_labels(tag=labelset)
 
-        # Remove label info from metadata, it it exist
-        for key in ['keyword_based_label_parameters',
-                    'topic_based_label_parameters',
-                    'zero_shot_parameters']:
-            if key in self.metadata and labelset in self.metadata[key]:
-                self.metadata[key].pop(labelset, None)
+        # Remove label info from metadata, if it exist
+        if labelset in self.metadata:
+            self.metadata.pop(labelset, None)
 
         self._save_metadata()
 
@@ -682,11 +659,10 @@ class TaskManager(baseTaskManager):
         self.df_dataset[['labels']] = self.df_dataset[['PUlabels']]
 
         path2model = self.path2models / self.class_name
-
+        model_type = self.global_parameters['classifier']['model_type']
+        model_name = self.global_parameters['classifier']['model_name']
         self.dc = CorpusClassifier(
-            self.df_dataset,
-            model_type=self.global_parameters['classifier']['model_type'],
-            model_name=self.global_parameters['classifier']['model_name'],
+            self.df_dataset, model_type=model_type, model_name=model_name,
             path2transformers=path2model)
 
         # Select data for training and testing
@@ -703,6 +679,13 @@ class TaskManager(baseTaskManager):
         self._save_dataset()
         self.state['trained_model'] = True
 
+        self.metadata[self.class_name]['training'] = {
+            'model_type': model_type,
+            'model_name': model_name,
+            'freeze_encoder': freeze_encoder,
+            'max_imbalance': max_imbalance,
+            'nmax': nmax,
+            'epochs': epochs}
         self._save_metadata()
 
         return
@@ -759,12 +742,13 @@ class TaskManager(baseTaskManager):
             metrics['AUC'] = roc['auc']
 
         # Save metrics in metadata file.
-        if self.class_name not in self.metadata:
-            self.metadata[self.class_name] = {}
+        if 'metrics' not in self.metadata[self.class_name]:
+            self.metadata[self.class_name]['metrics'] = {}
         key = f'{tag_model}_vs_{true_label_name}'
         if key not in self.metadata[self.class_name]:
-            self.metadata[self.class_name][key] = {}
-        self.metadata[self.class_name][key][subset] = metrics
+            self.metadata[self.class_name]['metrics'][key] = {}
+        self.metadata[self.class_name]['metrics'][key][subset] = metrics
+
         self._save_metadata()
 
         return
@@ -788,15 +772,13 @@ class TaskManager(baseTaskManager):
             tag_model, true_label_name, subset)
 
         # Save metrics in metadata file.
-        # Create dictionary keys if they do not exist
-        if self.class_name not in self.metadata:
-            self.metadata[self.class_name] = {}
+        if 'metrics' not in self.metadata[self.class_name]:
+            self.metadata[self.class_name]['metrics'] = {}
         key = f'{tag_model}_vs_{true_label_name}'
         if key not in self.metadata[self.class_name]:
-            self.metadata[self.class_name][key] = {}
-        # Save metrics
-        self.metadata[self.class_name][key][subset] = metrics
-        # Save metadata
+            self.metadata[self.class_name]['metrics'][key] = {}
+        self.metadata[self.class_name]['metrics'][key][subset] = metrics
+
         self._save_metadata()
 
         return
@@ -810,8 +792,6 @@ class TaskManager(baseTaskManager):
         # Check if a classifier object exists
         if not self._is_model():
             return
-
-        breakpoint()
 
         # Test PU predictions against PUlabels
         self._performance_metrics("PU", "PUlabels", "train")
@@ -1053,6 +1033,7 @@ class TaskManagerCMD(TaskManager):
             # Most AI keywords are read from a file, that misses a few
             # relevant keywords that are added here.
             keywords = (['artificial intelligence', 'argumentation framework',
+                         'random forest',
                          'statistical machine translation', 'pytorch']
                         + self.DM.get_keywords_list())
             # This is to avoid keyword repetitions
