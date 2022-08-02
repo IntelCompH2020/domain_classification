@@ -536,8 +536,7 @@ class CorpusClassifier(object):
         if set(labels).issubset({0, 1}) and set(preds).issubset({0, 1}):
             # Compute performance metrics
             bmetrics = metrics.binary_metrics(preds, labels)
-            title = f"-- -- Metrics based on {subdataset} data"
-            metrics.print_binary_metrics(bmetrics, title=title)
+            metrics.print_binary_metrics(bmetrics, tag=subdataset)
             roc = metrics.score_based_metrics(pscores, labels)
 
         else:

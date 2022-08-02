@@ -807,6 +807,10 @@ class TaskManager(baseTaskManager):
         available at the current dataset
         """
 
+        # Check if a classifier object exists
+        if not self._is_model():
+            return
+
         breakpoint()
 
         # Test PU predictions against PUlabels
@@ -828,6 +832,10 @@ class TaskManager(baseTaskManager):
         Compute all performance metrics based on the data available at the
         current dataset.
         """
+
+        # Check if a classifier object exists
+        if not self._is_model():
+            return
 
         # Test PN predictions against PUlabels
         self._performance_metrics("PN", "PUlabels", "train")
