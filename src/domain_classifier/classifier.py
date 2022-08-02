@@ -500,65 +500,115 @@ class CorpusClassifier(object):
 
         return result, wrong_predictions
 
-    def performance_metrics(self, true_label_name, tag="", verbose=True):
+    def performance_metrics(self, tag, true_label_name, subdataset):
         """
         Compute performance metrics
 
         Parameters
         ----------
+        tag : str in {'PU', 'PN'}
+            Ettiquete of the model to be evaluated.
         true_label_name : str
             Name of the column tu be used as a reference for evaluation
-        verbose : boolean, optional (default=True)
-            If True, the output metrics are printed
+        subdataset : str
+            An indicator of the subdataset to be evaluated. It can take values
+            'train', 'test' or 'unused'
         """
+
+        # Map subdataset to its integer code
+        ttu = {'train': TRAIN, 'test': TEST, 'unused': UNUSED}[subdataset]
 
         # ################
         # Training metrics
 
-        df_train = self.df_dataset[self.df_dataset.train_test == TRAIN]
-        # df_test = self.df_dataset[self.df_dataset.train_test == TEST]
+        df = self.df_dataset[self.df_dataset.train_test == ttu]
 
-        pscores = df_train[f"{tag}_prob_pred"].to_numpy()
-        preds = df_train[f"{tag}_prediction"].to_numpy()
-        labels = df_train[true_label_name].to_numpy()
+        # Reduce dataset to samples with predictions and labels only
+        df = df.loc[df[true_label_name].isin({0, 1})]
+        df = df.loc[df[f"{tag}_prediction"].isin({0, 1})]
 
+        # Extract predictions and labels
+        pscores = df[f"{tag}_prob_pred"].to_numpy()
+        preds = df[f"{tag}_prediction"].to_numpy()
+        labels = df[true_label_name].to_numpy()
+
+        # Check if the selected labels and predictions contain labels in {0, 1}
         if set(labels).issubset({0, 1}) and set(preds).issubset({0, 1}):
-            bmetrics_train = metrics.binary_metrics(preds, labels)
-            metrics.print_binary_metrics(
-                bmetrics_train, title="-- -- Metrics based on TRAIN data:")
-
-            roc_train = metrics.score_based_metrics(pscores, labels)
-            # metrics.plot_score_based_metrics(pscores, labels)
+            # Compute performance metrics
+            bmetrics = metrics.binary_metrics(preds, labels)
+            title = f"-- -- Metrics based on {subdataset} data"
+            metrics.print_binary_metrics(bmetrics, title=title)
+            roc = metrics.score_based_metrics(pscores, labels)
 
         else:
             logging.warning(
-                "-- -- There are no predictions for the training samples")
-            bmetrics_train = None
-            roc_train = None
+                f"-- -- There are no predictions for the {subdataset} samples")
+            bmetrics = None
+            roc = None
 
-        # ############
-        # Test metrics
-        df_test = self.df_dataset[self.df_dataset.train_test == TEST]
+        return bmetrics, roc
 
-        pscores = df_test[f"{tag}_prob_pred"].to_numpy()
-        preds = df_test[f"{tag}_prediction"].to_numpy()
-        labels = df_test[true_label_name].to_numpy()
+    def label2label_metrics(self, pred_name, true_label_name, subdataset):
+        """
+        Compute performance metrics
 
-        if set(labels).issubset({0, 1}) and set(preds).issubset({0, 1}):
-            bmetrics_test = metrics.binary_metrics(preds, labels)
-            metrics.print_binary_metrics(
-                bmetrics_test, title="-- -- Metrics based on TEST data:")
+        Parameters
+        ----------
+        tag : str in {'PU', 'PN'}
+            Ettiquete of the model to be evaluated.
+        true_label_name : str
+            Name of the column tu be used as a reference for evaluation
+        subdataset : str
+            An indicator of the subdataset to be evaluated. It can take values
+            'train', 'test' or 'unused'
+        """
 
-            roc_test = metrics.score_based_metrics(pscores, labels)
-            # metrics.plot_score_based_metrics(pscores, labels)
+        # Map subdataset to its integer code
+        ttu = {'train': TRAIN, 'test': TEST, 'unused': UNUSED}[subdataset]
 
-        else:
-            logging.warning(
-                "-- -- There are no predictions for the test samples")
-            bmetrics_test = None
-            roc_test = None
+        # ################
+        # Training metrics
 
-        return bmetrics_train, bmetrics_test, roc_train, roc_test
+        df = self.df_dataset[self.df_dataset.train_test == ttu]
+
+        # Reduce dataset to samples with predictions and labels only
+        df = df.loc[df[true_label_name].isin({0, 1})]
+        df = df.loc[df[pred_name].isin({0, 1})]
+
+        bmetrics = None    # Default
+        if len(df) > 0:
+            # Extract predictions and labels
+            preds = df[pred_name].to_numpy()
+            labels = df[true_label_name].to_numpy()
+
+            # Compute label-vs-label metrics
+            bmetrics = metrics.binary_metrics(preds, labels)
+
+        metrics.print_binary_metrics(bmetrics, tag=subdataset)
+
+        return bmetrics
+
+    # def performance_train_test(self, tag, true_label_name):
+    #     """
+    #     Compute performance metrics
+
+    #     Parameters
+    #     ----------
+    #     tag : str in {'PU', 'PN'}
+    #         Ettiquete of the model to be evaluated.
+    #     true_label_name : str
+    #         Name of the column tu be used as a reference for evaluation
+    #     """
+
+    #     # Training metrics
+    #     bmetrics_train, roc_train = self.performance_metrics(
+    #         tag, true_label_name, subdataset='train')
+
+    #     # Test metrics
+    #     bmetrics_test, roc_test = self.performance_metrics(
+    #         tag, true_label_name, subdataset='test')
+
+    #     return bmetrics_train, bmetrics_test, roc_train, roc_test
 
     def AL_sample(self, n_samples=5, sampler='extremes', p_ratio=0.8,
                   top_prob=0.1):

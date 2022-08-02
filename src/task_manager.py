@@ -730,49 +730,74 @@ class TaskManager(baseTaskManager):
 
         return result
 
-    def _performance_metrics(self, tag):
+    def _performance_metrics(self, tag_model, true_label_name, subset):
         """
         Compute all performance metrics based on the data available at the
         current dataset.
+
+        Parameters
+        ----------
+        tag_model : str in {'PU', 'PN'}
+            An ettiquete that identifies the model to be evaluated.
+        true_label_name : str
+            Name of the column in the dataset containing the "true labels" to
+            be used as a reference for evaluation
         """
 
-        if tag == 'PU':
-            true_label_name = "PUlabels"
+        # Compute train and test metrics
+        metrics, roc = self.dc.performance_metrics(
+            tag_model, true_label_name, subset)
 
-        metrics_train, metrics_test, roc_train, roc_test = (
-            self.dc.performance_metrics(true_label_name, tag))
-
-        # Plot rocs
-        if roc_train is not None:
-            p2fig = self.path2output / f'{self.class_name}_PU_ROC_train.png'
-            plotter.plot_roc(
-                roc_train['fpr_roc'], roc_train['tpr_roc'],
-                fpr0=metrics_train['fpr'],
-                tpr0=metrics_train['tpr'],
-                title="ROC (train)",
-                label=f"Train (AUC = {roc_train['auc']:.2f})",
-                path2figure=p2fig)
-        if roc_test is not None:
-            p2fig = self.path2output / f'{self.class_name}_PU_ROC_test.png'
-            plotter.plot_roc(
-                roc_test['fpr_roc'], roc_test['tpr_roc'],
-                fpr0=metrics_test['fpr'],
-                tpr0=metrics_test['tpr'],
-                title="ROC (test)",
-                label=f"Test (AUC = {roc_test['auc']:.2f})",
-                path2figure=p2fig)
+        # Plot train and test ROCs
+        fname = (f'{self.class_name}_{tag_model}_vs_{true_label_name}_ROC_'
+                 f'{subset}.png')
+        p2fig = self.path2output / fname
+        plotter.plot_roc(metrics, roc, tag=subset, p2fig=p2fig)
 
         # Add AUC in roc to the metrics dictionary:
-        if metrics_train is not None and roc_train is not None:
-            metrics_train['AUC'] = roc_train['auc']
-        if metrics_test is not None and roc_train is not None:
-            metrics_test['AUC'] = roc_test['auc']
+        if metrics is not None and roc is not None:
+            metrics['AUC'] = roc['auc']
 
+        # Save metrics in metadata file.
         if self.class_name not in self.metadata:
             self.metadata[self.class_name] = {}
-        self.metadata[self.class_name][f'{tag}_model'] = {
-            'train': metrics_train,
-            'test': metrics_test}
+        key = f'{tag_model}_vs_{true_label_name}'
+        if key not in self.metadata[self.class_name]:
+            self.metadata[self.class_name][key] = {}
+        self.metadata[self.class_name][key][subset] = metrics
+        self._save_metadata()
+
+        return
+
+    def _label2label_metrics(self, tag_model, true_label_name, subset):
+        """
+        Compute all performance metrics based on the data available at the
+        current dataset.
+
+        Parameters
+        ----------
+        tag_model : str in {'PU', 'PN'}
+            An ettiquete that identifies the model to be evaluated.
+        true_label_name : str
+            Name of the column in the dataset containing the "true labels" to
+            be used as a reference for evaluation
+        """
+
+        # Compute train and test metrics
+        metrics = self.dc.label2label_metrics(
+            tag_model, true_label_name, subset)
+
+        # Save metrics in metadata file.
+        # Create dictionary keys if they do not exist
+        if self.class_name not in self.metadata:
+            self.metadata[self.class_name] = {}
+        key = f'{tag_model}_vs_{true_label_name}'
+        if key not in self.metadata[self.class_name]:
+            self.metadata[self.class_name][key] = {}
+        # Save metrics
+        self.metadata[self.class_name][key][subset] = metrics
+        # Save metadata
+        self._save_metadata()
 
         return
 
@@ -782,7 +807,19 @@ class TaskManager(baseTaskManager):
         available at the current dataset
         """
 
-        self._performance_metrics('PU')
+        breakpoint()
+
+        # Test PU predictions against PUlabels
+        self._performance_metrics("PU", "PUlabels", "train")
+        self._performance_metrics("PU", "PUlabels", "test")
+
+        # Test PU predictions against annotations
+        self._performance_metrics("PU", "annotations", "test")
+        self._performance_metrics("PU", "annotations", "unused")
+
+        # Test PU labels against annotations
+        self._label2label_metrics("PUlabels", "annotations", "test")
+        self._label2label_metrics("PUlabels", "annotations", "unused")
 
         return
 
@@ -792,7 +829,13 @@ class TaskManager(baseTaskManager):
         current dataset.
         """
 
-        self._performance_metrics('PN')
+        # Test PN predictions against PUlabels
+        self._performance_metrics("PN", "PUlabels", "train")
+        self._performance_metrics("PN", "PUlabels", "test")
+
+        # Test PN predictions against annotations
+        self._performance_metrics("PN", "annotations", "test")
+        self._performance_metrics("PN", "annotations", "unused")
 
         return
 
@@ -999,8 +1042,13 @@ class TaskManagerCMD(TaskManager):
         keywords = self.QM.ask_keywords(kw_library)
 
         if keywords == ['__all_AI']:
-            keywords = (
-                ['artificial intelligence'] + self.DM.get_keywords_list())
+            # Most AI keywords are read from a file, that misses a few
+            # relevant keywords that are added here.
+            keywords = (['artificial intelligence', 'argumentation framework',
+                         'statistical machine translation', 'pytorch']
+                        + self.DM.get_keywords_list())
+            # This is to avoid keyword repetitions
+            keywords = list(set(keywords))
 
         return keywords
 

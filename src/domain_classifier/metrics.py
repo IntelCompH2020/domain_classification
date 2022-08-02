@@ -4,6 +4,7 @@ A collection of methods for the evaluation of classifiers.
 @author: J. Cid-Sueiro, A. Gallardo-Antolin
 """
 
+import logging
 import numpy as np
 
 # Some libraries required for evaluation
@@ -57,7 +58,7 @@ def binary_metrics(preds, labels):
     return m
 
 
-def print_binary_metrics(m, title=""):
+def print_binary_metrics(m, tag=""):
     """
     Pretty-prints the given metrics
 
@@ -69,6 +70,12 @@ def print_binary_metrics(m, title=""):
         Title to print as a header
     """
 
+    if m is None:
+        logging.warning(
+            f"-- -- There are no predictions for the {tag} samples")
+        return
+
+    title = f"-- -- Binary metrics based on {tag} data"
     print(f"")
     print("-" * len(title))
     print(title)

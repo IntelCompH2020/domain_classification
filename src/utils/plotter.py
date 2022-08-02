@@ -136,8 +136,8 @@ def plot_doc_scores(scores, n_pos, path2figure=None):
     return
 
 
-def plot_roc(fpr, tpr, fpr0=None, tpr0=None, label="", path2figure=None,
-             title='ROC curve'):
+def base_plot_roc(fpr, tpr, fpr0=None, tpr0=None, label="", path2figure=None,
+                  title='ROC curve'):
     """
     Plots a ROC curve from two lists of fpr and tpr values
 
@@ -175,4 +175,33 @@ def plot_roc(fpr, tpr, fpr0=None, tpr0=None, label="", path2figure=None,
 
     return
 
+
+def plot_roc(roc, metrics, tag="", path2figure=None):
+    """
+    Plots a ROC curve from two data dictionaries.
+
+    Parameters
+    ----------
+    roc : dict
+        A dictionary of roc values. It should containt heys fpr_roc, tpr_roc
+        and auc
+    metrics : dict
+        A dictionary of performance metrics. It should contain keys fpr0 and
+        tpr0 (the point of operation)
+    tag : str, optional (default="")
+        Tipically, a label 'Train' or 'Test' to add to the figure texts
+    path2figure : str or pathlib.Path or None
+        Path to save the figure. If None, the figure is not saved
+    """
+
+    if roc is not None:
+        base_plot_roc(
+            roc['fpr_roc'], roc['tpr_roc'],
+            fpr0=metrics['fpr'],
+            tpr0=metrics['tpr'],
+            title=f"ROC ({tag})",
+            label=f"{tag} (AUC = {roc['auc']:.2f})",
+            path2figure=path2figure)
+
+    return
 
