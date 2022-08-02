@@ -524,26 +524,24 @@ class CorpusClassifier(object):
         df = self.df_dataset[self.df_dataset.train_test == ttu]
 
         # Reduce dataset to samples with predictions and labels only
+        l0 = len(df)
         df = df.loc[df[true_label_name].isin({0, 1})]
         df = df.loc[df[f"{tag}_prediction"].isin({0, 1})]
-
-        # Extract predictions and labels
-        pscores = df[f"{tag}_prob_pred"].to_numpy()
-        preds = df[f"{tag}_prediction"].to_numpy()
-        labels = df[true_label_name].to_numpy()
+        logging.info(f"-- -- Metrics based on {len(df)} out of {l0} samples")
 
         # Check if the selected labels and predictions contain labels in {0, 1}
-        if set(labels).issubset({0, 1}) and set(preds).issubset({0, 1}):
+        bmetrics, roc = None, None    # Default values
+        if len(df) > 0:
+            # Extract predictions and labels
+            pscores = df[f"{tag}_prob_pred"].to_numpy()
+            preds = df[f"{tag}_prediction"].to_numpy()
+            labels = df[true_label_name].to_numpy()
+
             # Compute performance metrics
             bmetrics = metrics.binary_metrics(preds, labels)
-            metrics.print_binary_metrics(bmetrics, tag=subdataset)
             roc = metrics.score_based_metrics(pscores, labels)
 
-        else:
-            logging.warning(
-                f"-- -- There are no predictions for the {subdataset} samples")
-            bmetrics = None
-            roc = None
+        metrics.print_binary_metrics(bmetrics, tag=subdataset)
 
         return bmetrics, roc
 
@@ -571,8 +569,10 @@ class CorpusClassifier(object):
         df = self.df_dataset[self.df_dataset.train_test == ttu]
 
         # Reduce dataset to samples with predictions and labels only
+        l0 = len(df)
         df = df.loc[df[true_label_name].isin({0, 1})]
         df = df.loc[df[pred_name].isin({0, 1})]
+        logging.info(f"-- -- Metrics based on {len(df)} out of {l0} samples")
 
         bmetrics = None    # Default
         if len(df) > 0:
