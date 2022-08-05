@@ -727,18 +727,19 @@ class TaskManager(baseTaskManager):
         """
 
         # Compute train and test metrics
-        metrics, roc = self.dc.performance_metrics(
+        bmetrics, roc = self.dc.performance_metrics(
             tag_model, true_label_name, subset)
+        metrics.print_binary_metrics(bmetrics, tag=subdataset)
 
         # Plot train and test ROCs
         fname = (f'{self.class_name}_{tag_model}_vs_{true_label_name}_ROC_'
                  f'{subset}.png')
         p2fig = self.path2output / fname
-        plotter.plot_roc(roc, metrics, tag=subset, path2figure=p2fig)
+        plotter.plot_roc(roc, bmetrics, tag=subset, path2figure=p2fig)
 
         # Add AUC in roc to the metrics dictionary:
-        if metrics is not None and roc is not None:
-            metrics['AUC'] = roc['auc']
+        if bmetrics is not None and roc is not None:
+            bmetrics['AUC'] = roc['auc']
 
         # Save metrics in metadata file.
         if 'metrics' not in self.metadata[self.class_name]:
@@ -746,7 +747,7 @@ class TaskManager(baseTaskManager):
         key = f'{tag_model}_vs_{true_label_name}'
         if key not in self.metadata[self.class_name]:
             self.metadata[self.class_name]['metrics'][key] = {}
-        self.metadata[self.class_name]['metrics'][key][subset] = metrics
+        self.metadata[self.class_name]['metrics'][key][subset] = bmetrics
 
         self._save_metadata()
 

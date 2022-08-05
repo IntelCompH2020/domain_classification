@@ -500,7 +500,8 @@ class CorpusClassifier(object):
 
         return result, wrong_predictions
 
-    def performance_metrics(self, tag, true_label_name, subdataset):
+    def performance_metrics(
+            self, tag, true_label_name, subdataset, printout=True):
         """
         Compute performance metrics
 
@@ -513,6 +514,8 @@ class CorpusClassifier(object):
         subdataset : str
             An indicator of the subdataset to be evaluated. It can take values
             'train', 'test' or 'unused'
+        printout : boolean, optional (default=True)
+            If true, all metrics are printed (unless the roc values)
         """
 
         # Map subdataset to its integer code
@@ -541,11 +544,15 @@ class CorpusClassifier(object):
             bmetrics = metrics.binary_metrics(preds, labels)
             roc = metrics.score_based_metrics(pscores, labels)
 
-        metrics.print_binary_metrics(bmetrics, tag=subdataset)
+        # Print
+        if printout:
+            title = f"{tag}_vs_{true_label_name}"
+            metrics.print_metrics(bmetrics, roc, title=title, data=subdataset)
 
         return bmetrics, roc
 
-    def label2label_metrics(self, pred_name, true_label_name, subdataset):
+    def label2label_metrics(
+            self, pred_name, true_label_name, subdataset, printout=True):
         """
         Compute performance metrics
 
@@ -558,6 +565,8 @@ class CorpusClassifier(object):
         subdataset : str
             An indicator of the subdataset to be evaluated. It can take values
             'train', 'test' or 'unused'
+        printout : boolean, optional (default=True)
+            If true, all metrics are printed (unless the roc values)
         """
 
         # Map subdataset to its integer code
@@ -583,9 +592,27 @@ class CorpusClassifier(object):
             # Compute label-vs-label metrics
             bmetrics = metrics.binary_metrics(preds, labels)
 
-        metrics.print_binary_metrics(bmetrics, tag=subdataset)
+        # Print
+        if printout:
+            metrics.print_metrics(bmetrics, tag=subdataset)
 
         return bmetrics
+
+    def print_binary_metrics(self, bmetrics, tag=""):
+        """
+        Pretty-prints the given metrics
+
+        Parameters
+        ----------
+        bmetrics : dict
+            Dictionary of metrics (produced by the binary_metrics() method)
+        title : str, optional (default="")
+            Title to print as a header
+        """
+
+        metrics.print_binary_metrics(bmetrics, tag)
+
+        return
 
     def AL_sample(self, n_samples=5, sampler='extremes', p_ratio=0.8,
                   top_prob=0.1):

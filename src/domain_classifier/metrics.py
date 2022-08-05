@@ -43,7 +43,7 @@ def binary_metrics(preds, labels):
     # Dictionary with the evaluation results
     # Note that results are stored as standard float or int, because the
     # dictionary might be saved into a yaml file, and numpy formats are not
-    # properly saved. 
+    # properly saved.
     m = {'size': len(labels),
          'n_labels_0': float(np.sum(labels == 0)),
          'n_labels_1': float(np.sum(labels == 1)),
@@ -61,7 +61,7 @@ def binary_metrics(preds, labels):
     return m
 
 
-def print_binary_metrics(m, tag=""):
+def print_metrics(m, roc=None, title="", data=""):
     """
     Pretty-prints the given metrics
 
@@ -69,21 +69,23 @@ def print_binary_metrics(m, tag=""):
     ----------
     m : dict
         Dictionary of metrics (produced by the binary_metrics() method)
-    title : str, optional (default="")
-        Title to print as a header
+    roc : dict or None, optional (default=None)
+        A dictionary of score-based metrics. It is used to print AUC.
+    tag : str, optional (default="")
+        Identifier of the dataset used to compute the metrics. It is used
+        to compose the text title
     """
 
     if m is None:
         logging.warning(
-            f"-- -- There are no predictions for the {tag} samples")
+            f"-- -- There are no predictions for the {data} samples")
         return
 
-    title = f"-- -- Binary metrics based on {tag} data"
+    title2 = f"-- -- Binary metrics based on {data} data"
     print(f"")
-    print("-" * len(title))
+    print("-" * max(len(title), len(title2)))
     print(title)
-    print("-" * len(title))
-
+    print(title2)
     print(f"")
     print(f".. .. Sample size: {m['size']}")
     print(f".. .. Class proportions:")
@@ -101,6 +103,12 @@ def print_binary_metrics(m, tag=""):
     print(f".. .. Standard metrics:")
     print(f".. .. .. Accuracy: {m['acc']}")
     print(f".. .. .. Balanced accuracy: {m['bal_acc']}")
+    print("-" * max(len(title), len(title2)))
+
+    # Print AUC if available:
+    if roc is not None and 'auc' in roc:
+        print(f".. .. Score-based metrics:")
+        print(f".. .. .. AUC: {roc['auc']}")
 
 
 def score_based_metrics(scores, labels):
@@ -133,9 +141,10 @@ def score_based_metrics(scores, labels):
     tpr_roc_float = [float(k) for k in tpr_roc]
     fpr_roc_float = [float(k) for k in fpr_roc]
 
+    # Float values are used because np.float is not nice for yaml files
     m = {'tpr_roc': tpr_roc_float,
          'fpr_roc': fpr_roc_float,
-         'auc': auc(fpr_roc_float, tpr_roc_float)}
+         'auc': float(auc(fpr_roc_float, tpr_roc_float))}
 
     return m
 
