@@ -41,11 +41,14 @@ def binary_metrics(preds, labels):
     bal_acc = 0.5 * (tpr + 1 - fpr)
 
     # Dictionary with the evaluation results
+    # Note that results are stored as standard float or int, because the
+    # dictionary might be saved into a yaml file, and numpy formats are not
+    # properly saved. 
     m = {'size': len(labels),
-         'n_labels_0': np.sum(labels == 0),
-         'n_labels_1': np.sum(labels == 1),
-         'n_preds_0': np.sum(preds == 0),
-         'n_preds_1': np.sum(preds == 1),
+         'n_labels_0': float(np.sum(labels == 0)),
+         'n_labels_1': float(np.sum(labels == 1)),
+         'n_preds_0': float(np.sum(preds == 0)),
+         'n_preds_1': float(np.sum(preds == 1)),
          'tn': int(tn),
          'fp': int(fp),
          'fn': int(fn),

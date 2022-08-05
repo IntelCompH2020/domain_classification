@@ -587,28 +587,6 @@ class CorpusClassifier(object):
 
         return bmetrics
 
-    # def performance_train_test(self, tag, true_label_name):
-    #     """
-    #     Compute performance metrics
-
-    #     Parameters
-    #     ----------
-    #     tag : str in {'PU', 'PN'}
-    #         Ettiquete of the model to be evaluated.
-    #     true_label_name : str
-    #         Name of the column tu be used as a reference for evaluation
-    #     """
-
-    #     # Training metrics
-    #     bmetrics_train, roc_train = self.performance_metrics(
-    #         tag, true_label_name, subdataset='train')
-
-    #     # Test metrics
-    #     bmetrics_test, roc_test = self.performance_metrics(
-    #         tag, true_label_name, subdataset='test')
-
-    #     return bmetrics_train, bmetrics_test, roc_train, roc_test
-
     def AL_sample(self, n_samples=5, sampler='extremes', p_ratio=0.8,
                   top_prob=0.1):
         """

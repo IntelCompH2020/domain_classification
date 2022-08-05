@@ -17,7 +17,6 @@ from .domain_classifier.classifier import CorpusClassifier
 from .utils import plotter
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 # A message that is used twice in different parts of the code. It is defined
 # here because the same message must be used in both cases.
