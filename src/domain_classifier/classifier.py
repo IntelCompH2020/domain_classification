@@ -534,6 +534,7 @@ class CorpusClassifier(object):
 
         # Check if the selected labels and predictions contain labels in {0, 1}
         bmetrics, roc = None, None    # Default values
+        breakpoint()
         if len(df) > 0:
             # Extract predictions and labels
             pscores = df[f"{tag}_prob_pred"].to_numpy()

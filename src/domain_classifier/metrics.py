@@ -45,10 +45,10 @@ def binary_metrics(preds, labels):
     # dictionary might be saved into a yaml file, and numpy formats are not
     # properly saved.
     m = {'size': len(labels),
-         'n_labels_0': float(np.sum(labels == 0)),
-         'n_labels_1': float(np.sum(labels == 1)),
-         'n_preds_0': float(np.sum(preds == 0)),
-         'n_preds_1': float(np.sum(preds == 1)),
+         'n_labels_0': int(np.sum(labels == 0)),
+         'n_labels_1': int(np.sum(labels == 1)),
+         'n_preds_0': int(np.sum(preds == 0)),
+         'n_preds_1': int(np.sum(preds == 1)),
          'tn': int(tn),
          'fp': int(fp),
          'fn': int(fn),
@@ -81,34 +81,38 @@ def print_metrics(m, roc=None, title="", data=""):
             f"-- -- There are no predictions for the {data} samples")
         return
 
+    # Maximum string lentgh to be printed
+    w = len(str(m['size']))
+
     title2 = f"-- -- Binary metrics based on {data.upper()} data"
     print(f"")
     print("=" * max(len(title), len(title2)))
     print(f"-- -- {title}")
     print(title2)
     print(f"")
-    print(f".. .. Sample size: {m['size']}")
+    print(f".. .. Sample size: {m['size']:{w}}")
     print(f".. .. Class proportions:")
-    print(f".. .. .. Labels 0:      {m['n_labels_0']}")
-    print(f".. .. .. Labels 1:      {m['n_labels_1']}")
-    print(f".. .. .. Predictions 0: {m['n_preds_0']}")
-    print(f".. .. .. Predictions 1: {m['n_preds_1']}")
+    print(f".. .. .. Labels 0:      {m['n_labels_0']:{w}}")
+    print(f".. .. .. Labels 1:      {m['n_labels_1']:{w}}")
+    print(f".. .. .. Predictions 0: {m['n_preds_0']:{w}}")
+    print(f".. .. .. Predictions 1: {m['n_preds_1']:{w}}")
     print(f"")
     print(f".. .. Hits:")
-    print(f".. .. .. TP: {m['tp']},    TPR: {m['tpr']:.5f}")
-    print(f".. .. .. TN: {m['tn']}")
+    print(f".. .. .. TP: {m['tp']:{w}},    TPR: {m['tpr']:.5f}")
+    print(f".. .. .. TN: {m['tn']:{w}},    TNR: {1 - m['fpr']:.5f}")
     print(f".. .. Errors:")
-    print(f".. .. .. FP: {m['fp']},    FPR: {m['fpr']:.5f}")
-    print(f".. .. .. FN: {m['fn']}")
+    print(f".. .. .. FP: {m['fp']:{w}},    FPR: {m['fpr']:.5f}")
+    print(f".. .. .. FN: {m['fn']:{w}},    FNR: {1 - m['tpr']:.5f}")
     print(f".. .. Standard metrics:")
     print(f".. .. .. Accuracy: {m['acc']:.5f}")
     print(f".. .. .. Balanced accuracy: {m['bal_acc']:.5f}")
-    print("-" * max(len(title), len(title2)))
 
     # Print AUC if available:
     if roc is not None and 'auc' in roc:
         print(f".. .. Score-based metrics:")
-        print(f".. .. .. AUC: {roc['auc']}")
+        print(f".. .. .. AUC: {roc['auc']:.5f}")
+    print("-" * max(len(title), len(title2)))
+    print("")
 
 
 def score_based_metrics(scores, labels):
