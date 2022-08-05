@@ -558,7 +558,7 @@ class CorpusClassifier(object):
 
         Parameters
         ----------
-        tag : str in {'PU', 'PN'}
+        pred_name : str in {'PU', 'PN'}
             Ettiquete of the model to be evaluated.
         true_label_name : str
             Name of the column tu be used as a reference for evaluation
@@ -594,7 +594,8 @@ class CorpusClassifier(object):
 
         # Print
         if printout:
-            metrics.print_metrics(bmetrics, tag=subdataset)
+            title = f"{pred_name}_vs_{true_label_name}"
+            metrics.print_metrics(bmetrics, title=title, data=subdataset)
 
         return bmetrics
 

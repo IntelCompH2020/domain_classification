@@ -81,10 +81,10 @@ def print_metrics(m, roc=None, title="", data=""):
             f"-- -- There are no predictions for the {data} samples")
         return
 
-    title2 = f"-- -- Binary metrics based on {data} data"
+    title2 = f"-- -- Binary metrics based on {data.upper()} data"
     print(f"")
-    print("-" * max(len(title), len(title2)))
-    print(title)
+    print("=" * max(len(title), len(title2)))
+    print(f"-- -- {title}")
     print(title2)
     print(f"")
     print(f".. .. Sample size: {m['size']}")
@@ -95,14 +95,14 @@ def print_metrics(m, roc=None, title="", data=""):
     print(f".. .. .. Predictions 1: {m['n_preds_1']}")
     print(f"")
     print(f".. .. Hits:")
-    print(f".. .. .. TP: {m['tp']},    TPR: {m['tpr']:.6f}")
+    print(f".. .. .. TP: {m['tp']},    TPR: {m['tpr']:.5f}")
     print(f".. .. .. TN: {m['tn']}")
     print(f".. .. Errors:")
-    print(f".. .. .. FP: {m['fp']},    FPR: {m['fpr']:.6f}")
+    print(f".. .. .. FP: {m['fp']},    FPR: {m['fpr']:.5f}")
     print(f".. .. .. FN: {m['fn']}")
     print(f".. .. Standard metrics:")
-    print(f".. .. .. Accuracy: {m['acc']}")
-    print(f".. .. .. Balanced accuracy: {m['bal_acc']}")
+    print(f".. .. .. Accuracy: {m['acc']:.5f}")
+    print(f".. .. .. Balanced accuracy: {m['bal_acc']:.5f}")
     print("-" * max(len(title), len(title2)))
 
     # Print AUC if available:
