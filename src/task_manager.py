@@ -729,7 +729,6 @@ class TaskManager(baseTaskManager):
         # Compute train and test metrics
         bmetrics, roc = self.dc.performance_metrics(
             tag_model, true_label_name, subset)
-        metrics.print_binary_metrics(bmetrics, tag=subdataset)
 
         # Plot train and test ROCs
         fname = (f'{self.class_name}_{tag_model}_vs_{true_label_name}_ROC_'
