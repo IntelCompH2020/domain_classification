@@ -1032,7 +1032,7 @@ class TaskManagerCMD(TaskManager):
             # Most AI keywords are read from a file, that misses a few
             # relevant keywords that are added here.
             keywords = (['artificial intelligence', 'argumentation framework',
-                         'random forest', 'rule based translation'
+                         'random forest', 'rule based translation',
                          'statistical machine translation', 'pytorch']
                         + self.DM.get_keywords_list())
 
