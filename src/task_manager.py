@@ -1032,9 +1032,16 @@ class TaskManagerCMD(TaskManager):
             # Most AI keywords are read from a file, that misses a few
             # relevant keywords that are added here.
             keywords = (['artificial intelligence', 'argumentation framework',
-                         'random forest',
+                         'random forest', 'rule based translation'
                          'statistical machine translation', 'pytorch']
                         + self.DM.get_keywords_list())
+
+            wrong_keywords = {
+                'active learning',   # It's a more relevant topic in Ed. Sci.
+                'statistical machinetranslation',  # Appears this way in metad.
+                'rule based translation '}         # Extra space
+            keywords = [k for k in keywords if k not in wrong_keywords]
+
             # This is to avoid keyword repetitions
             keywords = list(set(keywords))
 
@@ -1273,7 +1280,7 @@ class TaskManagerCMD(TaskManager):
             print(width * "=")
 
         # Label confirmation: this is to confirm that the labeler did not make
-        # (conciously) a mistake.
+        # (consciously) a mistake.
         if not self.QM.confirm():
             logging.info("-- Canceling: new labels removed.")
             labels = []

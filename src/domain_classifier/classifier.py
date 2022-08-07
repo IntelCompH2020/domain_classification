@@ -686,6 +686,7 @@ class CorpusClassifier(object):
                 "-- Not enough documents with predictions in the dataset")
             return selected_docs
 
+        # Initialize columns 'sampler' or 'sampling_prob' if they do not exist
         if 'sampler' not in self.df_dataset:
             self.df_dataset[['sampler']] = "unsampled"
         if 'sampling_prob' not in self.df_dataset:
@@ -757,6 +758,8 @@ class CorpusClassifier(object):
                 unused_docs = unused_docs.sample(n_samples - n_half)
                 unused_docs['sampling_prob'] = p_unused
 
+            # FIXME: this might fail if the if conditions above are not
+            # satisfied. Check.
             selected_docs = pd.concat((selected_docs, unused_docs))
 
         else:
