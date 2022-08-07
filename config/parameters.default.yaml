@@ -3,8 +3,8 @@ corpus:
   # Fraction of documents to be taken from the corpora
   # Warning: do not use exponential notation (e.g. use 0.01 and not 1e-2)
   sampling_factor:
-    SemanticScholar: 0.002
-    patstat: 0.003
+    SemanticScholar: 0.01
+    patstat: 0.015
 
 # Parameter for the keyword-based document selector
 keywords:
@@ -14,7 +14,7 @@ keywords:
   # of the word in the description. (For method='count' only)
   wt: 1 
   # Maximum number of documents to be selected.
-  n_max: 4000
+  n_max: 50000
   # Minimum score. Only docs scored strictly above s_min are selected
   s_min: 0.6
   # Name of the SBERT model. Available pretrained models can be found in 
