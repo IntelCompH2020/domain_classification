@@ -738,7 +738,11 @@ class TaskManager(baseTaskManager):
 
         # Add AUC in roc to the metrics dictionary:
         if bmetrics is not None and roc is not None:
-            bmetrics['AUC'] = roc['auc']
+            if 'unweighted' not in bmetrics:
+                bmetrics['AUC'] = roc['auc']
+            else:
+                bmetrics['unweighted']['AUC'] = roc['unweighted']['auc']
+                bmetrics['weighted']['AUC'] = roc['weighted']['auc']
 
         # Save metrics in metadata file.
         if 'metrics' not in self.metadata[self.class_name]:
