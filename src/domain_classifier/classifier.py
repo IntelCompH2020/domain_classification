@@ -89,7 +89,7 @@ class CorpusClassifier(object):
         if use_cuda:
             if torch.cuda.is_available():
                 self.device = torch.device("cuda")
-                logging.info("-- --Cuda available: GPU will be used")
+                logging.info("-- -- Cuda available: GPU will be used")
             else:
                 logging.warning(
                     "-- -- 'use_cuda' set to True when cuda is unavailable."

@@ -91,7 +91,10 @@ def print_metrics(m, roc=None, title="", data=""):
         return
 
     # Maximum string lentgh to be printed
-    w = len(str(m['size']))
+    if 'unweighted' not in m and 'weightetd' not in m:
+        w = len(str(m['size']))
+    else:
+        w = len(str(m['unweighted']['size']))
 
     # Print header
     title2 = f"-- -- Binary metrics based on {data.upper()} data"
