@@ -492,7 +492,7 @@ class CorpusClassifier(object):
             # algorithm as the last computed scores
             self.df_dataset[f"prediction"] = (
                 self.df_dataset[f"{tag}_prediction"])
-            self.df_dataset.loc[f"prob_pred"] = prob_preds
+            self.df_dataset[f"prob_pred"] = prob_preds
 
         # TODO: redefine output of evaluation
         # result = {}
@@ -534,7 +534,7 @@ class CorpusClassifier(object):
 
         # Check if the selected labels and predictions contain labels in {0, 1}
         bmetrics, roc = None, None    # Default values
-        breakpoint()
+
         if len(df) > 0:
             # Extract predictions and labels
             pscores = df[f"{tag}_prob_pred"].to_numpy()
@@ -544,6 +544,17 @@ class CorpusClassifier(object):
             # Compute performance metrics
             bmetrics = metrics.binary_metrics(preds, labels)
             roc = metrics.score_based_metrics(pscores, labels)
+
+            # Compute weighted metrics
+            p = df["sampling_prob"].to_numpy()
+            pmetrics = metrics.binary_metrics(preds, labels, sampling_probs=p)
+            p_roc = metrics.score_based_metrics(pscores, labels)
+
+            # Compose dictionary of metrics
+            bmetrics = {'unweighted': bmetrics,
+                        'weighted': pmetrics}
+            roc = {'unweighted': roc,
+                   'weighted': p_roc}
 
         # Print
         if printout:
@@ -694,15 +705,15 @@ class CorpusClassifier(object):
 
         if sampler == 'random':
 
-            if len(selected_docs) > n_samples:
-                # ##############################
-                # Compute sampling probabilities
-                p = 1 / len(selected_docs)   # Population size
+            # Compute sampling probabilities
+            p = 1 / len(selected_docs)   # Population size
 
-                # ###########
-                # Sample docs
+            # Sample docs
+            if len(selected_docs) > n_samples:
                 selected_docs = selected_docs.sample(n_samples)
-                selected_docs['sampling_prob'] = p
+
+            # Assign sampling probabilities
+            selected_docs['sampling_prob'] = p
 
         elif sampler == 'extremes':
 
@@ -740,38 +751,45 @@ class CorpusClassifier(object):
                 # Join samples
                 selected_docs = pd.concat((selected_pos, selected_neg))
 
+            else:
+                # Compute sampling probabilities
+                p = 1 / len(selected_docs)   # Population size
+                # Assign sampling probabilities
+                selected_docs['sampling_prob'] = p
+
         elif sampler == 'full_rs':
 
-            # ##############################
             # Compute sampling probabilities
-
-            # ###########
-            # Sample docs
-
             n_half = n_samples // 2
-            if len(selected_docs) > n_half:
-                p_selected = 1 / len(selected_docs)
-                selected_docs = selected_docs.sample(n_half)
-                selected_docs['sampling_prob'] = p_selected
-            if len(unused_docs) > n_samples - n_half:
-                p_unused = 1 / len(unused_docs)
-                unused_docs = unused_docs.sample(n_samples - n_half)
-                unused_docs['sampling_prob'] = p_unused
+            p_selected = 1 / len(selected_docs)
+            p_unused = 1 / len(unused_docs)
 
-            # FIXME: this might fail if the if conditions above are not
-            # satisfied. Check.
+            # Sample docs
+            if len(selected_docs) > n_half:
+                selected_docs = selected_docs.sample(n_half)
+            if len(unused_docs) > n_samples - n_half:
+                unused_docs = unused_docs.sample(n_samples - n_half)
+
+            # Assign sampling probabilities
+            selected_docs['sampling_prob'] = p_selected
+            unused_docs['sampling_prob'] = p_unused
+
+            # Join samples from the train-test and the unused subdatasets
             selected_docs = pd.concat((selected_docs, unused_docs))
 
         else:
             logging.warning(f"-- Unknown sampling algorithm: {sampler}")
             return None
 
+        # Register sampler and sampling probabilities into the dataset
         idx = selected_docs.index
-        # Register sampling mode
         selected_docs.loc[idx, 'sampler'] = sampler
-        # Register sampling probabilities
         cols = ['sampler', 'sampling_prob']
         self.df_dataset.loc[idx, cols] = selected_docs[cols]
+
+        print("TODO: verify sampling is correct")
+        breakpoint()
+        print("TODO: verify sampling is correct")
 
         return selected_docs
 
