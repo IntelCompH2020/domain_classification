@@ -195,13 +195,24 @@ def plot_roc(roc, metrics, tag="", path2figure=None):
     """
 
     if roc is not None:
-        base_plot_roc(
-            roc['fpr_roc'], roc['tpr_roc'],
-            fpr0=metrics['fpr'],
-            tpr0=metrics['tpr'],
-            title=f"ROC ({tag})",
-            label=f"{tag} (AUC = {roc['auc']:.2f})",
-            path2figure=path2figure)
+        if 'unweighted' not in roc:
+            base_plot_roc(
+                roc['fpr_roc'], roc['tpr_roc'],
+                fpr0=metrics['fpr'],
+                tpr0=metrics['tpr'],
+                title=f"ROC ({tag})",
+                label=f"{tag} (AUC = {roc['auc']:.2f})",
+                path2figure=path2figure)
+        else:
+            roc_u = roc['unweighted']
+            metrics_u = metrics['unweighted']
+            base_plot_roc(
+                roc_u['fpr_roc'], roc_u['tpr_roc'],
+                fpr0=metrics_u['fpr'],
+                tpr0=metrics_u['tpr'],
+                title=f"ROC ({tag})",
+                label=f"{tag} (AUC = {roc_u['auc']:.2f})",
+                path2figure=path2figure)
 
     return
 
