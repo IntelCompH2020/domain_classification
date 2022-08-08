@@ -748,7 +748,7 @@ class TaskManager(baseTaskManager):
         if 'metrics' not in self.metadata[self.class_name]:
             self.metadata[self.class_name]['metrics'] = {}
         key = f'{tag_model}_vs_{true_label_name}'
-        if key not in self.metadata[self.class_name]:
+        if key not in self.metadata[self.class_name]['metrics']:
             self.metadata[self.class_name]['metrics'][key] = {}
         self.metadata[self.class_name]['metrics'][key][subset] = bmetrics
 
