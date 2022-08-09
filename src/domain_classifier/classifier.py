@@ -369,7 +369,7 @@ class CorpusClassifier(object):
             # SCORES: Fill scores for the evaluated data
             test_rows = self.df_dataset['train_test'] == TEST
             self.df_dataset.loc[
-                test_rows, [f"{tag}_score0", f"{tag}_score1"]] = best_scores
+                test_rows, [f"{tag}_score_0", f"{tag}_score_1"]] = best_scores
 
             # PREDICTIONS: Fill predictions for the evaluated data
             delta = scores[:, 1] - scores[:, 0]
@@ -919,7 +919,7 @@ class CorpusClassifier(object):
 
         return df_annotations
 
-    def update_annotations(self, df_annotations, label_name):
+    def update_annotations(self, df_annotations, annot_name='annotations'):
         """
         Updates self.df_dataset with the annotation data and metadata in
         the input dataframe.
@@ -932,7 +932,7 @@ class CorpusClassifier(object):
         """
 
         # Select from the input dataframe the columns related to annotations
-        valid_cols = ['id', label_name, 'sampler', 'sampling_prob', 'date',
+        valid_cols = ['id', annot_name, 'sampler', 'sampling_prob', 'date',
                       'train_test']
         cols = [c for c in valid_cols if c in self.df_dataset.columns]
         df_annotations = df_annotations[cols]

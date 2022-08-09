@@ -1050,7 +1050,11 @@ class TaskManagerCMD(TaskManager):
             # Most AI keywords are read from a file, that misses a few
             # relevant keywords that are added here.
             keywords = (['artificial intelligence', 'argumentation framework',
-                         'random forest', 'rule based translation',
+                         'intelligent tutoring system',
+                         'nonlinear archetypal analysis',
+                         'non-linear archetypal analysis',
+                         'random forest',
+                         'rule based translation', 'rule-based translation',
                          'statistical machine translation', 'pytorch']
                         + self.DM.get_keywords_list())
 
@@ -1272,8 +1276,10 @@ class TaskManagerCMD(TaskManager):
         print("-- SAMPLED DOCUMENTS FOR LABELING:")
 
         print(width * "=")
+        k = 1    # A classic counter
         for i, doc in selected_docs.iterrows():
-            print(f"Document {i + 1} out of {len(selected_docs)}")
+            print(f"Document {k} out of {len(selected_docs)}")
+            k += 1
             print(f"ID: {doc.id}")
             if self.metadata['corpus_name'] == 'EU_projects':
                 # Locate document in corpus

@@ -142,12 +142,12 @@ def print_metrics(m, roc=None, title="", data="", print_unweighted=True):
         print(f".. .. .. Accuracy: {mu['acc']:.5f}")
         print(f".. .. .. Balanced accuracy: {mu['bal_acc']:.5f}")
 
-    # Print AUC if available:
-    if roc is not None and 'auc' in roc:
-        print(f".. .. Score-based metrics:")
-        print(f".. .. .. AUC: {roc['unweighted']['auc']:.5f}")
-    print("-" * max(len(title), len(title2)))
-    print("")
+        # Print AUC if available:
+        if roc is not None and 'auc' in roc and 'unweighted' in roc:
+            print(f".. .. Score-based metrics:")
+            print(f".. .. .. AUC: {roc['unweighted']['auc']:.5f}")
+        print("-" * max(len(title), len(title2)))
+        print("")
 
     return
 
