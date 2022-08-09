@@ -281,20 +281,24 @@ class CustomModel(nn.Module):
         out = self.classifier(out)
         return out
 
-    def train_model(self, df_train, device="cuda"):
+    def train_model(self, df_train, device="cuda", batch_size=8):
         """
         Train the model
 
         Parameters
         ----------
-        df_train: DataFrame
+        df_train : DataFrame
             Training dataframe
-        epochs: int
+        epochs : int
             Number of epochs to train model
+        device : str, optional (default="cuda")
+            If "cuda", a GPU is used if available
+        batch_size : int, optiona (default=8)
+            Batch size
         """
 
         # Convert DataFrame to DataLoader
-        train_data = self.create_data_loader(df_train)
+        train_data = self.create_data_loader(df_train, batch_size=batch_size)
 
         # Balance weights giving more weight to the less common label
         label_occurrences = df_train["labels"].value_counts()
@@ -363,13 +367,25 @@ class CustomModel(nn.Module):
 
         return running_loss, t_time  # , batch_data
 
-    def eval_model(self, df_eval, device="cuda"):
+    def eval_model(self, df_eval, device="cuda", batch_size=8):
         """
         Evaluate trained model
+
+        Parameters
+        ----------
+        df_train : DataFrame
+            Training dataframe
+        epochs : int
+            Number of epochs to train model
+        device : str, optional (default="cuda")
+            If "cuda", a GPU is used if available
+        batch_size : int, optiona (default=8)
+            Batch size
         """
 
         # Convert DataFrame to DataLoader
-        eval_data = self.create_data_loader(df_eval, shuffle=False)
+        eval_data = self.create_data_loader(df_eval, shuffle=False,
+                                            batch_size=batch_size)
 
         self.to(device)
         self.embeddings.to(device)

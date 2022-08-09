@@ -255,7 +255,7 @@ class CorpusClassifier(object):
         return
 
     def train_model(self, epochs=3, validate=True, freeze_encoder=True,
-                    tag=""):
+                    tag="", batch_size=8):
         """
         Train binary text classification model based on transformers
 
@@ -274,6 +274,8 @@ class CorpusClassifier(object):
         tag : str, optional (default="")
             A preffix that will be used for all result variables (scores and
             predictions) saved in the dataset dataframe
+        batch_size : int, optiona (default=8)
+            Batch size
 
         Notes
         -----
@@ -331,7 +333,7 @@ class CorpusClassifier(object):
 
             # Train epoch
             epoch_loss, epoch_time = self.model.train_model(
-                df_train, self.device)
+                df_train, device=self.device, batch_size=batch_size)
 
             logging.info(f"-- -- Epoch: {i} completed. loss: {epoch_loss:.3f}")
 
@@ -347,7 +349,7 @@ class CorpusClassifier(object):
                 # (Note that scores contain the (non-binary, non probabilistic)
                 # classifier outputs).
                 scores, total_loss, result = self.model.eval_model(
-                    df_test, self.device)
+                    df_test, device=self.device, batch_size=batch_size)
 
                 # Keep the best model
                 if result["f1"] >= best_result:
@@ -398,7 +400,7 @@ class CorpusClassifier(object):
 
         return
 
-    def eval_model(self, samples="train_test", tag=""):
+    def eval_model(self, samples="train_test", tag="", batch_size=8):
         """
         Compute predictions of the classification model over the input dataset
         and compute performance metrics.
@@ -413,6 +415,8 @@ class CorpusClassifier(object):
             Prefix of the score and prediction names.
             The scores will be saved in the columns of self.df_dataset
             containing these scores.
+        batch_size : int, optiona (default=8)
+            Batch size
         """
 
         # #############
@@ -437,13 +441,14 @@ class CorpusClassifier(object):
             logging.error(msg)
             raise ValueError(msg)
 
-        # FIXME: This condition should not be applied as a function of the tag,
-        #        because the tag name can be arbitrarily modified. Maybe this
-        #        weight should be passed as parameter.
-        if tag == "PU":
-            df_test["sample_weight"] = 1
-        else:
-            df_test["sample_weight"] = 10
+        # The following command is likely not needed, because it assigns the
+        # default weight, 1, to all samples
+        # The sample weights define the empirical risk, which is a weighted
+        # sum. Since the weights used for training before and after annotation
+        # are different, there are no "good" weights to use here.
+        # We can used the last-used weights, but this information is not being
+        # saved. It should be stored in self.df_dataset to be used here.
+        df_test["sample_weight"] = 1
 
         # #########################
         # Prediction and Evaluation
@@ -452,7 +457,7 @@ class CorpusClassifier(object):
         logging.info(f"-- -- Testing model with {len(df_test)} documents...")
         t0 = time()
         scores, total_loss, result = self.model.eval_model(
-            df_test, self.device)
+            df_test, device=self.device, batch_size=batch_size)
         logging.info(f"-- -- Model tested in {time() - t0} seconds")
 
         # Compute probabilistic predicitons
@@ -501,7 +506,8 @@ class CorpusClassifier(object):
         return result, wrong_predictions
 
     def performance_metrics(
-            self, tag, true_label_name, subdataset, printout=True):
+            self, tag, true_label_name, subdataset, printout=True,
+            use_sampling_probs=True):
         """
         Compute performance metrics
 
@@ -516,6 +522,21 @@ class CorpusClassifier(object):
             'train', 'test' or 'unused'
         printout : boolean, optional (default=True)
             If true, all metrics are printed (unless the roc values)
+        use_sampling_probs: boolean, optional (default=True)
+            If true, metrics are weighted by the (inverse) sampling
+            probabilities, if available. If true, unweighted metrics are
+            computed too, and saved in entry 'unweighted' of the output
+            dictionaries, as complementary info.
+
+        Returns
+        -------
+        bmetrics : dict
+            A dictionary of binary metrics (i.e. metrics based on the binary
+            labels and predictions only)
+        roc : dict
+            A dictionary of score-based metrics (i.e. metric based on the
+            binary labels and predictions, and the scores (soft decistions)
+            of the classifier)
         """
 
         # Map subdataset to its integer code
@@ -541,20 +562,28 @@ class CorpusClassifier(object):
             preds = df[f"{tag}_prediction"].to_numpy()
             labels = df[true_label_name].to_numpy()
 
-            # Compute performance metrics
-            bmetrics = metrics.binary_metrics(preds, labels)
-            roc = metrics.score_based_metrics(pscores, labels)
+            if (use_sampling_probs
+                    and 'sampling_prob' in df
+                    and min(df['sampling_prob']) > 0
+                    and max(df['sampling_prob']) <= 1):
 
-            # Compute weighted metrics
-            p = df["sampling_prob"].to_numpy()
-            pmetrics = metrics.binary_metrics(preds, labels, sampling_probs=p)
-            p_roc = metrics.score_based_metrics(pscores, labels)
+                # Compute weighted metrics
+                p = df["sampling_prob"].to_numpy()
+                bmetrics = metrics.binary_metrics(
+                    preds, labels, sampling_probs=p)
+                roc = metrics.score_based_metrics(pscores, labels)
 
-            # Compose dictionary of metrics
-            bmetrics = {'unweighted': bmetrics,
-                        'weighted': pmetrics}
-            roc = {'unweighted': roc,
-                   'weighted': p_roc}
+                # Compute and add unweighted metrics as a complementary entry
+                # to the output dictionaries (this is just to facilitate the
+                # comparison witht he weighted metrics)
+                bmetrics['unweighted'] = metrics.binary_metrics(preds, labels)
+                roc['unweighted'] = metrics.score_based_metrics(
+                    pscores, labels)
+
+            else:
+                # Compute unweighted metrics only
+                bmetrics = metrics.binary_metrics(preds, labels)
+                roc = metrics.score_based_metrics(pscores, labels)
 
         # Print
         if printout:
@@ -564,9 +593,11 @@ class CorpusClassifier(object):
         return bmetrics, roc
 
     def label2label_metrics(
-            self, pred_name, true_label_name, subdataset, printout=True):
+            self, pred_name, true_label_name, subdataset, printout=True,
+            use_sampling_probs=True):
         """
-        Compute performance metrics
+        Compute binary performance metrics (i.e. metrics based on the binary
+        labels and predictions only)
 
         Parameters
         ----------
@@ -579,6 +610,16 @@ class CorpusClassifier(object):
             'train', 'test' or 'unused'
         printout : boolean, optional (default=True)
             If true, all metrics are printed (unless the roc values)
+        use_sampling_probs: boolean, optional (default=True)
+            If true, metrics are weighted by the (inverse) sampling
+            probabilities, if available. If true, unweighted metrics are
+            computed too, and saved in entry 'unweighted' of the output
+            dictionary, as complementary info.
+
+        Returns
+        -------
+        bmetrics : dict
+            A dictionary of binary metrics
         """
 
         # Map subdataset to its integer code
@@ -601,8 +642,24 @@ class CorpusClassifier(object):
             preds = df[pred_name].to_numpy()
             labels = df[true_label_name].to_numpy()
 
-            # Compute label-vs-label metrics
-            bmetrics = metrics.binary_metrics(preds, labels)
+            if (use_sampling_probs
+                    and 'sampling_prob' in df
+                    and min(df['sampling_prob']) > 0
+                    and max(df['sampling_prob']) <= 1):
+
+                # Compute weighted metrics
+                p = df["sampling_prob"].to_numpy()
+                bmetrics = metrics.binary_metrics(
+                    preds, labels, sampling_probs=p)
+
+                # Compute and add unweighted metrics as a complementary entry
+                # to the output dictionaries (this is just to facilitate the
+                # comparison witht he weighted metrics)
+                bmetrics['unweighted'] = metrics.binary_metrics(preds, labels)
+
+            else:
+                # Compute unweighted metrics only
+                bmetrics = metrics.binary_metrics(preds, labels)
 
         # Print
         if printout:
@@ -895,9 +952,24 @@ class CorpusClassifier(object):
 
         return
 
-    def retrain_model(self, freeze_encoder=True):
+    def retrain_model(self, freeze_encoder=True, batch_size=8,
+                      annotation_gain=10):
         """
         Re-train the classifier model using annotations
+
+        Parameters
+        ----------
+        epochs : int, optional (default=3)
+            Number of training epochs
+        freeze_encoder : bool, optional (default=True)
+            If True, the embedding layer is frozen, so that only the
+            classification layers is updated. This is useful to use
+            precomputed embedings for large datasets.
+        batch_size : int, optional (default=8)
+            Batch size
+        annotation_gain : int or float, optional (default=10)
+            Relative value of an annotated sample with respect to a non-
+            annotated one.
         """
 
         # #################
@@ -920,28 +992,30 @@ class CorpusClassifier(object):
         # ####################
         # Get PU training data
         # Note that we select the columns required for training only
-        # Note, also, that we exclude from the PU data the annotated labels
+
+        # Training data not annotated (i.e., UNUSED in column 'learned')
+        is_train = self.df_dataset.train_test == TRAIN
         df_train_PU = self.df_dataset[
-            (self.df_dataset.train_test == TRAIN)
+            is_train
             & (self.df_dataset.learned == UNUSED)][['id', 'text', 'labels']]
+        df_train_PU["sample_weight"] = 1
 
-        #  Get annotated samples already used for retraining
+        # Training data with annotations already used for retraining
         df_clean_used = self.df_dataset[
-            self.df_dataset.learned == 1][['id', 'text', 'labels']]
+            is_train & self.df_dataset.learned == 1][['id', 'text', 'labels']]
+        df_clean_used["sample_weight"] = annotation_gain
 
-        #  Get new annotated samples, not used for retraining yet
+        # Training data with annotations not used for retraining yet
         df_clean_new = self.df_dataset[
-            self.df_dataset.learned == 0][['id', 'text', 'labels']]
+            is_train & self.df_dataset.learned == 0][['id', 'text', 'labels']]
+        df_clean_new["sample_weight"] = annotation_gain
 
         # ##################
         # Integrate datasets
 
         # FIXME: Change this by a more clever integration
         df_train = pd.concat([df_train_PU, df_clean_used, df_clean_new])
-
-        # TODO: set correct weight
-        df_train = df_clean_new
-        df_train["sample_weight"] = 10
+        # df_train = df_clean_new
 
         # ##############
         # Classification
@@ -952,7 +1026,8 @@ class CorpusClassifier(object):
         # Train the model
         t0 = time()
         logging.info(f"-- -- Training model with {len(df_train)} documents...")
-        self.model.train_model(df_train, self.device)
+        self.model.train_model(
+            df_train, device=self.device, batch_size=batch_size)
         logging.info(f"-- -- Model trained in {time() - t0:.3f} seconds")
 
         # ################

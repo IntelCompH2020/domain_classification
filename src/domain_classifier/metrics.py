@@ -70,7 +70,7 @@ def binary_metrics(preds, labels, sampling_probs=None):
     return m
 
 
-def print_metrics(m, roc=None, title="", data=""):
+def print_metrics(m, roc=None, title="", data="", print_unweighted=True):
     """
     Pretty-prints the given metrics
 
@@ -80,9 +80,12 @@ def print_metrics(m, roc=None, title="", data=""):
         Dictionary of metrics (produced by the binary_metrics() method)
     roc : dict or None, optional (default=None)
         A dictionary of score-based metrics. It is used to print AUC.
-    tag : str, optional (default="")
+    data : str, optional (default="")
         Identifier of the dataset used to compute the metrics. It is used
         to compose the text title
+    print_unweighted : boolean (default=True)
+        If True, unweighted metrics are printed in addition to the weighted
+        metrics
     """
 
     if m is None:
@@ -91,10 +94,7 @@ def print_metrics(m, roc=None, title="", data=""):
         return
 
     # Maximum string lentgh to be printed
-    if 'unweighted' not in m and 'weightetd' not in m:
-        w = len(str(m['size']))
-    else:
-        w = len(str(m['unweighted']['size']))
+    w = len(str(m['size']))
 
     # Print header
     title2 = f"-- -- Binary metrics based on {data.upper()} data"
@@ -104,59 +104,52 @@ def print_metrics(m, roc=None, title="", data=""):
     print(title2)
     print(f"")
 
-    if 'unweighted' not in m and 'weightetd' not in m:
-        print(f".. .. Sample size: {m['size']:{w}}")
-        print(f".. .. Class proportions:")
-        print(f".. .. .. Labels 0:      {m['n_labels_0']:{w}}")
-        print(f".. .. .. Labels 1:      {m['n_labels_1']:{w}}")
-        print(f".. .. .. Predictions 0: {m['n_preds_0']:{w}}")
-        print(f".. .. .. Predictions 1: {m['n_preds_1']:{w}}")
-        print(f"")
+    print(f".. .. Sample size: {m['size']:{w}}")
+    print(f".. .. Class proportions:")
+    print(f".. .. .. Labels 0:      {m['n_labels_0']:{w}}")
+    print(f".. .. .. Labels 1:      {m['n_labels_1']:{w}}")
+    print(f".. .. .. Predictions 0: {m['n_preds_0']:{w}}")
+    print(f".. .. .. Predictions 1: {m['n_preds_1']:{w}}")
+    print(f"")
+    print(f".. .. Hits:")
+    print(f".. .. .. TP: {m['tp']:{w}},    TPR: {m['tpr']:.5f}")
+    print(f".. .. .. TN: {m['tn']:{w}},    TNR: {1 - m['fpr']:.5f}")
+    print(f".. .. Errors:")
+    print(f".. .. .. FP: {m['fp']:{w}},    FPR: {m['fpr']:.5f}")
+    print(f".. .. .. FN: {m['fn']:{w}},    FNR: {1 - m['tpr']:.5f}")
+    print(f".. .. Standard metrics:")
+    print(f".. .. .. Accuracy: {m['acc']:.5f}")
+    print(f".. .. .. Balanced accuracy: {m['bal_acc']:.5f}")
+
+    # Print AUC if available:
+    if roc is not None and 'auc' in roc:
+        print(f".. .. Score-based metrics:")
+        print(f".. .. .. AUC: {roc['auc']:.5f}")
+    print("-" * max(len(title), len(title2)))
+    print("")
+
+    if print_unweighted and ('unweighted' in m):
+
+        mu = m['unweighted']
+        print('Unweighted metrics:')
         print(f".. .. Hits:")
-        print(f".. .. .. TP: {m['tp']:{w}},    TPR: {m['tpr']:.5f}")
-        print(f".. .. .. TN: {m['tn']:{w}},    TNR: {1 - m['fpr']:.5f}")
+        print(f".. .. .. TP: {mu['tp']:{w}},    TPR: {mu['tpr']:.5f}")
+        print(f".. .. .. TN: {mu['tn']:{w}},    TNR: {1 - mu['fpr']:.5f}")
         print(f".. .. Errors:")
-        print(f".. .. .. FP: {m['fp']:{w}},    FPR: {m['fpr']:.5f}")
-        print(f".. .. .. FN: {m['fn']:{w}},    FNR: {1 - m['tpr']:.5f}")
+        print(f".. .. .. FP: {mu['fp']:{w}},    FPR: {mu['fpr']:.5f}")
+        print(f".. .. .. FN: {mu['fn']:{w}},    FNR: {1 - mu['tpr']:.5f}")
         print(f".. .. Standard metrics:")
-        print(f".. .. .. Accuracy: {m['acc']:.5f}")
-        print(f".. .. .. Balanced accuracy: {m['bal_acc']:.5f}")
+        print(f".. .. .. Accuracy: {mu['acc']:.5f}")
+        print(f".. .. .. Balanced accuracy: {mu['bal_acc']:.5f}")
 
-        # Print AUC if available:
-        if roc is not None and 'auc' in roc:
-            print(f".. .. Score-based metrics:")
-            print(f".. .. .. AUC: {roc['auc']:.5f}")
-        print("-" * max(len(title), len(title2)))
-        print("")
+    # Print AUC if available:
+    if roc is not None and 'auc' in roc:
+        print(f".. .. Score-based metrics:")
+        print(f".. .. .. AUC: {roc['unweighted']['auc']:.5f}")
+    print("-" * max(len(title), len(title2)))
+    print("")
 
-    else:
-
-        for key in {'unweighted', 'weighted'}:
-            mu = m[key]
-            print(key.upper())
-            print(f".. .. Sample size: {mu['size']:{w}}")
-            print(f".. .. Class proportions:")
-            print(f".. .. .. Labels 0:      {mu['n_labels_0']:{w}}")
-            print(f".. .. .. Labels 1:      {mu['n_labels_1']:{w}}")
-            print(f".. .. .. Predictions 0: {mu['n_preds_0']:{w}}")
-            print(f".. .. .. Predictions 1: {mu['n_preds_1']:{w}}")
-            print(f"")
-            print(f".. .. Hits:")
-            print(f".. .. .. TP: {mu['tp']:{w}},    TPR: {mu['tpr']:.5f}")
-            print(f".. .. .. TN: {mu['tn']:{w}},    TNR: {1 - mu['fpr']:.5f}")
-            print(f".. .. Errors:")
-            print(f".. .. .. FP: {mu['fp']:{w}},    FPR: {mu['fpr']:.5f}")
-            print(f".. .. .. FN: {mu['fn']:{w}},    FNR: {1 - mu['tpr']:.5f}")
-            print(f".. .. Standard metrics:")
-            print(f".. .. .. Accuracy: {mu['acc']:.5f}")
-            print(f".. .. .. Balanced accuracy: {mu['bal_acc']:.5f}")
-
-        # Print AUC if available:
-        if roc is not None and 'auc' in roc:
-            print(f".. .. Score-based metrics:")
-            print(f".. .. .. AUC: {roc[key]['auc']:.5f}")
-        print("-" * max(len(title), len(title2)))
-        print("")
+    return
 
 
 def score_based_metrics(scores, labels, sampling_probs=None):

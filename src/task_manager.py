@@ -644,6 +644,7 @@ class TaskManager(baseTaskManager):
 
         # Configuration parameters
         freeze_encoder = self.global_parameters['classifier']['freeze_encoder']
+        batch_size = self.global_parameters['classifier']['batch_size']
 
         if self.dc is not None:
             # If there exists a classifier object, update the local dataset,
@@ -670,7 +671,8 @@ class TaskManager(baseTaskManager):
 
         # Train the model using simpletransformers
         self.dc.train_model(epochs=epochs, validate=True,
-                            freeze_encoder=freeze_encoder, tag="PU")
+                            freeze_encoder=freeze_encoder, tag="PU",
+                            batch_size=batch_size)
 
         # Update status.
         # Since training takes much time, we store the classification results
@@ -698,9 +700,12 @@ class TaskManager(baseTaskManager):
         if not self._is_model():
             return
 
+        # Configuration parameters
+        batch_size = self.global_parameters['classifier']['batch_size']
+
         # Evaluate the model over the test set
         result, wrong_predictions = self.dc.eval_model(
-            samples=samples, tag='PU')
+            samples=samples, tag='PU', batch_size=batch_size)
 
         # Pretty print dictionary of results
         logging.info(f"-- Classification results: {result}")
@@ -738,11 +743,9 @@ class TaskManager(baseTaskManager):
 
         # Add AUC in roc to the metrics dictionary:
         if bmetrics is not None and roc is not None:
-            if 'unweighted' not in bmetrics:
-                bmetrics['AUC'] = roc['auc']
-            else:
+            bmetrics['AUC'] = roc['auc']
+            if 'unweighted' in bmetrics and 'unweighted' in roc:
                 bmetrics['unweighted']['AUC'] = roc['unweighted']['auc']
-                bmetrics['weighted']['AUC'] = roc['weighted']['auc']
 
         # Save metrics in metadata file.
         if 'metrics' not in self.metadata[self.class_name]:
@@ -862,6 +865,10 @@ class TaskManager(baseTaskManager):
         # STEP 3: Annotate
         self.dc.annotate(idx, labels, col=ANNOTATIONS)
 
+        # Check annotation consistency:
+        logging.debug("Check annotation consistency here!!!")
+        breakpoint()
+
         # Update dataset file to include new labels
         self._save_dataset()
 
@@ -897,8 +904,11 @@ class TaskManager(baseTaskManager):
         if not self._is_model():
             return
 
+        # Configuration parameters
+        batch_size = self.global_parameters['classifier']['batch_size']
+
         # Retrain model using the new labels
-        self.dc.retrain_model(freeze_encoder=True)
+        self.dc.retrain_model(freeze_encoder=True, batch_size=batch_size)
 
         # Update status.
         # Since training takes much time, we store the classification results
@@ -922,8 +932,12 @@ class TaskManager(baseTaskManager):
         if not self._is_model():
             return
 
+        # Configuration parameters
+        batch_size = self.global_parameters['classifier']['batch_size']
+
         # Evaluate the model over the test set
-        result, wrong_predictions = self.dc.eval_model(tag='PN')
+        result, wrong_predictions = self.dc.eval_model(
+            tag='PN', batch_size=batch_size)
 
         # Pretty print dictionary of results
         logging.info(f"-- Classification results: {result}")

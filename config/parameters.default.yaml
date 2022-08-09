@@ -52,6 +52,8 @@ classifier:
   freeze_encoder: True
   # Number of epochs
   epochs: 5
+  # Only for GPU use
+  batch_size: 8
 
 # Parameters for the active learning (AL)
 active_learning:
