@@ -728,7 +728,8 @@ class TaskManager(baseTaskManager):
 
         return result
 
-    def _performance_metrics(self, tag_model, true_label_name, subset):
+    def _performance_metrics(self, tag_model, true_label_name, subset,
+                             use_sampling_probs=True):
         """
         Compute all performance metrics based on the data available at the
         current dataset.
@@ -744,7 +745,8 @@ class TaskManager(baseTaskManager):
 
         # Compute train and test metrics
         bmetrics, roc = self.dc.performance_metrics(
-            tag_model, true_label_name, subset)
+            tag_model, true_label_name, subset,
+            use_sampling_probs=use_sampling_probs)
 
         # Plot train and test ROCs
         fname = (f'{self.class_name}_{tag_model}_vs_{true_label_name}_ROC_'
@@ -770,7 +772,8 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def _label2label_metrics(self, tag_model, true_label_name, subset):
+    def _label2label_metrics(self, tag_model, true_label_name, subset,
+                             use_sampling_probs=True):
         """
         Compute all performance metrics based on the data available at the
         current dataset.
@@ -786,7 +789,8 @@ class TaskManager(baseTaskManager):
 
         # Compute train and test metrics
         metrics = self.dc.label2label_metrics(
-            tag_model, true_label_name, subset)
+            tag_model, true_label_name, subset,
+            use_sampling_probs=use_sampling_probs)
 
         # Save metrics in metadata file.
         if 'metrics' not in self.metadata[self.class_name]:
