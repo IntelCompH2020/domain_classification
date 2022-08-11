@@ -42,6 +42,10 @@ def binary_metrics(preds, labels, sampling_probs=None):
     if sampling_probs is not None:
         w = 1 / (sampling_probs + eps)
 
+        # Normalize weights. This is not required, but useful to interpret
+        # tn, fp, fn and tp values as "no. of effective samples"
+        w = w / np.sum(w) * len(w)
+
     # Metrics computation at s_min threshold
     tn, fp, fn, tp = confusion_matrix(preds, labels, sample_weight=w).ravel()
     tpr = (tp + eps) / (tp + fn + 2 * eps)
