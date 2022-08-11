@@ -47,7 +47,7 @@ def binary_metrics(preds, labels, sampling_probs=None):
         w = w / np.sum(w) * len(w)
 
     # Metrics computation at s_min threshold
-    tn, fp, fn, tp = confusion_matrix(preds, labels, sample_weight=w).ravel()
+    tn, fp, fn, tp = confusion_matrix(labels, preds, sample_weight=w).ravel()
     tpr = (tp + eps) / (tp + fn + 2 * eps)
     fpr = (fp + eps) / (fp + tn + 2 * eps)
     acc = (tp + tn + eps) / (tp + tn + fp + fn + 2 * eps)
