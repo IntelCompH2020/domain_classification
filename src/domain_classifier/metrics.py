@@ -193,6 +193,9 @@ def score_based_metrics(scores, labels, sampling_probs=None):
     fpr_roc, tpr_roc, thresholds = roc_curve(
         target_sorted, ssort, sample_weight=w)
 
+    breakpoint()
+
+
     # Dictionary with the evaluation results
     tpr_roc_float = [float(k) for k in tpr_roc]
     fpr_roc_float = [float(k) for k in fpr_roc]
