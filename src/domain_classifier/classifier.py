@@ -110,7 +110,7 @@ class CorpusClassifier(object):
 
         return
 
-    def num_annnotations(self):
+    def num_annotations(self):
         """
         Return the number of manual annotations available
         """

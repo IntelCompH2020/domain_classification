@@ -865,7 +865,9 @@ class TaskManager(baseTaskManager):
         # STEP 3: Annotate
         self.dc.annotate(idx, labels, col=ANNOTATIONS)
 
-        # Check annotation consistency:
+        # Update dataset file to include new labels
+        self._save_dataset()
+
         n_labels, n_train, n_test, n_unused = self.dc.num_annotations()
         logging.info("-- Summary of current annotations:")
         logging.info(f"-- -- Annotations: {n_labels}")
@@ -873,11 +875,9 @@ class TaskManager(baseTaskManager):
         logging.info(f"-- -- Test: {n_test}")
         logging.info(f"-- -- Unused: {n_unused}")
 
+        # Check annotation consistency:
         logging.debug("Check annotation consistency here!!!")
         breakpoint()
-
-        # Update dataset file to include new labels
-        self._save_dataset()
 
         return
 
