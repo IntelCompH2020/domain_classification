@@ -110,6 +110,19 @@ class CorpusClassifier(object):
 
         return
 
+    def num_annnotations(self):
+        """
+        Return the number of manual annotations available
+        """
+
+        df_annot = self.df_dataset[self.df_dataset.sampler != 'unsampled']
+        n_labels = len(df_annot)
+        n_train = sum(df_annot.train_test == TRAIN)
+        n_test = sum(df_annot.train_test == TEST)
+        n_unused = sum(df_annot.train_test == UNUSED)
+
+        return n_labels, n_train, n_test, n_unused
+
     def train_test_split(self, max_imbalance=None, nmax=None, train_size=0.6,
                          random_state=None):
         """
@@ -519,7 +532,8 @@ class CorpusClassifier(object):
             Name of the column tu be used as a reference for evaluation
         subdataset : str
             An indicator of the subdataset to be evaluated. It can take values
-            'train', 'test' or 'unused'
+            'train', 'test', 'unused', 'notrain' (which uses train and test)
+            and 'all' (which uses all data)
         printout : boolean, optional (default=True)
             If true, all metrics are printed (unless the roc values)
         use_sampling_probs: boolean, optional (default=True)
@@ -539,13 +553,20 @@ class CorpusClassifier(object):
             of the classifier)
         """
 
-        # Map subdataset to its integer code
-        ttu = {'train': TRAIN, 'test': TEST, 'unused': UNUSED}[subdataset]
-
         # ################
         # Training metrics
 
-        df = self.df_dataset[self.df_dataset.train_test == ttu]
+        if subdataset in {'train', 'test', 'unused'}:
+            # Map subdataset to its integer code
+            ttu = {'train': TRAIN, 'test': TEST, 'unused': UNUSED}[subdataset]
+            df = self.df_dataset[self.df_dataset.train_test == ttu]
+        elif subdataset == 'all':
+            df = self.df_dataset.copy()
+        elif subdataset == 'notrain':
+            df = self.df_dataset[self.df_dataset.train_test != TRAIN]
+        else:
+            logging.error("Unknown subdataset")
+            return None, None
 
         # Reduce dataset to samples with predictions and labels only
         l0 = len(df)
@@ -555,6 +576,18 @@ class CorpusClassifier(object):
 
         # Check if the selected labels and predictions contain labels in {0, 1}
         bmetrics, roc = None, None    # Default values
+
+        if subdataset == 'notrain':
+            print("UNTESTED")
+            breakpoint()
+            print("UNTESTED")
+            # Correction of test sampling probability values
+            ntrain = sum(self.df_datasest.train_test == TRAIN)
+            ntest = sum(self.df_datasest.train_test == TEST)
+            factor = (ntrain + ntest) / ntest
+            is_test = df.train_test == TEST
+            df.loc[is_test, 'sampling_prob'] = (
+                factor * df.loc[is_test, 'sampling_prob'])
 
         if len(df) > 0:
             # Extract predictions and labels
@@ -844,10 +877,6 @@ class CorpusClassifier(object):
         cols = ['sampler', 'sampling_prob']
         self.df_dataset.loc[idx, cols] = selected_docs[cols]
 
-        print("TODO: verify sampling is correct")
-        breakpoint()
-        print("TODO: verify sampling is correct")
-
         return selected_docs
 
     def annotate(self, idx, labels, col='annotations'):
@@ -890,7 +919,7 @@ class CorpusClassifier(object):
 
         return
 
-    def get_annotations(self, annot_name='annotations'):
+    def get_annotations(self, annot_name='annotations', include_text=True):
         """
         Returns the portion of self.dataset that contains annotated data
 
@@ -898,7 +927,11 @@ class CorpusClassifier(object):
         ----------
         annot_name : str, optional (default='annotations')
             Name of the column in the pandas dataframe containing the
-            annotation
+            annotations
+        include_text : bool, optional (default=True)
+            If true, the text of the annotated document is included in the
+            output dataframe. This is usefull for a manual inspection of
+            the annotations.
 
         Returns
         -------
@@ -908,8 +941,12 @@ class CorpusClassifier(object):
         """
 
         # Extract label dataframe from the dataset.
-        cols = ['id', annot_name, 'sampler', 'sampling_prob', 'date',
-                'train_test']
+        if include_text:
+            cols = ['id', 'text', annot_name, 'sampler', 'sampling_prob',
+                    'date', 'train_test']
+        else:
+            cols = ['id', annot_name, 'sampler', 'sampling_prob', 'date',
+                    'train_test']
         cols = [c for c in cols if c in self.df_dataset.columns]
 
         # Identify annotated docs:
