@@ -570,7 +570,7 @@ class TaskManager(baseTaskManager):
                 # Test PU labels against annotations
                 logging.info(
                     f"-- Quality of the PU labels wrt {gold_standard}")
-                self._label2label_metrics("PUlabels", gold_standard, "unused")
+                self._label2label_metrics("PUlabels", gold_standard, "all")
 
         # Plot score distributions (this does not epend on the gold standard)
         p2fig = self.path2output / f'{self.class_name}_PUscores.png'
