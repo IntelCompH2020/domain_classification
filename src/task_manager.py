@@ -822,6 +822,7 @@ class TaskManager(baseTaskManager):
                                   use_sampling_probs=False)
 
         # Test PU predictions against annotations
+        breakpoint()
         self._performance_metrics("PU", "annotations", "test")
         self._performance_metrics("PU", "annotations", "unused")
         self._performance_metrics("PU", "annotations", "all")
