@@ -553,9 +553,7 @@ class CorpusClassifier(object):
             of the classifier)
         """
 
-        # ################
-        # Training metrics
-
+        # Select population
         if subdataset in {'train', 'test', 'unused'}:
             # Map subdataset to its integer code
             ttu = {'train': TRAIN, 'test': TEST, 'unused': UNUSED}[subdataset]
@@ -574,54 +572,48 @@ class CorpusClassifier(object):
         df = df.loc[df[f"{tag}_prediction"].isin({0, 1})]
         logging.info(f"-- -- Metrics based on {len(df)} out of {l0} samples")
 
+        # Check if dataframe is not empty
+        if len(df) == 0:
+            logging.warning("-- -- No samples to evaluate")
+            return None, None
+
         # Check if the selected labels and predictions contain labels in {0, 1}
         bmetrics, roc = None, None    # Default values
 
-        if subdataset == 'notrain':
-            print("UNTESTED")
-            breakpoint()
-            print("UNTESTED")
-            # Correction of test sampling probability values
-            ntrain = sum(self.df_datasest.train_test == TRAIN)
-            ntest = sum(self.df_datasest.train_test == TEST)
-            factor = (ntrain + ntest) / ntest
-            is_test = df.train_test == TEST
-            df.loc[is_test, 'sampling_prob'] = (
-                factor * df.loc[is_test, 'sampling_prob'])
+        # Extract predictions and labels
+        pscores = df[f"{tag}_prob_pred"].to_numpy()
+        preds = df[f"{tag}_prediction"].to_numpy()
+        labels = df[true_label_name].to_numpy()
 
-        if len(df) > 0:
-            # Extract predictions and labels
-            pscores = df[f"{tag}_prob_pred"].to_numpy()
-            preds = df[f"{tag}_prediction"].to_numpy()
-            labels = df[true_label_name].to_numpy()
+        # Check if consistent sampling probabilities exist in df.
+        if (use_sampling_probs
+                and 'sampling_prob' in df
+                and min(df['sampling_prob']) > 0
+                and max(df['sampling_prob']) <= 1):
 
-            if (use_sampling_probs
-                    and 'sampling_prob' in df
-                    and min(df['sampling_prob']) > 0
-                    and max(df['sampling_prob']) <= 1):
+            # Compute weighted metrics
+            p = df["sampling_prob"].to_numpy()
+            bmetrics = metrics.binary_metrics(
+                preds, labels, sampling_probs=p)
+            roc = metrics.score_based_metrics(pscores, labels)
 
-                # Compute weighted metrics
-                p = df["sampling_prob"].to_numpy()
-                bmetrics = metrics.binary_metrics(
-                    preds, labels, sampling_probs=p)
-                roc = metrics.score_based_metrics(pscores, labels)
+            # Compute and add unweighted metrics as a complementary entry
+            # to the output dictionaries (this is just to facilitate the
+            # comparison witht he weighted metrics)
+            bmetrics['unweighted'] = metrics.binary_metrics(preds, labels)
+            roc['unweighted'] = metrics.score_based_metrics(
+                pscores, labels)
 
-                # Compute and add unweighted metrics as a complementary entry
-                # to the output dictionaries (this is just to facilitate the
-                # comparison witht he weighted metrics)
-                bmetrics['unweighted'] = metrics.binary_metrics(preds, labels)
-                roc['unweighted'] = metrics.score_based_metrics(
-                    pscores, labels)
-
-            else:
-                # Compute unweighted metrics only
-                bmetrics = metrics.binary_metrics(preds, labels)
-                roc = metrics.score_based_metrics(pscores, labels)
+        else:
+            # Compute unweighted metrics only
+            bmetrics = metrics.binary_metrics(preds, labels)
+            roc = metrics.score_based_metrics(pscores, labels)
 
         # Print
         if printout:
             title = f"{tag}_vs_{true_label_name}"
-            metrics.print_metrics(bmetrics, roc, title=title, data=subdataset)
+            metrics.print_metrics(bmetrics, roc, title=title, data=subdataset,
+                                  print_unweighted=False)
 
         return bmetrics, roc
 
@@ -655,13 +647,18 @@ class CorpusClassifier(object):
             A dictionary of binary metrics
         """
 
-        # Map subdataset to its integer code
-        ttu = {'train': TRAIN, 'test': TEST, 'unused': UNUSED}[subdataset]
-
-        # ################
-        # Training metrics
-
-        df = self.df_dataset[self.df_dataset.train_test == ttu]
+        # Select population
+        if subdataset in {'train', 'test', 'unused'}:
+            # Map subdataset to its integer code
+            ttu = {'train': TRAIN, 'test': TEST, 'unused': UNUSED}[subdataset]
+            df = self.df_dataset[self.df_dataset.train_test == ttu]
+        elif subdataset == 'all':
+            df = self.df_dataset.copy()
+        elif subdataset == 'notrain':
+            df = self.df_dataset[self.df_dataset.train_test != TRAIN]
+        else:
+            logging.error("Unknown subdataset")
+            return None
 
         # Reduce dataset to samples with predictions and labels only
         l0 = len(df)
@@ -669,35 +666,40 @@ class CorpusClassifier(object):
         df = df.loc[df[pred_name].isin({0, 1})]
         logging.info(f"-- -- Metrics based on {len(df)} out of {l0} samples")
 
+        # Check if dataframe is not empty
+        if len(df) == 0:
+            logging.warning("-- -- No samples to evaluate")
+            return None
+
         bmetrics = None    # Default
-        if len(df) > 0:
-            # Extract predictions and labels
-            preds = df[pred_name].to_numpy()
-            labels = df[true_label_name].to_numpy()
+        # Extract predictions and labels
+        preds = df[pred_name].to_numpy()
+        labels = df[true_label_name].to_numpy()
 
-            if (use_sampling_probs
-                    and 'sampling_prob' in df
-                    and min(df['sampling_prob']) > 0
-                    and max(df['sampling_prob']) <= 1):
+        if (use_sampling_probs
+                and 'sampling_prob' in df
+                and min(df['sampling_prob']) > 0
+                and max(df['sampling_prob']) <= 1):
 
-                # Compute weighted metrics
-                p = df["sampling_prob"].to_numpy()
-                bmetrics = metrics.binary_metrics(
-                    preds, labels, sampling_probs=p)
+            # Compute weighted metrics
+            p = df["sampling_prob"].to_numpy()
+            bmetrics = metrics.binary_metrics(
+                preds, labels, sampling_probs=p)
 
-                # Compute and add unweighted metrics as a complementary entry
-                # to the output dictionaries (this is just to facilitate the
-                # comparison witht he weighted metrics)
-                bmetrics['unweighted'] = metrics.binary_metrics(preds, labels)
+            # Compute and add unweighted metrics as a complementary entry
+            # to the output dictionaries (this is just to facilitate the
+            # comparison witht he weighted metrics)
+            bmetrics['unweighted'] = metrics.binary_metrics(preds, labels)
 
-            else:
-                # Compute unweighted metrics only
-                bmetrics = metrics.binary_metrics(preds, labels)
+        else:
+            # Compute unweighted metrics only
+            bmetrics = metrics.binary_metrics(preds, labels)
 
         # Print
         if printout:
             title = f"{pred_name}_vs_{true_label_name}"
-            metrics.print_metrics(bmetrics, title=title, data=subdataset)
+            metrics.print_metrics(bmetrics, title=title, data=subdataset,
+                                  print_unweighted=False)
 
         return bmetrics
 

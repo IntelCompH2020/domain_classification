@@ -219,6 +219,9 @@ class TaskManager(baseTaskManager):
         gs_labels = [x for x in self.df_corpus.columns
                      if x.startswith('target_')]
 
+        if "annotations" in self.dc.df_dataset:
+            gs_labels.append("annotations")
+
         if gs_labels == []:
             logging.warning('No Gold Standard is available. Please choose the '
                             'unique option in the menu')
@@ -554,14 +557,22 @@ class TaskManager(baseTaskManager):
         Evaluate the current set of PU labels
         """
 
-        if self.df_dataset is None:
+        if self.dc is None or self.dc.df_dataset is None:
             logging.warning("-- No labels loaded. "
                             "You must load or create a set of labels first")
             return
 
         if gold_standard != NO_GOLD_STANDARD:
-            pass
+            if gold_standard not in self.dc.df_dataset.columns:
+                logging.warning("-- Gold standard not available in the "
+                                "dataframe")
+            else:
+                # Test PU labels against annotations
+                logging.info(
+                    f"-- Quality of the PU labels wrt {gold_standard}")
+                self._label2label_metrics("PUlabels", gold_standard, "unused")
 
+        # Plot score distributions (this does not epend on the gold standard)
         p2fig = self.path2output / f'{self.class_name}_PUscores.png'
         scores = self.df_dataset.base_scores
         n_pos = np.sum(self.df_dataset.PUlabels == 1)
@@ -800,16 +811,16 @@ class TaskManager(baseTaskManager):
             return
 
         # Test PU predictions against PUlabels
+        logging.info("-- Quality of the PU predictor wrt the PU labels")
         self._performance_metrics("PU", "PUlabels", "train")
         self._performance_metrics("PU", "PUlabels", "test")
+        self._performance_metrics("PU", "PUlabels", "all",
+                                  use_sampling_probs=False)
 
         # Test PU predictions against annotations
         self._performance_metrics("PU", "annotations", "test")
         self._performance_metrics("PU", "annotations", "unused")
-
-        # Test PU labels against annotations
-        self._label2label_metrics("PUlabels", "annotations", "test")
-        self._label2label_metrics("PUlabels", "annotations", "unused")
+        self._performance_metrics("PU", "annotations", "all")
 
         return
 
