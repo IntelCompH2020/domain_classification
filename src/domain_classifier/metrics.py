@@ -183,6 +183,11 @@ def score_based_metrics(scores, labels, sampling_probs=None):
     if sampling_probs is not None:
         w = 1 / (sampling_probs + eps)
 
+    breakpoint()
+
+    # ROC curve
+    fpr_roc, tpr_roc, thresholds = roc_curve(labels, scores, sample_weight=w)
+
     # Sort scores and target values
     s = np.array(scores)
     ssort = -np.sort(-s)
@@ -190,11 +195,29 @@ def score_based_metrics(scores, labels, sampling_probs=None):
     target_sorted = labels[isort]
 
     # ROC curve
-    fpr_roc, tpr_roc, thresholds = roc_curve(
+    fpr_roc2, tpr_roc2, thresholds2 = roc_curve(
         target_sorted, ssort, sample_weight=w)
 
-    breakpoint()
+    # Compute class priors, FP and TP.
+    if w is None:
+        w = np.ones(labels.shape)
+    P1 = sum(w * labels) / sum(w)
+    P0 = 1 - P1
+    fn = P1 * (1 - tpr_roc)
+    fp = P0 * fpr_roc
 
+    # Some critical points:
+    # 1. FPR = FNR (= 1-TPR)
+    i = np.argmin(np.abs(fpr_roc + tpr_roc - 1))
+    Q1 = {'tpr': tpr_roc[i],
+          'fpr': fpr_roc[i],
+          'th': thresholds[i]}
+
+    # 2. FP = FN (= 1 - TP)
+    i = np.argmin(np.abs(fp - fn))
+    Q2 = {'tpr': tpr_roc[i],
+          'fpr': fpr_roc[i],
+          'th': thresholds[i]}
 
     # Dictionary with the evaluation results
     tpr_roc_float = [float(k) for k in tpr_roc]
@@ -203,7 +226,10 @@ def score_based_metrics(scores, labels, sampling_probs=None):
     # Float values are used because np.float is not nice for yaml files
     m = {'tpr_roc': tpr_roc_float,
          'fpr_roc': fpr_roc_float,
-         'auc': float(auc(fpr_roc_float, tpr_roc_float))}
+         'auc': float(auc(fpr_roc_float, tpr_roc_float)),
+         'fpr=fnr': Q1,
+         'fp=fn': Q2,
+         }
 
     return m
 
