@@ -967,7 +967,8 @@ class CorpusClassifier(object):
         ----------
         df_annotations : pandas.dataFrame
             A dataframe of annotations.
-        label_name : Name of the column containing the class annotations
+        annot_name : str, optional (default='annotations')
+            Name of the column containing the class annotations
         """
 
         # Select from the input dataframe the columns related to annotations

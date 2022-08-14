@@ -183,25 +183,19 @@ def score_based_metrics(scores, labels, sampling_probs=None):
     if sampling_probs is not None:
         w = 1 / (sampling_probs + eps)
 
-    breakpoint()
+    # ##############################
+    # Metrics based on the ROC curve
 
     # ROC curve
     fpr_roc, tpr_roc, thresholds = roc_curve(labels, scores, sample_weight=w)
 
-    # Sort scores and target values
-    s = np.array(scores)
-    ssort = -np.sort(-s)
-    isort = np.argsort(-s)
-    target_sorted = labels[isort]
-
-    # ROC curve
-    fpr_roc2, tpr_roc2, thresholds2 = roc_curve(
-        target_sorted, ssort, sample_weight=w)
-
     # Compute class priors, FP and TP.
     if w is None:
-        w = np.ones(labels.shape)
-    P1 = sum(w * labels) / sum(w)
+        w_ = np.ones(labels.shape)
+    else:
+        w_ = w
+
+    P1 = sum(w_ * labels) / sum(w_)
     P0 = 1 - P1
     fn = P1 * (1 - tpr_roc)
     fp = P0 * fpr_roc
@@ -230,6 +224,31 @@ def score_based_metrics(scores, labels, sampling_probs=None):
          'fpr=fnr': Q1,
          'fp=fn': Q2,
          }
+
+    # #############################
+    # Metrics based on the PR curve
+
+    # ROC curve
+    precission, recall, thresholds = roc_curve(labels, scores, sample_weight=w)
+
+    # Some critical points:
+    # 1. FPR = FNR (= 1-TPR)
+    i = np.argmin(np.abs(fpr_roc + tpr_roc - 1))
+    Q1 = {'tpr': tpr_roc[i],
+          'fpr': fpr_roc[i],
+          'th': thresholds[i]}
+
+    # 2. FP = FN (= 1 - TP)
+    i = np.argmin(np.abs(fp - fn))
+    Q2 = {'tpr': tpr_roc[i],
+          'fpr': fpr_roc[i],
+          'th': thresholds[i]}
+
+    # Dictionary with the evaluation results
+    tpr_roc_float = [float(k) for k in tpr_roc]
+    fpr_roc_float = [float(k) for k in fpr_roc]
+
+
 
     return m
 
