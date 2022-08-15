@@ -1000,9 +1000,12 @@ class CorpusClassifier(object):
             Name of the column containing the class annotations
         """
 
+        self._initialize_annotations(self, annot_name=annot_name)
+
         # Select from the input dataframe the columns related to annotations
         valid_cols = ['id', annot_name, 'sampler', 'sampling_prob', 'date',
                       'train_test']
+
         cols = [c for c in valid_cols if c in self.df_dataset.columns]
         df_annotations = df_annotations[cols]
 
