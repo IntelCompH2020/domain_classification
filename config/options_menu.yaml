@@ -183,7 +183,7 @@ performance_metrics_PN:
 # ########################
 # Options for import_export_annotations
 import_annotations:
-  title: "Import annotations (warning: annotations from this session will be lost)"
+  title: "Import annotations (overwrites existing annotations)"
   options:
     - get_method: _get_annotation_list
 

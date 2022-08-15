@@ -85,6 +85,7 @@ class CorpusClassifier(object):
         self.model = None
         self.df_dataset = df_dataset
         self.config = None
+        self.best_epoch = 15
 
         if use_cuda:
             if torch.cuda.is_available():
@@ -334,10 +335,17 @@ class CorpusClassifier(object):
             self.model.freeze_encoder_layer()
 
         # Best model selection
-        best_epoch = 0
-        best_result = 0
-        best_scores = None
-        best_model = None
+        if validate:
+            best_epoch = 0
+            best_result = 0
+            best_scores = None
+            best_model = None
+
+            # Get test data (rows with value 1 in column 'train_test')
+            # Note that we select the columns required for training only
+            df_test = self.df_dataset[
+                self.df_dataset.train_test == TEST][['id', 'text', 'labels']]
+            df_test["sample_weight"] = 1
 
         # Train the model
         logging.info(f"-- Training model with {len(df_train)} documents...")
@@ -351,12 +359,6 @@ class CorpusClassifier(object):
             logging.info(f"-- -- Epoch: {i} completed. loss: {epoch_loss:.3f}")
 
             if validate:
-                # Get test data (rows with value 1 in column 'train_test')
-                # Note that we select the columns required for training only
-                df_test = self.df_dataset[
-                    self.df_dataset.train_test == TEST][
-                        ['id', 'text', 'labels']]
-                df_test["sample_weight"] = 1
 
                 # Evaluate the model
                 # (Note that scores contain the (non-binary, non probabilistic)
@@ -376,6 +378,7 @@ class CorpusClassifier(object):
         if validate:
             # Replace the last model by the best model
             self.model = best_model
+            self.best_epoch = best_epoch
             logging.info(f"-- Best model in epoch {best_epoch} with "
                          f"F1: {best_result:.3f}")
 

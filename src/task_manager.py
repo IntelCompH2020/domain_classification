@@ -481,23 +481,13 @@ class TaskManager(baseTaskManager):
 
         # ################################
         # Save parameters in metadata file
-        key = 'zeroshot_parameters'
-        if key not in self.metadata:
-            self.metadata[key] = {}
-        self.metadata[key][tag] = {
-            'keyword': self.keywords,
-            'n_max': n_max,
-            's_min': s_min}
-        self._save_metadata()
-
-        # ################################
-        # Save parameters in metadata file
         self.metadata[tag] = {
             'doc_selection': {
                 'method': 'zeroshot',
                 'keyword': self.keywords,
                 'n_max': n_max,
                 's_min': s_min}}
+        self._save_metadata()
 
         return msg
 
@@ -691,13 +681,14 @@ class TaskManager(baseTaskManager):
         self._save_dataset()
         self.state['trained_model'] = True
 
-        self.metadata[self.class_name]['training'] = {
+        self.metadata[self.class_name]['PU_training'] = {
             'model_type': model_type,
             'model_name': model_name,
             'freeze_encoder': freeze_encoder,
             'max_imbalance': max_imbalance,
             'nmax': nmax,
-            'epochs': epochs}
+            'epochs': epochs,
+            'best_epoch': self.dc.best_epoch}
         self._save_metadata()
 
         return
