@@ -1013,11 +1013,6 @@ class CorpusClassifier(object):
         df_annotations = df_annotations.loc[
             df_annotations['id'].isin(self.df_dataset['id'])]
 
-        # Create columns that did not exist
-        new_cols = [c for c in df_annotations.cols if c not in self.df_dataset]
-        for col in new_cols:
-            self.df_dataset[col] = UNUSED
-
         # Merge into the current dataset
         self.df_dataset = self.df_dataset.set_index('id').update(
             df_annotations.set_index('id'), join='left', overwrite=True)
