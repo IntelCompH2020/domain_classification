@@ -111,6 +111,32 @@ class CorpusClassifier(object):
 
         return
 
+    def _initialize_annotations(self, annot_name='annotations'):
+        """
+        Inititializs the annotation table before filling with annotations
+
+        Parameters
+        ----------
+        annot_name : str, optional (default='annotations')
+            Name of the column containing the class annotations
+        """
+
+        # Initialize columns
+        if annot_name not in self.df_dataset:
+            self.df_dataset[[annot_name]] = UNUSED
+        if 'sampler' not in self.df_dataset:
+            self.df_dataset[['sampler']] = "unsampled"
+        if 'sampling_prob' not in self.df_dataset:
+            self.df_dataset[['sampling_prob']] = UNUSED
+        if 'date' not in self.df_dataset:
+            self.df_dataset[['date']] = ""
+        if 'train_test' not in self.df_dataset:
+            self.df_dataset[['train_test']] = UNUSED
+        if 'learned' not in self.df_dataset:
+            self.df_dataset[['learned']] = UNUSED
+
+        return
+
     def num_annotations(self):
         """
         Return the number of manual annotations available
