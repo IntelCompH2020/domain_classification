@@ -809,6 +809,7 @@ class TaskManager(baseTaskManager):
         logging.info("-- Quality of the PU predictor wrt the PU labels")
         self._performance_metrics("PU", "PUlabels", "train")
         self._performance_metrics("PU", "PUlabels", "test")
+        breakpoint()
         self._performance_metrics("PU", "PUlabels", "all",
                                   use_sampling_probs=False)
 
