@@ -548,8 +548,9 @@ class CorpusClassifier(object):
         return result, wrong_predictions
 
     def performance_metrics(
-            self, tag, true_label_name, subdataset, printout=True,
-            use_sampling_probs=True):
+            self, tag, true_label_name, subdataset,
+            pred_name=None, score_name=None,
+            printout=True, use_sampling_probs=True):
         """
         Compute performance metrics
 
@@ -582,6 +583,12 @@ class CorpusClassifier(object):
             of the classifier)
         """
 
+        # Make column names if not given
+        if pred_name is None:
+            pred_name = f"{tag}_prediction"
+        if score_name is None:
+            score_name = f"{tag}_prob_pred"
+
         # Select population
         if subdataset in {'train', 'test', 'unused'}:
             # Map subdataset to its integer code
@@ -598,7 +605,7 @@ class CorpusClassifier(object):
         # Reduce dataset to samples with predictions and labels only
         l0 = len(df)
         df = df.loc[df[true_label_name].isin({0, 1})]
-        df = df.loc[df[f"{tag}_prediction"].isin({0, 1})]
+        df = df.loc[df[pred_name].isin({0, 1})]
         logging.info(f"-- -- Metrics based on {len(df)} out of {l0} samples")
 
         # Check if dataframe is not empty
@@ -610,8 +617,8 @@ class CorpusClassifier(object):
         bmetrics, roc = None, None    # Default values
 
         # Extract predictions and labels
-        pscores = df[f"{tag}_prob_pred"].to_numpy()
-        preds = df[f"{tag}_prediction"].to_numpy()
+        pscores = df[score_name].to_numpy()
+        preds = df[pred_name].to_numpy()
         labels = df[true_label_name].to_numpy()
 
         # Check if consistent sampling probabilities exist in df.

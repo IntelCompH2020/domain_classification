@@ -542,7 +542,7 @@ class TaskManager(baseTaskManager):
 
         return msg
 
-    def evaluate_PUlabels(self, gold_standard):
+    def evaluate_PUlabels(self, true_label_name):
         """
         Evaluate the current set of PU labels
         """
@@ -552,17 +552,46 @@ class TaskManager(baseTaskManager):
                             "You must load or create a set of labels first")
             return
 
-        if gold_standard != NO_GOLD_STANDARD:
-            if gold_standard not in self.dc.df_dataset.columns:
+        if true_label_name != NO_GOLD_STANDARD:
+            if true_label_name not in self.dc.df_dataset.columns:
                 logging.warning("-- Gold standard not available in the "
                                 "dataframe")
             else:
                 # Test PU labels against annotations
                 logging.info(
-                    f"-- Quality of the PU labels wrt {gold_standard}")
-                self._label2label_metrics("PUlabels", gold_standard, "all")
+                    f"-- Quality of the PU labels wrt {true_label_name}")
+                # self._label2label_metrics("PUlabels", true_label_name, "all")
 
-        # Plot score distributions (this does not epend on the gold standard)
+                # Compute train and test metrics
+                bmetrics, roc = self.dc.performance_metrics(
+                    'PUlabels', true_label_name, 'all', pred_name="PUlabels",
+                    score_name="base_scores", use_sampling_probs=True)
+
+                # Plot train and test ROCs
+                fname = (f'{self.class_name}_PUlabels_vs_{true_label_name}'
+                         f'_ROC_all.png')
+                p2fig = self.path2output / fname
+                plotter.plot_roc(roc, bmetrics, tag='all', path2figure=p2fig)
+
+                # Add AUC in roc to the metrics dictionary:
+                if bmetrics is not None and roc is not None:
+                    bmetrics['AUC'] = roc['auc']
+                    if 'unweighted' in bmetrics and 'unweighted' in roc:
+                        bmetrics['unweighted']['AUC'] = (
+                            roc['unweighted']['auc'])
+
+                # Save metrics in metadata file.
+                if 'metrics' not in self.metadata[self.class_name]:
+                    self.metadata[self.class_name]['metrics'] = {}
+                key = f'PUlabels_vs_{true_label_name}'
+                if key not in self.metadata[self.class_name]['metrics']:
+                    self.metadata[self.class_name]['metrics'][key] = {}
+                self.metadata[self.class_name]['metrics'][key]['all'] = (
+                    bmetrics)
+
+                self._save_metadata()
+
+        # Plot score distributions (this does not depend on the gold standard)
         p2fig = self.path2output / f'{self.class_name}_PUscores.png'
         scores = self.df_dataset.base_scores
         n_pos = np.sum(self.df_dataset.PUlabels == 1)
