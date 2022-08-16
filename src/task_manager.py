@@ -969,10 +969,6 @@ class TaskManager(baseTaskManager):
         This will be useful to share annotations from different projects.
         """
 
-        print("WARNING: IMPORTATION HAS NOT BEEN TESTED. PLEAS TEST IT"
-              "BEFORE USING IT WITH YOUR PROJECTS...")
-        breakpoint()
-
         # Check if a classifier object exists
         if self.dc is None:
             logging.error("-- No annotations to export. Load labels first")

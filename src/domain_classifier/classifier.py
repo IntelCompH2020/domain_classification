@@ -1014,6 +1014,7 @@ class CorpusClassifier(object):
             df_annotations['id'].isin(self.df_dataset['id'])]
 
         # Merge into the current dataset
+        breakpoint()
         self.df_dataset = self.df_dataset.set_index('id').update(
             df_annotations.set_index('id'), join='left', overwrite=True)
 
