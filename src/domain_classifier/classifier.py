@@ -1015,7 +1015,8 @@ class CorpusClassifier(object):
 
         # Merge into the current dataset
         breakpoint()
-        self.df_dataset.set_index('id', inplace=True).update(
+        self.df_dataset.set_index('id', inplace=True)
+        self.df_dataset.update(
             df_annotations.set_index('id'), join='left', overwrite=True)
 
         # This is to go back to the original indices. This might be not
