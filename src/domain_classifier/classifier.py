@@ -1248,8 +1248,6 @@ class CorpusClassifier(object):
         is_tr_used = is_train & (self.df_dataset.learned == 1)
         is_tr_new = is_train & (self.df_dataset.learned == 0)
 
-        breakpoint()
-
         self.df_dataset.loc[is_tr_unused, "sample_weight"] = 1
         self.df_dataset.loc[is_tr_used, "sample_weight"] = annotation_gain
         self.df_dataset.loc[is_tr_new, "sample_weight"] = annotation_gain
@@ -1257,9 +1255,9 @@ class CorpusClassifier(object):
         self.df_dataset.loc[is_train, "labels"] = self.df_dataset.loc[
             is_train, "PUlabels"]
         self.df_dataset.loc[is_tr_used, "labels"] = self.df_dataset.loc[
-            is_train, "annotations"]
+            is_tr_used, "annotations"]
         self.df_dataset.loc[is_tr_new, "labels"] = self.df_dataset.loc[
-            is_train, "annotations"]
+            is_tr_new, "annotations"]
 
         # #######
         # Retrain
