@@ -343,6 +343,7 @@ class CorpusClassifier(object):
         for i, e in enumerate(tqdm(range(epochs), desc="Train epoch")):
 
             # Train epoch
+            breakpoint()
             epoch_loss, epoch_time = self.model.train_model(
                 df_train, device=self.device, batch_size=batch_size)
 
