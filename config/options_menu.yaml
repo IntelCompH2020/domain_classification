@@ -155,9 +155,6 @@ evaluate_PUlabels:
 train_PUmodel:
   title: Train PU classifier model with the available labels
 
-predict_PU:
-  title: Compute predictions based on the PU model
-
 evaluate_PUmodel:
   title: Evaluate PU classifier model with the available labels
   options:

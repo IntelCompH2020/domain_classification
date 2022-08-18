@@ -675,6 +675,8 @@ class TaskManager(baseTaskManager):
         # Configuration parameters
         freeze_encoder = self.global_parameters['classifier']['freeze_encoder']
         batch_size = self.global_parameters['classifier']['batch_size']
+        model_type = self.global_parameters['classifier']['model_type']
+        model_name = self.global_parameters['classifier']['model_name']
 
         if self.dc is not None:
             # If there exists a classifier object, update the local dataset,
@@ -689,8 +691,6 @@ class TaskManager(baseTaskManager):
         self.df_dataset[['labels']] = self.df_dataset[['PUlabels']]
 
         path2model = self.path2models / self.class_name
-        model_type = self.global_parameters['classifier']['model_type']
-        model_name = self.global_parameters['classifier']['model_name']
         self.dc = CorpusClassifier(
             self.df_dataset, model_type=model_type, model_name=model_name,
             path2transformers=path2model)
@@ -938,7 +938,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def retrain_model(self):
+    def retrain_model(self, epochs=3):
         """
         Improves classifier performance using the labels provided by users
         """
@@ -951,7 +951,8 @@ class TaskManager(baseTaskManager):
         batch_size = self.global_parameters['classifier']['batch_size']
 
         # Retrain model using the new labels
-        self.dc.retrain_model(freeze_encoder=True, batch_size=batch_size)
+        self.dc.retrain_model(freeze_encoder=True, batch_size=batch_size,
+                              epochs=epochs)
 
         # Update status.
         # Since training takes much time, we store the classification results

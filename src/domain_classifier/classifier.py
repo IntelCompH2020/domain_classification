@@ -1253,7 +1253,7 @@ class CorpusClassifier(object):
         self.df_dataset.loc[is_tr_new, "sample_weight"] = annotation_gain
 
         self.df_dataset.loc[is_train, "labels"] = self.df_dataset.loc[
-            is_train, "PU_labels"]
+            is_train, "PUlabels"]
         self.df_dataset.loc[is_tr_used, "labels"] = self.df_dataset.loc[
             is_train, "annotations"]
         self.df_dataset.loc[is_tr_new, "labels"] = self.df_dataset.loc[
