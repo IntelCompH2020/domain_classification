@@ -690,9 +690,9 @@ class CorpusClassifier(object):
             # A duplicate of the predictions is stored in columns without the
             # tag, to be identified by the sampler of the active learning
             # algorithm as the last computed scores
-            self.df_dataset[train_test, f"prediction"] = (
+            self.df_dataset.loc[train_test, "prediction"] = (
                 delta > 0).astype(int)
-            self.df_dataset.loc[train_test, f"prob_pred"] = prob_preds
+            self.df_dataset.loc[train_test, "prob_pred"] = prob_preds
 
         elif samples == 'all':
             # Scores
@@ -705,9 +705,9 @@ class CorpusClassifier(object):
             # A duplicate of the predictions is stored in columns without the
             # tag, to be identified by the sampler of the active learning
             # algorithm as the last computed scores
-            self.df_dataset[f"prediction"] = (
+            self.df_dataset["prediction"] = (
                 self.df_dataset[f"{tag}_prediction"])
-            self.df_dataset[f"prob_pred"] = prob_preds
+            self.df_dataset["prob_pred"] = prob_preds
 
         # TODO: redefine output of evaluation
         # result = {}
