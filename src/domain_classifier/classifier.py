@@ -343,7 +343,6 @@ class CorpusClassifier(object):
         for i, e in enumerate(tqdm(range(epochs), desc="Train epoch")):
 
             # Train epoch
-            breakpoint()
             epoch_loss, epoch_time = self.model.train_model(
                 df_train, device=self.device, batch_size=batch_size)
 
@@ -1242,6 +1241,8 @@ class CorpusClassifier(object):
         # ####################
         # Get PU training data
         # Note that we select the columns required for training only
+
+        breakpoint()
 
         # Training data not annotated (i.e., UNUSED in column 'learned')
         is_train = (self.df_dataset.train_test == TRAIN)
