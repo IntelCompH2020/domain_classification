@@ -614,7 +614,6 @@ class TaskManager(baseTaskManager):
         # Load dataset
         self.df_dataset, msg = self.DM.load_dataset(self.class_name)
 
-        breakpoint()
         # If a model has been already trained for the given class, load it.
         if self._is_model(verbose=False):
 
@@ -692,7 +691,6 @@ class TaskManager(baseTaskManager):
         self.df_dataset[['labels']] = self.df_dataset[['PUlabels']]
 
         path2model = self.path2models / self.class_name
-        breakpoint()
         self.dc = CorpusClassifier(
             self.df_dataset, model_type=model_type, model_name=model_name,
             path2transformers=path2model)
@@ -840,7 +838,6 @@ class TaskManager(baseTaskManager):
         logging.info("-- Quality of the PU predictor wrt the PU labels")
         self._performance_metrics("PU", "PUlabels", "train")
         self._performance_metrics("PU", "PUlabels", "test")
-        breakpoint()
         self._performance_metrics("PU", "PUlabels", "all",
                                   use_sampling_probs=False)
 
@@ -912,10 +909,6 @@ class TaskManager(baseTaskManager):
         logging.info(f"-- -- Train: {n_train}")
         logging.info(f"-- -- Test: {n_test}")
         logging.info(f"-- -- Unused: {n_unused}")
-
-        # Check annotation consistency:
-        logging.debug("Check annotation consistency here!!!")
-        breakpoint()
 
         return
 

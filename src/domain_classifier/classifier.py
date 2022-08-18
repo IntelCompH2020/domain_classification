@@ -1242,13 +1242,11 @@ class CorpusClassifier(object):
         # Get PU training data
         # Note that we select the columns required for training only
 
-        breakpoint()
-
         # Training data not annotated (i.e., UNUSED in column 'learned')
         is_train = (self.df_dataset.train_test == TRAIN)
-        is_tr_unused = (is_train & self.df_dataset.learned == UNUSED)
-        is_tr_used = (is_train & self.df_dataset.learned == 1)
-        is_tr_new = (is_train & self.df_dataset.learned == 0)
+        is_tr_unused = is_train & (self.df_dataset.learned == UNUSED)
+        is_tr_used = is_train & (self.df_dataset.learned == 1)
+        is_tr_new = is_train & (self.df_dataset.learned == 0)
 
         self.df_dataset.loc[is_tr_unused, "sample_weight"] = 1
         self.df_dataset.loc[is_tr_used, "sample_weight"] = annotation_gain
