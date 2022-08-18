@@ -614,6 +614,7 @@ class TaskManager(baseTaskManager):
         # Load dataset
         self.df_dataset, msg = self.DM.load_dataset(self.class_name)
 
+        breakpoint()
         # If a model has been already trained for the given class, load it.
         if self._is_model(verbose=False):
 
@@ -691,6 +692,7 @@ class TaskManager(baseTaskManager):
         self.df_dataset[['labels']] = self.df_dataset[['PUlabels']]
 
         path2model = self.path2models / self.class_name
+        breakpoint()
         self.dc = CorpusClassifier(
             self.df_dataset, model_type=model_type, model_name=model_name,
             path2transformers=path2model)
