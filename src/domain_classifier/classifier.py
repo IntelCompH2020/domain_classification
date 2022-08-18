@@ -94,8 +94,7 @@ class CorpusClassifier(object):
             else:
                 logging.warning(
                     "-- -- 'use_cuda' set to True when cuda is unavailable."
-                    " Make sure CUDA is available or set use_cuda=False."
-                )
+                    " Make sure CUDA is available or set use_cuda=False.")
                 self.device = torch.device("cpu")
                 logging.info(
                     f"-- -- Cuda unavailable: model will be trained with CPU")
@@ -281,20 +280,189 @@ class CorpusClassifier(object):
         # Load model
         self.model = CustomModel(self.config, self.path2transformers,
                                  self.model_type, self.model_name)
-        # if self.model_type == 'roberta':
-        #     self.model = RobertaCustomModel(
-        #         self.config, self.path2transformers, self.model_name)
-        # elif self.model_type == 'mpnet':
-        #     self.model = MPNetCustomModel(
-        #         self.config, self.path2transformers, self.model_name)
-
         self.model.load(model_dir)
 
         logging.info(f"-- Model loaded from {model_dir}")
 
         return
 
+    def _train_model(self, epochs=3, validate=True, freeze_encoder=True,
+                     tag="", batch_size=8):
+        """
+        Train binary text classification model based on transformers
+
+        Parameters
+        ----------
+        epochs : int, optional (default=3)
+            Number of training epochs
+        validate : bool, optional (default=True)
+            If True, the model epoch is selected based on the F1 score computed
+            over the test data. Otherwise, the model after the last epoch is
+            taken
+        freeze_encoder : bool, optional (default=True)
+            If True, the embedding layer is frozen, so that only the
+            classification layers are updated. This is useful to use
+            precomputed embeddings for large datasets.
+        tag : str, optional (default="")
+            A preffix that will be used for all result variables (scores and
+            predictions) saved in the dataset dataframe
+        batch_size : int, optiona (default=8)
+            Batch size
+        """
+
+        logging.info("-- Training model...")
+
+        # Freeze encoder layer if needed
+        if freeze_encoder:
+            self.model.freeze_encoder_layer()
+
+        # Get training data (rows with value 1 in column 'train_test')
+        # Note that we select the columns required for training only
+        df_train = self.df_dataset[
+            self.df_dataset.train_test == TRAIN][[
+                'id', 'text', 'labels', 'sample_weight']]
+
+        # Best model selection
+        if validate:
+            # Get test data (rows with value 1 in column 'train_test')
+            # Note that we select the columns required for training only
+            df_test = self.df_dataset[
+                self.df_dataset.train_test == TEST][[
+                    'id', 'text', 'labels', 'sample_weight']]
+
+        # Best model selection
+        if validate:
+            best_epoch = 0
+            best_result = 0
+            best_scores = None
+            best_model = None
+
+        # Train the model
+        logging.info(f"-- Training model with {len(df_train)} documents...")
+        t0 = time()
+        for i, e in enumerate(tqdm(range(epochs), desc="Train epoch")):
+
+            # Train epoch
+            epoch_loss, epoch_time = self.model.train_model(
+                df_train, device=self.device, batch_size=batch_size)
+
+            logging.info(f"-- -- Epoch: {i} completed. loss: {epoch_loss:.3f}")
+
+            if validate:
+
+                # Evaluate the model
+                # (Note that scores contain the (non-binary, non probabilistic)
+                # classifier outputs).
+                scores, total_loss, result = self.model.eval_model(
+                    df_test, device=self.device, batch_size=batch_size)
+
+                # Keep the best model
+                if result["f1"] >= best_result:
+                    best_epoch = e
+                    best_result = result["f1"]
+                    best_scores = scores
+                    best_model = copy.deepcopy(self.model)
+
+        logging.info(f"-- -- Model trained in {time() - t0:.3f} seconds")
+
+        if validate:
+            # Replace the last model by the best model
+            self.model = best_model
+            self.best_epoch = best_epoch
+            logging.info(f"-- Best model in epoch {best_epoch} with "
+                         f"F1: {best_result:.3f}")
+
+            # SCORES: Fill scores for the evaluated data
+            test_rows = self.df_dataset['train_test'] == TEST
+            self.df_dataset.loc[
+                test_rows, [f"{tag}_score_0", f"{tag}_score_1"]] = best_scores
+
+            # PREDICTIONS: Fill predictions for the evaluated data
+            delta = scores[:, 1] - scores[:, 0]
+            # Column "prediction" stores the binary class prediction.
+            self.df_dataset[f"{tag}_prediction"] = UNUSED
+            self.df_dataset.loc[test_rows, f"{tag}_prediction"] = (
+                delta > 0).astype(int)
+
+            # Fill probabilistic predictions for the evaluated data
+            # Scores are mapped to probabilities through a logistic function.
+            # FIXME: Check training loss in simpletransformers documentation or
+            #        code, to see if logistic loss is appropriate here.
+            prob_preds = 1 / (1 + np.exp(-delta))
+            self.df_dataset.loc[test_rows, f"{tag}_prob_pred"] = prob_preds
+            # A duplicate of the predictions is stored in columns without the
+            # tag, to be identified by the sampler of the active learning
+            # algorithm as the last computed scores
+            self.df_dataset[f"prediction"] = (
+                self.df_dataset[f"{tag}_prediction"])
+            self.df_dataset.loc[test_rows, f"prob_pred"] = prob_preds
+
+        # Save model
+        model_dir = self.path2transformers / "best_model.pt"
+        self.model.save(model_dir)
+        logging.info(f"-- Model saved in {model_dir}")
+
+        return
+
     def train_model(self, epochs=3, validate=True, freeze_encoder=True,
+                    tag="", batch_size=8):
+        """
+        Train binary text classification model based on transformers
+
+        Parameters
+        ----------
+        epochs : int, optional (default=3)
+            Number of training epochs
+        validate : bool, optional (default=True)
+            If True, the model epoch is selected based on the F1 score computed
+            over the test data. Otherwise, the model after the last epoch is
+            taken
+        freeze_encoder : bool, optional (default=True)
+            If True, the embedding layer is frozen, so that only the
+            classification layers is updated. This is useful to use
+            precomputed embedings for large datasets.
+        tag : str, optional (default="")
+            A preffix that will be used for all result variables (scores and
+            predictions) saved in the dataset dataframe
+        batch_size : int, optiona (default=8)
+            Batch size
+        """
+
+        logging.info("-- Training model...")
+
+        # ###############################
+        # Initialize classification model
+
+        # Load config
+        self.load_model_config()
+
+        # Create model directory
+        self.path2transformers.mkdir(exist_ok=True)
+
+        # Create model
+        self.model = CustomModel(self.config, self.path2transformers,
+                                 self.model_type, self.model_name)
+
+        # #################
+        # Get training data
+        if 'train_test' not in self.df_dataset:
+            # Make partition if not available
+            logging.warning(
+                "-- -- Train test partition not available. A partition with "
+                "default parameters will be generated")
+            self.train_test_split()
+        self.df_dataset["sample_weight"] = 1
+
+        # #####
+        # Train
+
+        self._train_model(
+            epochs=epochs, validate=validate, freeze_encoder=freeze_encoder,
+            tag=tag, batch_size=batch_size)
+
+        return
+
+    def train_model_old(self, epochs=3, validate=True, freeze_encoder=True,
                     tag="", batch_size=8):
         """
         Train binary text classification model based on transformers
@@ -1032,8 +1200,82 @@ class CorpusClassifier(object):
 
         return
 
-    def retrain_model(self, freeze_encoder=True, batch_size=8,
+    def retrain_model(self, freeze_encoder=True, batch_size=8, epochs=3,
                       annotation_gain=10):
+        """
+        Re-train the classifier model using annotations
+
+        Parameters
+        ----------
+        epochs : int, optional (default=3)
+            Number of training epochs
+        freeze_encoder : bool, optional (default=True)
+            If True, the embedding layer is frozen, so that only the
+            classification layers is updated. This is useful to use
+            precomputed embedings for large datasets.
+        batch_size : int, optional (default=8)
+            Batch size
+        annotation_gain : int or float, optional (default=10)
+            Relative value of an annotated sample with respect to a non-
+            annotated one.
+        """
+
+        # #################
+        # Get training data
+
+        # FIXME: Implement the data collection here:
+        # We should combine two colums from self.df_dataset
+        #   - "labels", with the original labels used to train the first model
+        #   - "annotations", with the new annotations
+
+        # Notes:
+        # Take into account that the annotation process could take place
+        # iteratively, so this method could be called several times, each time
+        # with some already used annotations and the new ones gathered from the
+        # late human-annotation iteration. To help with this, you might use two
+        # complementary columns from self.df_dataset
+        #   - column 'date', with the annotation date
+        #   - column 'learned', marking with 1 those labels already used in
+        #     previous retrainings
+
+        # ####################
+        # Get PU training data
+        # Note that we select the columns required for training only
+
+        # Training data not annotated (i.e., UNUSED in column 'learned')
+        is_train = (self.df_dataset.train_test == TRAIN)
+        is_tr_unused = (is_train & self.df_dataset.learned == UNUSED)
+        is_tr_used = (is_train & self.df_dataset.learned == 1)
+        is_tr_new = (is_train & self.df_dataset.learned == 0)
+
+        self.df_dataset.loc[is_tr_unused, "sample_weight"] = 1
+        self.df_dataset.loc[is_tr_used, "sample_weight"] = annotation_gain
+        self.df_dataset.loc[is_tr_new, "sample_weight"] = annotation_gain
+
+        self.df_dataset.loc[is_train, "labels"] = self.df_dataset.loc[
+            is_train, "PU_labels"]
+        self.df_dataset.loc[is_tr_used, "labels"] = self.df_dataset.loc[
+            is_train, "annotations"]
+        self.df_dataset.loc[is_tr_new, "labels"] = self.df_dataset.loc[
+            is_train, "annotations"]
+
+        # #######
+        # Retrain
+
+        self._train_model(
+            epochs=3, validate=True, freeze_encoder=freeze_encoder, tag='PN',
+            batch_size=batch_size)
+
+        # ################
+        # Update dataframe
+
+        # Mark new annotations as used
+        self.df_dataset.loc[self.df_dataset.learned == 0, 'learned'] = 1
+
+        return
+
+    def retrain_model_old(self, freeze_encoder=True, batch_size=8,
+                          annotation_gain=10):
         """
         Re-train the classifier model using annotations
 
@@ -1084,11 +1326,15 @@ class CorpusClassifier(object):
         df_clean_used = self.df_dataset[
             is_train & self.df_dataset.learned == 1][['id', 'text', 'labels']]
         df_clean_used["sample_weight"] = annotation_gain
+        # Update labels with annotations
+        df_clean_used["labels"] = df_clean_used["annotations"]
 
         # Training data with annotations not used for retraining yet
         df_clean_new = self.df_dataset[
             is_train & self.df_dataset.learned == 0][['id', 'text', 'labels']]
         df_clean_new["sample_weight"] = annotation_gain
+        # Update labels with annotations
+        df_clean_new["labels"] = df_clean_new["annotations"]
 
         # ##################
         # Integrate datasets

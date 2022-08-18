@@ -113,8 +113,8 @@ def plot_doc_scores(scores, n_pos, path2figure=None):
 
     if path2figure is not None:
         path2figure_log = add_tag_2_path('log', path2figure)
-        logging.info(f"-- Figure saved in {path2figure_log}")
         plt.savefig(path2figure_log)
+        logging.info(f"-- Figure saved in {path2figure_log}")
 
     # ###############
     # Score histogram
@@ -130,8 +130,8 @@ def plot_doc_scores(scores, n_pos, path2figure=None):
 
     if path2figure is not None:
         path2figure_hist = add_tag_2_path('hist', path2figure)
-        logging.info(f"-- Figure saved in {path2figure_hist}")
         plt.savefig(path2figure_hist)
+        logging.info(f"-- Figure saved in {path2figure_hist}")
 
     return
 
@@ -172,6 +172,7 @@ def base_plot_roc(fpr, tpr, fpr0=None, tpr0=None, label="", path2figure=None,
 
     if path2figure is not None:
         plt.savefig(path2figure)
+        logging.info(f"-- Figure saved in {path2figure}")
 
     return
 
