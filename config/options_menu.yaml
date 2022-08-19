@@ -172,6 +172,10 @@ retrain_model:
 
 reevaluate_model:
   title: Evaluate retrained model.
+  options:
+    - parameters:
+        train_test: Evaluate samples used for training and test only
+        all: Evaluate all samples in the local dataset
 
 performance_metrics_PN:
   title: Show all performance metrics

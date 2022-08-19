@@ -963,7 +963,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def reevaluate_model(self):
+    def reevaluate_model(self, samples="train_test"):
         """
         Evaluate a domain classifier
         """
@@ -981,7 +981,7 @@ class TaskManager(baseTaskManager):
 
         # Evaluate the model over the test set
         result, wrong_predictions = self.dc.eval_model(
-            tag='PN', batch_size=batch_size)
+            samples=samples, tag='PN', batch_size=batch_size)
 
         # Pretty print dictionary of results
         logging.info(f"-- Classification results: {result}")
