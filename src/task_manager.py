@@ -844,6 +844,7 @@ class TaskManager(baseTaskManager):
         # Test PU predictions against annotations
         self._performance_metrics("PU", "annotations", "test")
         self._performance_metrics("PU", "annotations", "unused")
+        breakpoint()
         self._performance_metrics("PU", "annotations", "all")
 
         return
@@ -861,10 +862,14 @@ class TaskManager(baseTaskManager):
         # Test PN predictions against PUlabels
         self._performance_metrics("PN", "PUlabels", "train")
         self._performance_metrics("PN", "PUlabels", "test")
+        self._performance_metrics("PN", "PUlabels", "all",
+                                  use_sampling_probs=False)
 
         # Test PN predictions against annotations
         self._performance_metrics("PN", "annotations", "test")
         self._performance_metrics("PN", "annotations", "unused")
+        breakpoint()
+        self._performance_metrics("PN", "annotations", "all")
 
         return
 
