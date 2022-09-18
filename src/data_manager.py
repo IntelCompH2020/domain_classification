@@ -624,6 +624,44 @@ class DataManager(object):
 
         return T, df_metadata, topic_words
 
+    def load_topic_metadata(self):
+        """
+        Loads the metadata associated to the topic matrix from the selected
+        corpus
+        """
+
+        # ####################
+        # Paths and file names
+
+        # Some file and folder names that could be specific of the current
+        # corpus. They should be possibly moved to a config file
+        topic_folder = 'topic_model'
+        topic_model_fname = 'modelo_sparse.npz'
+        metadata_fname = 'CORDIS720all-metadata.csv'
+
+        # ###########
+        # Topic model
+
+        # Load topic model
+        path2topics = self.path2corpus / topic_folder / topic_model_fname
+
+        if not pathlib.Path.exists(path2topics):
+            logging.warning(f"-- No topic model available at {path2topics}")
+            return None, None
+
+        data = np.load(path2topics)
+
+        # Extract topic descriptions
+        topic_words = data['descriptions']
+
+        # Load metadata
+        path2metadata = self.path2corpus / topic_folder / metadata_fname
+        df_metadata = pd.read_csv(path2metadata)
+        logging.info(f'-- Topic matrix metadata loaded about '
+                     f'{len(df_metadata)} documents')
+
+        return df_metadata, topic_words
+
     def load_dataset(self, tag=""):
         """
         Loads a labeled dataset of documents in the format required by the

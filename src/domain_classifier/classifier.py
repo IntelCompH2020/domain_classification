@@ -433,11 +433,11 @@ class CorpusClassifier(object):
         # ###############################
         # Initialize classification model
 
-        # Load config
-        self.load_model_config()
-
         # Create model directory
         self.path2transformers.mkdir(exist_ok=True)
+
+        # Load config
+        self.load_model_config()
 
         # Create model
         self.model = CustomModel(self.config, self.path2transformers,
@@ -517,6 +517,7 @@ class CorpusClassifier(object):
         # ##############
         # Classification
 
+        breakpoint()
         # Load config
         self.load_model_config()
 

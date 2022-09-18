@@ -23,8 +23,7 @@ def add_tag_2_path(tag, path):
     return path.parent / f'{path.stem}_{tag}{path.suffix}'
 
 
-def plot_top_values(stats, n_top=25, title="", xlabel="", ylabel="",
-                    normalizer=1):
+def plot_top_values(stats, n_top=25, title="", xlabel="", ylabel=""):
     """
     Barplots the top values in a given dictionary.
 
@@ -40,8 +39,6 @@ def plot_top_values(stats, n_top=25, title="", xlabel="", ylabel="",
         xlabel for the figure
     ylabel: str, optional (default="")
         ylabel for the figure
-    normalizer: int, optional (default=1)
-        Values in dictionary are divided by normalized before plotting.
     """
 
     # Sort by decreasing number of occurences
@@ -60,7 +57,7 @@ def plot_top_values(stats, n_top=25, title="", xlabel="", ylabel="",
     return
 
 
-def plot_doc_scores(scores, n_pos, path2figure=None):
+def plot_doc_scores(scores, n_pos=None, path2figure=None):
     """
     Plot sorted document scores
 
@@ -69,7 +66,7 @@ def plot_doc_scores(scores, n_pos, path2figure=None):
     scores : list
         A list of scores
 
-    n_pos : float
+    n_pos : float, optional (default=None)
         The position to mark in the plot.
     """
 
@@ -87,8 +84,9 @@ def plot_doc_scores(scores, n_pos, path2figure=None):
     plt.figure()
     plt.plot(sorted_scores, label='score')
     # Plot score threshold
-    z = N - n_pos
-    plt.plot([z, z], [0, s_max], ':r', label='threshold')
+    if n_pos is not None:
+        z = N - n_pos
+        plt.plot([z, z], [0, s_max], ':r', label='threshold')
     plt.title('Sorted document scores')
     plt.xlabel('Document')
     plt.ylabel('Score')
@@ -104,7 +102,8 @@ def plot_doc_scores(scores, n_pos, path2figure=None):
     plt.figure()
     plt.semilogx(range(1, N + 1), -np.sort(-scores), label='score')
     # Plot score threshold
-    plt.semilogx([n_pos, n_pos], [0, s_max], ':r', label='threshold')
+    if n_pos is not None:
+        plt.semilogx([n_pos, n_pos], [0, s_max], ':r', label='threshold')
     plt.title('Sorted document scores (log-scale, descending order)')
     plt.xlabel('Document')
     plt.ylabel('Score')

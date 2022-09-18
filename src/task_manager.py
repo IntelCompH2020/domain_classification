@@ -6,6 +6,7 @@ using the core processing classes and methods.
 """
 
 import logging
+import numpy as np
 
 # Local imports
 # You might need to update the location of the baseTaskManager class
@@ -15,8 +16,6 @@ from .query_manager import QueryManager
 from .domain_classifier.preprocessor import CorpusDFProcessor
 from .domain_classifier.classifier import CorpusClassifier
 from .utils import plotter
-
-import numpy as np
 
 # A message that is used twice in different parts of the code. It is defined
 # here because the same message must be used in both cases.
@@ -229,6 +228,39 @@ class TaskManager(baseTaskManager):
 
         return gs_labels
 
+    def _convert_keywords(self, keywords, out='list'):
+        """
+        Converts a string variable keywords to the required format.
+
+        If keywords is an empty string, self.keywords is returned.
+
+        Otherwise, extra blank spaces are removed and, if needed, a comma
+        separated string is transformed into a comma-separated list
+
+        Parameters
+        ----------
+        keywords : str
+            If "", self.keywords is returned
+            Otherwise, a comma separated string of keywords is expected.
+        out : str in {'list', 'str'}
+            If list, a comma separated list of keywords is returned
+            If str, a comma separated list of keywords is returned
+        """
+
+        if keywords == "":
+            return self.keywords
+        else:
+            # Transform string into list of keywords
+            keywords = keywords.split(",")
+            # Clean extra blank spaces keyword-by-keyword
+            keywords = [" ".join(k.split()) for k in keywords]
+
+            # Join keywords back into a string
+            if out == 'str':
+                keywords = ", ".join(keywords)
+
+            return keywords
+
     def _save_dataset(self):
         """
         Saves the dataset used by the last classifier object.
@@ -286,9 +318,11 @@ class TaskManager(baseTaskManager):
             if param not in self.global_parameters['active_learning']:
                 self.global_parameters['active_learning'][param] = value
 
+        logging.info("-- Configuration file activated")
+
         return
 
-    def load_corpus(self, corpus_name):
+    def load_corpus(self, corpus_name: str):
         """
         Loads a dataframe of documents from a given corpus.
 
@@ -358,7 +392,7 @@ class TaskManager(baseTaskManager):
 
         return msg
 
-    def analyze_keywords(self, wt=2):
+    def analyze_keywords(self, wt: float = 2.0, keywords: str = ""):
         """
         Get a set of positive labels using keyword-based search
 
@@ -367,9 +401,13 @@ class TaskManager(baseTaskManager):
         wt : float, optional (default=2)
             Weighting factor for the title components. Keyword matches with
             title words are weighted by this factor
+        keywords : str, optional (default= "")
+            A comma-separated string of keywords.
+            If the string is empty, the keywords are read from self.keywords
         """
 
-        # Weight of the title words
+        # Read keywords:
+        self.keywords = self._convert_keywords(keywords, out='list')
         logging.info(f'-- Selected keywords: {self.keywords}')
 
         df_stats, kf_stats = self.CorpusProc.compute_keyword_stats(
@@ -387,8 +425,9 @@ class TaskManager(baseTaskManager):
 
         return y, df_stats, kf_stats
 
-    def get_labels_by_keywords(self, wt=2, n_max=2000, s_min=1, tag="kwds",
-                               method='count'):
+    def get_labels_by_keywords(
+            self, wt: float = 2.0, n_max: int = 2000, s_min: float = 1.0,
+            tag: str = "kwds", method: str = 'count', keywords: str = ""):
         """
         Get a set of positive labels using keyword-based search
 
@@ -402,14 +441,19 @@ class TaskManager(baseTaskManager):
             a huge number that, in practice, means there is no loimit
         s_min: float, optional (default=1)
             Minimum score. Only elements strictly above s_min are selected
-        tag: str, optional (default=1)
+        tag: str, optional (default='kwds')
             Name of the output label set.
         method: 'embedding' or 'count', optional
             Selection method: 'count' (based on counting occurences of keywords
             in docs) or 'embedding' (based on the computation of similarities
             between doc and keyword embeddings)
+        keywords : str, optional (default="")
+            A comma-separated string of keywords.
+            If the string is empty, the keywords are read from self.keywords
         """
 
+        # Read keywords:
+        self.keywords = self._convert_keywords(keywords, out='list')
         logging.info(f'-- Selected keywords: {self.keywords}')
 
         # Take name of the SBERT model from the configuration parameters
@@ -449,7 +493,8 @@ class TaskManager(baseTaskManager):
 
         return msg
 
-    def get_labels_by_zeroshot(self, n_max=2000, s_min=0.1, tag="zeroshot"):
+    def get_labels_by_zeroshot(self, n_max: int = 2000, s_min: float = 0.1,
+                               tag: str = "zeroshot", keywords: str = ""):
         """
         Get a set of positive labels using a zero-shot classification model
 
@@ -462,7 +507,14 @@ class TaskManager(baseTaskManager):
             Minimum score. Only elements strictly above s_min are selected
         tag: str, optional (default=1)
             Name of the output label set.
+        keywords : str, optional (default="")
+            A comma-separated string of keywords.
+            If the string is empty, the keywords are read from self.keywords
         """
+
+        # Read keywords:
+        self.keywords = self._convert_keywords(keywords, out='list')
+        logging.info(f'-- Selected keyword: {self.keywords}')
 
         # Filter documents by zero-shot classification
         ids, scores = self.CorpusProc.filter_by_zeroshot(
@@ -491,19 +543,17 @@ class TaskManager(baseTaskManager):
 
         return msg
 
-    def get_labels_by_topics(self, topic_weights, T, df_metadata, n_max=2000,
-                             s_min=1, tag="tpcs"):
+    def get_labels_by_topics(self, topic_weights, n_max: int = 2000,
+                             s_min: float = 1.0, tag: str = "tpcs"):
         """
         Get a set of positive labels from a weighted list of topics
 
         Parameters
         ----------
-        topic_weights: numpy.array
-            Weight of each topic
-        T: numpy.ndarray
-            Topic matrix
-        df_metadata:
-            Topic metadata
+        topic_weights: str or dict
+            If dict, a dictionwary topics: weighs
+            If str, a string of comma-separated topicis and wieighs:
+            t1, w1, t2, w2, ...
         n_max: int or None, optional (defaul=2000)
             Maximum number of elements in the output list. The default is
             a huge number that, in practice, means there is no loimit
@@ -512,6 +562,22 @@ class TaskManager(baseTaskManager):
         tag: str, optional (default=1)
             Name of the output label set.
         """
+
+        # It topic_weights is a string, convert to dictionary
+        if isinstance(topic_weights, str):
+            topic_weights = QueryManager.str2dict(topic_weights)
+
+        # Load topics
+        T, df_metadata, topic_words = self.DM.load_topics()
+
+        if T is None:
+            msg = "-- No topic model available for this corpus"
+            return msg
+
+        # Remove all documents (rows) from the topic matrix, that are not
+        # in self.df_corpus.
+        T, df_metadata = self.CorpusProc.remove_docs_from_topics(
+            T, df_metadata, col_id='corpusid')
 
         # Filter documents by topics
         ids, scores = self.CorpusProc.filter_by_topics(
@@ -632,7 +698,7 @@ class TaskManager(baseTaskManager):
 
         return msg
 
-    def reset_labels(self, labelset):
+    def reset_labels(self, class_name):
         """
         Reset all labels and models associated to a given category
 
@@ -643,28 +709,31 @@ class TaskManager(baseTaskManager):
         """
 
         # Remove files
-        self.DM.reset_labels(tag=labelset)
+        self.DM.reset_labels(tag=class_name)
 
         # Remove label info from metadata, if it exist
-        if labelset in self.metadata:
-            self.metadata.pop(labelset, None)
+        if class_name in self.metadata:
+            self.metadata.pop(class_name, None)
 
         self._save_metadata()
 
         return
 
-    def train_PUmodel(self, max_imbalance=3, nmax=400, epochs=3):
+    def train_PUmodel(self, max_imbalance: float = 3.0, nmax: int = 400,
+                      epochs: int = 3):
         """
         Train a domain classifiers
 
         Parameters
         ----------
-        max_imbalance : int or float or None, optional (default=None)
+        max_imbalance : float, optional (default=3.0)
             Maximum ratio negative vs positive samples. If the ratio in
             df_dataset is higher, the negative class is subsampled.
             If None, the original proportions are preserved
-        nmax : int or None (defautl=None)
+        nmax : int, optional (defautl=400)
             Maximum size of the whole (train+test) dataset
+        epochs : int, optional (default=3)
+            Number of training epoch
         """
 
         if self.df_dataset is None:
@@ -1270,16 +1339,7 @@ class TaskManagerCMD(TaskManager):
         # Get topic weights
 
         # Load topics
-        T, df_metadata, topic_words = self.DM.load_topics()
-
-        if T is None:
-            msg = "-- No topic model available for this corpus"
-            return msg
-
-        # Remove all documents (rows) from the topic matrix, that are not
-        # in self.df_corpus.
-        T, df_metadata = self.CorpusProc.remove_docs_from_topics(
-            T, df_metadata, col_id='corpusid')
+        df_metadata, topic_words = self.DM.load_topic_metadata()
 
         # Ask for topic weights
         topic_weights = self._ask_topics(topic_words)
@@ -1288,8 +1348,8 @@ class TaskManagerCMD(TaskManager):
 
         # ##########
         # Get labels
-        msg = super().get_labels_by_topics(topic_weights, T, df_metadata,
-                                           n_max=n_max, s_min=s_min, tag=tag)
+        msg = super().get_labels_by_topics(
+            topic_weights, n_max=n_max, s_min=s_min, tag=tag)
 
         return msg
 
@@ -1461,15 +1521,9 @@ class TaskManagerGUI(TaskManager):
         """
 
         # Load topics
-        T, df_metadata, topic_words = self.DM.load_topics()
+        df_metadata, topic_words = self.DM.load_topic_metadata()
 
-        # Remove all documents (rows) from the topic matrix, that are not
-        # in self.df_corpus.
-        if T is not None:
-            T, df_metadata = self.CorpusProc.remove_docs_from_topics(
-                T, df_metadata, col_id='corpusid')
-
-        return topic_words, T, df_metadata
+        return topic_words, df_metadata
 
     def get_feedback(self, idx, labels):
         """

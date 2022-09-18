@@ -248,8 +248,6 @@ def score_based_metrics(scores, labels, sampling_probs=None):
     tpr_roc_float = [float(k) for k in tpr_roc]
     fpr_roc_float = [float(k) for k in fpr_roc]
 
-
-
     return m
 
 
