@@ -910,11 +910,11 @@ class TaskManager(baseTaskManager):
         self._performance_metrics("PU", "PUlabels", "all",
                                   use_sampling_probs=False)
 
-        # Test PU predictions against annotations
-        self._performance_metrics("PU", ANNOTATIONS, "test")
-        self._performance_metrics("PU", ANNOTATIONS, "unused")
-        breakpoint()
-        self._performance_metrics("PU", ANNOTATIONS, "all")
+        if ANNOTATIONS in self.dc.df_dataset:
+            # Test PU predictions against annotations
+            self._performance_metrics("PU", ANNOTATIONS, "test")
+            self._performance_metrics("PU", ANNOTATIONS, "unused")
+            self._performance_metrics("PU", ANNOTATIONS, "all")
 
         return
 
