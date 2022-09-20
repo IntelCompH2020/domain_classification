@@ -929,7 +929,6 @@ class TaskManager(baseTaskManager):
             return
 
         # Test PN predictions against PUlabels
-        breakpoint()
         self._performance_metrics("PN", "PUlabels", "train")
         self._performance_metrics("PN", "PUlabels", "test")
         self._performance_metrics("PN", "PUlabels", "all",

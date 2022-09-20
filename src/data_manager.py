@@ -834,7 +834,7 @@ class DataManager(object):
 
         # Save
         fpath = folder / f"selected_docs_{tag}.csv"
-        df_docs.save_csv(fpath)
+        df_docs.to_csv(fpath)
 
         return
 
@@ -883,7 +883,7 @@ class DataManager(object):
 
         # Save
         fpath = folder / f"new_labels_{tag}.csv"
-        df_labels.save_csv(fpath)
+        df_labels.to_csv(fpath)
 
         return
 
