@@ -106,7 +106,8 @@ def main():
         options_needing_labels = {
             'load_labels', 'PU_learning', 'get_feedback', 'update_model',
             'import_export_annotations', 'evaluate_PUlabels', 'train_PUmodel',
-            'evaluate_PUmodel', 'performance_metrics_PU', 'retrain_model',
+            'evaluate_PUmodel', 'performance_metrics_PU', 'sample_documents',
+            'get_labels_from_docs', 'annotate', 'retrain_model',
             'reevaluate_model', 'performance_metrics_PN', 'import_annotations',
             'export_annotations'}
 
