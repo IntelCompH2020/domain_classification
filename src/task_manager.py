@@ -1095,7 +1095,7 @@ class TaskManager(baseTaskManager):
         # Check consistency: the indices in selected_doc and df_labels must
         # be the same and in the same order. Otherwise, both dataframes could
         # correspond to different annotation rounds, and must be elliminated
-        if df_labels.idx != idx:
+        if np.any(df_labels.index != idx):
             logging.error("-- The files of last sampled documents and last"
                           "labels do not match. Annotation aborted.")
             logging.error("-- You should re-sample and re-annotate")
