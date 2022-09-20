@@ -811,6 +811,7 @@ class DataManager(object):
 
         # Create temporary folder
         fpath = self.path2datasets / "temp" / f"selected_docs_{tag}.csv"
+        breakpoint()
         df = pd.read_csv(fpath)
 
         return df
