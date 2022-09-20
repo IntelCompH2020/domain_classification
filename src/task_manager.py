@@ -1011,6 +1011,9 @@ class TaskManager(baseTaskManager):
         # TODO: Save selected_docs
         self.DM.save_selected_docs(selected_docs, tag=self.class_name)
 
+        # Update dataset file (AL_sample changes data in some colums)
+        self._save_dataset()
+
         return
 
     def get_labels_from_docs(self):
