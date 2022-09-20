@@ -967,8 +967,11 @@ class TaskManager(baseTaskManager):
         # Indices of the selected docs
         idx = selected_docs.index
 
+        # TODO: Save selected_docs
+        self.DM.save_selected_docs(selected_docs, tag=self.class_name)
+
         # STEP 2: Request labels
-        labels = self.get_labels_from_docs(selected_docs)
+        labels = self.get_labels_from_docs()
 
         # STEP 3: Annotate
         self.dc.annotate(idx, labels, col=ANNOTATIONS)
@@ -1456,14 +1459,9 @@ class TaskManagerCMD(TaskManager):
 
         return msg
 
-    def get_labels_from_docs(self, selected_docs):
+    def get_labels_from_docs(self):
         """
         Requests feedback about the class of given documents.
-
-        Parameters
-        ----------
-        selected_docs : pands.DataFrame
-            Selected documents
 
         Returns
         -------
@@ -1471,6 +1469,9 @@ class TaskManagerCMD(TaskManager):
             Labels for the given documents, in the same order than the
             documents in the input dataframe
         """
+
+        # Load sampled documents
+        selected_docs = self.DM.load_selected_docs(tag=self.class_name)
 
         labels = []
         width = 80
