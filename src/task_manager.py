@@ -1074,6 +1074,8 @@ class TaskManager(baseTaskManager):
             logging.info("-- Canceling: new labels removed.")
             labels = []
 
+        breakpoint()
+
         self.DM.save_new_labels(selected_docs.idx, labels, tag=self.class_name)
 
         return labels

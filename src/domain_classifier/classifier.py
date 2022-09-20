@@ -971,6 +971,13 @@ class CorpusClassifier(object):
         population sizes are large enough.
         """
 
+        # Check sampler
+        valid_samplers = ['random', 'extremes', 'full_rs']
+        if sampler not in valid_samplers:
+            logging.error(
+                f'-- -- Sampler unknown: available options are '
+                f'{", ".join(valid_samplers)}')
+
         # This is for backward compatibility
         if 'prediction' not in self.df_dataset:
             self.df_dataset['prediction'] = self.df_dataset['PU_prediction']
