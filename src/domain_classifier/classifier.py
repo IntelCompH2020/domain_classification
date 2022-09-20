@@ -1085,7 +1085,6 @@ class CorpusClassifier(object):
             return None
 
         # Register sampler and sampling probabilities into the dataset
-        breakpoint()
         idx = selected_docs.index
         selected_docs.loc[idx, 'sampler'] = sampler
         cols = ['sampler', 'sampling_prob']
