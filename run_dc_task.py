@@ -135,7 +135,6 @@ def main():
                 kwargs[arg] = getattr(args, arg)
 
         # Run task
-        breakpoint()
         getattr(tm, args.task)(*arg_values, **kwargs)
 
     # If the task is reset_labels run it with the class name.
