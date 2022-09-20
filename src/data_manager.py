@@ -891,6 +891,23 @@ class DataManager(object):
 
         return
 
+    def remove_temp_files(self, tag):
+        """
+        Removes temporary files associated to a given annotation round
+        """
+
+        folder = self.path2datasets / "temp"
+        # Remove selected docs file.
+        fpath = folder / f"selected_docs_{tag}.csv"
+        if fpath.exists():
+            fpath.unlink()
+        # Remove labels file.
+        fpath = folder / f"new_labels_{tag}.csv"
+        if fpath.exists():
+            fpath.unlink()
+
+        return
+
     def import_annotations(self, tag):
         """
         Loads a file with annotations.

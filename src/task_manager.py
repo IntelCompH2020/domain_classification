@@ -1085,7 +1085,6 @@ class TaskManager(baseTaskManager):
         """
 
         # Load sampled documents
-        breakpoint()
         selected_docs = self.DM.load_selected_docs(tag=self.class_name)
         df_labels = self.DM.load_new_labels(tag=self.class_name)
 
@@ -1104,6 +1103,9 @@ class TaskManager(baseTaskManager):
 
         # STEP 3: Annotate
         self.dc.annotate(idx, labels, col=ANNOTATIONS)
+
+        # Remove temporary label files
+        self.DM.remove_temp_files(self.class_name)
 
         # Update dataset file to include new labels
         self._save_dataset()
