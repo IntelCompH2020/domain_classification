@@ -517,7 +517,6 @@ class CorpusClassifier(object):
         # ##############
         # Classification
 
-        breakpoint()
         # Load config
         self.load_model_config()
 

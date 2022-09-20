@@ -794,6 +794,99 @@ class DataManager(object):
         # The log message is returned to be shown in a GUI, if needed
         return ids_pos, msg
 
+    def load_selected_docs(self, tag=""):
+        """
+        Loads a temporal dataframe of documents selected for annotation
+
+        Parameters
+        ----------
+        tag : str, optional (default="")
+            Label suffix for the file name
+
+        Returns
+        -------
+        df : pandas.DataFrame
+            Selected documents
+        """
+
+        # Create temporary folder
+        fpath = self.path2datasets / "temp" / f"selected_docs_{tag}.csv"
+        df = pd.read_csv(fpath)
+
+        return df
+
+    def save_selected_docs(self, df_docs, tag=""):
+        """
+        Save a temporal dataframe of documents selected for annotation
+
+        Parameters
+        ----------
+        df_docs : pandas.DataFrame
+            Dataframe of documents to be annotated
+        tag : str, optional (default="")
+            Suffix for the file name
+        """
+
+        # Create temporary folder
+        folder = self.path2datasets / "temp"
+        if not folder.exists():
+            folder.mkdir()
+
+        # Save
+        fpath = folder / f"selected_docs_{tag}.csv"
+        df_docs.save_csv(fpath)
+
+        return
+
+    def load_new_labels(self, tag=""):
+        """
+        Loads a temporal dataframe of documents selected for annotation
+
+        Parameters
+        ----------
+        tag : str, optional (default="")
+            Suffix for the file name
+
+        Returns
+        -------
+        df : pandas.DataFrame
+            A dataframe of labels
+        """
+
+        # Create temporary folder
+        fpath = self.path2datasets / "temp" / f"new_labels_{tag}.csv"
+        df = pd.read_csv(fpath)
+
+        return df
+
+    def save_new_labels(self, idx, labels, tag=""):
+        """
+        Save labels from the last annotation round in a temporary file
+
+        Parameters
+        ----------
+        idx : list like
+            Indices of the annotated documents.
+        labels : list
+            List of labels
+        tag : str, optional (default="")
+            Label suffix for the file name
+        """
+
+        # Make dataframe (to save easily into a csv file)
+        df_labels = pd.DataFrame(labels, index=idx, columns=['labels'])
+
+        # Create temporary folder
+        folder = self.path2datasets / "temp"
+        if not folder.exists():
+            folder.mkdir()
+
+        # Save
+        fpath = folder / f"new_labels_{tag}.csv"
+        df_labels.save_csv(fpath)
+
+        return
+
     def import_annotations(self, tag):
         """
         Loads a file with annotations.

@@ -146,9 +146,7 @@ def main():
     # TEST PENDING:
     # - get_feedback:  Get relevance feedback from user
     # - evaluate_PUlabels:  Evaluate subcorpus with respect to a gold standard
-    # - train_PUmodel:  Train PU classifier model with the available labels
     # - evaluate_PUmodel:  Evaluate PU classifier model with the available labs
-    # - performance_metrics_PU:  Show all performance metrics
     # - retrain_model:  Retrain model with manual annotations
     # - reevaluate_model:  Evaluate retrained model.
     # - performance_metrics_PN:  Show all performance metrics

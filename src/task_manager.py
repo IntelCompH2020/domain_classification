@@ -218,8 +218,8 @@ class TaskManager(baseTaskManager):
         gs_labels = [x for x in self.df_corpus.columns
                      if x.startswith('target_')]
 
-        if "annotations" in self.dc.df_dataset:
-            gs_labels.append("annotations")
+        if ANNOTATIONS in self.dc.df_dataset:
+            gs_labels.append(ANNOTATIONS)
 
         if gs_labels == []:
             logging.warning('No Gold Standard is available. Please choose the '
@@ -608,7 +608,7 @@ class TaskManager(baseTaskManager):
 
         return msg
 
-    def evaluate_PUlabels(self, true_label_name):
+    def evaluate_PUlabels(self, true_label_name: str):
         """
         Evaluate the current set of PU labels
         """
@@ -791,7 +791,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def evaluate_PUmodel(self, samples="train_test"):
+    def evaluate_PUmodel(self, samples: str = "train_test"):
         """
         Evaluate a domain classifiers
         """
@@ -911,10 +911,10 @@ class TaskManager(baseTaskManager):
                                   use_sampling_probs=False)
 
         # Test PU predictions against annotations
-        self._performance_metrics("PU", "annotations", "test")
-        self._performance_metrics("PU", "annotations", "unused")
+        self._performance_metrics("PU", ANNOTATIONS, "test")
+        self._performance_metrics("PU", ANNOTATIONS, "unused")
         breakpoint()
-        self._performance_metrics("PU", "annotations", "all")
+        self._performance_metrics("PU", ANNOTATIONS, "all")
 
         return
 
@@ -929,16 +929,16 @@ class TaskManager(baseTaskManager):
             return
 
         # Test PN predictions against PUlabels
+        breakpoint()
         self._performance_metrics("PN", "PUlabels", "train")
         self._performance_metrics("PN", "PUlabels", "test")
         self._performance_metrics("PN", "PUlabels", "all",
                                   use_sampling_probs=False)
 
         # Test PN predictions against annotations
-        self._performance_metrics("PN", "annotations", "test")
-        self._performance_metrics("PN", "annotations", "unused")
-        breakpoint()
-        self._performance_metrics("PN", "annotations", "all")
+        self._performance_metrics("PN", ANNOTATIONS, "test")
+        self._performance_metrics("PN", ANNOTATIONS, "unused")
+        self._performance_metrics("PN", ANNOTATIONS, "all")
 
         return
 
@@ -986,14 +986,38 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def get_labels_from_docs(self, n_docs):
+    def sample_documents(self, sampler=None):
+        """
+        Gets some labels from a user for a selected subset of documents
+        """
+
+        # This is for compatibility with the GUI
+        if sampler is None:
+            sampler = self.global_parameters['active_learning']['sampler']
+
+        # Check if a classifier object exists
+        if not self._is_model():
+            return
+
+        # STEP 1: Select bunch of documents at random
+        selected_docs = self.dc.AL_sample(
+            n_samples=self.global_parameters['active_learning']['n_docs'],
+            sampler=sampler,
+            p_ratio=self.global_parameters['active_learning']['p_ratio'],
+            top_prob=self.global_parameters['active_learning']['top_prob'])
+
+        # TODO: Save selected_docs
+        self.DM.save_selected_docs(selected_docs, tag=self.class_name)
+
+        return
+
+    def get_labels_from_docs(self):
         """
         Requests feedback about the class of given documents.
 
-        Parameters
-        ----------
-        selected_docs : pands.DataFrame
-            Selected documents
+        This method assumes user queryng through the command window. It should
+        be overwrittend by inherited classes to adapt the specific UI of the
+        application
 
         Returns
         -------
@@ -1002,12 +1026,92 @@ class TaskManager(baseTaskManager):
             documents in the input dataframe
         """
 
-        raise NotImplementedError(
-            "Please Implement this method in your inherited class")
+        # Load sampled documents
+        selected_docs = self.DM.load_selected_docs(tag=self.class_name)
+
+        # Temporal query manager object
+        QM = QueryManager()
+
+        labels = []
+        width = 80
+
+        print(width * "=")
+        print("-- SAMPLED DOCUMENTS FOR LABELING:")
+
+        print(width * "=")
+        k = 1    # A classic counter
+        for i, doc in selected_docs.iterrows():
+            print(f"Document {k} out of {len(selected_docs)}")
+            k += 1
+            print(f"ID: {doc.id}")
+            if self.metadata['corpus_name'] == 'EU_projects':
+                # Locate document in corpus
+                doc_corpus = self.df_corpus[self.df_corpus['id'] == doc.id]
+                # Get and print title
+                title = doc_corpus.iloc[0].title
+                print(f"TITLE: {title}")
+                # Get and print description
+                descr = doc_corpus.iloc[0].description
+                print(f"DESCRIPTION: {descr}")
+            else:
+                # Get and print text
+                text = doc.text
+                print(f"TEXT: {text}")
+            # Get and print prediction
+            if 'prediction' in doc:
+                print(f"PREDICTED CLASS: {doc.prediction}")
+            if 'prob_pred' in doc:
+                print(f"SCORE: {doc.prob_pred}")
+
+            labels.append(QM.ask_label())
+            print(width * "=")
+
+        # Label confirmation: this is to confirm that the labeler did not make
+        # (consciously) a mistake.
+        if not QM.confirm():
+            logging.info("-- Canceling: new labels removed.")
+            labels = []
+
+        self.DM.save_new_labels(selected_docs.idx, labels, tag=self.class_name)
+
+        return labels
+
+    def annotate(self):
+        """
+        Save user-provided labels in the dataset
+        """
+
+        # Load sampled documents
+        selected_docs = self.DM.load_selected_docs(tag=self.class_name)
+        df_labels = self.DM.load_new_labels(tag=self.class_name)
+        # Indices of the selected docs
+        idx = selected_docs.index
+        # Check consistency: the indices in selected_doc and df_labels must
+        # be the same and in the same order. Otherwise, both dataframes could
+        # correspond to different annotation rounds, and must be elliminated
+        if df_labels.idx != idx:
+            logging.error("-- The files of last sampled documents and last"
+                          "labels do not match. Annotation aborted.")
+            logging.error("-- You should re-sample and re-annotate")
+            return
+        labels = list(df_labels.labels)
+
+        # STEP 3: Annotate
+        self.dc.annotate(idx, labels, col=ANNOTATIONS)
+
+        # Update dataset file to include new labels
+        self._save_dataset()
+
+        n_labels, n_train, n_test, n_unused = self.dc.num_annotations()
+        logging.info("-- Summary of current annotations:")
+        logging.info(f"-- -- Annotations: {n_labels}")
+        logging.info(f"-- -- Train: {n_train}")
+        logging.info(f"-- -- Test: {n_test}")
+        logging.info(f"-- -- Unused: {n_unused}")
 
         return
 
-    def retrain_model(self, epochs=3):
+    def retrain_model(self, epochs: int = 3):
         """
         Improves classifier performance using the labels provided by users
         """
@@ -1032,7 +1136,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def reevaluate_model(self, samples="train_test"):
+    def reevaluate_model(self, samples: str = "train_test"):
         """
         Evaluate a domain classifier
         """
@@ -1062,7 +1166,7 @@ class TaskManager(baseTaskManager):
 
         return result
 
-    def import_annotations(self, domain_name):
+    def import_annotations(self, domain_name: str):
         """
         Imports / exports annotations from / to a file in the dataset folder.
 
@@ -1082,7 +1186,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def export_annotations(self, domain_name):
+    def export_annotations(self, domain_name: str):
         """
         Imports / exports annotations from / to a file in the dataset folder.
 
