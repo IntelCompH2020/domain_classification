@@ -1031,8 +1031,6 @@ class TaskManager(baseTaskManager):
         # Load sampled documents
         selected_docs = self.DM.load_selected_docs(tag=self.class_name)
 
-        breakpoint()
-
         # Temporal query manager object
         QM = QueryManager()
 
@@ -1077,8 +1075,8 @@ class TaskManager(baseTaskManager):
             labels = []
 
         breakpoint()
-
-        self.DM.save_new_labels(selected_docs.id, labels, tag=self.class_name)
+        self.DM.save_new_labels(selected_docs.index, labels,
+                                tag=self.class_name)
 
         return labels
 
@@ -1089,6 +1087,7 @@ class TaskManager(baseTaskManager):
 
         # Load sampled documents
         selected_docs = self.DM.load_selected_docs(tag=self.class_name)
+        breakpoint()
         df_labels = self.DM.load_new_labels(tag=self.class_name)
         # Indices of the selected docs
         ids = selected_docs.id

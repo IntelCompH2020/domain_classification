@@ -811,8 +811,9 @@ class DataManager(object):
 
         # Create temporary folder
         fpath = self.path2datasets / "temp" / f"selected_docs_{tag}.csv"
-        breakpoint()
-        df = pd.read_csv(fpath)
+        # Below, index_col=0 is used to use the first column as indices.
+        # Otherwise, an additional index colums would be used.
+        df = pd.read_csv(fpath, index_col=0)
 
         return df
 
@@ -835,6 +836,8 @@ class DataManager(object):
 
         # Save
         fpath = folder / f"selected_docs_{tag}.csv"
+        # Below, index_col=0 is used to use the first column as indices.
+        # Otherwise, an additional index colums would be used.
         df_docs.to_csv(fpath)
 
         return
@@ -856,7 +859,7 @@ class DataManager(object):
 
         # Create temporary folder
         fpath = self.path2datasets / "temp" / f"new_labels_{tag}.csv"
-        df = pd.read_csv(fpath)
+        df = pd.read_csv(fpath, index_col=0)
 
         return df
 
