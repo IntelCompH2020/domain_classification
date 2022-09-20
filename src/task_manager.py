@@ -1074,7 +1074,6 @@ class TaskManager(baseTaskManager):
             logging.info("-- Canceling: new labels removed.")
             labels = []
 
-        breakpoint()
         self.DM.save_new_labels(selected_docs.index, labels,
                                 tag=self.class_name)
 
@@ -1086,15 +1085,17 @@ class TaskManager(baseTaskManager):
         """
 
         # Load sampled documents
-        selected_docs = self.DM.load_selected_docs(tag=self.class_name)
         breakpoint()
+        selected_docs = self.DM.load_selected_docs(tag=self.class_name)
         df_labels = self.DM.load_new_labels(tag=self.class_name)
+
         # Indices of the selected docs
-        ids = selected_docs.id
+        idx = selected_docs.index
+
         # Check consistency: the indices in selected_doc and df_labels must
         # be the same and in the same order. Otherwise, both dataframes could
         # correspond to different annotation rounds, and must be elliminated
-        if df_labels.id != ids:
+        if df_labels.idx != idx:
             logging.error("-- The files of last sampled documents and last"
                           "labels do not match. Annotation aborted.")
             logging.error("-- You should re-sample and re-annotate")
