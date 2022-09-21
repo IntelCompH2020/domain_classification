@@ -176,6 +176,7 @@
                         --source /path/to/datasets
                         —-zeroshot /path/to/zeroshot
                         --task TASK
+                        --class_name CLASS_NAME
                         --param1 PARAM1
                         --param1 PARAM2
                         ...
@@ -188,12 +189,13 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">/path/to/datasets</span></code> is the path to the source data folder.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">/path/to/zeroshot</span></code> is the path to a folder containing a pre-trained zero-shot model utilized for the selection of a subcorpus from a category name.</p></li>
 <li><p>TASK is the name of the task to run.</p></li>
+<li><p>CLASS_NAME is the name of the target category (only for tasks requiring it)</p></li>
 <li><p>param1, param2 are the names of the specific parameters</p></li>
 <li><p>PARAM1, PARAM2 are their values</p></li>
 </ul>
 </div></blockquote>
 <p>You can run</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python main_dc_single_task.py --h
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python run_dc_task.py --h
 </pre></div>
 </div>
 <p>to see available tasks.</p>

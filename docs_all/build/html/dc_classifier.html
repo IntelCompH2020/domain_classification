@@ -362,25 +362,6 @@ annotated one.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.retrain_model_old">
-<span class="sig-name descname"><span class="pre">retrain_model_old</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freeze_encoder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation_gain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.retrain_model_old" title="Permalink to this definition"></a></dt>
-<dd><p>Re-train the classifier model using annotations</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>epochs</strong> (<em>int, optional (default=3)</em>) – Number of training epochs</p></li>
-<li><p><strong>freeze_encoder</strong> (<em>bool, optional (default=True)</em>) – If True, the embedding layer is frozen, so that only the
-classification layers is updated. This is useful to use
-precomputed embedings for large datasets.</p></li>
-<li><p><strong>batch_size</strong> (<em>int, optional (default=8)</em>) – Batch size</p></li>
-<li><p><strong>annotation_gain</strong> (<em>int or float, optional (default=10)</em>) – Relative value of an annotated sample with respect to a non-
-annotated one.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.train_model">
 <span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freeze_encoder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.train_model" title="Permalink to this definition"></a></dt>
 <dd><p>Train binary text classification model based on transformers</p>
@@ -400,32 +381,6 @@ predictions) saved in the dataset dataframe</p></li>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.train_model_old">
-<span class="sig-name descname"><span class="pre">train_model_old</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freeze_encoder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.train_model_old" title="Permalink to this definition"></a></dt>
-<dd><p>Train binary text classification model based on transformers</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>epochs</strong> (<em>int, optional (default=3)</em>) – Number of training epochs</p></li>
-<li><p><strong>validate</strong> (<em>bool, optional (default=True)</em>) – If True, the model epoch is selected based on the F1 score computed
-over the test data. Otherwise, the model after the last epoch is
-taken</p></li>
-<li><p><strong>freeze_encoder</strong> (<em>bool, optional (default=True)</em>) – If True, the embedding layer is frozen, so that only the
-classification layers is updated. This is useful to use
-precomputed embedings for large datasets.</p></li>
-<li><p><strong>tag</strong> (<em>str, optional (default=””)</em>) – A preffix that will be used for all result variables (scores and
-predictions) saved in the dataset dataframe</p></li>
-<li><p><strong>batch_size</strong> (<em>int, optiona (default=8)</em>) – Batch size</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>The use of simpletransformers follows the example code in
-<a class="reference external" href="https://towardsdatascience.com/simple-transformers-introducing-the">https://towardsdatascience.com/simple-transformers-introducing-the</a>-
-easiest-bert-roberta-xlnet-and-xlm-library-58bf8c59b2a3</p>
 </dd></dl>
 
 <dl class="py method">

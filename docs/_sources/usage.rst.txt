@@ -95,6 +95,7 @@ To run a specific task, all parameter of the task should be introduced through t
                             --source /path/to/datasets
                             —-zeroshot /path/to/zeroshot
                             --task TASK
+                            --class_name CLASS_NAME
                             --param1 PARAM1
                             --param1 PARAM2
                             ...
@@ -105,6 +106,7 @@ where
    * ``/path/to/datasets`` is the path to the source data folder.
    * ``/path/to/zeroshot`` is the path to a folder containing a pre-trained zero-shot model utilized for the selection of a subcorpus from a category name.
    * TASK is the name of the task to run.
+   * CLASS_NAME is the name of the target category (only for tasks requiring it)
    * param1, param2 are the names of the specific parameters
    * PARAM1, PARAM2 are their values
 
@@ -112,7 +114,7 @@ You can run
 
 .. code-block:: bash
 
-    $ python main_dc_single_task.py --h
+    $ python run_dc_task.py --h
 
 to see available tasks.
 
