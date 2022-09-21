@@ -1105,7 +1105,6 @@ class TaskManager(baseTaskManager):
         labels = list(df_labels.labels)
 
         # STEP 3: Annotate
-        breakpoint()
         self.dc.annotate(idx, labels, col=ANNOTATIONS)
 
         # Remove temporary label files

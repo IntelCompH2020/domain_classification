@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="#" />
@@ -46,6 +47,8 @@
 <li class="toctree-l1"><a class="reference internal" href="dc_classifier.html">Classifier</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dc_custom_model.html">Custom Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dc_preprocessor.html">Preprocessor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_metrics.html">Classifier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_plotter.html">Classifier</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_main_window.html">Main Window</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_analyze_keywords_window.html">Analyze Keywords Window</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_constants.html">Constants</a></li>
@@ -180,6 +183,8 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dc_plotter.html#src.utils.plotter.add_tag_2_path">add_tag_2_path() (in module src.utils.plotter)</a>
+</li>
       <li><a href="dc_classifier.html#src.domain_classifier.classifier.CorpusClassifier.AL_sample">AL_sample() (src.domain_classifier.classifier.CorpusClassifier method)</a>
 </li>
       <li><a href="dc_task_manager.html#src.task_manager.TaskManager.analyze_keywords">analyze_keywords() (src.task_manager.TaskManager method)</a>
@@ -191,13 +196,17 @@
       <li><a href="gui_analyze_keywords_window.html#src.graphical_user_interface.analyze_keywords_window.AnalyzeKeywordsWindow">AnalyzeKeywordsWindow (class in src.graphical_user_interface.analyze_keywords_window)</a>
 </li>
       <li><a href="dc_classifier.html#src.domain_classifier.classifier.CorpusClassifier.annotate">annotate() (src.domain_classifier.classifier.CorpusClassifier method)</a>
+
+      <ul>
+        <li><a href="dc_task_manager.html#src.task_manager.TaskManager.annotate">(src.task_manager.TaskManager method)</a>
 </li>
+      </ul></li>
       <li><a href="gui_main_window.html#src.graphical_user_interface.main_window.MainWindow.append_text_evaluate">append_text_evaluate() (src.graphical_user_interface.main_window.MainWindow method)</a>
-</li>
-      <li><a href="gui_main_window.html#src.graphical_user_interface.main_window.MainWindow.append_text_retrain_reval">append_text_retrain_reval() (src.graphical_user_interface.main_window.MainWindow method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="gui_main_window.html#src.graphical_user_interface.main_window.MainWindow.append_text_retrain_reval">append_text_retrain_reval() (src.graphical_user_interface.main_window.MainWindow method)</a>
+</li>
       <li><a href="gui_main_window.html#src.graphical_user_interface.main_window.MainWindow.append_text_train">append_text_train() (src.graphical_user_interface.main_window.MainWindow method)</a>
 </li>
       <li><a href="dc_query_manager.html#src.query_manager.QueryManager.ask_keywords">ask_keywords() (src.query_manager.QueryManager method)</a>
@@ -218,7 +227,13 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dc_plotter.html#src.utils.plotter.base_plot_roc">base_plot_roc() (in module src.utils.plotter)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="dc_base_taskmanager.html#src.base_taskmanager.baseTaskManager">baseTaskManager (class in src.base_taskmanager)</a>
+</li>
+      <li><a href="dc_metrics.html#src.domain_classifier.metrics.binary_metrics">binary_metrics() (in module src.domain_classifier.metrics)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -260,10 +275,10 @@
 </li>
       <li><a href="gui_main_window.html#src.graphical_user_interface.main_window.MainWindow.clicked_reset_labels">clicked_reset_labels() (src.graphical_user_interface.main_window.MainWindow method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="gui_main_window.html#src.graphical_user_interface.main_window.MainWindow.clicked_retrain_model">clicked_retrain_model() (src.graphical_user_interface.main_window.MainWindow method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="gui_get_keywords_window.html#src.graphical_user_interface.get_keywords_window.GetKeywordsWindow.clicked_select_keywords">clicked_select_keywords() (src.graphical_user_interface.get_keywords_window.GetKeywordsWindow method)</a>
 </li>
       <li><a href="gui_main_window.html#src.graphical_user_interface.main_window.MainWindow.clicked_train_PU_model">clicked_train_PU_model() (src.graphical_user_interface.main_window.MainWindow method)</a>
@@ -276,6 +291,8 @@
         <li><a href="dc_preprocessor.html#src.domain_classifier.preprocessor.CorpusProcessor.compute_keyword_stats">(src.domain_classifier.preprocessor.CorpusProcessor method)</a>
 </li>
       </ul></li>
+      <li><a href="gui_main_window.html#src.graphical_user_interface.main_window.MainWindow.configure_import_labels_buttons">configure_import_labels_buttons() (src.graphical_user_interface.main_window.MainWindow method)</a>
+</li>
       <li><a href="dc_query_manager.html#src.query_manager.QueryManager.confirm">confirm() (src.query_manager.QueryManager method)</a>
 </li>
       <li><a href="gui_constants.html#src.graphical_user_interface.constants.Constants">Constants (class in src.graphical_user_interface.constants)</a>
@@ -305,6 +322,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="dc_data_manager.html#src.data_manager.DataManager">DataManager (class in src.data_manager)</a>
+</li>
+      <li><a href="dc_data_manager.html#src.data_manager.detect_english">detect_english() (in module src.data_manager)</a>
 </li>
       <li><a href="gui_main_window.html#src.graphical_user_interface.main_window.MainWindow.do_after_evaluate_pu_model">do_after_evaluate_pu_model() (src.graphical_user_interface.main_window.MainWindow method)</a>
 </li>
@@ -338,16 +357,18 @@
       </ul></li>
       <li><a href="dc_preprocessor.html#src.domain_classifier.preprocessor.CorpusDFProcessor.evaluate_filter">evaluate_filter() (src.domain_classifier.preprocessor.CorpusDFProcessor method)</a>
 </li>
+      <li><a href="dc_task_manager.html#src.task_manager.TaskManager.evaluate_PUlabels">evaluate_PUlabels() (src.task_manager.TaskManager method)</a>
+</li>
       <li><a href="dc_task_manager.html#src.task_manager.TaskManager.evaluate_PUmodel">evaluate_PUmodel() (src.task_manager.TaskManager method)</a>
 </li>
       <li><a href="gui_main_window.html#src.graphical_user_interface.main_window.MainWindow.execute_evaluate_pu_model">execute_evaluate_pu_model() (src.graphical_user_interface.main_window.MainWindow method)</a>
 </li>
       <li><a href="gui_main_window.html#src.graphical_user_interface.main_window.MainWindow.execute_give_feedback">execute_give_feedback() (src.graphical_user_interface.main_window.MainWindow method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="gui_main_window.html#src.graphical_user_interface.main_window.MainWindow.execute_import_labels">execute_import_labels() (src.graphical_user_interface.main_window.MainWindow method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="gui_util.html#src.graphical_user_interface.util.execute_in_thread">execute_in_thread() (in module src.graphical_user_interface.util)</a>
 </li>
       <li><a href="gui_main_window.html#src.graphical_user_interface.main_window.MainWindow.execute_load_corpus">execute_load_corpus() (src.graphical_user_interface.main_window.MainWindow method)</a>
@@ -358,6 +379,14 @@
 </li>
       <li><a href="gui_main_window.html#src.graphical_user_interface.main_window.MainWindow.execute_train_classifier">execute_train_classifier() (src.graphical_user_interface.main_window.MainWindow method)</a>
 </li>
+      <li><a href="dc_data_manager.html#src.data_manager.DataManager.export_annotations">export_annotations() (src.data_manager.DataManager method)</a>
+
+      <ul>
+        <li><a href="dc_task_manager.html#src.task_manager.TaskManager.export_annotations">(src.task_manager.TaskManager method)</a>
+</li>
+        <li><a href="dc_task_manager.html#src.task_manager.TaskManagerCMD.export_annotations">(src.task_manager.TaskManagerCMD method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -386,6 +415,10 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dc_data_manager.html#src.data_manager.DataManager.get_annotation_list">get_annotation_list() (src.data_manager.DataManager method)</a>
+</li>
+      <li><a href="dc_classifier.html#src.domain_classifier.classifier.CorpusClassifier.get_annotations">get_annotations() (src.domain_classifier.classifier.CorpusClassifier method)</a>
+</li>
       <li><a href="dc_data_manager.html#src.data_manager.DataManager.get_corpus_list">get_corpus_list() (src.data_manager.DataManager method)</a>
 </li>
       <li><a href="dc_data_manager.html#src.data_manager.DataManager.get_dataset_list">get_dataset_list() (src.data_manager.DataManager method)</a>
@@ -412,6 +445,8 @@
         <li><a href="dc_task_manager.html#src.task_manager.TaskManagerCMD.get_labels_by_topics">(src.task_manager.TaskManagerCMD method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="dc_task_manager.html#src.task_manager.TaskManager.get_labels_by_zeroshot">get_labels_by_zeroshot() (src.task_manager.TaskManager method)</a>
 
       <ul>
@@ -420,17 +455,15 @@
         <li><a href="dc_task_manager.html#src.task_manager.TaskManagerGUI.get_labels_by_zeroshot">(src.task_manager.TaskManagerGUI method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="dc_task_manager.html#src.task_manager.TaskManager.get_labels_from_docs">get_labels_from_docs() (src.task_manager.TaskManager method)</a>
 
       <ul>
         <li><a href="dc_task_manager.html#src.task_manager.TaskManagerCMD.get_labels_from_docs">(src.task_manager.TaskManagerCMD method)</a>
 </li>
       </ul></li>
-      <li><a href="dc_data_manager.html#src.data_manager.DataManager.get_labelset_list">get_labelset_list() (src.data_manager.DataManager method)</a>
-</li>
       <li><a href="dc_data_manager.html#src.data_manager.DataManager.get_model_list">get_model_list() (src.data_manager.DataManager method)</a>
+</li>
+      <li><a href="mn_menu_navigator.html#src.menu_navigator.menu_navigator.MenuNavigator.get_options">get_options() (src.menu_navigator.menu_navigator.MenuNavigator method)</a>
 </li>
       <li><a href="dc_task_manager.html#src.task_manager.TaskManagerGUI.get_suggested_keywords">get_suggested_keywords() (src.task_manager.TaskManagerGUI method)</a>
 </li>
@@ -452,10 +485,16 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="dc_data_manager.html#src.data_manager.DataManager.import_labels">import_labels() (src.data_manager.DataManager method)</a>
+      <li><a href="dc_data_manager.html#src.data_manager.DataManager.import_AI_subcorpus">import_AI_subcorpus() (src.data_manager.DataManager method)</a>
 
       <ul>
-        <li><a href="dc_task_manager.html#src.task_manager.TaskManager.import_labels">(src.task_manager.TaskManager method)</a>
+        <li><a href="dc_task_manager.html#src.task_manager.TaskManager.import_AI_subcorpus">(src.task_manager.TaskManager method)</a>
+</li>
+      </ul></li>
+      <li><a href="dc_data_manager.html#src.data_manager.DataManager.import_annotations">import_annotations() (src.data_manager.DataManager method)</a>
+
+      <ul>
+        <li><a href="dc_task_manager.html#src.task_manager.TaskManager.import_annotations">(src.task_manager.TaskManager method)</a>
 </li>
       </ul></li>
       <li><a href="gui_main_window.html#src.graphical_user_interface.main_window.MainWindow.init_feedback_elements">init_feedback_elements() (src.graphical_user_interface.main_window.MainWindow method)</a>
@@ -484,12 +523,16 @@
         <li><a href="gui_get_topics_list_window.html#src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.initUI">(src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow method)</a>
 </li>
       </ul></li>
+      <li><a href="dc_data_manager.html#src.data_manager.DataManager.is_model">is_model() (src.data_manager.DataManager method)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dc_classifier.html#src.domain_classifier.classifier.CorpusClassifier.label2label_metrics">label2label_metrics() (src.domain_classifier.classifier.CorpusClassifier method)</a>
+</li>
       <li><a href="dc_base_taskmanager.html#src.base_taskmanager.baseTaskManager.load">load() (src.base_taskmanager.baseTaskManager method)</a>
 
       <ul>
@@ -504,19 +547,21 @@
       </ul></li>
       <li><a href="dc_data_manager.html#src.data_manager.DataManager.load_dataset">load_dataset() (src.data_manager.DataManager method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="dc_custom_model.html#src.domain_classifier.custom_model.CustomModel.load_embeddings">load_embeddings() (src.domain_classifier.custom_model.CustomModel method)</a>
 </li>
-      <li><a href="dc_data_manager.html#src.data_manager.DataManager.load_labels">load_labels() (src.data_manager.DataManager method)</a>
-
-      <ul>
-        <li><a href="dc_task_manager.html#src.task_manager.TaskManager.load_labels">(src.task_manager.TaskManager method)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dc_task_manager.html#src.task_manager.TaskManager.load_labels">load_labels() (src.task_manager.TaskManager method)</a>
 </li>
-      </ul></li>
       <li><a href="dc_classifier.html#src.domain_classifier.classifier.CorpusClassifier.load_model">load_model() (src.domain_classifier.classifier.CorpusClassifier method)</a>
 </li>
       <li><a href="dc_classifier.html#src.domain_classifier.classifier.CorpusClassifier.load_model_config">load_model_config() (src.domain_classifier.classifier.CorpusClassifier method)</a>
+</li>
+      <li><a href="dc_data_manager.html#src.data_manager.DataManager.load_new_labels">load_new_labels() (src.data_manager.DataManager method)</a>
+</li>
+      <li><a href="dc_data_manager.html#src.data_manager.DataManager.load_selected_docs">load_selected_docs() (src.data_manager.DataManager method)</a>
+</li>
+      <li><a href="dc_data_manager.html#src.data_manager.DataManager.load_topic_metadata">load_topic_metadata() (src.data_manager.DataManager method)</a>
 </li>
       <li><a href="dc_data_manager.html#src.data_manager.DataManager.load_topics">load_topics() (src.data_manager.DataManager method)</a>
 </li>
@@ -527,8 +572,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="gui_main_window.html#src.graphical_user_interface.main_window.MainWindow">MainWindow (class in src.graphical_user_interface.main_window)</a>
-</li>
-      <li><a href="dc_preprocessor.html#src.domain_classifier.preprocessor.CorpusDFProcessor.make_pos_labels_df">make_pos_labels_df() (src.domain_classifier.preprocessor.CorpusDFProcessor method)</a>
 </li>
       <li><a href="dc_preprocessor.html#src.domain_classifier.preprocessor.CorpusDFProcessor.make_PU_dataset">make_PU_dataset() (src.domain_classifier.preprocessor.CorpusDFProcessor method)</a>
 </li>
@@ -547,6 +590,8 @@
         <li><a href="dc_classifier.html#module-src.domain_classifier.classifier">src.domain_classifier.classifier</a>
 </li>
         <li><a href="dc_custom_model.html#module-src.domain_classifier.custom_model">src.domain_classifier.custom_model</a>
+</li>
+        <li><a href="dc_metrics.html#module-src.domain_classifier.metrics">src.domain_classifier.metrics</a>
 </li>
         <li><a href="dc_preprocessor.html#module-src.domain_classifier.preprocessor">src.domain_classifier.preprocessor</a>
 </li>
@@ -576,6 +621,8 @@
 </li>
         <li><a href="dc_task_manager.html#module-src.task_manager">src.task_manager</a>
 </li>
+        <li><a href="dc_plotter.html#module-src.utils.plotter">src.utils.plotter</a>
+</li>
       </ul></li>
   </ul></td>
 </tr></table>
@@ -584,6 +631,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mn_menu_navigator.html#src.menu_navigator.menu_navigator.MenuNavigator.navigate">navigate() (src.menu_navigator.menu_navigator.MenuNavigator method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dc_classifier.html#src.domain_classifier.classifier.CorpusClassifier.num_annotations">num_annotations() (src.domain_classifier.classifier.CorpusClassifier method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -599,7 +650,27 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="dc_preprocessor.html#src.domain_classifier.preprocessor.CorpusProcessor.performance_metrics">performance_metrics() (src.domain_classifier.preprocessor.CorpusProcessor method)</a>
+      <li><a href="dc_classifier.html#src.domain_classifier.classifier.CorpusClassifier.performance_metrics">performance_metrics() (src.domain_classifier.classifier.CorpusClassifier method)</a>
+
+      <ul>
+        <li><a href="dc_preprocessor.html#src.domain_classifier.preprocessor.CorpusProcessor.performance_metrics">(src.domain_classifier.preprocessor.CorpusProcessor method)</a>
+</li>
+      </ul></li>
+      <li><a href="dc_task_manager.html#src.task_manager.TaskManager.performance_metrics_PN">performance_metrics_PN() (src.task_manager.TaskManager method)</a>
+</li>
+      <li><a href="dc_task_manager.html#src.task_manager.TaskManager.performance_metrics_PU">performance_metrics_PU() (src.task_manager.TaskManager method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dc_plotter.html#src.utils.plotter.plot_doc_scores">plot_doc_scores() (in module src.utils.plotter)</a>
+</li>
+      <li><a href="dc_plotter.html#src.utils.plotter.plot_roc">plot_roc() (in module src.utils.plotter)</a>
+</li>
+      <li><a href="dc_plotter.html#src.utils.plotter.plot_top_values">plot_top_values() (in module src.utils.plotter)</a>
+</li>
+      <li><a href="dc_classifier.html#src.domain_classifier.classifier.CorpusClassifier.print_binary_metrics">print_binary_metrics() (src.domain_classifier.classifier.CorpusClassifier method)</a>
+</li>
+      <li><a href="dc_metrics.html#src.domain_classifier.metrics.print_metrics">print_metrics() (in module src.domain_classifier.metrics)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -623,6 +694,8 @@
 </li>
       <li><a href="dc_preprocessor.html#src.domain_classifier.preprocessor.CorpusDFProcessor.remove_docs_from_topics">remove_docs_from_topics() (src.domain_classifier.preprocessor.CorpusDFProcessor method)</a>
 </li>
+      <li><a href="dc_data_manager.html#src.data_manager.DataManager.remove_temp_files">remove_temp_files() (src.data_manager.DataManager method)</a>
+</li>
       <li><a href="mn_menu_navigator.html#src.menu_navigator.menu_navigator.MenuNavigator.request_confirmation">request_confirmation() (src.menu_navigator.menu_navigator.MenuNavigator method)</a>
 </li>
       <li><a href="dc_data_manager.html#src.data_manager.DataManager.reset_labels">reset_labels() (src.data_manager.DataManager method)</a>
@@ -641,6 +714,8 @@
         <li><a href="dc_task_manager.html#src.task_manager.TaskManager.retrain_model">(src.task_manager.TaskManager method)</a>
 </li>
       </ul></li>
+      <li><a href="dc_classifier.html#src.domain_classifier.classifier.CorpusClassifier.retrain_model_old">retrain_model_old() (src.domain_classifier.classifier.CorpusClassifier method)</a>
+</li>
       <li><a href="gui_worker.html#src.graphical_user_interface.worker.Worker.run">run() (src.graphical_user_interface.worker.Worker method)</a>
 </li>
   </ul></td>
@@ -649,7 +724,15 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dc_task_manager.html#src.task_manager.TaskManager.sample_documents">sample_documents() (src.task_manager.TaskManager method)</a>
+</li>
       <li><a href="dc_data_manager.html#src.data_manager.DataManager.save_dataset">save_dataset() (src.data_manager.DataManager method)</a>
+</li>
+      <li><a href="dc_data_manager.html#src.data_manager.DataManager.save_new_labels">save_new_labels() (src.data_manager.DataManager method)</a>
+</li>
+      <li><a href="dc_data_manager.html#src.data_manager.DataManager.save_selected_docs">save_selected_docs() (src.data_manager.DataManager method)</a>
+</li>
+      <li><a href="dc_metrics.html#src.domain_classifier.metrics.score_based_metrics">score_based_metrics() (in module src.domain_classifier.metrics)</a>
 </li>
       <li><a href="dc_preprocessor.html#src.domain_classifier.preprocessor.CorpusDFProcessor.score_by_keyword_count">score_by_keyword_count() (src.domain_classifier.preprocessor.CorpusDFProcessor method)</a>
 </li>
@@ -709,6 +792,13 @@
 
       <ul>
         <li><a href="dc_custom_model.html#module-src.domain_classifier.custom_model">module</a>
+</li>
+      </ul></li>
+      <li>
+    src.domain_classifier.metrics
+
+      <ul>
+        <li><a href="dc_metrics.html#module-src.domain_classifier.metrics">module</a>
 </li>
       </ul></li>
       <li>
@@ -811,6 +901,15 @@
         <li><a href="dc_task_manager.html#module-src.task_manager">module</a>
 </li>
       </ul></li>
+      <li>
+    src.utils.plotter
+
+      <ul>
+        <li><a href="dc_plotter.html#module-src.utils.plotter">module</a>
+</li>
+      </ul></li>
+      <li><a href="dc_query_manager.html#src.query_manager.QueryManager.str2dict">str2dict() (src.query_manager.QueryManager static method)</a>
+</li>
       <li><a href="gui_get_topics_list_window.html#src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow.synchronize_scrolls">synchronize_scrolls() (src.graphical_user_interface.get_topics_list_window.GetTopicsListWindow method)</a>
 </li>
   </ul></td>
@@ -835,6 +934,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dc_classifier.html#src.domain_classifier.classifier.CorpusClassifier.train_model_old">train_model_old() (src.domain_classifier.classifier.CorpusClassifier method)</a>
+</li>
       <li><a href="dc_task_manager.html#src.task_manager.TaskManager.train_PUmodel">train_PUmodel() (src.task_manager.TaskManager method)</a>
 
       <ul>
@@ -851,6 +952,8 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dc_classifier.html#src.domain_classifier.classifier.CorpusClassifier.update_annotations">update_annotations() (src.domain_classifier.classifier.CorpusClassifier method)</a>
+</li>
       <li><a href="gui_get_keywords_window.html#src.graphical_user_interface.get_keywords_window.GetKeywordsWindow.update_params">update_params() (src.graphical_user_interface.get_keywords_window.GetKeywordsWindow method)</a>
 
       <ul>

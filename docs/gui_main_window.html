@@ -15,12 +15,13 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Analyze Keywords Window" href="gui_analyze_keywords_window.html" />
-    <link rel="prev" title="Preprocessor" href="dc_preprocessor.html" /> 
+    <link rel="prev" title="Classifier" href="dc_plotter.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,6 +50,8 @@
 <li class="toctree-l1"><a class="reference internal" href="dc_classifier.html">Classifier</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dc_custom_model.html">Custom Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dc_preprocessor.html">Preprocessor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_metrics.html">Classifier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_plotter.html">Classifier</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Main Window</a><ul class="simple">
 </ul>
 </li>
@@ -88,14 +91,14 @@
            <div itemprop="articleBody">
              
   <section id="main-window">
-<h1>Main Window<a class="headerlink" href="#main-window" title="Permalink to this headline"></a></h1>
+<h1>Main Window<a class="headerlink" href="#main-window" title="Permalink to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
 <span class="target" id="module-src.graphical_user_interface.main_window"></span><p>&#64;author: L. Calvo-Bartolome</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.graphical_user_interface.main_window.</span></span><span class="sig-name descname"><span class="pre">MainWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stderr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PyQt5.QtWidgets.QMainWindow</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QMainWindow</span></code></p>
 <p>Class representing the main window of the application.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.__init__">
@@ -153,8 +156,8 @@ the predicted class that the user has associated to each of the documents to ann
 <dl class="py method">
 <dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.clicked_evaluate_PU_model">
 <span class="sig-name descname"><span class="pre">clicked_evaluate_PU_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.clicked_evaluate_PU_model" title="Permalink to this definition"></a></dt>
-<dd><p>Method that controls the actions that are carried out when the button “eval_pu_classifier_push_button” is
-clicked by the user.</p>
+<dd><p>Method that controls the actions that are carried out when the button
+“eval_pu_classifier_push_button” is clicked by the user.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -233,6 +236,13 @@ of the documents in a QTextEdit widget.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.configure_import_labels_buttons">
+<span class="sig-name descname"><span class="pre">configure_import_labels_buttons</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.configure_import_labels_buttons" title="Permalink to this definition"></a></dt>
+<dd><p>Makes visible only radio buttons that corresponds with the functions that
+are available for each of the corpus</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.do_after_evaluate_pu_model">
 <span class="sig-name descname"><span class="pre">do_after_evaluate_pu_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.do_after_evaluate_pu_model" title="Permalink to this definition"></a></dt>
 <dd><p>Method to be executed after the evaluation of the PU model has been
@@ -295,8 +305,8 @@ user on a secondary thread while the MainWindow execution is maintained in the m
 <dl class="py method">
 <dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.execute_import_labels">
 <span class="sig-name descname"><span class="pre">execute_import_labels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.execute_import_labels" title="Permalink to this definition"></a></dt>
-<dd><p>Imports the labels by invoking the corresponding method in the Task Manager
-object associated with the GUI.</p>
+<dd><p>Imports the labels by invoking the corresponding method in the Task
+Manager object associated with the GUI.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -388,7 +398,8 @@ that were read initially from the configuration file</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.graphical_user_interface.main_window.MainWindow.show_sampled_docs_for_labeling">
 <span class="sig-name descname"><span class="pre">show_sampled_docs_for_labeling</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.graphical_user_interface.main_window.MainWindow.show_sampled_docs_for_labeling" title="Permalink to this definition"></a></dt>
-<dd><p>Visualizes the documents from which the user is going to give feedback for the updating of a model.</p>
+<dd><p>Visualizes the documents from which the user is going to give feedback
+for the updating of a model.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -407,7 +418,7 @@ window that have been specified by the user.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="dc_preprocessor.html" class="btn btn-neutral float-left" title="Preprocessor" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dc_plotter.html" class="btn btn-neutral float-left" title="Classifier" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="gui_analyze_keywords_window.html" class="btn btn-neutral float-right" title="Analyze Keywords Window" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
