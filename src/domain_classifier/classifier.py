@@ -13,6 +13,12 @@ import pandas as pd
 import numpy as np
 import torch
 import copy
+import collections.abc
+#hyper needs the four following aliases to be done manually.
+collections.Iterable = collections.abc.Iterable
+collections.Mapping = collections.abc.Mapping
+collections.MutableSet = collections.abc.MutableSet
+collections.MutableMapping = collections.abc.MutableMapping
 from simpletransformers.classification import ClassificationModel
 from transformers.models.roberta.configuration_roberta import RobertaConfig
 from .custom_model import CustomModel
