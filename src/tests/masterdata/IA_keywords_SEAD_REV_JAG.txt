@@ -1,0 +1,262 @@
+artificial neural network
+deep belief net
+deep belief network
+deep decision tree
+fisher kernel
+grassmann kernel
+linear-time kernel
+nonparametric kernel
+text processing
+bagging
+belief network
+data clustering
+decision tree
+ensemble learning
+ensemble method
+kernel method
+pattern recognition
+regression tree
+abductive logic programming
+active learning
+adaboost
+adaptive algorithm
+adaptive bayesian sampling
+adaptive classification
+adaptive clustering
+adaptive gradient method
+adaptive neuro fuzzy inference system
+adaptive spectral regularization algorithm
+adversarial net
+adversarial network
+artificial intelligence
+attention model
+attentional pooling
+author profiling
+autoencoder
+automata theory
+automated reasoning
+automatic summarization
+automatic translation
+autonomous car
+autonomous robot
+back propagation
+backpropagation
+bayes net
+bayesian decision theory
+bayesian dyadic tree
+bayesian generative model
+bayesian hierarchical model
+bayesian learning
+bayesian network
+bayesian neural architecture
+bayesian nonparametric model
+bayesian programming
+belief propagation decoder
+belief-desire-intention software model
+biomedical text processing
+boltzmann machine
+brain computer interface
+case based reasoning
+case-based reasoning
+chatbot
+cognitive architecture
+cognitive computing
+collaborative filtering
+computational intelligence
+computational learning theory
+computational lexicography
+computational linguistics
+computational neuroscience
+computational semantics
+computational vision
+computer aided language learning
+computer aided translation
+computer vision
+conditional neural field
+conditional random field
+conditional random sampling
+continuous dueling bandit
+continuous-time diffusion network
+conversation agent
+convolutional kernel network
+convolutional network
+decision support system
+decision theory
+declarative programming
+deductive classifier
+deep generative model
+deep hierarchical network
+deep learning
+deep network
+deep parsimonious representation
+deep reinforcement learning
+deeppy
+dependency treebanks
+dialog system
+dialogue system
+dirichlet process mixture model
+discriminative factor modeling
+embedding model
+evolutionary algorithm
+evolutionary computation
+expert system
+feature learning
+feedforward network
+finite state automata
+forests of randomized trees
+framenet
+fuzzy control system
+gaussian process
+generative adversarial network
+generative neural sampler
+genetic algorithm
+genetic operator
+gibbs sampling
+gradient descent
+gradient descent algorithm
+graph-based learning
+handwriting recognition
+hidden markov model
+hidden semi-markov
+hidden variable model
+hierarchical dirichlet process
+hierarchical learning
+hierarchical topic model
+human language technology
+human language technologies
+image recognition
+infinite automata
+intelligent computer aided language learning
+intelligent personal assistant
+keras
+kernel classifier
+kernel learning
+kernel regularization
+knowledge engineering
+knowledge-based system
+language engineering
+language generation
+language resource
+language technology
+language understanding
+latent dirichlet allocation
+latent dirichlet process
+latent gaussian model
+learning algorithm
+learning array
+learning spectral clustering
+linear latent variable model
+machine learning
+machine translation
+machine vision
+markov chain
+markov chain monte carlo
+markov decision process
+markov model
+markov network
+markov random field
+mcmc method
+mean field variational bayes
+mondrian process
+morphological analyzer
+multi-agent reinforcement learning
+multiagent system
+multi-agent system
+multi-armed bandit
+multi-armed-bandit
+multiclass classification
+multiclass prediction
+multi-label learning
+multimodal learning
+multimodal reasoning
+multiscale random field
+multi-task learning
+naive bayes
+named entity recognition
+natural language parsing
+natural language processing
+natural language programming
+nearest neighbor classification
+neural machine translation
+neurocybernetic
+nonparametric bayesian method
+ontology learning
+opinion mining
+part-of-speech tagger
+pattern classification
+pattern-matching
+perceptron
+phonetic recognition
+plagiarism detection
+poisson graphical model
+pos tagger
+probbank
+question answering
+reasoning system
+recurrent ladder network
+reinforcement learning
+residual transfer network
+reversible residual network
+rule based translation 
+semantic analyzer
+semantic indexing
+semantic network
+semantic role labeling
+semantic technology
+semantic technologies
+semisupervised learning
+semi-supervised learning
+sentiment analysis
+sequence learning
+sequential decision problem
+sparse learning
+spectral embedding
+spectral learning
+speech detection
+speech information retrieval
+speech processing
+speech recognition
+speech separation
+speech technology
+speech technologies
+speech to text
+spiking model
+spiking network
+statistical machinetranslation
+stochastic bandit
+stochastic gradient descent
+stochastic gradient mcmc
+stochastic gradient method
+stochastic kinetic model
+stochastic learning
+stochastic network
+stochastic neural process
+stochastic semantic analysis
+streaming variational bayes
+structured random orthogonal embedding
+supervised dictionary learning
+supervised learning
+support vector classification
+support vector classifier
+support vector machine
+tensorflow
+text analytics
+text categorization
+text classification
+text mining
+text to speech
+topic model
+transferable representation
+unsupervised context sensitive language
+unsupervised learning
+variational gradient descent
+variational learning
+verbnet
+visual recognition
+voice recognition
+weisfeiler-lehman network
+word embedding
+word sense disambiguation
+word2vec
+wordembedding
+wordnet
