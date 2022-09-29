@@ -15,11 +15,12 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Main Window" href="gui_main_window.html" />
+    <link rel="next" title="Metrics" href="dc_metrics.html" />
     <link rel="prev" title="Custom Model" href="dc_custom_model.html" /> 
 </head>
 
@@ -51,6 +52,8 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Preprocessor</a><ul class="simple">
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="dc_metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_plotter.html">Plotter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_main_window.html">Main Window</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_analyze_keywords_window.html">Analyze Keywords Window</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_constants.html">Constants</a></li>
@@ -88,7 +91,7 @@
            <div itemprop="articleBody">
              
   <section id="preprocessor">
-<h1>Preprocessor<a class="headerlink" href="#preprocessor" title="Permalink to this headline"></a></h1>
+<h1>Preprocessor<a class="headerlink" href="#preprocessor" title="Permalink to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
 <span class="target" id="module-src.domain_classifier.preprocessor"></span><p>Defines classes and methods providing the main functionality for document
@@ -261,37 +264,22 @@ a huge number that, in practice, means there is no loimit</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusDFProcessor.make_PU_dataset">
-<span class="sig-name descname"><span class="pre">make_PU_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_labels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor.make_PU_dataset" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">make_PU_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor.make_PU_dataset" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the labeled dataframe in the format required by the
 CorpusClassifier class</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df_corpus</strong> (<em>pandas.DataFrame</em>) – Text corpus, with at least three columns: id, title and description</p></li>
-<li><p><strong>df_labels</strong> (<em>pandas.DataFrame</em>) – Dataframe of positive labels. It should contain column id. All
-labels are assumed to be positive</p></li>
+<li><p><strong>ids</strong> (<em>array-like</em>) – ids of documents with positive labels</p></li>
+<li><p><strong>scores</strong> (<em>array-like or None, optional</em>) – A list or np.array of score values, one per row in self.df_corpus.
+It is used to fill the base_scores column in the output dataframe.
+They are expected to contain the scores used to select the
+positive labels for PU learning. Thus, the docs listed in ids
+should be those with the highest scores.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>df_dataset</strong> – A pandas dataframe with three columns: id, text and labels.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="src.domain_classifier.preprocessor.CorpusDFProcessor.make_pos_labels_df">
-<span class="sig-name descname"><span class="pre">make_pos_labels_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ids</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.preprocessor.CorpusDFProcessor.make_pos_labels_df" title="Permalink to this definition"></a></dt>
-<dd><p>Returns a dataframe with the given ids and a single, all-ones column</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>ids</strong> (<em>array-like</em>) – Values for the column ‘ids’</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>df_labels</strong> – A dataframe with two columns: ‘id’ and ‘class’. All values in
-class column are equal to one.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>pandas.DataFrame</p>
@@ -592,7 +580,7 @@ according to a given keyword and a pre-trained zero-shot classifier</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="dc_custom_model.html" class="btn btn-neutral float-left" title="Custom Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="gui_main_window.html" class="btn btn-neutral float-right" title="Main Window" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="dc_metrics.html" class="btn btn-neutral float-right" title="Metrics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

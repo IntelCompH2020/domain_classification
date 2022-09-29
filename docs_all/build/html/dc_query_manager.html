@@ -15,6 +15,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -51,6 +52,8 @@
 <li class="toctree-l1"><a class="reference internal" href="dc_classifier.html">Classifier</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dc_custom_model.html">Custom Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dc_preprocessor.html">Preprocessor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_plotter.html">Plotter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_main_window.html">Main Window</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_analyze_keywords_window.html">Analyze Keywords Window</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_constants.html">Constants</a></li>
@@ -88,7 +91,7 @@
            <div itemprop="articleBody">
              
   <section id="query-manager">
-<h1>Query Manager<a class="headerlink" href="#query-manager" title="Permalink to this headline"></a></h1>
+<h1>Query Manager<a class="headerlink" href="#query-manager" title="Permalink to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
 <span class="target" id="module-src.query_manager"></span><p>Provides basic methods for user interaction through a command window.</p>
@@ -216,6 +219,25 @@ introduced by the user (if any) or the default value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>True if the user inputs ‘y’, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.query_manager.QueryManager.str2dict">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">str2dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.query_manager.QueryManager.str2dict" title="Permalink to this definition"></a></dt>
+<dd><p>Converts a string of comma-separated keys and values (“k1, v1, k2,
+v2, …!” into a dictionary {k1: v1, k2: v2, …} of integer keys
+and normalized weight values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – String o comma-separated keys and values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>tw</strong> – A dictionary integer keys and float values.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
