@@ -14,7 +14,9 @@ from .data_manager import DataManager
 from .query_manager import QueryManager
 from .domain_classifier.preprocessor import CorpusDFProcessor
 from .domain_classifier.classifier import CorpusClassifier
+from .domain_classifier.inference import Inference
 from .utils import plotter
+
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -118,6 +120,8 @@ class TaskManager(baseTaskManager):
         self.DM = DataManager(self.path2source, self.path2datasets,
                               self.path2models, self.path2embeddings)
 
+        self.inferenceManager = None
+
         return
 
     def _is_model(self, verbose=True):
@@ -166,6 +170,15 @@ class TaskManager(baseTaskManager):
             dataset_list = self.DM.get_dataset_list()
 
         return dataset_list
+
+    def _get_inference(self): 
+        if self.inferenceManager == None:
+            self.inferenceManager = Inference(self.global_parameters['inference'])
+        return self.inferenceManager.getOptions()
+
+    def inference(self, option):
+        self.inferenceManager.setOption(option)
+        return self.inferenceManager.getOptions()
 
     def _get_gold_standard_labels(self):
         """

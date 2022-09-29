@@ -16,6 +16,7 @@ root:
     - PU_learning
     - get_feedback
     - update_model
+    - inference
 
 # In the following, each menu option is described.
 # GENERIC FORMAT OF AN OPTION DESCRIPTOR:
@@ -112,6 +113,13 @@ update_model:
   options:
     - retrain_model
     - reevaluate_model
+
+inference:
+  title: Inference
+  options:
+    - get_method: _get_inference
+    
+
 
 # ######################
 # Options for get_labels
