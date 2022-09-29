@@ -11,44 +11,9 @@ import numpy as np
 import scipy.sparse as scp
 import logging
 import shutil
-import yaml
 
 from time import time
 from sklearn.preprocessing import normalize
-from langdetect import detect
-
-import dask.dataframe as dd
-from dask.diagnostics import ProgressBar
-
-
-def detect_english(x):
-    """
-    Returns True is x contains text in English.
-
-    Parameters
-    ----------
-    x : str
-        Input string
-
-    Returns
-    -------
-    True if x contains English text, False otherwise.
-    """
-
-    # Default output value. Only if langdetect detects english, y will be True
-    y = False
-
-    # A try-except is required because detect() raises execution errors for
-    # invalid strings that may appear for some inputs x.
-    try:
-        # Check if the string contains at least one alphabetic character
-        # (otherwise, the lang detector raises an error)
-        if x.lower().islower():
-            y = detect(x) == 'en'
-    except:
-        logging.warning(f"-- Language detection error in string {x}")
-
-    return y
 
 
 class DataManager(object):
@@ -80,10 +45,8 @@ class DataManager(object):
         # self.path2labels = pathlib.Path(path2labels)   # No longer used
         self.path2datasets = pathlib.Path(path2datasets)
         self.path2models = pathlib.Path(path2models)
-
         if path2embeddings is not None:
             self.path2embeddings = pathlib.Path(path2embeddings)
-
         # The path to the corpus is given when calling the load_corpus method
         self.path2corpus = None
 
@@ -139,32 +102,6 @@ class DataManager(object):
 
         return dataset_list
 
-    def get_annotation_list(self):
-        """
-        Returns the list of available corpus
-        """
-
-        # Data location
-        prefix = f"labels_{self.corpus_name}_"
-        folder = self.path2corpus / 'annotations'
-
-        # If there is no annotation folder, return an empty list.
-        if not folder.is_dir():
-            return []
-
-        # Read files
-        files = [e.stem for e in folder.iterdir()
-                 if e.is_file() and e.stem.startswith(prefix)]
-
-        # Remove prefixes and get tags only:
-        tags = [e[len(prefix):] for e in files]
-
-        # Since the dataset folder might contain diferent file formats of the
-        # same annotation file, we take unique names
-        tags = list(set(tags))
-
-        return tags
-
     def get_model_list(self):
         """
         Returns the list of available models
@@ -200,64 +137,42 @@ class DataManager(object):
 
         return keywords
 
-    def load_corpus(self, corpus_name, sampling_factor=1):
+    def load_corpus(self, corpus_name):
         """
         Loads a dataframe of documents from a given corpus.
-
-        When available, the names of the relevant dataframe components are
-        mapped to normalized names: id, title, description, keywords and
-        target_xxx
 
         Parameters
         ----------
         corpus_name : str
             Name of the corpus. It should be the name of a folder in
             self.path2source
-
-        sampling_factor : float, optional (default=1)
-            Fraction of documents to be taken from the original corpus.
-            (Used for SemanticScholar and patstat only)
         """
 
         # Loading corpus
         logging.info(f'-- Loading corpus {corpus_name}')
-        t0 = time()
 
         self.path2corpus = self.path2source / corpus_name
-
-        if sampling_factor == 1:
-            path2feather = self.path2corpus / 'corpus' / 'corpus.feather'
-        else:
-            # Generate label (docs per million)
-            dpm = str(int(sampling_factor * 1e6))
-            path2feather = (self.path2corpus / 'corpus'
-                            / f'corpus_{dpm}.feather')
+        path2feather = self.path2corpus / 'corpus' / 'corpus.feather'
         self.corpus_name = corpus_name
 
-        # #################################################
-        # Load corpus data from feather file (if it exists)
+        # By default, a feather file version of the corpus will be save
+        save_feather = True
+        # By default, no corpus cleaning is done
+        clean_corpus = False
+        # If there is a feather file, load it
+        t0 = time()
+
+        # ################
+        # Load corpus data
+
         if path2feather.is_file():
 
             logging.info(f'-- -- Feather file {path2feather} found...')
             df_corpus = pd.read_feather(path2feather)
+            save_feather = False
 
-            # Log results
-            logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
-                         f" documents loaded in {time() - t0:.2f} secs.")
-
-            return df_corpus
-
-        # #########################################
-        # Load corpus data from its original source
-
-        # By default, neither corpus cleaning nor language filtering are done
-        clean_corpus = corpus_name in {
-            'AEI_projects', 'SemanticScholar', 'patstat', 'CORDIS.parquet',
-            'S2CS.parquet'}
-        remove_non_en = corpus_name in {
-            'SemanticScholar', 'patstat'}
-
-        if corpus_name == 'EU_projects':
+        # if it doesn't exist, load the selected corpus in its original form
+        elif corpus_name == 'EU_projects':
 
             # ####################
             # Paths and file names
@@ -354,6 +269,7 @@ class DataManager(object):
                        'Ind2017_TIC': 'target_tic',
                        'Ind2017_ENE': 'target_ene'}
             df_corpus.rename(columns=mapping, inplace=True)
+            clean_corpus = True
 
         elif corpus_name == 'CORDIS.parquet':
 
@@ -391,6 +307,7 @@ class DataManager(object):
             # We use "Referencia", renamed as "id", as the project id.
             mapping = {'objective': 'description'}
             df_corpus.rename(columns=mapping, inplace=True)
+            clean_corpus = True
 
             # Map list of euroSciVoc codes to a string (otherwise, no
             # feather file can be saved)
@@ -433,92 +350,23 @@ class DataManager(object):
                          f'{len(dfk)} documents')
 
             # Map column names to normalized names
+            # We use "Referencia", renamed as "id", as the project id.
             mapping = {'paperAbstract': 'description',
                        'fieldsOfStudy': 'keywords'}
 
             df_corpus.rename(columns=mapping, inplace=True)
-
-        elif corpus_name == 'SemanticScholar':
-
-            path2metadata = self.path2corpus / 'metadata.yaml'
-
-            if not path2metadata.is_file():
-                logging.error(
-                    f"-- A metadata file in {path2metadata} is missed. It is "
-                    "required for this corpus. Corpus not loaded")
-
-            with open(path2metadata, 'r', encoding='utf8') as f:
-                metadata = yaml.safe_load(f)
-            path2texts = pathlib.Path(metadata['corpus'])
-
-            df = dd.read_parquet(path2texts)
-            dfsmall = df.sample(frac=sampling_factor, random_state=0)
-
-            with ProgressBar():
-                df_corpus = dfsmall.compute()
-
-            # Remove unrelevant fields
-            df_corpus = df_corpus[[
-                'id', 'title', 'paperAbstract', 'fieldsOfStudy']]
-
-            # Map column names to normalized names
-            mapping = {'paperAbstract': 'description',
-                       'fieldsOfStudy': 'keywords'}
-            df_corpus.rename(columns=mapping, inplace=True)
-
-            # Map list of keywords to a string (otherwise, no feather file can
-            # be saved)
-            col = 'keywords'   # Just to abbreviate
-            df_corpus[col] = df_corpus[col].apply(
-                lambda x: ','.join(x.astype(str)) if x is not None else '')
-
-        elif corpus_name == 'patstat':
-
-            path2metadata = self.path2corpus / 'metadata.yaml'
-
-            if not path2metadata.is_file():
-                logging.error(
-                    f"-- A metadata file in {path2metadata} is missed. It is "
-                    "required for this corpus. Corpus not loaded")
-
-            with open(path2metadata, 'r', encoding='utf8') as f:
-                metadata = yaml.safe_load(f)
-            path2texts = pathlib.Path(metadata['corpus'])
-
-            df = dd.read_parquet(path2texts)
-            dfsmall = df.sample(frac=sampling_factor, random_state=0)
-
-            with ProgressBar():
-                df_corpus = dfsmall.compute()
-
-            # Remove unrelevant fields
-            # Available fields are: appln_id, docdb_family_id, appln_title,
-            # appln_abstract, appln_filing_year, earliest_filing_year,
-            # granted, appln_auth, receiving_office, ipr_type
-            df_corpus = df_corpus[['appln_id', 'appln_title',
-                                   'appln_abstract']]
-
-            # Map column names to normalized names
-            mapping = {'appln_id': 'id',
-                       'appln_title': 'title',
-                       'appln_abstract': 'description'}
-            df_corpus.rename(columns=mapping, inplace=True)
+            clean_corpus = True
 
         else:
             logging.warning("-- Unknown corpus")
-            return None
+            df_corpus = None
 
         # ############
         # Clean corpus
         if clean_corpus:
 
-            l0 = len(df_corpus)
-            logging.info(f"-- -- {l0} base documents loaded")
-
             # Remove duplicates, if any
             df_corpus.drop_duplicates(subset=['id'], inplace=True)
-            l1 = len(df_corpus)
-            logging.info(f"-- -- {l0 - l1} duplicated documents removed")
 
             # Remove documents with missing data, if any
             ind_notna = df_corpus['title'].notna()
@@ -529,49 +377,28 @@ class DataManager(object):
             # Fill nan cells with empty strings
             df_corpus.fillna("", inplace=True)
 
-            # Remove documents with zero-length title or description
-            df_corpus = df_corpus[df_corpus['title'] != ""]
-            df_corpus = df_corpus[df_corpus['description'] != ""]
-
             # Remove special characters
             df_corpus['title'] = df_corpus['title'].str.replace('\t', '')
             df_corpus['description'] = (
                 df_corpus['description'].str.replace('\t', ''))
 
-            # Log results
-            l2 = len(df_corpus)
-            logging.info(f"-- -- {l1 - l2} documents with empty title or "
-                         "description: removed")
-
-        # ###############################################
-        # Remove documents without description in english
-        # Note that if save_feather is False, non-english removal mu
-        if remove_non_en:
-
-            l0 = len(df_corpus)
-            logging.info("-- -- Applying language filter. This may take a "
-                         "while")
-            df_corpus['eng'] = (
-                df_corpus['title'] + ' ' + df_corpus['description']).apply(
-                    detect_english)
-            df_corpus = df_corpus[df_corpus['eng']]
-            df_corpus.drop(columns='eng', inplace=True)
-
-            # Log results
-            l1 = len(df_corpus)
-            logging.info(f"-- -- {l0 - l1} non-English documents: removed")
-
-        # Reset the index and drop the old index
-        df_corpus = df_corpus.reset_index(drop=True)
+            # Reset the index and drop the old index
+            df_corpus = df_corpus.reset_index(drop=True)
 
         # ############
         # Log and save
 
-        # Save to feather file
+        # Log results
         logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
                      f" documents loaded in {time() - t0:.2f} secs.")
-        df_corpus.to_feather(path2feather)
-        logging.info(f"-- -- Corpus saved in feather file {path2feather}")
+
+        # Save to feather file
+        if save_feather:
+            logging.info(f'-- -- Writing feather file in {path2feather} '
+                         f'to speed up future loads...')
+            t0 = time()
+            df_corpus.to_feather(path2feather)
+            logging.info(f"-- -- Feather file saved in {time()-t0} secs")
 
         return df_corpus
 
@@ -623,44 +450,6 @@ class DataManager(object):
                      f'{len(df_metadata)} documents')
 
         return T, df_metadata, topic_words
-
-    def load_topic_metadata(self):
-        """
-        Loads the metadata associated to the topic matrix from the selected
-        corpus
-        """
-
-        # ####################
-        # Paths and file names
-
-        # Some file and folder names that could be specific of the current
-        # corpus. They should be possibly moved to a config file
-        topic_folder = 'topic_model'
-        topic_model_fname = 'modelo_sparse.npz'
-        metadata_fname = 'CORDIS720all-metadata.csv'
-
-        # ###########
-        # Topic model
-
-        # Load topic model
-        path2topics = self.path2corpus / topic_folder / topic_model_fname
-
-        if not pathlib.Path.exists(path2topics):
-            logging.warning(f"-- No topic model available at {path2topics}")
-            return None, None
-
-        data = np.load(path2topics)
-
-        # Extract topic descriptions
-        topic_words = data['descriptions']
-
-        # Load metadata
-        path2metadata = self.path2corpus / topic_folder / metadata_fname
-        df_metadata = pd.read_csv(path2metadata)
-        logging.info(f'-- Topic matrix metadata loaded about '
-                     f'{len(df_metadata)} documents')
-
-        return df_metadata, topic_words
 
     def load_dataset(self, tag=""):
         """
@@ -723,7 +512,7 @@ class DataManager(object):
 
         logging.info(f"-- -- Labels {tag} removed")
 
-    def import_AI_subcorpus(self, ids_corpus=None, tag="imported"):
+    def import_labels(self, ids_corpus=None, tag="imported"):
         """
         Loads a subcorpus of positive labels from file.
 
@@ -793,166 +582,6 @@ class DataManager(object):
 
         # The log message is returned to be shown in a GUI, if needed
         return ids_pos, msg
-
-    def load_selected_docs(self, tag=""):
-        """
-        Loads a temporal dataframe of documents selected for annotation
-
-        Parameters
-        ----------
-        tag : str, optional (default="")
-            Label suffix for the file name
-
-        Returns
-        -------
-        df : pandas.DataFrame
-            Selected documents
-        """
-
-        # Create temporary folder
-        fpath = self.path2datasets / "temp" / f"selected_docs_{tag}.csv"
-        # Below, index_col=0 is used to use the first column as indices.
-        # Otherwise, an additional index colums would be used.
-        df = pd.read_csv(fpath, index_col=0)
-
-        return df
-
-    def save_selected_docs(self, df_docs, tag=""):
-        """
-        Save a temporal dataframe of documents selected for annotation
-
-        Parameters
-        ----------
-        df_docs : pandas.DataFrame
-            Dataframe of documents to be annotated
-        tag : str, optional (default="")
-            Suffix for the file name
-        """
-
-        # Create temporary folder
-        folder = self.path2datasets / "temp"
-        if not folder.exists():
-            folder.mkdir()
-
-        # Save
-        fpath = folder / f"selected_docs_{tag}.csv"
-        # Below, index_col=0 is used to use the first column as indices.
-        # Otherwise, an additional index colums would be used.
-        df_docs.to_csv(fpath)
-
-        return
-
-    def load_new_labels(self, tag=""):
-        """
-        Loads a temporal dataframe of documents selected for annotation
-
-        Parameters
-        ----------
-        tag : str, optional (default="")
-            Suffix for the file name
-
-        Returns
-        -------
-        df : pandas.DataFrame
-            A dataframe of labels
-        """
-
-        # Create temporary folder
-        fpath = self.path2datasets / "temp" / f"new_labels_{tag}.csv"
-        df = pd.read_csv(fpath, index_col=0)
-
-        return df
-
-    def save_new_labels(self, idx, labels, tag=""):
-        """
-        Save labels from the last annotation round in a temporary file
-
-        Parameters
-        ----------
-        idx : list like
-            Indices of the annotated documents.
-        labels : list
-            List of labels
-        tag : str, optional (default="")
-            Label suffix for the file name
-        """
-
-        # Make dataframe (to save easily into a csv file)
-        df_labels = pd.DataFrame(labels, index=idx, columns=['labels'])
-
-        # Create temporary folder
-        folder = self.path2datasets / "temp"
-        if not folder.exists():
-            folder.mkdir()
-
-        # Save
-        fpath = folder / f"new_labels_{tag}.csv"
-        df_labels.to_csv(fpath)
-
-        return
-
-    def remove_temp_files(self, tag):
-        """
-        Removes temporary files associated to a given annotation round
-        """
-
-        folder = self.path2datasets / "temp"
-        # Remove selected docs file.
-        fpath = folder / f"selected_docs_{tag}.csv"
-        if fpath.exists():
-            fpath.unlink()
-        # Remove labels file.
-        fpath = folder / f"new_labels_{tag}.csv"
-        if fpath.exists():
-            fpath.unlink()
-
-        return
-
-    def import_annotations(self, tag):
-        """
-        Loads a file with annotations.
-
-        Parameters
-        ----------
-        tag: str
-            Name used to identify the annmotation file.
-
-        Returns
-        -------
-        df_annotations: pandas.dataFrame
-            Dataframe of annotations.
-        """
-
-        # Read labels file
-        path2labels = (self.path2corpus / 'annotations'
-                       / f"labels_{self.corpus_name}_{tag}.csv")
-        df_annotations = pd.read_csv(path2labels)
-
-        return df_annotations
-
-    def export_annotations(self, df_annotations, tag):
-        """
-        Export a dataframe of annotations to csv file.
-
-        Parameters
-        ----------
-        df_annotations: pandas.dataFrame
-            A dataframse of annotations
-        tag: str, optional (default="imported")
-            Name for the domain. To be included as a suffix of the file name.
-
-        """
-
-        # Create folder if it does not exist
-        folder = self.path2corpus / 'annotations'
-        if not folder.is_dir():
-            folder.mkdir()
-
-        # Export annotations
-        path2labels = folder / f"labels_{self.corpus_name}_{tag}.csv"
-        df_annotations.to_csv(path2labels)
-
-        return
 
     def save_dataset(self, df_dataset, tag="", save_csv=False):
         """

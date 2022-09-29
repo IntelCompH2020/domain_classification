@@ -19,8 +19,6 @@ Domain Classifier Docs
    dc_classifier.rst
    dc_custom_model.rst
    dc_preprocessor.rst
-   dc_metrics.rst
-   dc_plotter.rst
    gui_main_window.rst
    gui_analyze_keywords_window.rst
    gui_constants.rst

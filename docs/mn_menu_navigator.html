@@ -15,7 +15,6 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -52,8 +51,6 @@
 <li class="toctree-l1"><a class="reference internal" href="dc_classifier.html">Classifier</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dc_custom_model.html">Custom Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dc_preprocessor.html">Preprocessor</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dc_metrics.html">Metrics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dc_plotter.html">Plotter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_main_window.html">Main Window</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_analyze_keywords_window.html">Analyze Keywords Window</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_constants.html">Constants</a></li>
@@ -91,7 +88,7 @@
            <div itemprop="articleBody">
              
   <section id="menu-navigator">
-<h1>Menu Navigator<a class="headerlink" href="#menu-navigator" title="Permalink to this heading"></a></h1>
+<h1>Menu Navigator<a class="headerlink" href="#menu-navigator" title="Permalink to this headline"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
 <span class="target" id="module-src.menu_navigator.menu_navigator"></span><p>A generic class to manage the user navigation through a multilevel options
@@ -155,40 +152,15 @@ the path, and the value is the path.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="src.menu_navigator.menu_navigator.MenuNavigator.get_options">
-<span class="sig-name descname"><span class="pre">get_options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tasks_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.menu_navigator.menu_navigator.MenuNavigator.get_options" title="Permalink to this definition"></a></dt>
-<dd><p>Returns a list of all possible actions.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tasks_only</strong> (<em>boolean, optional (default=True)</em>) – If true, only options that correspond to task names (methods from
-the task_manager class) are returned</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>options</strong> – A list of possible action.
-Is action is a tuple (name_of_the_action, title), where title is
-the description of the action taken from the options_menu file.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list of tuple (str, str)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="src.menu_navigator.menu_navigator.MenuNavigator.navigate">
-<span class="sig-name descname"><span class="pre">navigate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iterate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.menu_navigator.menu_navigator.MenuNavigator.navigate" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">navigate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.menu_navigator.menu_navigator.MenuNavigator.navigate" title="Permalink to this definition"></a></dt>
 <dd><p>Manages the menu navigation loop</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>option</strong> (<em>str, optional (default=None)</em>) – Initial selection from the menu of options.
-If None, the initial selection will be requested to the user</p></li>
+<li><p><strong>options</strong> (<em>dict</em>) – A dictionary of options</p></li>
 <li><p><strong>active_options</strong> (<em>list or None, optional (default=None)</em>) – List of option keys indicating the available options to print.
 If None, all options are shown.</p></li>
-<li><p><strong>iterate</strong> (<em>boolean, optional (default=True)</em>) – If true, a sequence of menu options is shown to the
-user until the zero (exit) menu option is selected
-by the user
-If false, the</p></li>
 </ul>
 </dd>
 </dl>
@@ -197,8 +169,8 @@ If false, the</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.menu_navigator.menu_navigator.MenuNavigator.query_options">
 <span class="sig-name descname"><span class="pre">query_options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zero_option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'exit'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.menu_navigator.menu_navigator.MenuNavigator.query_options" title="Permalink to this definition"></a></dt>
-<dd><p>Prints a heading and the subset of options indicated in the list of
-active_options, ask the user and returns the user selection</p>
+<dd><p>Prints a heading mnd the subset of options indicated in the list of
+active_options, and returns the one selected by the used</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

@@ -21,40 +21,6 @@ class QueryManager(object):
 
         return
 
-    @staticmethod
-    def str2dict(text):
-        """
-        Converts a string of comma-separated keys and values ("k1, v1, k2,
-        v2, ...!" into a dictionary {k1: v1, k2: v2, ...} of integer keys
-        and normalized weight values
-
-        Parameters
-        ----------
-        text : str
-            String o comma-separated keys and values
-
-        Returns
-        -------
-        tw : dict
-            A dictionary integer keys and float values.
-        """
-
-        tw_list = text.split(',')
-
-        # Get topic indices as integers
-        keys = [int(k) for k in tw_list[::2]]
-        # Get topic weights as floats
-        weights = [float(w) for w in tw_list[1::2]]
-
-        # Normalize weights
-        sum_w = sum(weights)
-        weights = [w / sum_w for w in weights]
-
-        # Store in dictionary
-        tw = dict(zip(keys, weights))
-
-        return tw
-
     def ask_keywords(self, kw_library=None):
         """
         Ask the user for a list of keywords.
@@ -73,7 +39,6 @@ class QueryManager(object):
         if kw_library is not None:
             logging.info(
                 f"-- Suggested list of keywords: {', '.join(kw_library)}\n")
-            logging.info("-- Type '__all_AI' to select all these keywords\n")
 
         str_keys = input('-- Write your keyword/s (separated by commas, '
                          'e.g., "gradient descent, gibbs sampling") ')
@@ -126,8 +91,19 @@ class QueryManager(object):
         logging.info("   id_0, weight_0, id_1, weight_1, ...")
         topic_weights_str = input(": ")
 
+        tw_list = topic_weights_str.split(',')
+
+        # Get topic indices as integers
+        keys = [int(k) for k in tw_list[::2]]
+        # Get topic weights as floats
+        weights = [float(w) for w in tw_list[1::2]]
+
+        # Normalize weights
+        sum_w = sum(weights)
+        weights = [w / sum_w for w in weights]
+
         # Store in dictionary
-        tw = self.str2dict(topic_weights_str)
+        tw = dict(zip(keys, weights))
         logging.info(f"-- Normalized weights: {tw}")
 
         return tw
@@ -220,12 +196,8 @@ class QueryManager(object):
         """
 
         logging.info("")
+        label = input("-- Press 'y' to confirm the anotation. Otherwise all "
+                      "labels in this session will be removed: ")
 
-        label = 'xxx'
-        while label not in {'yes', 'no'}:
-            label = input(
-                "-- Press 'yes' to confirm the anotation, or 'no' to remove "
-                "all labels in this session: ")
-
-        return label == 'yes'
+        return label == 'y'
 

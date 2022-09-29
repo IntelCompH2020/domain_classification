@@ -198,7 +198,7 @@ class baseTaskManager(object):
             print(f'Folder {p2p} already exists.')
 
             # Remove current backup folder, if it exists
-            old_p2p = p2p.parent / f'{p2p.name}_old'
+            old_p2p = p2p.parent / (p2p.name + '_old/')
             if old_p2p.exists():
                 shutil.rmtree(old_p2p)
 
@@ -218,7 +218,7 @@ class baseTaskManager(object):
         # Place a copy of a default configuration file in the project folder.
         # This file should be adapted by the user to the new project settings.
         p2default_c = pathlib.Path(
-            'config', f'{p2c.stem}.default{p2c.suffix}')
+            'config', p2c.stem + '.default' + p2c.suffix)
         if p2default_c.is_file():
             # If a default configuration file exists, it is copied into the
             # project folder.
@@ -238,7 +238,7 @@ class baseTaskManager(object):
         self.ready2setup = True
 
         print(f"-- Project {p2p} created.")
-        print(f"---- Project metadata saved in {self.metadata_fname}")
+        print("---- Project metadata saved in {0}".format(self.metadata_fname))
         print("---- A default config file has been located in the project "
               "folder.")
         print("---- Open it and set your configuration variables properly.")
@@ -281,13 +281,6 @@ class baseTaskManager(object):
 
             if self.state['configReady']:
                 self.ready2setup = True
-                self.setup()
-                print(f'-- Project {self.path2project} succesfully loaded.')
-            elif self.path2config.exists():
-                self.ready2setup = True
-                print(f'-- Activating configuration file. You can reconfigure '
-                      f'at any time by (1) editing {self.path2project}, (2) '
-                      'restarting and (3) activating the new config file')
                 self.setup()
                 print(f'-- Project {self.path2project} succesfully loaded.')
             else:

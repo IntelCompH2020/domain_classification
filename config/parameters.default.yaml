@@ -1,10 +1,11 @@
-# Parameters for the corpus loaders
-corpus:
-  # Fraction of documents to be taken from the corpora
-  # Warning: do not use exponential notation (e.g. use 0.01 and not 1e-2)
-  sampling_factor:
-    SemanticScholar: 0.01
-    patstat: 0.015
+# Specify format for the log outputs
+logformat:
+  filename:    msgs.log
+  datefmt:     '%m-%d %H:%M:%S'
+  file_format: '%(asctime)s %(levelname)-8s %(message)s'
+  file_level:  INFO
+  cons_level:  DEBUG
+  cons_format: '%(levelname)-8s %(message)s'
 
 # Parameter for the keyword-based document selector
 keywords:
@@ -14,7 +15,7 @@ keywords:
   # of the word in the description. (For method='count' only)
   wt: 1 
   # Maximum number of documents to be selected.
-  n_max: 50000
+  n_max: 4000
   # Minimum score. Only docs scored strictly above s_min are selected
   s_min: 0.6
   # Name of the SBERT model. Available pretrained models can be found in 
@@ -37,23 +38,10 @@ topics:
 
 # Parameters for the classifier
 classifier:
-  # Type of transformer for ClassificationModel (e.g. roberta, mpnet), see
-  # https://simpletransformers.ai/docs/classification-specifics/#supported-model-types
-  model_type: mpnet
-  # Name of the simpletransformer model (e.g. roberta_base, all-mpnet-base-v2)
-  model_name: sentence-transformers/all-mpnet-base-v2
   # Maximum ratio negative vs positive samples in the training set
   max_imbalance: 3
   # Maximum number of documents in the training set.
   nmax: 400
-  # If True, the embedding layer is fixed, and not fine-tuned.
-  # During learning, only the layers aftert the encoder of the sentence
-  # transformer are updated.
-  freeze_encoder: True
-  # Number of epochs
-  epochs: 5
-  # Only for GPU use
-  batch_size: 8
 
 # Parameters for the active learning (AL)
 active_learning:
@@ -66,17 +54,7 @@ active_learning:
   p_ratio: 0.8
   # (Approximate) probability of selecting the doc with the highest score in a
   # single sampling. This parameter is used to control the randomness of the
-  # stochastic sampling: if top_prob=1, the samples with the highest score are 
-  # are taken deterministically. top_prob=0 is equivalent to random sampling.
-  # (Used for sampler='extremes' only)
+  # randomness of the stochastic sampling: if top_prob=1, the highest score
+  # samples are taken deterministically. top_prob=0 is equivalent to random
+  # sampling. (Used for sampler='extremes' only)
   top_prob: 0.1
-
-# Specify format for the log outputs
-logformat:
-  filename:    msgs.log
-  datefmt:     '%m-%d %H:%M:%S'
-  file_format: '%(asctime)s %(levelname)-8s %(message)s'
-  file_level:  INFO
-  cons_level:  DEBUG
-  cons_format: '%(levelname)-8s %(message)s'
-

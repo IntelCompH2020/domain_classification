@@ -15,7 +15,6 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -52,8 +51,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="dc_custom_model.html">Custom Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dc_preprocessor.html">Preprocessor</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dc_metrics.html">Metrics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dc_plotter.html">Plotter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_main_window.html">Main Window</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_analyze_keywords_window.html">Analyze Keywords Window</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_constants.html">Constants</a></li>
@@ -91,14 +88,14 @@
            <div itemprop="articleBody">
              
   <section id="classifier">
-<h1>Classifier<a class="headerlink" href="#classifier" title="Permalink to this heading"></a></h1>
+<h1>Classifier<a class="headerlink" href="#classifier" title="Permalink to this headline"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
 <span class="target" id="module-src.domain_classifier.classifier"></span><p>Defines the main domain classification class</p>
 <p>&#64;author: J. Cid-Sueiro, J.A. Espinosa, A. Gallardo-Antolin</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.domain_classifier.classifier.</span></span><span class="sig-name descname"><span class="pre">CorpusClassifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mpnet'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sentence-transformers/all-mpnet-base-v2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2transformers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.domain_classifier.classifier.</span></span><span class="sig-name descname"><span class="pre">CorpusClassifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2transformers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A container of corpus classification methods</p>
 <dl class="py method">
@@ -116,10 +113,6 @@ predictions</p></li>
 <li><p>If “extremes”, samples are taken stochastically, but with
 documents with the highest or smallest probability scores are
 selected with higher probability.</p></li>
-<li><p>If “full_rs”, samples are taken at random from the whole dataset
-for testing purposes. Half samples are taken at random from the
-train-test split, while the rest is taken from the other
-documents</p></li>
 </ul>
 </li>
 <li><p><strong>p_ratio</strong> (<em>float, optional (default=0.8)</em>) – Ratio of high-score samples. The rest will be low-score samples.
@@ -138,32 +131,18 @@ to random sampling.</p></li>
 <dd class="field-odd"><p>pandas.dataFrame</p>
 </dd>
 </dl>
-<p class="rubric">Notes</p>
-<p>Besides the output dataframe, this method updates columns ‘sampler’ and
-‘sampling_prob’ from self.dataframe.</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>‘sampler’ stores the sampling method that selected the doc.</p></li>
-<li><p>‘sampling_prob’ is the probability with which each doc was</p></li>
-</ul>
-</div></blockquote>
-<p>selected. This is approximate, since the sampling of multiple documents
-is done without replacement, but it is reasonably accurate if the
-population sizes are large enough.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mpnet'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sentence-transformers/all-mpnet-base-v2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2transformers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.__init__" title="Permalink to this definition"></a></dt>
-<dd><p>Initializes a classifier object</p>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2transformers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cuda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Initializes a preprocessor object</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>df_dataset</strong> (<em>pandas.DataFrame</em>) – Dataset with text and labels. It must contain at least two columns
 with names “text” and “labels”, with the input and the target
 labels for classification.</p></li>
-<li><p><strong>model_type</strong> (<em>str, optional (default=”roberta”)</em>) – Type of transformer model.</p></li>
-<li><p><strong>model_name</strong> (<em>str, optional (default=”roberta-base”)</em>) – Name of the simpletransformer model</p></li>
 <li><p><strong>path2transformers</strong> (<em>pathlib.Path or str, optional (default=”.”)</em>) – Path to the folder that will store all files produced by the
 simpletransformers library.
 Default value is “.”.</p></li>
@@ -201,74 +180,20 @@ does not exist, it is created.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.eval_model">
-<span class="sig-name descname"><span class="pre">eval_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'train_test'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.eval_model" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">eval_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag_score</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'score'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.eval_model" title="Permalink to this definition"></a></dt>
 <dd><p>Compute predictions of the classification model over the input dataset
 and compute performance metrics.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>samples</strong> (<em>str, optional (default=”train_test”)</em>) – Samples to evaluate. If “train_test” only training and test samples
-are evaluated. Otherwise, all samples in df_dataset attribute
-are evaluated</p></li>
-<li><p><strong>tag</strong> (<em>str</em>) – Prefix of the score and prediction names.
-The scores will be saved in the columns of self.df_dataset
-containing these scores.</p></li>
-<li><p><strong>batch_size</strong> (<em>int, optiona (default=8)</em>) – Batch size</p></li>
-</ul>
+<dd class="field-odd"><p><strong>tag_score</strong> (<em>str</em>) – Prefix of the score names.
+The scores will be save in the columns of self.df_dataset
+containing these scores.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.get_annotations">
-<span class="sig-name descname"><span class="pre">get_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annot_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'annotations'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.get_annotations" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the portion of self.dataset that contains annotated data</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>annot_name</strong> (<em>str, optional (default=’annotations’)</em>) – Name of the column in the pandas dataframe containing the
-annotations</p></li>
-<li><p><strong>include_text</strong> (<em>bool, optional (default=True)</em>) – If true, the text of the annotated document is included in the
-output dataframe. This is usefull for a manual inspection of
-the annotations.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>df_annotation</strong> – The dataframe containing the annotations. All columns related
-to the annotation are returned.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>pandas.dataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.label2label_metrics">
-<span class="sig-name descname"><span class="pre">label2label_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_label_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subdataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">printout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sampling_probs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.label2label_metrics" title="Permalink to this definition"></a></dt>
-<dd><p>Compute binary performance metrics (i.e. metrics based on the binary
-labels and predictions only)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pred_name</strong> (<em>str in {‘PU’, ‘PN’}</em>) – Ettiquete of the model to be evaluated.</p></li>
-<li><p><strong>true_label_name</strong> (<em>str</em>) – Name of the column tu be used as a reference for evaluation</p></li>
-<li><p><strong>subdataset</strong> (<em>str</em>) – An indicator of the subdataset to be evaluated. It can take values
-‘train’, ‘test’ or ‘unused’</p></li>
-<li><p><strong>printout</strong> (<em>boolean, optional (default=True)</em>) – If true, all metrics are printed (unless the roc values)</p></li>
-<li><p><strong>use_sampling_probs</strong> (<em>boolean, optional (default=True)</em>) – If true, metrics are weighted by the (inverse) sampling
-probabilities, if available. If true, unweighted metrics are
-computed too, and saved in entry ‘unweighted’ of the output
-dictionary, as complementary info.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>bmetrics</strong> – A dictionary of binary metrics</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
+<p class="rubric">Notes</p>
+<p>The use of simpletransformers follows the example code in
+<a class="reference external" href="https://towardsdatascience.com/simple-transformers-introducing-the">https://towardsdatascience.com/simple-transformers-introducing-the</a>-
+easiest-bert-roberta-xlnet-and-xlm-library-58bf8c59b2a3</p>
 </dd></dl>
 
 <dl class="py method">
@@ -291,96 +216,19 @@ ClassificationModel and save it.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.num_annotations">
-<span class="sig-name descname"><span class="pre">num_annotations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.num_annotations" title="Permalink to this definition"></a></dt>
-<dd><p>Return the number of manual annotations available</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.performance_metrics">
-<span class="sig-name descname"><span class="pre">performance_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">true_label_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subdataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">printout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_sampling_probs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.performance_metrics" title="Permalink to this definition"></a></dt>
-<dd><p>Compute performance metrics</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>tag</strong> (<em>str in {‘PU’, ‘PN’}</em>) – Ettiquete of the model to be evaluated.</p></li>
-<li><p><strong>true_label_name</strong> (<em>str</em>) – Name of the column tu be used as a reference for evaluation</p></li>
-<li><p><strong>subdataset</strong> (<em>str</em>) – An indicator of the subdataset to be evaluated. It can take values
-‘train’, ‘test’, ‘unused’, ‘notrain’ (which uses train and test)
-and ‘all’ (which uses all data)</p></li>
-<li><p><strong>printout</strong> (<em>boolean, optional (default=True)</em>) – If true, all metrics are printed (unless the roc values)</p></li>
-<li><p><strong>use_sampling_probs</strong> (<em>boolean, optional (default=True)</em>) – If true, metrics are weighted by the (inverse) sampling
-probabilities, if available. If true, unweighted metrics are
-computed too, and saved in entry ‘unweighted’ of the output
-dictionaries, as complementary info.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>bmetrics</strong> (<em>dict</em>) – A dictionary of binary metrics (i.e. metrics based on the binary
-labels and predictions only)</p></li>
-<li><p><strong>roc</strong> (<em>dict</em>) – A dictionary of score-based metrics (i.e. metric based on the
-binary labels and predictions, and the scores (soft decistions)
-of the classifier)</p></li>
-</ul>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.print_binary_metrics">
-<span class="sig-name descname"><span class="pre">print_binary_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bmetrics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.print_binary_metrics" title="Permalink to this definition"></a></dt>
-<dd><p>Pretty-prints the given metrics</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>bmetrics</strong> (<em>dict</em>) – Dictionary of metrics (produced by the binary_metrics() method)</p></li>
-<li><p><strong>title</strong> (<em>str, optional (default=””)</em>) – Title to print as a header</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.retrain_model">
-<span class="sig-name descname"><span class="pre">retrain_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freeze_encoder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation_gain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.retrain_model" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">retrain_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.retrain_model" title="Permalink to this definition"></a></dt>
 <dd><p>Re-train the classifier model using annotations</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>epochs</strong> (<em>int, optional (default=3)</em>) – Number of training epochs</p></li>
-<li><p><strong>freeze_encoder</strong> (<em>bool, optional (default=True)</em>) – If True, the embedding layer is frozen, so that only the
-classification layers is updated. This is useful to use
-precomputed embedings for large datasets.</p></li>
-<li><p><strong>batch_size</strong> (<em>int, optional (default=8)</em>) – Batch size</p></li>
-<li><p><strong>annotation_gain</strong> (<em>int or float, optional (default=10)</em>) – Relative value of an annotated sample with respect to a non-
-annotated one.</p></li>
-</ul>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.train_model">
-<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freeze_encoder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.train_model" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">train_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.train_model" title="Permalink to this definition"></a></dt>
 <dd><p>Train binary text classification model based on transformers</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>epochs</strong> (<em>int, optional (default=3)</em>) – Number of training epochs</p></li>
-<li><p><strong>validate</strong> (<em>bool, optional (default=True)</em>) – If True, the model epoch is selected based on the F1 score computed
-over the test data. Otherwise, the model after the last epoch is
-taken</p></li>
-<li><p><strong>freeze_encoder</strong> (<em>bool, optional (default=True)</em>) – If True, the embedding layer is frozen, so that only the
-classification layers is updated. This is useful to use
-precomputed embedings for large datasets.</p></li>
-<li><p><strong>tag</strong> (<em>str, optional (default=””)</em>) – A preffix that will be used for all result variables (scores and
-predictions) saved in the dataset dataframe</p></li>
-<li><p><strong>batch_size</strong> (<em>int, optiona (default=8)</em>) – Batch size</p></li>
-</ul>
-</dd>
-</dl>
+<p class="rubric">Notes</p>
+<p>The use of simpletransformers follows the example code in
+<a class="reference external" href="https://towardsdatascience.com/simple-transformers-introducing-the">https://towardsdatascience.com/simple-transformers-introducing-the</a>-
+easiest-bert-roberta-xlnet-and-xlm-library-58bf8c59b2a3</p>
 </dd></dl>
 
 <dl class="py method">
@@ -411,21 +259,6 @@ Pass an int for reproducible output across multiple function calls.</p></li>
 -1: otherwise</p></li>
 </ul>
 </p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.update_annotations">
-<span class="sig-name descname"><span class="pre">update_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df_annotations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annot_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'annotations'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.update_annotations" title="Permalink to this definition"></a></dt>
-<dd><p>Updates self.df_dataset with the annotation data and metadata in
-the input dataframe.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>df_annotations</strong> (<em>pandas.dataFrame</em>) – A dataframe of annotations.</p></li>
-<li><p><strong>annot_name</strong> (<em>str, optional (default=’annotations’)</em>) – Name of the column containing the class annotations</p></li>
-</ul>
 </dd>
 </dl>
 </dd></dl>
