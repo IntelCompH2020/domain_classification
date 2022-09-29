@@ -16,11 +16,7 @@ root:
     - PU_learning
     - get_feedback
     - update_model
-<<<<<<< HEAD
-    - inference
-=======
     - import_export_annotations
->>>>>>> origin/main
 
 # In the following, each menu option is described.
 # GENERIC FORMAT OF AN OPTION DESCRIPTOR:
@@ -129,13 +125,6 @@ import_export_annotations:
   options:
     - import_annotations
     - export_annotations
-
-inference:
-  title: Inference
-  options:
-    - get_method: _get_inference
-    
-
 
 # ######################
 # Options for get_labels

@@ -15,21 +15,14 @@ from .data_manager import DataManager
 from .query_manager import QueryManager
 from .domain_classifier.preprocessor import CorpusDFProcessor
 from .domain_classifier.classifier import CorpusClassifier
-from .domain_classifier.inference import Inference
 from .utils import plotter
 
-<<<<<<< HEAD
-
-import numpy as np
-import matplotlib.pyplot as plt
-=======
 # A message that is used twice in different parts of the code. It is defined
 # here because the same message must be used in both cases.
 NO_GOLD_STANDARD = 'Do not use a Gold Standard.'
 
 # Name of the column of annotations in the datasets of manual labels
 ANNOTATIONS = 'annotations'
->>>>>>> origin/main
 
 
 class TaskManager(baseTaskManager):
@@ -142,8 +135,6 @@ class TaskManager(baseTaskManager):
         self.DM = DataManager(self.path2source, self.path2datasets,
                               self.path2models, self.path2embeddings)
 
-        self.inferenceManager = None
-
         return
 
     def _is_model(self, verbose=True):
@@ -193,16 +184,6 @@ class TaskManager(baseTaskManager):
 
         return dataset_list
 
-<<<<<<< HEAD
-    def _get_inference(self): 
-        if self.inferenceManager == None:
-            self.inferenceManager = Inference(self.global_parameters['inference'])
-        return self.inferenceManager.getOptions()
-
-    def inference(self, option):
-        self.inferenceManager.setOption(option)
-        return self.inferenceManager.getOptions()
-=======
     def _get_annotation_list(self):
         """
         Returns the list of available files with class annotations
@@ -222,7 +203,6 @@ class TaskManager(baseTaskManager):
             annotations_list = self.DM.get_annotation_list()
 
         return annotations_list
->>>>>>> origin/main
 
     def _get_gold_standard_labels(self):
         """
