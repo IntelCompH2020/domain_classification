@@ -375,8 +375,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def execute_import_labels(self):
         """
-        Imports the labels by invoking the corresponding method in the Task Manager
-        object associated with the GUI.
+        Imports the labels by invoking the corresponding method in the Task
+        Manager object associated with the GUI.
         """
         # Get labels
         if self.get_label_option == 1:
@@ -392,8 +392,6 @@ class MainWindow(QtWidgets.QMainWindow):
         elif self.get_label_option == 4:
             message_out = self.tm.get_labels_by_topics(
                 topic_weights=self.get_topics_list_window.tw,
-                T=self.get_topics_list_window.T,
-                df_metadata=self.get_topics_list_window.df_metadata,
                 n_max=self.get_topics_list_window.n_max,
                 s_min=self.get_topics_list_window.s_min,
                 tag=self.get_topics_list_window.selectedTag)
@@ -834,23 +832,25 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def clicked_evaluate_PU_model(self):
         """
-        Method that controls the actions that are carried out when the button "eval_pu_classifier_push_button" is
-        clicked by the user.
+        Method that controls the actions that are carried out when the button
+        "eval_pu_classifier_push_button" is clicked by the user.
         """
 
-        # Check if a corpus and a set of labels have been selected and a model trained.
-        # Otherwise, the evaluation cannot be carried out
+        # Check if a corpus and a set of labels have been selected and a model
+        # trained. Otherwise, the evaluation cannot be carried out
         if self.tm.state['selected_corpus'] and self.tm.df_labels is not None and \
                 self.labels_loaded is not None and self.tm.dc is not None:
 
             # Execute the PU model evaluation in the secondary thread
             execute_in_thread(
-                self, self.execute_evaluate_pu_model, self.do_after_evaluate_pu_model,
-                self.progress_bar_evaluate)
+                self, self.execute_evaluate_pu_model,
+                self.do_after_evaluate_pu_model, self.progress_bar_evaluate)
         else:
 
-            # Show warning message if the conditions for evaluating the model are not met
-            QtWidgets.QMessageBox.warning(self, Messages.DC_MESSAGE, Messages.WARNING_EVALUATION)
+            # Show warning message if the conditions for evaluating the model
+            # are not met
+            QtWidgets.QMessageBox.warning(
+                self, Messages.DC_MESSAGE, Messages.WARNING_EVALUATION)
 
         return
 
@@ -938,7 +938,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def show_sampled_docs_for_labeling(self):
         """
-        Visualizes the documents from which the user is going to give feedback for the updating of a model.
+        Visualizes the documents from which the user is going to give feedback
+        for the updating of a model.
         """
         # Select bunch of documents at random
         n_docs = self.n_docs_al

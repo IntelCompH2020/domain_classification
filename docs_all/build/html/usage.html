@@ -16,6 +16,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -44,6 +45,8 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started with Domain Classifier</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#graphical-user-interface">Graphical User Interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#terminal-mode">Terminal mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#single-task-execution-with-user-interaction">Single task execution with user interaction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#single-task-execution-without-user-interaction">Single task execution without user interaction</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="mn_menu_navigator.html">Menu Navigator</a></li>
@@ -54,6 +57,8 @@
 <li class="toctree-l1"><a class="reference internal" href="dc_classifier.html">Classifier</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dc_custom_model.html">Custom Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dc_preprocessor.html">Preprocessor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_plotter.html">Plotter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_main_window.html">Main Window</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_analyze_keywords_window.html">Analyze Keywords Window</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui_constants.html">Constants</a></li>
@@ -91,16 +96,18 @@
            <div itemprop="articleBody">
              
   <section id="getting-started-with-domain-classifier">
-<h1>Getting Started with Domain Classifier<a class="headerlink" href="#getting-started-with-domain-classifier" title="Permalink to this headline"></a></h1>
-<p>There are two different versions of the Domain Classifier. They differ in the way to manage the user interaction:</p>
+<h1>Getting Started with Domain Classifier<a class="headerlink" href="#getting-started-with-domain-classifier" title="Permalink to this heading"></a></h1>
+<p>There are different scritps available to run the Domain Classifier. They differ in the way to manage the user interaction:</p>
 <blockquote>
 <div><ol class="arabic simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">main_gui.py</span></code>: user interacts through a Graphical User Interface (GUI).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">main_domain_classifier.py</span></code>: user interacts through a terminal (command window).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">main_dc_single_task.py</span></code>: to execute a single task (requires user interaction).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_dc_task.py</span></code>: to execute a single task (without user interaction).</p></li>
 </ol>
 </div></blockquote>
 <section id="graphical-user-interface">
-<h2>Graphical User Interface<a class="headerlink" href="#graphical-user-interface" title="Permalink to this headline"></a></h2>
+<h2>Graphical User Interface<a class="headerlink" href="#graphical-user-interface" title="Permalink to this heading"></a></h2>
 <p>You will need a terminal window to launch the GUI: open a terminal, go to the roof folder of the software and run</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python main_gui.py --p /path/to/project
                      --source /path/to/datasets
@@ -122,7 +129,7 @@
 <p>and select the appropriate folders inside the GUI.</p>
 </section>
 <section id="terminal-mode">
-<h2>Terminal mode<a class="headerlink" href="#terminal-mode" title="Permalink to this headline"></a></h2>
+<h2>Terminal mode<a class="headerlink" href="#terminal-mode" title="Permalink to this heading"></a></h2>
 <p>To use the interaction through a command window, open a terminal, go to the root folder of the software and run</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python main_domain_classifier.py --p /path/to/project
                                    --source /path/to/datasets
@@ -137,6 +144,61 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">/path/to/zeroshot</span></code> is the path to a folder containing a pre-trained zero-shot model utilized for the selection of a subcorpus from a category name.</p></li>
 </ul>
 </div></blockquote>
+</section>
+<section id="single-task-execution-with-user-interaction">
+<h2>Single task execution with user interaction<a class="headerlink" href="#single-task-execution-with-user-interaction" title="Permalink to this heading"></a></h2>
+<p>To use the interaction through a command window, open a terminal, go to the root folder of the software and run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python main_dc_single_task.py --p /path/to/project
+                                --source /path/to/datasets
+                                —-zeroshot /path/to/zeroshot
+                                --task TASK
+</pre></div>
+</div>
+<p>where</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/project</span></code> is the path to a new or an existing project in which the application’s output will be saved.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/datasets</span></code> is the path to the source data folder.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/zeroshot</span></code> is the path to a folder containing a pre-trained zero-shot model utilized for the selection of a subcorpus from a category name.</p></li>
+<li><p>TASK is the name of the task to run.</p></li>
+</ul>
+</div></blockquote>
+<p>You can run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python main_dc_single_task.py --h
+</pre></div>
+</div>
+<p>to see available tasks.</p>
+</section>
+<section id="single-task-execution-without-user-interaction">
+<h2>Single task execution without user interaction<a class="headerlink" href="#single-task-execution-without-user-interaction" title="Permalink to this heading"></a></h2>
+<p>To run a specific task, all parameter of the task should be introduced through the comman window. To do so, you can run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python run_dc_task.py --p /path/to/project
+                        --source /path/to/datasets
+                        —-zeroshot /path/to/zeroshot
+                        --task TASK
+                        --class_name CLASS_NAME
+                        --param1 PARAM1
+                        --param1 PARAM2
+                        ...
+</pre></div>
+</div>
+<p>where</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/project</span></code> is the path to a new or an existing project in which the application’s output will be saved.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/datasets</span></code> is the path to the source data folder.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/zeroshot</span></code> is the path to a folder containing a pre-trained zero-shot model utilized for the selection of a subcorpus from a category name.</p></li>
+<li><p>TASK is the name of the task to run.</p></li>
+<li><p>CLASS_NAME is the name of the target category (only for tasks requiring it)</p></li>
+<li><p>param1, param2 are the names of the specific parameters</p></li>
+<li><p>PARAM1, PARAM2 are their values</p></li>
+</ul>
+</div></blockquote>
+<p>You can run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python run_dc_task.py --h
+</pre></div>
+</div>
+<p>to see available tasks.</p>
 </section>
 </section>
 

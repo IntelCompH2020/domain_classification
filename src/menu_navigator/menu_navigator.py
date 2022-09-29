@@ -71,8 +71,8 @@ class MenuNavigator(object):
     def query_options(self, options, active_options=None, msg=None,
                       zero_option='exit'):
         """
-        Prints a heading mnd the subset of options indicated in the list of
-        active_options, and returns the one selected by the used
+        Prints a heading and the subset of options indicated in the list of
+        active_options, ask the user and returns the user selection
 
         Parameters
         ----------
@@ -122,8 +122,8 @@ class MenuNavigator(object):
 
         n_option = None
         while n_option not in range_opt:
-            n_option = input('What would you like to do? [{0}-{1}]: '.format(
-                str(range_opt[0]), range_opt[-1]))
+            n_option = input(f'What would you like to do? '
+                             f'[{range_opt[0]}-{range_opt[-1]}]: ')
             try:
                 n_option = int(n_option)
             except:
@@ -180,18 +180,64 @@ class MenuNavigator(object):
 
         return
 
+<<<<<<< HEAD
     def navigate(self, option=None, active_options=None):
 
+=======
+    def get_options(self, tasks_only=False):
+        """
+        Returns a list of all possible actions.
+
+        Parameters
+        ----------
+        tasks_only : boolean, optional (default=True)
+            If true, only options that correspond to task names (methods from
+            the task_manager class) are returned
+
+        Returns
+        -------
+        options : list of tuple (str, str)
+            A list of possible action.
+            Is action is a tuple (name_of_the_action, title), where title is
+            the description of the action taken from the options_menu file.
+        """
+
+        with open(self.path2menu, 'r', encoding='utf8') as f:
+            menu = yaml.safe_load(f)
+
+        if tasks_only:
+            no_tasks = [k for k, v in menu.items() if k != 'root'
+                        and 'options' in v
+                        and isinstance(v['options'], list)
+                        and len(v['options']) > 0
+                        and isinstance(v['options'][0], str)]
+            options = [
+                (x, menu[x]['title']) for x in menu if x != 'root'
+                and x not in no_tasks]
+
+        else:
+            options = [(x, menu[x]['title']) for x in menu if x != 'root']
+
+        return options
+
+    def navigate(self, option=None, active_options=None, iterate=True):
+>>>>>>> origin/main
         """
         Manages the menu navigation loop
 
         Parameters
         ----------
-        options : dict
-            A dictionary of options
+        option : str, optional (default=None)
+            Initial selection from the menu of options.
+            If None, the initial selection will be requested to the user
         active_options : list or None, optional (default=None)
             List of option keys indicating the available options to print.
             If None, all options are shown.
+        iterate : boolean, optional (default=True)
+            If true, a sequence of menu options is shown to the
+            user until the zero (exit) menu option is selected
+            by the user
+            If false, the
         """
 
         # #####################
@@ -237,8 +283,10 @@ class MenuNavigator(object):
                     active_options = copy.copy(default_opt)
                     zero_opt = 'exit'
 
-            elif ('options' in menu[option] and
-                  type(menu[option]['options'][0]) != dict):
+            elif ('options' in menu[option]
+                  and not isinstance(menu[option]['options'][0], dict)):
+
+                # type(menu[option]['options'][0]) != dict):
                 # Select new options to query
                 active_options = menu[option]['options']
                 zero_opt = 'up'
@@ -272,7 +320,7 @@ class MenuNavigator(object):
 
                         # Query parameter to user from the values given in the
                         # menu
-                        if type(arg) == list:
+                        if isinstance(arg, list):   # type(arg) == list:
                             param_opts = {p: p for p in arg}
                         else:
                             param_opts = copy.copy(arg)
@@ -349,3 +397,6 @@ class MenuNavigator(object):
 
                 zero_opt = 'exit'
 
+                var_exit = var_exit or not iterate
+
+        return

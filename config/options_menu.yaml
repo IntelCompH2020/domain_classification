@@ -16,7 +16,11 @@ root:
     - PU_learning
     - get_feedback
     - update_model
+<<<<<<< HEAD
     - inference
+=======
+    - import_export_annotations
+>>>>>>> origin/main
 
 # In the following, each menu option is described.
 # GENERIC FORMAT OF AN OPTION DESCRIPTOR:
@@ -35,10 +39,10 @@ root:
 #      arguments are needed.
 #      The single key of each dictionary specifes the way to get the input
 #      arguments. There are thres possible ways: >
-#     <1: 'parameter': in that case, the options are defined in another
+#     <1: 'parameters': in that case, the options are defined in another
 #                      dictionary, where the keys are the input arguments and
 #                      the values describe the meaning of the input argument>
-#     - parameter:
+#     - parameters:
 #         param0: description
 #         param1: description
 #         ...
@@ -82,7 +86,7 @@ load_corpus:
 get_labels:
   title: Select a preliminary subcorpus from the positive class
   options:
-    - import_labels
+    - import_AI_subcorpus
     - get_labels_by_keywords
     - analyze_keywords
     - get_labels_by_topics
@@ -104,15 +108,27 @@ PU_learning:
   options:
     - train_PUmodel
     - evaluate_PUmodel
+    - performance_metrics_PU
 
 get_feedback:
   title: Get relevance feedback from user
+  options:
+    - sample_documents
+    - get_labels_from_docs
+    - annotate
 
 update_model: 
   title: Update the classifier model with the latest relevance feedback
   options:
     - retrain_model
     - reevaluate_model
+    - performance_metrics_PN
+
+import_export_annotations:
+  title: Import / export annotations
+  options:
+    - import_annotations
+    - export_annotations
 
 inference:
   title: Inference
@@ -123,7 +139,7 @@ inference:
 
 # ######################
 # Options for get_labels
-import_labels:
+import_AI_subcorpus:
     title: Import labels from a source file
 
 get_labels_by_keywords:
@@ -149,11 +165,32 @@ evaluate_PUlabels:
 train_PUmodel:
   title: Train PU classifier model with the available labels
 
-predict_PU:
-  title: Compute predictions based on the PU model
-
 evaluate_PUmodel:
   title: Evaluate PU classifier model with the available labels
+  options:
+    - parameters:
+        train_test: Evaluate samples used for training and test only
+        all: Evaluate all samples in the local dataset
+
+performance_metrics_PU:
+  title: Show all performance metrics
+
+# ########################
+# Options for get_feedback
+
+sample_documents:
+  title: Sample documents for annotation
+  options:
+    - parameters:
+        random: Random sampling over the test-train split, for retraining 
+        extremes: Sampling biased towards confident predictions, for retraining
+        full_rs: Fully random sampling over the whole dataset, for testing
+
+get_labels_from_docs:
+  title: Query labels from user
+
+annotate:
+  title: Annotate documents with the user-provided labels
 
 # ########################
 # Options for update_model
@@ -162,6 +199,24 @@ retrain_model:
 
 reevaluate_model:
   title: Evaluate retrained model.
+  options:
+    - parameters:
+        train_test: Evaluate samples used for training and test only
+        all: Evaluate all samples in the local dataset
+
+performance_metrics_PN:
+  title: Show all performance metrics
+
+
+# ########################
+# Options for import_export_annotations
+import_annotations:
+  title: "Import annotations (overwrites existing annotations)"
+  options:
+    - get_method: _get_annotation_list
+
+export_annotations:
+  title: "Export annotations (warning: deletes older annotation files)"
 
 # ####################
 # ####################

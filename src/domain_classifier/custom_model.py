@@ -21,6 +21,10 @@ from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 from transformers import RobertaTokenizerFast
 from transformers.models.roberta.modeling_roberta import RobertaEmbeddings
+
+from transformers import MPNetTokenizerFast
+from transformers.models.mpnet.modeling_mpnet import MPNetEmbeddings
+
 from transformers import logging as hf_logging
 
 # Remove message when loading transformers model
@@ -59,15 +63,10 @@ class CustomEncoderLayer(nn.Module):
     Custom encoder layer of transformer for classification.
     """
 
-    def __init__(
-        self,
-        hidden_act="gelu",
-        hidden_size=768,
-        intermediate_size=3072,
-        layer_norm_eps=1e-05,
-        num_attention_heads=12,
-        num_hidden_layers=1,
-    ):
+    def __init__(self, hidden_act="gelu", hidden_size=768,
+                 intermediate_size=3072, layer_norm_eps=1e-05,
+                 num_attention_heads=12, num_hidden_layers=1):
+
         super().__init__()
 
         # Default values
@@ -114,13 +113,11 @@ class CustomClassificationHead(nn.Module):
     Head for sentence-level classification tasks.
     """
 
-    def __init__(self, classifier_dropout=0.1, hidden_dropout_prob=0.1,
-                 hidden_size=768):
+    def __init__(self, hidden_dropout_prob=0.1, hidden_size=768):
 
         super().__init__()
 
         # Configuration
-        self.classifier_dropout = classifier_dropout
         self.hidden_dropout_prob = hidden_dropout_prob
         self.hidden_size = hidden_size
 
@@ -129,7 +126,7 @@ class CustomClassificationHead(nn.Module):
 
         # Classification layers
         self.dense = nn.Linear(self.hidden_size, self.hidden_size)
-        self.dropout = nn.Dropout(self.classifier_dropout)
+        self.dropout = nn.Dropout(self.hidden_dropout_prob)
         self.out_proj = nn.Linear(self.hidden_size, self.num_labels)
 
     def forward(self, features: torch.Tensor):
@@ -156,32 +153,26 @@ class CustomModel(nn.Module):
     Head for sentence-level classification tasks.
     """
 
-    def __init__(self, config, path_model):
+    def __init__(self, config, path_model, model_type, model_name):
         super().__init__()
 
         # Configuration
         self.config = config
-        # self.classifier_dropout = config.classifier_dropout
-        # self.hidden_act = config.hidden_act
-        # self.hidden_dropout_prob = config.hidden_dropout_prob
-        # self.hidden_size = config.hidden_size
-        # self.intermediate_size = config.intermediate_size
-        # self.layer_norm_eps = config.layer_norm_eps
-        # self.num_attention_heads = config.num_attention_heads
-        # self.num_hidden_layers = config.num_hidden_layers
 
-        # Default values
-        self.classifier_dropout = 0.1
-        self.hidden_act = "gelu"
-        self.hidden_dropout_prob = 0.1
-        self.hidden_size = 768
-        self.intermediate_size = 3072
-        self.layer_norm_eps = 1e-05
-        self.num_attention_heads = 12
-        self.num_hidden_layers = 1
+        self.hidden_act = config.hidden_act
+        self.hidden_dropout_prob = config.hidden_dropout_prob
+        self.hidden_size = config.hidden_size
+        self.intermediate_size = config.intermediate_size
+        self.layer_norm_eps = config.layer_norm_eps
+        self.num_attention_heads = config.num_attention_heads
+        self.num_hidden_layers = config.num_hidden_layers
 
         # Model location
         self.path_model = path_model
+
+        # Type of model
+        self.model_type = model_type
+        self.model_name = model_name
 
         # Transformer encoder
         self.encoderTransform = CustomEncoderLayer(
@@ -194,7 +185,6 @@ class CustomModel(nn.Module):
 
         # Classification layer
         self.classifier = CustomClassificationHead(
-            classifier_dropout=self.classifier_dropout,
             hidden_dropout_prob=self.hidden_dropout_prob,
             hidden_size=self.hidden_size)
 
@@ -208,15 +198,25 @@ class CustomModel(nn.Module):
         """
 
         df_set = CustomDataset(df)
-        loader = DataLoader(
-            dataset=df_set, batch_size=batch_size, shuffle=shuffle,
-            num_workers=0
-        )
+
+        # Note that shuffle is taken as an input argument. It should be True
+        # in training mode and False for evaluation.
+        # The nn.Module class contains attribute self.training that
+        # (possibly) can be used (shuffle=self.training). However, I am not
+        # 100% sure of the implications, so I have preferred to take shuffle
+        # from the args.
+        loader = DataLoader(dataset=df_set, batch_size=batch_size,
+                            shuffle=shuffle, num_workers=0)
 
         return loader
 
     def load_tokenizer(self):
-        tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
+
+        if self.model_type == 'roberta':
+            tokenizer = RobertaTokenizerFast.from_pretrained(self.model_name)
+        elif self.model_type == 'mpnet':
+            tokenizer = MPNetTokenizerFast.from_pretrained(self.model_name)
+
         logging.info("-- -- Tokenizer loaded")
         # logging.info(f" -- Max length: {tokenizer.model_max_length}")
         self.tokenizer = tokenizer
@@ -235,23 +235,31 @@ class CustomModel(nn.Module):
             # Load TransformerModel
             logging.info(
                 f"-- -- No available embeddings. Loading embeddings from "
-                "roberta model.")
+                f"{self.model_type} model.")
             model = ClassificationModel(
-                "roberta", "roberta-base", use_cuda=False)
+                self.model_type, self.model_name,
+                use_cuda=torch.cuda.is_available())
 
-            embeddings = copy.deepcopy(model.model.roberta.embeddings)
+            if self.model_type == 'roberta':
+                embeddings = copy.deepcopy(model.model.roberta.embeddings)
+            elif self.model_type == 'mpnet':
+                embeddings = copy.deepcopy(model.model.mpnet.embeddings)
 
             # Save model
             torch.save(embeddings.state_dict(), path2embeddings_state)
-            logging.info("-- -- Embeddings model saved")
+            logging.info("-- -- Embedding model saved")
 
             del model
 
         else:
             # Load model
-            embeddings = RobertaEmbeddings(self.config)
+            if self.model_type == 'roberta':
+                embeddings = RobertaEmbeddings(self.config)
+            elif self.model_type == 'mpnet':
+                embeddings = MPNetEmbeddings(self.config)
+
             embeddings.load_state_dict(torch.load(path2embeddings_state))
-            logging.info("-- -- Embeddings model loaded from file")
+            logging.info("-- -- Embedding model loaded from file")
 
         # Set grad to false to freeze layer
         for param in embeddings.parameters():
@@ -273,20 +281,24 @@ class CustomModel(nn.Module):
         out = self.classifier(out)
         return out
 
-    def train_model(self, df_train, device="cuda"):
+    def train_model(self, df_train, device="cuda", batch_size=8):
         """
         Train the model
 
         Parameters
         ----------
-        df_train: DataFrame
+        df_train : DataFrame
             Training dataframe
-        epochs: int
+        epochs : int
             Number of epochs to train model
+        device : str, optional (default="cuda")
+            If "cuda", a GPU is used if available
+        batch_size : int, optiona (default=8)
+            Batch size
         """
 
         # Convert DataFrame to DataLoader
-        train_data = self.create_data_loader(df_train)
+        train_data = self.create_data_loader(df_train, batch_size=batch_size)
 
         # Balance weights giving more weight to the less common label
         label_occurrences = df_train["labels"].value_counts()
@@ -315,7 +327,7 @@ class CustomModel(nn.Module):
                                       leave=None)):
 
             # get the inputs; data is a list of [inputs, labels]
-            data_id = data.get("id")
+            # data_id = data.get("id")
             labels = data.get("labels").to(device)
             text = data.get("text")
             sample_weight = data.get(
@@ -355,13 +367,25 @@ class CustomModel(nn.Module):
 
         return running_loss, t_time  # , batch_data
 
-    def eval_model(self, df_eval, device="cuda"):
+    def eval_model(self, df_eval, device="cuda", batch_size=8):
         """
         Evaluate trained model
+
+        Parameters
+        ----------
+        df_train : DataFrame
+            Training dataframe
+        epochs : int
+            Number of epochs to train model
+        device : str, optional (default="cuda")
+            If "cuda", a GPU is used if available
+        batch_size : int, optiona (default=8)
+            Batch size
         """
 
         # Convert DataFrame to DataLoader
-        eval_data = self.create_data_loader(df_eval, shuffle=False)
+        eval_data = self.create_data_loader(df_eval, shuffle=False,
+                                            batch_size=batch_size)
 
         self.to(device)
         self.embeddings.to(device)
@@ -376,7 +400,7 @@ class CustomModel(nn.Module):
         with torch.no_grad():
             for i, data in enumerate(tqdm(eval_data, desc="Eval batch",
                                           leave=None)):
-                data_id = data.get("id")
+                # data_id = data.get("id")
                 labels = data.get("labels").to(device)
                 text = data.get("text")
                 sample_weight = data.get(
@@ -425,6 +449,7 @@ class CustomModel(nn.Module):
         return predictions, total_loss, result
 
     def _compute_scores_(self, orig, pred):
+
         scores = {"tp": 0, "fp": 0, "tn": 0, "fn": 0}
         # Inputs to boolean
         pred = torch.tensor(pred.tolist()).bool()
@@ -482,11 +507,13 @@ class CustomModel(nn.Module):
         self.load_state_dict(torch.load(load_path))
 
     def freeze_encoder_layer(self):
+
         for param in self.encoderTransform.parameters():
             # print(param.requires_grad)
             param.requires_grad = False
 
     def unfreeze_encoder_layer(self):
+
         for param in self.encoderTransform.parameters():
             # print(param.requires_grad)
             param.requires_grad = True
