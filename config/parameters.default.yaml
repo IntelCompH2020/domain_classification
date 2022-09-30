@@ -4,7 +4,9 @@ corpus:
   # Warning: do not use exponential notation (e.g. use 0.01 and not 1e-2)
   sampling_factor:
     SemanticScholar: 0.01
+    SemanticScholar_emb: 0.01
     patstat: 0.015
+    patstat_emb: 0.015
 
 # Parameter for the keyword-based document selector
 keywords:

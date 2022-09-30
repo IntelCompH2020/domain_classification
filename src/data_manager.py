@@ -252,10 +252,12 @@ class DataManager(object):
 
         # By default, neither corpus cleaning nor language filtering are done
         clean_corpus = corpus_name in {
-            'AEI_projects', 'SemanticScholar', 'patstat', 'CORDIS.parquet',
-            'S2CS.parquet'}
+            'SemanticScholar', 'SemanticScholar_emb',
+            'patstat', 'patstat_emb',
+            'AEI_projects', 'CORDIS.parquet', 'S2CS.parquet'}
         remove_non_en = corpus_name in {
-            'SemanticScholar', 'patstat'}
+            'SemanticScholar', 'SemanticScholar_emb',
+            'patstat', 'patstat_emb'}
 
         if corpus_name == 'EU_projects':
 
@@ -438,7 +440,7 @@ class DataManager(object):
 
             df_corpus.rename(columns=mapping, inplace=True)
 
-        elif corpus_name == 'SemanticScholar':
+        elif corpus_name in {'SemanticScholar', 'SemanticScholar_emb'}:
 
             path2metadata = self.path2corpus / 'metadata.yaml'
 
@@ -458,8 +460,10 @@ class DataManager(object):
                 df_corpus = dfsmall.compute()
 
             # Remove unrelevant fields
-            df_corpus = df_corpus[[
-                'id', 'title', 'paperAbstract', 'fieldsOfStudy']]
+            selected_cols = ['id', 'title', 'paperAbstract', 'fieldsOfStudy']
+            if 'embeddings' in df_corpus:
+                selected_cols += ['embeddings']
+            df_corpus = df_corpus[selected_cols]
 
             # Map column names to normalized names
             mapping = {'paperAbstract': 'description',
@@ -472,7 +476,7 @@ class DataManager(object):
             df_corpus[col] = df_corpus[col].apply(
                 lambda x: ','.join(x.astype(str)) if x is not None else '')
 
-        elif corpus_name == 'patstat':
+        elif corpus_name in {'patstat', 'patstat_emb'}:
 
             path2metadata = self.path2corpus / 'metadata.yaml'
 
@@ -495,8 +499,10 @@ class DataManager(object):
             # Available fields are: appln_id, docdb_family_id, appln_title,
             # appln_abstract, appln_filing_year, earliest_filing_year,
             # granted, appln_auth, receiving_office, ipr_type
-            df_corpus = df_corpus[['appln_id', 'appln_title',
-                                   'appln_abstract']]
+            selected_cols = ['appln_id', 'appln_title', 'appln_abstract']
+            if 'embeddings' in df_corpus:
+                selected_cols += ['embeddings']
+            df_corpus = df_corpus[selected_cols]
 
             # Map column names to normalized names
             mapping = {'appln_id': 'id',
