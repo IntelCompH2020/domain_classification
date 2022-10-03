@@ -6,7 +6,7 @@ corpus:
     SemanticScholar: 0.01
     SemanticScholar_emb: 0.01
     patstat: 0.015
-    patstat_emb: 0.015
+    patstat_emb: 0.015 
 
 # Parameter for the keyword-based document selector
 keywords:
@@ -81,4 +81,3 @@ logformat:
   file_level:  INFO
   cons_level:  DEBUG
   cons_format: '%(levelname)-8s %(message)s'
-

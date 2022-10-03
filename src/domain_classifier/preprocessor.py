@@ -549,6 +549,8 @@ class CorpusDFProcessor(object):
         score : list of float
             List of scores, one per documents in corpus
         """
+        import pdb
+        pdb.set_trace()
 
         # Check if embeddings have been provided
         if method == 'count' or self.path2embeddings is None:

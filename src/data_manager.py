@@ -34,7 +34,7 @@ def detect_english(x):
     -------
     True if x contains English text, False otherwise.
     """
-
+    print('count')
     # Default output value. Only if langdetect detects english, y will be True
     y = False
 
@@ -90,8 +90,35 @@ class DataManager(object):
         # Default name of the corpus. It can be changed by the load_corpus or
         # the load_dataset methods
         self.corpus_name = ""
+        self.metadata = None 
 
         return
+
+    def get_metadata(self):
+        return self.metadata
+    def __load_metadata(self):
+        path2metadata = self.path2corpus / 'metadata.yaml'
+        if not path2metadata.is_file():
+            logging.error(
+                f"-- A metadata file in {path2metadata} is missed. It is "
+                "required for this corpus. Corpus not loaded")
+        with open(path2metadata, 'r', encoding='utf8') as f:
+            self.metadata = yaml.safe_load(f)
+    def __update_metadata(self):
+        path2metadata = self.path2corpus / 'metadata.yaml'
+        with open(path2metadata, 'w') as f:
+            data = yaml.dump(self.metadata, f)
+    def __determineCorpusHasEmbeddings(self,columns):
+        self.metadata["corpus_has_embeddings"] = bool((np.array(columns) == 'embeddings').sum() > 0)
+        self.__update_metadata()
+
+    def enrich_dataset_with_embeddings(self,df_dataset):
+        df_dataset.drop(['embeddings'], axis=1, errors='ignore',inplace=True)
+        df_corpus = pd.read_feather(f'{self.metadata["corpus"]}/corpus.feather')
+        df_dataset = df_dataset.merge(df_corpus[['id','embeddings']], left_on = "id", 
+                                                                      right_on = "id", 
+                                                                      how = "left")
+        return df_dataset
 
     def is_model(self, class_name):
         """
@@ -219,11 +246,13 @@ class DataManager(object):
             (Used for SemanticScholar and patstat only)
         """
 
+
         # Loading corpus
         logging.info(f'-- Loading corpus {corpus_name}')
         t0 = time()
 
         self.path2corpus = self.path2source / corpus_name
+        self.__load_metadata()
 
         if sampling_factor == 1:
             path2feather = self.path2corpus / 'corpus' / 'corpus.feather'
@@ -244,6 +273,8 @@ class DataManager(object):
             # Log results
             logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
                          f" documents loaded in {time() - t0:.2f} secs.")
+
+            self.__determineCorpusHasEmbeddings(df_corpus.columns)
 
             return df_corpus
 
@@ -441,7 +472,8 @@ class DataManager(object):
             df_corpus.rename(columns=mapping, inplace=True)
 
         elif corpus_name in {'SemanticScholar', 'SemanticScholar_emb'}:
-
+            import pdb 
+            pdb.set_trace()
             path2metadata = self.path2corpus / 'metadata.yaml'
 
             if not path2metadata.is_file():
@@ -453,6 +485,8 @@ class DataManager(object):
                 metadata = yaml.safe_load(f)
             path2texts = pathlib.Path(metadata['corpus'])
 
+            import pdb 
+            pdb.set_trace()
             df = dd.read_parquet(path2texts)
             dfsmall = df.sample(frac=sampling_factor, random_state=0)
 
@@ -552,6 +586,8 @@ class DataManager(object):
         # ###############################################
         # Remove documents without description in english
         # Note that if save_feather is False, non-english removal mu
+        #import pdb 
+        #pdb.set_trace()
         if remove_non_en:
 
             l0 = len(df_corpus)
@@ -569,6 +605,8 @@ class DataManager(object):
 
         # Reset the index and drop the old index
         df_corpus = df_corpus.reset_index(drop=True)
+
+        self.__determineCorpusHasEmbeddings(df_corpus.columns)
 
         # ############
         # Log and save
@@ -976,6 +1014,7 @@ class DataManager(object):
 
         # ########################
         # Saving id and class only
+        df_dataset.drop(['embeddings'], axis=1, errors='ignore',inplace=True)
 
         dataset_fname = f'dataset_{self.corpus_name}_{tag}.feather'
         path2dataset = self.path2datasets / dataset_fname
@@ -992,4 +1031,3 @@ class DataManager(object):
 
         # The log message is returned to be shown in a GUI, if needed
         return msg
-

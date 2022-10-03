@@ -127,6 +127,13 @@ import_export_annotations:
     - import_annotations
     - export_annotations
 
+inference:
+  title: Inference
+  options:
+    - get_method: _get_inference
+    
+
+
 # ######################
 # Options for get_labels
 import_AI_subcorpus:

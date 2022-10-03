@@ -28,6 +28,9 @@ from transformers.models.mpnet.configuration_mpnet import MPNetConfig
 from transformers import logging as hf_logging
 
 from .custom_model import CustomModel
+
+from .custom_model_mlp import MLP
+from .custom_model_mlp import CustomDatasetMLP
 # from .custom_model_roberta import RobertaCustomModel
 # from .custom_model_mpnet import MPNetCustomModel
 from . import metrics
@@ -41,6 +44,7 @@ TEST = 1
 UNUSED = -99
 
 hf_logging.set_verbosity_error()
+
 
 
 class CorpusClassifier(object):
@@ -1137,3 +1141,84 @@ class CorpusClassifier(object):
         self.df_dataset.loc[self.df_dataset.learned == 0, 'learned'] = 1
 
         return
+
+import torch.utils.data as data
+
+class CorpusClassifierMLP(CorpusClassifier):
+    def __init__(self, df_dataset, model_type="mpnet",
+                model_name="sentence-transformers/all-mpnet-base-v2",
+                path2transformers=".",
+                use_cuda=True):
+
+#['id', 'text', 'base_scores', 'PUlabels', 'labels', 'embeddings'],
+
+        super().__init__(df_dataset, model_type=model_type, 
+                                   model_name=model_name,
+                                   path2transformers=path2transformers,
+                                   use_cuda = use_cuda)
+
+        self.model = MLP(768,1024,1)
+
+    def __sample_train_data(self):
+
+        df_potential_train = self.df_dataset[self.df_dataset['train_test']==0]
+        df_positive = df_potential_train[df_potential_train['labels']==1]
+        df_negative = df_potential_train[df_potential_train['labels']==0]
+        df_majority = df_positive if len(df_positive) >= len(df_negative) else df_negative
+        df_minority = df_positive if len(df_positive) < len(df_negative) else df_negative
+
+        return pd.concat([df_majority,df_minority.sample(len(df_majority),replace=True)])
+
+    def __sample_validation_data(self, weak_label = True):
+        df_potential_validation = self.df_dataset[self.df_dataset['train_test']==1]
+        if weak_label:
+            return df_potential_validation
+        else:
+            #has to be adjusted
+            return df_potential_validation
+
+
+    def train_model(self, epochs=3, validate=True, freeze_encoder=True,
+                    tag="", batch_size=8):
+
+        
+        df_train = self.__sample_train_data()
+        df_validation = self.__sample_validation_data()
+
+        train_data = CustomDatasetMLP(df_train)
+        train_iterator = data.DataLoader(train_data,
+                                         shuffle=True,
+                                         batch_size=8)
+        validation_data = CustomDatasetMLP(df_validation)
+        validation_iterator = data.DataLoader(validation_data,
+                                              shuffle=False,
+                                              batch_size=8)
+
+        import pdb 
+        pdb.set_trace()
+        self.model.train_loop(train_iterator,validation_iterator)
+        import pdb 
+        pdb.set_trace()
+        torch.save(self.model.state_dict(), self.path2transformers / 'currentModel.pt')
+
+
+
+    def train_test_split(self, max_imbalance=None, nmax=None, train_size=0.6,
+                        random_state=None):
+
+        df_train, df_test = model_selection.train_test_split(
+            self.df_dataset, train_size=train_size, random_state=random_state,
+            shuffle=True, stratify=None)
+
+        # Marc train and test samples in the dataset.
+        self.df_dataset['train_test'] = UNUSED
+        self.df_dataset.loc[df_train.index, 'train_test'] = TRAIN
+        self.df_dataset.loc[df_test.index, 'train_test'] = TEST
+
+    def load_model_config(self):
+        pass
+
+
+
+
+

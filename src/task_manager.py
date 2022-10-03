@@ -15,12 +15,12 @@ from .data_manager import DataManager
 from .query_manager import QueryManager
 from .domain_classifier.preprocessor import CorpusDFProcessor
 from .domain_classifier.classifier import CorpusClassifier
+from .domain_classifier.classifier import CorpusClassifierMLP
+from .domain_classifier.inference import Inference
 from .utils import plotter
-
 
 import numpy as np
 import matplotlib.pyplot as plt
-
 
 # A message that is used twice in different parts of the code. It is defined
 # here because the same message must be used in both cases.
@@ -28,6 +28,7 @@ NO_GOLD_STANDARD = 'Do not use a Gold Standard.'
 
 # Name of the column of annotations in the datasets of manual labels
 ANNOTATIONS = 'annotations'
+
 
 
 class TaskManager(baseTaskManager):
@@ -140,6 +141,8 @@ class TaskManager(baseTaskManager):
         self.DM = DataManager(self.path2source, self.path2datasets,
                               self.path2models, self.path2embeddings)
 
+        self.inferenceManager = None
+
         return
 
     def _is_model(self, verbose=True):
@@ -189,16 +192,14 @@ class TaskManager(baseTaskManager):
 
         return dataset_list
 
+
     def _get_inference(self): 
         if self.inferenceManager == None:
-            import pdb 
-            pdb.set_trace()
-            self.inferenceManager = Inference(self.global_parameters['inference'])
+            self.inferenceManager = Inference(self)
         return self.inferenceManager.getOptions()
 
     def inference(self, option):
-        self.inferenceManager.setOption(option)
-        return self.inferenceManager.getOptions()
+        self.inferenceManager.inferData()
 
     def _get_annotation_list(self):
         """
@@ -219,6 +220,7 @@ class TaskManager(baseTaskManager):
             annotations_list = self.DM.get_annotation_list()
 
         return annotations_list
+
 
     def _get_gold_standard_labels(self):
         """
@@ -302,7 +304,6 @@ class TaskManager(baseTaskManager):
         Extends the load method from the parent class to load the project
         corpus and the dataset (if any)
         """
-
         super().load()
         msg = ""
 
@@ -760,7 +761,7 @@ class TaskManager(baseTaskManager):
         # Configuration parameters
         freeze_encoder = self.global_parameters['classifier']['freeze_encoder']
         batch_size = self.global_parameters['classifier']['batch_size']
-        model_type = self.global_parameters['classifier']['model_type']
+        model_type = self.global_parameters['classifier']['model_name']
         model_name = self.global_parameters['classifier']['model_name']
 
         if self.dc is not None:
@@ -776,9 +777,18 @@ class TaskManager(baseTaskManager):
         self.df_dataset[['labels']] = self.df_dataset[['PUlabels']]
 
         path2model = self.path2models / self.class_name
-        self.dc = CorpusClassifier(
-            self.df_dataset, model_type=model_type, model_name=model_name,
-            path2transformers=path2model)
+
+        if self.DM.get_metadata()['corpus_has_embeddings']:
+
+            self.df_dataset = self.DM.enrich_dataset_with_embeddings(self.df_dataset)
+
+            self.dc = CorpusClassifierMLP(
+                self.df_dataset, model_type=model_type, model_name=model_name,
+                path2transformers=path2model)
+        else:
+            self.dc = CorpusClassifier(
+                self.df_dataset, model_type=model_type, model_name=model_name,
+                path2transformers=path2model)
 
         # Select data for training and testing
         self.dc.train_test_split(max_imbalance=max_imbalance, nmax=nmax,
@@ -1560,25 +1570,29 @@ class TaskManagerCMD(TaskManager):
         """
         Train a domain classifier
         """
+        max_imbalance = 1.0
+        nmax = np.inf 
+        epochs = 0
+        if not self.DM.get_metadata()['corpus_has_embeddings']:
 
-        # Get weight parameter (weight of title word wrt description words)
-        max_imbalance = self.QM.ask_value(
-            query=("Introduce the maximum ratio negative vs positive samples "
-                   "in the training set"),
-            convert_to=float,
-            default=self.global_parameters['classifier']['max_imbalance'])
+            # Get weight parameter (weight of title word wrt description words)
+            max_imbalance = self.QM.ask_value(
+                query=("Introduce the maximum ratio negative vs positive samples "
+                       "in the training set"),
+                convert_to=float,
+                default=self.global_parameters['classifier']['max_imbalance'])
 
-        # Get score threshold
-        nmax = self.QM.ask_value(
-            query=("Maximum number of documents in the training set"),
-            convert_to=int,
-            default=self.global_parameters['classifier']['nmax'])
+            # Get score threshold
+            nmax = self.QM.ask_value(
+                query=("Maximum number of documents in the training set"),
+                convert_to=int,
+                default=self.global_parameters['classifier']['nmax'])
 
-        # Get score threshold
-        epochs = self.QM.ask_value(
-            query=("Number of training epochs"),
-            convert_to=int,
-            default=self.global_parameters['classifier']['epochs'])
+            # Get score threshold
+            epochs = self.QM.ask_value(
+                query=("Number of training epochs"),
+                convert_to=int,
+                default=self.global_parameters['classifier']['epochs'])
 
         super().train_PUmodel(max_imbalance, nmax, epochs)
 
