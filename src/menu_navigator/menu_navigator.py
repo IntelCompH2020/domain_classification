@@ -217,6 +217,10 @@ class MenuNavigator(object):
         return options
 
     def navigate(self, option=None, active_options=None, iterate=True):
+<<<<<<< HEAD
+=======
+
+>>>>>>> cce35ae (adjust)
         """
         Manages the menu navigation loop
 

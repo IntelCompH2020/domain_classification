@@ -15,6 +15,12 @@ import copy
 from sklearn import model_selection
 from tqdm import tqdm
 
+import collections.abc
+#hyper needs the four following aliases to be done manually.
+collections.Iterable = collections.abc.Iterable
+collections.Mapping = collections.abc.Mapping
+collections.MutableSet = collections.abc.MutableSet
+collections.MutableMapping = collections.abc.MutableMapping
 from simpletransformers.classification import ClassificationModel
 from transformers.models.roberta.configuration_roberta import RobertaConfig
 from transformers.models.mpnet.configuration_mpnet import MPNetConfig

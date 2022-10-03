@@ -17,6 +17,11 @@ from .domain_classifier.preprocessor import CorpusDFProcessor
 from .domain_classifier.classifier import CorpusClassifier
 from .utils import plotter
 
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+
 # A message that is used twice in different parts of the code. It is defined
 # here because the same message must be used in both cases.
 NO_GOLD_STANDARD = 'Do not use a Gold Standard.'
@@ -183,6 +188,17 @@ class TaskManager(baseTaskManager):
             dataset_list = self.DM.get_dataset_list()
 
         return dataset_list
+
+    def _get_inference(self): 
+        if self.inferenceManager == None:
+            import pdb 
+            pdb.set_trace()
+            self.inferenceManager = Inference(self.global_parameters['inference'])
+        return self.inferenceManager.getOptions()
+
+    def inference(self, option):
+        self.inferenceManager.setOption(option)
+        return self.inferenceManager.getOptions()
 
     def _get_annotation_list(self):
         """

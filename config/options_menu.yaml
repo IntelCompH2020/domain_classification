@@ -17,6 +17,7 @@ root:
     - get_feedback
     - update_model
     - import_export_annotations
+    - inference
 
 # In the following, each menu option is described.
 # GENERIC FORMAT OF AN OPTION DESCRIPTOR:
