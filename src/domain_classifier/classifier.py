@@ -1156,7 +1156,7 @@ class CorpusClassifierMLP(CorpusClassifier):
                                    model_name=model_name,
                                    path2transformers=path2transformers,
                                    use_cuda = use_cuda)
-
+ 
         self.model = MLP(768,1024,1)
 
     def __sample_train_data(self):
@@ -1194,11 +1194,9 @@ class CorpusClassifierMLP(CorpusClassifier):
                                               shuffle=False,
                                               batch_size=8)
 
-        import pdb 
-        pdb.set_trace()
         self.model.train_loop(train_iterator,validation_iterator)
-        import pdb 
-        pdb.set_trace()
+
+        self.path2transformers.mkdir(exist_ok=True)
         torch.save(self.model.state_dict(), self.path2transformers / 'currentModel.pt')
 
 

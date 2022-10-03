@@ -27,13 +27,13 @@ import pandas as pd
 
 class CustomDatasetMLP(Dataset):
 	def __init__(self,df_data):
-		import pdb 
-		pdb.set_trace()
 		self.data = df_data[['embeddings','labels']].to_numpy().copy()
 		#print(f'self.data:{self.data}')
 	def __getitem__(self,idx):
 		item = torch.Tensor(self.data[idx,0].copy()).to('cuda'), torch.Tensor([self.data[idx,1]]).to('cuda')
 		return item
+
+		
 	def __len__(self):
 		return len(self.data)
 
@@ -74,8 +74,6 @@ class MLP(nn.Module):
 		eval_iterator = data.DataLoader(eval_data,shuffle=False,batch_size=8)
 		predictions = []
 		for (x, y) in tqdm(eval_iterator, desc="Inference", leave=False):
-			import pdb 
-			pdb.set_trace()
 			predictions_new = self.forward(x).detach().cpu().numpy()
 			if len(predictions) == 0:
 				predictions = predictions_new

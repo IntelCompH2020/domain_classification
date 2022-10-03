@@ -113,11 +113,17 @@ class DataManager(object):
         self.__update_metadata()
 
     def enrich_dataset_with_embeddings(self,df_dataset):
+        
         df_dataset.drop(['embeddings'], axis=1, errors='ignore',inplace=True)
         df_corpus = pd.read_feather(f'{self.metadata["corpus"]}/corpus.feather')
+
         df_dataset = df_dataset.merge(df_corpus[['id','embeddings']], left_on = "id", 
                                                                       right_on = "id", 
                                                                       how = "left")
+        #remove empty embeddings       
+        df_dataset = df_dataset[df_dataset['embeddings'].isnull()==False]
+        df_dataset.reset_index(inplace = True)
+
         return df_dataset
 
     def is_model(self, class_name):
@@ -472,8 +478,6 @@ class DataManager(object):
             df_corpus.rename(columns=mapping, inplace=True)
 
         elif corpus_name in {'SemanticScholar', 'SemanticScholar_emb'}:
-            import pdb 
-            pdb.set_trace()
             path2metadata = self.path2corpus / 'metadata.yaml'
 
             if not path2metadata.is_file():
@@ -485,8 +489,6 @@ class DataManager(object):
                 metadata = yaml.safe_load(f)
             path2texts = pathlib.Path(metadata['corpus'])
 
-            import pdb 
-            pdb.set_trace()
             df = dd.read_parquet(path2texts)
             dfsmall = df.sample(frac=sampling_factor, random_state=0)
 
@@ -586,8 +588,6 @@ class DataManager(object):
         # ###############################################
         # Remove documents without description in english
         # Note that if save_feather is False, non-english removal mu
-        #import pdb 
-        #pdb.set_trace()
         if remove_non_en:
 
             l0 = len(df_corpus)
@@ -1018,6 +1018,8 @@ class DataManager(object):
 
         dataset_fname = f'dataset_{self.corpus_name}_{tag}.feather'
         path2dataset = self.path2datasets / dataset_fname
+
+
         df_dataset.to_feather(path2dataset)
         msg = (f"-- File with {len(df_dataset)} samples saved in "
                f"{path2dataset}")
