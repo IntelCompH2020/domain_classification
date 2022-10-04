@@ -122,8 +122,11 @@ class DataManager(object):
                                                                       how = "left")
         #remove empty embeddings       
         df_dataset = df_dataset[df_dataset['embeddings'].isnull()==False]
-        df_dataset.reset_index(inplace = True)
-
+        
+        try:
+            df_dataset.reset_index(inplace = True)
+        except:
+            pass
         return df_dataset
 
     def is_model(self, class_name):

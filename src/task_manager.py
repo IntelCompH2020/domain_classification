@@ -704,9 +704,19 @@ class TaskManager(baseTaskManager):
             path2model = self.path2models / self.class_name
             model_type = self.global_parameters['classifier']['model_type']
             model_name = self.global_parameters['classifier']['model_name']
-            self.dc = CorpusClassifier(
-                self.df_dataset, model_type=model_type, model_name=model_name,
-                path2transformers=path2model)
+
+            if self.DM.get_metadata()['corpus_has_embeddings']:
+
+                self.df_dataset = self.DM.enrich_dataset_with_embeddings(self.df_dataset)
+
+                self.dc = CorpusClassifierMLP(
+                    self.df_dataset, model_type=model_type, model_name=model_name,
+                    path2transformers=path2model)
+            else:
+
+                self.dc = CorpusClassifier(
+                    self.df_dataset, model_type=model_type, model_name=model_name,
+                    path2transformers=path2model)
             self.dc.load_model()
 
         else:
@@ -761,7 +771,7 @@ class TaskManager(baseTaskManager):
         # Configuration parameters
         freeze_encoder = self.global_parameters['classifier']['freeze_encoder']
         batch_size = self.global_parameters['classifier']['batch_size']
-        model_type = self.global_parameters['classifier']['model_name']
+        model_type = self.global_parameters['classifier']['model_type']
         model_name = self.global_parameters['classifier']['model_name']
 
         if self.dc is not None:
@@ -987,6 +997,9 @@ class TaskManager(baseTaskManager):
             p_ratio=self.global_parameters['active_learning']['p_ratio'],
             top_prob=self.global_parameters['active_learning']['top_prob'])
 
+        import pdb 
+        pdb.set_trace()  
+
         if selected_docs is None:
             return
 
@@ -1018,7 +1031,6 @@ class TaskManager(baseTaskManager):
         """
         Gets some labels from a user for a selected subset of documents
         """
-
         # This is for compatibility with the GUI
         if sampler is None:
             sampler = self.global_parameters['active_learning']['sampler']
@@ -1026,6 +1038,7 @@ class TaskManager(baseTaskManager):
         # Check if a classifier object exists
         if not self._is_model():
             return
+
 
         # STEP 1: Select bunch of documents at random
         selected_docs = self.dc.AL_sample(

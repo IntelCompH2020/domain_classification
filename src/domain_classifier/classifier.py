@@ -243,8 +243,7 @@ class CorpusClassifier(object):
 
             # Load default config from the transformer model
             use_cuda = torch.cuda.is_available()
-            model = ClassificationModel(
-                self.model_type, self.model_name, use_cuda=use_cuda)
+            model = ClassificationModel(self.model_type, self.model_name, use_cuda=use_cuda)
             self.config = copy.deepcopy(model.config)
 
             # Save config
@@ -318,6 +317,7 @@ class CorpusClassifier(object):
         batch_size : int, optiona (default=8)
             Batch size
         """
+
 
         logging.info("-- Training model...")
 
@@ -786,6 +786,12 @@ class CorpusClassifier(object):
 
     def AL_sample(self, n_samples=5, sampler='extremes', p_ratio=0.8,
                   top_prob=0.1):
+
+        #'level_0', 'index', 'id', 'text', 'base_scores', 'PUlabels', 'labels',
+        #'train_test'
+
+        #PU_score_0  PU_score_1  PU_prediction  PU_prob_pred  prediction  prob_pred
+
         """
         Returns a given number of samples for active learning (AL)
 
@@ -833,7 +839,7 @@ class CorpusClassifier(object):
         """
 
         # Check sampler
-        valid_samplers = ['random', 'extremes', 'full_rs']
+        valid_samplers = ['random', 'extremes', 'full_rs','least_confidence']
         if sampler not in valid_samplers:
             logging.error(
                 f'-- -- Sampler unknown: available options are '
@@ -878,6 +884,21 @@ class CorpusClassifier(object):
 
             # Assign sampling probabilities
             selected_docs['sampling_prob'] = p
+
+        elif sampler == 'least_confidence':
+            
+            self.eval_model()
+            df_train = self.df_dataset[self.df_dataset['train_test']==0]
+            df_test = self.df_dataset[self.df_dataset['train_test']==1]
+            train_ratio = len(df_train) /(len(df_train)+len(df_test))
+            sample_size_train = int(np.round(n_samples * train_ratio))    
+            sample_size_test = n_samples - sample_size_train
+            
+            sort_idx_train = np.argsort(np.abs(df_train['prob_pred'].to_numpy()-0.5))
+            sort_idx_test = np.argsort(np.abs(df_test['prob_pred'].to_numpy()-0.5))
+
+            selected_docs = pd.concat([df_train.iloc[sort_idx_train][:sample_size_train],
+                                        df_test.iloc[sort_idx_test][:sample_size_test]])
 
         elif sampler == 'extremes':
 
@@ -1157,11 +1178,11 @@ class CorpusClassifierMLP(CorpusClassifier):
                                    path2transformers=path2transformers,
                                    use_cuda = use_cuda)
  
-        self.model = MLP(768,1024,1)
+        self.model = None
 
     def __sample_train_data(self):
 
-        df_potential_train = self.df_dataset[self.df_dataset['train_test']==0]
+        df_potential_train = self.df_dataset[self.df_dataset['train_test']==0].copy()
         df_positive = df_potential_train[df_potential_train['labels']==1]
         df_negative = df_potential_train[df_potential_train['labels']==0]
         df_majority = df_positive if len(df_positive) >= len(df_negative) else df_negative
@@ -1170,7 +1191,7 @@ class CorpusClassifierMLP(CorpusClassifier):
         return pd.concat([df_majority,df_minority.sample(len(df_majority),replace=True)])
 
     def __sample_validation_data(self, weak_label = True):
-        df_potential_validation = self.df_dataset[self.df_dataset['train_test']==1]
+        df_potential_validation = self.df_dataset[self.df_dataset['train_test']==1].copy()
         if weak_label:
             return df_potential_validation
         else:
@@ -1181,6 +1202,10 @@ class CorpusClassifierMLP(CorpusClassifier):
     def train_model(self, epochs=3, validate=True, freeze_encoder=True,
                     tag="", batch_size=8):
 
+        #['id', 'text', 'base_scores', 'PUlabels', 'labels', 'train_test',
+        #'sample_weight', 'PU_score_0', 'PU_score_1', 'PU_prediction',
+        #'PU_prob_pred', 'prediction', 'prob_pred', 'sampler', 'sampling_prob']
+        self.load_model()
         
         df_train = self.__sample_train_data()
         df_validation = self.__sample_validation_data()
@@ -1199,7 +1224,13 @@ class CorpusClassifierMLP(CorpusClassifier):
         self.path2transformers.mkdir(exist_ok=True)
         torch.save(self.model.state_dict(), self.path2transformers / 'currentModel.pt')
 
-
+    def load_model(self):
+        self.path2transformers.mkdir(exist_ok=True)
+        self.model = MLP(768,1024,1)
+        try:
+            self.model.load_state_dict(torch.load(self.path2transformers / 'currentModel.pt'))
+        except:
+            pass
 
     def train_test_split(self, max_imbalance=None, nmax=None, train_size=0.6,
                         random_state=None):
@@ -1215,6 +1246,43 @@ class CorpusClassifierMLP(CorpusClassifier):
 
     def load_model_config(self):
         pass
+
+    def eval_model(self):
+        df_inference = self.df_dataset[(self.df_dataset.train_test == TRAIN) | 
+                                       (self.df_dataset.train_test == TEST)]
+        inference_data = CustomDatasetMLP(df_inference)
+        inference_iterator = data.DataLoader(inference_data,shuffle=False,batch_size=8)
+        predictions = []
+        for (x, y) in tqdm(inference_iterator, desc="Inference", leave=False):
+            predictions_new = self.model.forward(x).detach().cpu().numpy().reshape(-1)
+            if len(predictions) == 0:
+                predictions = predictions_new
+            else:
+                predictions = np.concatenate([predictions,predictions_new])
+  
+        self.df_dataset.loc[df_inference.index,'prob_pred'] = predictions
+
+
+
+    def AL_sample(self, n_samples=5, sampler='extremes', p_ratio=0.8,
+                  top_prob=0.1):
+
+        #add columns to be in sync with other classifier
+        #'id', 'text', 'base_scores', 'PUlabels', 'labels', 'train_test',
+       #'sample_weight', 'PU_score_0', 'PU_score_1', 'PU_prediction',
+       #'PU_prob_pred', 'prediction', 'prob_pred'],
+        
+        self.df_dataset['sample_weight'] = 1.0
+        for column_name in ['PU_score_0','PU_score_1','PU_prediction','PU_prob_pred','prediction','prob_pred']:
+            self.df_dataset[column_name] = 0 
+
+        
+        return super().AL_sample(n_samples=n_samples,sampler=sampler,p_ratio=p_ratio,top_prob=top_prob)
+
+
+
+
+
 
 
 

@@ -550,6 +550,8 @@ class CorpusDFProcessor(object):
             List of scores, one per documents in corpus
         """
 
+
+
         # Check if embeddings have been provided
         if method == 'count' or self.path2embeddings is None:
             scores = self.score_by_keyword_count(keywords, wt)

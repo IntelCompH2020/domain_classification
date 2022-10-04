@@ -179,7 +179,8 @@ sample_documents:
   title: Sample documents for annotation
   options:
     - parameters:
-        random: Random sampling over the test-train split, for retraining 
+        random: Random sampling over the test-train split, for retraining
+        least_confidence: Least confidence over the test-train split, for retraining
         extremes: Sampling biased towards confident predictions, for retraining
         full_rs: Fully random sampling over the whole dataset, for testing
 
