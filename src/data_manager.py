@@ -2,7 +2,7 @@
 Defines a data manager class to provide basic read-write functionality for
 the project.
 
-@author: J. Cid-Sueiro, A. Gallardo-Antolin
+@author: J. Cid-Sueiro, A. Gallardo-Antolin, T. Ahlers
 """
 
 import pathlib
@@ -90,43 +90,64 @@ class DataManager(object):
         # Default name of the corpus. It can be changed by the load_corpus or
         # the load_dataset methods
         self.corpus_name = ""
-        self.metadata = None 
+
+        # Dictionary of metadata
+        self.metadata = None
 
         return
 
     def get_metadata(self):
+
         return self.metadata
+
     def __load_metadata(self):
+
         path2metadata = self.path2corpus / 'metadata.yaml'
+
         if not path2metadata.is_file():
             logging.error(
                 f"-- A metadata file in {path2metadata} is missed. It is "
                 "required for this corpus. Corpus not loaded")
+
         with open(path2metadata, 'r', encoding='utf8') as f:
             self.metadata = yaml.safe_load(f)
+
+        return
+
     def __update_metadata(self):
+
         path2metadata = self.path2corpus / 'metadata.yaml'
         with open(path2metadata, 'w') as f:
             data = yaml.dump(self.metadata, f)
-    def __determineCorpusHasEmbeddings(self,columns):
-        self.metadata["corpus_has_embeddings"] = bool((np.array(columns) == 'embeddings').sum() > 0)
+
+        return
+
+    def __determineCorpusHasEmbeddings(self, columns):
+
+        self.metadata["corpus_has_embeddings"] = bool(
+            (np.array(columns) == 'embeddings').sum() > 0)
         self.__update_metadata()
 
-    def enrich_dataset_with_embeddings(self,df_dataset):
-        
-        df_dataset.drop(['embeddings'], axis=1, errors='ignore',inplace=True)
-        df_corpus = pd.read_feather(f'{self.metadata["corpus"]}/corpus.feather')
+        return
 
-        df_dataset = df_dataset.merge(df_corpus[['id','embeddings']], left_on = "id", 
-                                                                      right_on = "id", 
-                                                                      how = "left")
-        #remove empty embeddings       
+    def enrich_dataset_with_embeddings(self, df_dataset):
+
+        df_dataset.drop(['embeddings'], axis=1, errors='ignore', inplace=True)
+        df_corpus = pd.read_feather(
+            f'{self.metadata["corpus"]}/corpus.feather')
+
+        df_dataset = df_dataset.merge(
+            df_corpus[['id', 'embeddings']],
+            left_on="id", right_on="id", how="left")
+
+        # remove empty embeddings
         df_dataset = df_dataset[df_dataset['embeddings'].isnull()==False]
-        
+
         try:
-            df_dataset.reset_index(inplace = True)
+            df_dataset.reset_index(inplace=True)
         except:
             pass
+
         return df_dataset
 
     def is_model(self, class_name):
@@ -254,7 +275,6 @@ class DataManager(object):
             Fraction of documents to be taken from the original corpus.
             (Used for SemanticScholar and patstat only)
         """
-
 
         # Loading corpus
         logging.info(f'-- Loading corpus {corpus_name}')
@@ -1017,11 +1037,10 @@ class DataManager(object):
 
         # ########################
         # Saving id and class only
-        df_dataset.drop(['embeddings'], axis=1, errors='ignore',inplace=True)
+        df_dataset.drop(['embeddings'], axis=1, errors='ignore', inplace=True)
 
         dataset_fname = f'dataset_{self.corpus_name}_{tag}.feather'
         path2dataset = self.path2datasets / dataset_fname
-
 
         df_dataset.to_feather(path2dataset)
         msg = (f"-- File with {len(df_dataset)} samples saved in "

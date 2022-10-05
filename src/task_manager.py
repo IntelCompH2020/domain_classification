@@ -19,16 +19,12 @@ from .domain_classifier.classifier import CorpusClassifierMLP
 from .domain_classifier.inference import Inference
 from .utils import plotter
 
-import numpy as np
-import matplotlib.pyplot as plt
-
 # A message that is used twice in different parts of the code. It is defined
 # here because the same message must be used in both cases.
 NO_GOLD_STANDARD = 'Do not use a Gold Standard.'
 
 # Name of the column of annotations in the datasets of manual labels
 ANNOTATIONS = 'annotations'
-
 
 
 class TaskManager(baseTaskManager):
@@ -192,14 +188,29 @@ class TaskManager(baseTaskManager):
 
         return dataset_list
 
+    def _get_inference(self):
+        """
+        Returns inference manager options
+        """
 
-    def _get_inference(self): 
-        if self.inferenceManager == None:
+        if self.inferenceManager is None:
             self.inferenceManager = Inference(self)
+
         return self.inferenceManager.getOptions()
 
     def inference(self, option):
+        """
+        Infers data
+
+        Parameters
+        ----------
+        option:
+            Unused
+        """
+
         self.inferenceManager.inferData()
+
+        return
 
     def _get_annotation_list(self):
         """
@@ -220,7 +231,6 @@ class TaskManager(baseTaskManager):
             annotations_list = self.DM.get_annotation_list()
 
         return annotations_list
-
 
     def _get_gold_standard_labels(self):
         """
@@ -707,16 +717,18 @@ class TaskManager(baseTaskManager):
 
             if self.DM.get_metadata()['corpus_has_embeddings']:
 
-                self.df_dataset = self.DM.enrich_dataset_with_embeddings(self.df_dataset)
+                self.df_dataset = self.DM.enrich_dataset_with_embeddings(
+                    self.df_dataset)
 
                 self.dc = CorpusClassifierMLP(
-                    self.df_dataset, model_type=model_type, model_name=model_name,
-                    path2transformers=path2model)
+                    self.df_dataset, model_type=model_type,
+                    model_name=model_name, path2transformers=path2model)
             else:
 
                 self.dc = CorpusClassifier(
-                    self.df_dataset, model_type=model_type, model_name=model_name,
-                    path2transformers=path2model)
+                    self.df_dataset, model_type=model_type,
+                    model_name=model_name, path2transformers=path2model)
+
             self.dc.load_model()
 
         else:
@@ -790,7 +802,8 @@ class TaskManager(baseTaskManager):
 
         if self.DM.get_metadata()['corpus_has_embeddings']:
 
-            self.df_dataset = self.DM.enrich_dataset_with_embeddings(self.df_dataset)
+            self.df_dataset = self.DM.enrich_dataset_with_embeddings(
+                self.df_dataset)
 
             self.dc = CorpusClassifierMLP(
                 self.df_dataset, model_type=model_type, model_name=model_name,
@@ -997,9 +1010,6 @@ class TaskManager(baseTaskManager):
             p_ratio=self.global_parameters['active_learning']['p_ratio'],
             top_prob=self.global_parameters['active_learning']['top_prob'])
 
-        import pdb 
-        pdb.set_trace()  
-
         if selected_docs is None:
             return
 
@@ -1038,7 +1048,6 @@ class TaskManager(baseTaskManager):
         # Check if a classifier object exists
         if not self._is_model():
             return
-
 
         # STEP 1: Select bunch of documents at random
         selected_docs = self.dc.AL_sample(
@@ -1221,6 +1230,11 @@ class TaskManager(baseTaskManager):
         Imports / exports annotations from / to a file in the dataset folder.
 
         This will be useful to share annotations from different projects.
+
+        Parameters
+        ----------
+        domain_name : str
+            Name of the domain
         """
 
         # Check if a classifier object exists
@@ -1583,15 +1597,17 @@ class TaskManagerCMD(TaskManager):
         """
         Train a domain classifier
         """
+
         max_imbalance = 1.0
-        nmax = np.inf 
+        nmax = np.inf
         epochs = 0
+
         if not self.DM.get_metadata()['corpus_has_embeddings']:
 
             # Get weight parameter (weight of title word wrt description words)
             max_imbalance = self.QM.ask_value(
-                query=("Introduce the maximum ratio negative vs positive samples "
-                       "in the training set"),
+                query=("Introduce the maximum ratio negative vs positive "
+                       "samples in the training set"),
                 convert_to=float,
                 default=self.global_parameters['classifier']['max_imbalance'])
 
