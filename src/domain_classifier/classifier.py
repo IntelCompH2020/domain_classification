@@ -114,10 +114,10 @@ class CorpusClassifier(object):
             logging.info(f"-- -- Model will be trained with CPU")
 
         if 'labels' not in self.df_dataset:
-            logging.error(" ")
-            logging.error(f"-- -- Column 'labels' does not exist in the input "
-                          "dataframe")
-            logging.error(" ")
+            logging.warning(" ")
+            logging.warning(f"-- -- Column 'labels' does not exist in the "
+                            "input dataframe")
+            logging.warning(" ")
 
         return
 

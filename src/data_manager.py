@@ -96,6 +96,27 @@ class DataManager(object):
 
         return
 
+    def _get_path2feather(self, sampling_factor):
+        """
+        Returns the path to the feather file associated to the subcorpubs based
+        on the given sampling factor
+
+        Parameters
+        ----------
+        sampling_factor : int
+            Sampling factor
+        """
+
+        if sampling_factor == 1:
+            path2feather = self.path2corpus / 'corpus' / 'corpus.feather'
+        else:
+            # Generate label (docs per million)
+            dpm = str(int(sampling_factor * 1e6))
+            path2feather = (self.path2corpus / 'corpus'
+                            / f'corpus_{dpm}.feather')
+
+        return path2feather
+
     def get_metadata(self):
 
         return self.metadata
@@ -118,7 +139,7 @@ class DataManager(object):
 
         path2metadata = self.path2corpus / 'metadata.yaml'
         with open(path2metadata, 'w') as f:
-            data = yaml.dump(self.metadata, f)
+            yaml.dump(self.metadata, f)
 
         return
 
@@ -129,26 +150,6 @@ class DataManager(object):
         self.__update_metadata()
 
         return
-
-    def enrich_dataset_with_embeddings(self, df_dataset):
-
-        df_dataset.drop(['embeddings'], axis=1, errors='ignore', inplace=True)
-        df_corpus = pd.read_feather(
-            f'{self.metadata["corpus"]}/corpus.feather')
-
-        df_dataset = df_dataset.merge(
-            df_corpus[['id', 'embeddings']],
-            left_on="id", right_on="id", how="left")
-
-        # remove empty embeddings
-        df_dataset = df_dataset[df_dataset['embeddings'].isnull()==False]
-
-        try:
-            df_dataset.reset_index(inplace=True)
-        except:
-            pass
-
-        return df_dataset
 
     def is_model(self, class_name):
         """
@@ -280,17 +281,10 @@ class DataManager(object):
         logging.info(f'-- Loading corpus {corpus_name}')
         t0 = time()
 
+        self.corpus_name = corpus_name
         self.path2corpus = self.path2source / corpus_name
         self.__load_metadata()
-
-        if sampling_factor == 1:
-            path2feather = self.path2corpus / 'corpus' / 'corpus.feather'
-        else:
-            # Generate label (docs per million)
-            dpm = str(int(sampling_factor * 1e6))
-            path2feather = (self.path2corpus / 'corpus'
-                            / f'corpus_{dpm}.feather')
-        self.corpus_name = corpus_name
+        path2feather = self._get_path2feather(sampling_factor)
 
         # #################################################
         # Load corpus data from feather file (if it exists)

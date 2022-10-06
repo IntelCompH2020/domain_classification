@@ -717,8 +717,9 @@ class TaskManager(baseTaskManager):
 
             if self.DM.get_metadata()['corpus_has_embeddings']:
 
-                self.df_dataset = self.DM.enrich_dataset_with_embeddings(
-                    self.df_dataset)
+                self.df_dataset = (
+                    self.CorpusProc.enrich_dataset_with_embeddings(
+                        self.df_dataset, self.df_corpus))
 
                 self.dc = CorpusClassifierMLP(
                     self.df_dataset, model_type=model_type,
@@ -802,8 +803,8 @@ class TaskManager(baseTaskManager):
 
         if self.DM.get_metadata()['corpus_has_embeddings']:
 
-            self.df_dataset = self.DM.enrich_dataset_with_embeddings(
-                self.df_dataset)
+            self.df_dataset = self.CorpusProc.enrich_dataset_with_embeddings(
+                self.df_dataset, self.df_corpus)
 
             self.dc = CorpusClassifierMLP(
                 self.df_dataset, model_type=model_type, model_name=model_name,

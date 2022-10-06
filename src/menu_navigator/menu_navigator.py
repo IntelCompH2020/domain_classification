@@ -217,7 +217,6 @@ class MenuNavigator(object):
         return options
 
     def navigate(self, option=None, active_options=None, iterate=True):
-
         """
         Manages the menu navigation loop
 
@@ -356,36 +355,14 @@ class MenuNavigator(object):
 
                 # Call the method specified in option1
                 if param != 'zero':
-                    if 1 == 2:
-                        # Call method with the selected parameter
-                        getattr(self.tm, option)(*all_params)
+                    # Call method with the selected parameter
+                    getattr(self.tm, option)(*all_params)
 
-                        # Update list of active menu options
-                        if 'post_opts' in menu[option]:
-                            active_options = menu[option]['post_opts']
-                        else:
-                            active_options = copy.copy(default_opt)
+                    # Update list of active menu options
+                    if 'post_opts' in menu[option]:
+                        active_options = menu[option]['post_opts']
                     else:
-                        # Call method with the selected parameter
-                        while True:
-                            parameters = getattr(self.tm, option)(*all_params)
-                            try:
-                                if len(parameters) == 0:
-                                    break
-                            except:
-                                break
-                            param_opts = {p: p for p in parameters}
-                            param = self.query_options(
-                                param_opts, zero_option='up')
-                            if param == 'zero':
-                                break
-                            all_params = [param]
-
-                        # Update list of active menu options
-                        if 'post_opts' in menu[option]:
-                            active_options = menu[option]['post_opts']
-                        else:
-                            active_options = copy.copy(default_opt)
+                        active_options = copy.copy(default_opt)
 
                 else:
                     # Activate flag to exit the application

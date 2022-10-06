@@ -550,8 +550,6 @@ class CorpusDFProcessor(object):
             List of scores, one per documents in corpus
         """
 
-
-
         # Check if embeddings have been provided
         if method == 'count' or self.path2embeddings is None:
             scores = self.score_by_keyword_count(keywords, wt)
@@ -845,3 +843,22 @@ class CorpusDFProcessor(object):
                 f"-- -- FPR (Fall-out) = {eval_scores['fpr_nmax']:.4f}")
 
         return eval_scores
+
+    def enrich_dataset_with_embeddings(self, df_dataset, df_corpus):
+
+        if 'embeddings' in df_dataset:
+            df_dataset.drop(['embeddings'], axis=1, inplace=True)
+
+        df_dataset = df_dataset.merge(
+            df_corpus[['id', 'embeddings']],
+            left_on="id", right_on="id", how="left")
+
+        # remove empty embeddings
+        df_dataset = df_dataset[df_dataset['embeddings'].isnull() == False]
+
+        try:
+            df_dataset.reset_index(inplace=True)
+        except:
+            pass
+
+        return df_dataset
