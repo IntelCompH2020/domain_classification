@@ -1525,62 +1525,6 @@ class TaskManagerCMD(TaskManager):
 
         return msg
 
-    def get_labels_from_docs(self):
-        """
-        Requests feedback about the class of given documents.
-
-        Returns
-        -------
-        labels : list of boolean
-            Labels for the given documents, in the same order than the
-            documents in the input dataframe
-        """
-
-        # Load sampled documents
-        selected_docs = self.DM.load_selected_docs(tag=self.class_name)
-
-        labels = []
-        width = 80
-
-        print(width * "=")
-        print("-- SAMPLED DOCUMENTS FOR LABELING:")
-
-        print(width * "=")
-        k = 1    # A classic counter
-        for i, doc in selected_docs.iterrows():
-            print(f"Document {k} out of {len(selected_docs)}")
-            k += 1
-            print(f"ID: {doc.id}")
-            if self.metadata['corpus_name'] == 'EU_projects':
-                # Locate document in corpus
-                doc_corpus = self.df_corpus[self.df_corpus['id'] == doc.id]
-                # Get and print title
-                title = doc_corpus.iloc[0].title
-                print(f"TITLE: {title}")
-                # Get and print description
-                descr = doc_corpus.iloc[0].description
-                print(f"DESCRIPTION: {descr}")
-            else:
-                # Get and print text
-                text = doc.text
-                print(f"TEXT: {text}")
-            # Get and print prediction
-            if 'prediction' in doc:
-                print(f"PREDICTED CLASS: {doc.prediction}")
-            if 'prob_pred' in doc:
-                print(f"SCORE: {doc.prob_pred}")
-
-            labels.append(self.QM.ask_label())
-            print(width * "=")
-
-        # Label confirmation: this is to confirm that the labeler did not make
-        # (consciously) a mistake.
-        if not self.QM.confirm():
-            logging.info("-- Canceling: new labels removed.")
-            labels = []
-
-        return labels
-
     def export_annotations(self):
 
         if self.dc is None:
