@@ -1122,12 +1122,14 @@ class TaskManager(baseTaskManager):
 
         # Label confirmation: this is to confirm that the labeler did not make
         # (consciously) a mistake.
+        breakpoint()
         if not QM.confirm():
             logging.info("-- Canceling: new labels removed.")
             labels = []
 
         self.DM.save_new_labels(selected_docs.index, labels,
                                 tag=self.class_name)
+        logging.info("-- New labels saved.")
 
         return labels
 
@@ -1137,6 +1139,7 @@ class TaskManager(baseTaskManager):
         """
 
         # Load sampled documents
+        breakpoint()
         selected_docs = self.DM.load_selected_docs(tag=self.class_name)
         df_labels = self.DM.load_new_labels(tag=self.class_name)
 
