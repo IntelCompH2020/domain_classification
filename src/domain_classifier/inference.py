@@ -25,136 +25,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-class CustomDataset(Dataset):
-	def __init__(self,df_data):
-		self.data = df_data[['embeddings','labels']].to_numpy().copy()
-		#print(f'self.data:{self.data}')
-	def __getitem__(self,idx):
-		item = torch.Tensor(self.data[idx,0].copy()).to('cuda'), torch.Tensor([self.data[idx,1]]).to('cuda')
-		return item
-	def __len__(self):
-		return len(self.data)
-    
-class MLP(nn.Module):
-	def __init__(self, input_dim, hidden_dim, output_dim):
-	    super().__init__()
-	    self.linear1 = nn.Linear(input_dim, hidden_dim)
-	    self.linear2 = nn.Linear(hidden_dim, output_dim)
-	    self.criterion = nn.BCELoss()
-	    self.optimizer = optim.Adam(self.parameters(),lr=0.001)
-	    self.sigmoid = nn.Sigmoid()
-	    self.relu = nn.ReLU()
-	    self.to('cuda')
-	def forward(self, x):
-	    x = self.relu(self.linear1(x))
-	    x = self.sigmoid(self.linear2(x))
-	    return x
-	def save(self):
-		pass
-	def calculate_f1_score(self,y_preds,y_labels):
-	    epsilon = 1e-7
-	    y_preds = y_preds.view(-1)
-	    y_labels = y_labels.view(-1)
-
-	    tp_c = (y_preds * (y_labels == 1)).sum()
-	    fp_c = (y_preds * (y_labels == 0)).sum()
-	    tn_c = ((1-y_preds) * (y_labels == 1)).sum()
-	    fn_c = ((1-y_preds) * (y_labels == 0)).sum()
-	    
-	    print(f'tp_c/fp_c/tn_c/tp_c:{tp_c}/{fp_c}/{tn_c}/{fn_c}')
-
-	    precision = tp_c/(tp_c+fp_c+epsilon)
-	    recall = tp_c/(tp_c+fn_c+epsilon)
-	    return 2 * precision*recall/(precision+recall)
-
-	def predict_proba(self,df_eval):
-		eval_data = CustomDataset(df_eval)
-		eval_iterator = data.DataLoader(eval_data,shuffle=False,batch_size=8)
-		predictions = []
-		for (x, y) in tqdm(eval_iterator, desc="Inference", leave=False):
-			import pdb 
-			pdb.set_trace()
-			predictions_new = self.forward(x).detach().cpu().numpy()
-			if len(predictions) == 0:
-				predictions = predictions_new
-			else:
-				predictions = np.concatenate([predictions,predictions_new])
-		        
-		return predictions.reshape(-1)
-	        
-	        
-	def train_loop(self,train_iterator,eval_iterator, epochs=-1, device='cuda'):
-		train_loss = 0
-		eval_loss = 0
-		eval_losses = []
-		train_losses = []
-		early_stopping = epochs == -1
-		y_labels,y_preds,f1_scores = [],[],[]
-		while True:
-			self.train()
-		    
-			for (x, y) in tqdm(train_iterator, desc="Training", leave=False):
-				#∫print(f'loopX/Y:{x}/{y}')
-				self.optimizer.zero_grad()
-				y_pred = self.forward(x)
-				loss = self.criterion(y_pred, y)
-				loss.backward()
-				self.optimizer.step()
-				train_loss += loss.item()
-			    
-			self.eval()
-			with torch.no_grad():
-				for (x, y) in tqdm(eval_iterator, desc="Eval", leave=False):
-					y_pred = self.forward(x)
-					loss = self.criterion(y_pred, y)
-					eval_loss += loss.item()
-					if len(y_preds) == 0:
-						y_preds = y_pred
-						y_labels = y
-					else:
-						y_preds = torch.concat([y_preds,y_pred])
-						y_labels = torch.concat([y_labels,y])
-			        
-			f1_scores.append(self.calculate_f1_score(y_preds,y_labels).detach().cpu().numpy())
-			y_labels,y_preds = [],[]
-
-			train_losses.append(train_loss/len(train_iterator)) 
-			eval_losses.append(eval_loss/len(eval_iterator))
-
-			print(f'Train/eval loss/eval_f1_score:{train_losses[-1]}/{eval_losses[-1]}/{f1_scores[-1]}')
-
-			if len(train_losses) == epochs:
-			    break
-
-			if early_stopping:
-				metrics = -np.array(f1_scores) #eval_scores
-				#metrics = np.array(eval_losses)
-				metrics[-3:] *= 0.99 #to forece a minimum improvement
-				if np.argmin(metrics) + 1 == len(metrics):
-					best_model = self
-				    
-				if np.argmin(metrics) + 3 <= len(metrics):
-					self = best_model
-					break   
-		return [train_losses[-1],eval_losses[-1],f1_scores[-1]]
-
-class Inference(object):
-	def __init__(self,tm):
-		self.tm = tm
-	def getOptions(self):
-		return ['Inference MLP']
-	def inferData(self):
-		metadata = self.tm.DM.get_metadata()
-		modelFolder = self.tm.path2models/self.tm.class_name
-		modelName = os.listdir(modelFolder)[0]
-		classifier = MLP(768,1024,1)
-		classifier.load_state_dict(torch.load(modelFolder/modelName))
-		classifier.eval()
-		dPaths = {  'd_documentEmbeddings': metadata['corpus'],
-            		'p_prediction': self.tm.path2output / self.tm.class_name }
-		dh = DataHandler(dPaths, classifier = classifier)
-		dh.run('p_d','p',PandasModifier)
-
+from .custom_model_mlp import MLP
+from .custom_model_mlp import CustomDatasetMLP
 
 class PandasModifier(): 
 	def __init__(self,dh,kwargs):
@@ -165,7 +37,7 @@ class PandasModifier():
 	def change(self,df):
 		df_eval = df[['embeddings']].copy()
 		df_eval.insert(0,'labels',0)
-		eval_data = CustomDataset(df_eval)
+		eval_data = CustomDatasetMLP(df_eval)
 		eval_iterator = data.DataLoader(eval_data,shuffle=False,batch_size=8)
 		predictions = []
 		for (x, y) in tqdm(eval_iterator, desc="Inference", leave=False):
@@ -315,7 +187,3 @@ class DataHandler():
 	    if len(keyParts) != 2:
 	        raise Exception('format of key has to be x_x')
 	    return keyParts
-
-
-
-

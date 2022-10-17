@@ -16,7 +16,6 @@ from .query_manager import QueryManager
 from .domain_classifier.preprocessor import CorpusDFProcessor
 from .domain_classifier.classifier import CorpusClassifier
 from .domain_classifier.classifier import CorpusClassifierMLP
-from .domain_classifier.inference import Inference
 from .utils import plotter
 
 # A message that is used twice in different parts of the code. It is defined
@@ -137,8 +136,6 @@ class TaskManager(baseTaskManager):
         self.DM = DataManager(self.path2source, self.path2datasets,
                               self.path2models, self.path2embeddings)
 
-        self.inferenceManager = None
-
         return
 
     def _is_model(self, verbose=True):
@@ -193,12 +190,9 @@ class TaskManager(baseTaskManager):
         Returns inference manager options
         """
 
-        if self.inferenceManager is None:
-            self.inferenceManager = Inference(self)
+        return ['Inference MLP']
 
-        return self.inferenceManager.getOptions()
-
-    def inference(self, option):
+    def inference(self):
         """
         Infers data
 
@@ -207,8 +201,10 @@ class TaskManager(baseTaskManager):
         option:
             Unused
         """
-
-        self.inferenceManager.inferData()
+        metadata = self.DM.get_metadata()
+        dPaths = {  'd_documentEmbeddings': metadata['corpus'],
+                   'p_prediction': self.path2output / self.class_name }
+        self.dc.inferData(dPaths)
 
         return
 
