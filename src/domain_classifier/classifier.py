@@ -1260,6 +1260,23 @@ class CorpusClassifierMLP(CorpusClassifier):
 
     def retrain_model(self, freeze_encoder=True, batch_size=8, epochs=3,
                       annotation_gain=10):
+"""
+        Re-train the classifier model using annotations
+
+        Parameters
+        ----------
+        epochs : int, optional (default=3)
+            Number of training epochs
+        freeze_encoder : bool, optional (default=True)
+            If True, the embedding layer is frozen, so that only the
+            classification layers is updated. This is useful to use
+            precomputed embedings for large datasets.
+        batch_size : int, optional (default=8)
+            Batch size
+        annotation_gain : int or float, optional (default=10)
+            Relative value of an annotated sample with respect to a non-
+            annotated one.
+        """
 
         self.load_model()
 
@@ -1354,12 +1371,25 @@ class CorpusClassifierMLP(CorpusClassifier):
 
     def AL_sample(self, n_samples=5, sampler='extremes', p_ratio=0.8,
                   top_prob=0.1):
-        """
-        #add columns to be in sync with other classifier
-        #'id', 'text', 'base_scores', 'PUlabels', 'labels', 'train_test',
-        #'sample_weight', 'PU_score_0', 'PU_score_1', 'PU_prediction',
-        #'PU_prob_pred', 'prediction', 'prob_pred'],
-        """
+"""
+        Returns a given number of samples for active learning (AL)
+
+        Parameters
+        ----------
+        n_samples : int, optional (default=5)
+            Number of samples to return
+        sampler : str, optional (default="random")
+            Sample selection algorithm.
+
+            - If "random", samples are taken at random from all docs with
+              predictions
+            - If "extremes", samples are taken stochastically, but with
+              documents with the highest or smallest probability scores are
+              selected with higher probability.
+            - If "full_rs", samples are taken at random from the whole dataset
+              for testing purposes. Half samples are taken at random from the
+              train-test split, while the rest is taken from the other
+              documents
 
         self.df_dataset['sample_weight'] = 1.0
         for column_name in ['PU_score_0', 'PU_score_1', 'PU_prediction',
