@@ -1521,8 +1521,6 @@ class CorpusClassifierMLP(CorpusClassifier):
 		----------
 		
 		"""
-		import pdb 
-		pdb.set_trace()
 		self.model.eval()
 		dh = DataHandler(dPaths, classifier = self.model)
 		dh.run('p_d','p',PandasModifier)
