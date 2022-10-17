@@ -107,7 +107,7 @@ class TaskManager(baseTaskManager):
         self.path2embeddings = self.path2project / self.f_struct['embeddings']
         self.path2output = self.path2project / self.f_struct['output']
 
-        # Path to the folder containing the zero-shot model
+        # Path to the folder contaxining the zero-shot model
         self.path2zeroshot = path2zeroshot
 
         # Corpus dataframe
@@ -1066,6 +1066,8 @@ class TaskManager(baseTaskManager):
         return
 
     def get_labels_from_docs(self):
+
+
         """
         Requests feedback about the class of given documents.
 
@@ -1082,6 +1084,7 @@ class TaskManager(baseTaskManager):
 
         # Load sampled documents
         selected_docs = self.DM.load_selected_docs(tag=self.class_name)
+
 
         # Temporal query manager object
         QM = QueryManager()
@@ -1119,12 +1122,12 @@ class TaskManager(baseTaskManager):
 
             labels.append(QM.ask_label())
             print(width * "=")
-
         # Label confirmation: this is to confirm that the labeler did not make
         # (consciously) a mistake.
         if not QM.confirm():
             logging.info("-- Canceling: new labels removed.")
             labels = []
+
 
         self.DM.save_new_labels(selected_docs.index, labels,
                                 tag=self.class_name)
@@ -1176,10 +1179,17 @@ class TaskManager(baseTaskManager):
         """
         Improves classifier performance using the labels provided by users
         """
-
         # Check if a classifier object exists
         if not self._is_model():
             return
+
+        #import pdb 
+        #pdb.set_trace()
+
+        #if self.DM.get_metadata()['corpus_has_embeddings']:
+        #    self.df_dataset = (self.CorpusProc.enrich_dataset_with_embeddings(
+        #                self.df_dataset, self.df_corpus))
+
 
         # Configuration parameters
         batch_size = self.global_parameters['classifier']['batch_size']
@@ -1187,6 +1197,7 @@ class TaskManager(baseTaskManager):
         # Retrain model using the new labels
         self.dc.retrain_model(freeze_encoder=True, batch_size=batch_size,
                               epochs=epochs)
+
 
         # Update status.
         # Since training takes much time, we store the classification results

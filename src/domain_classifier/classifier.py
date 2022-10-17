@@ -1178,10 +1178,15 @@ class CorpusClassifierMLP(CorpusClassifier):
 
         self.model = None
 
-    def __sample_train_data(self):
+    def __sample_train_data(self,retrain=False):
 
-        df_potential_train = self.df_dataset[
-            self.df_dataset['train_test'] == 0].copy()
+        if not retrain:
+            df_potential_train = self.df_dataset[
+                self.df_dataset['train_test'] == 0].copy()
+        else:
+            df_potential_train = self.df_dataset[
+                (self.df_dataset['train_test'] == 0) & 
+                (self.df_dataset['annotations'] != UNUSED)].copy()
         df_positive = df_potential_train[df_potential_train['labels'] == 1]
         df_negative = df_potential_train[df_potential_train['labels'] == 0]
         df_majority = (df_positive if len(df_positive) >= len(df_negative)
@@ -1189,18 +1194,37 @@ class CorpusClassifierMLP(CorpusClassifier):
         df_minority = (df_positive if len(df_positive) < len(df_negative)
                        else df_negative)
 
+        if len(df_minority) == 0:
+            return[]
+
         return pd.concat([df_majority, df_minority.sample(len(df_majority),
                                                           replace=True)])
 
-    def __sample_validation_data(self, weak_label=True):
+    def __sample_validation_data(self,retrain=False):
 
-        df_potential_validation = self.df_dataset[
-            self.df_dataset['train_test'] == 1].copy()
-        if weak_label:
+        if not retrain:
+            return self.df_dataset[self.df_dataset['train_test'] == 1].copy()
+        df_potential_validation = self.df_dataset[(self.df_dataset['train_test'] == 1) & 
+                                                  (self.df_dataset['annotations'] != UNUSED)].copy()
+
+        if len(df_potential_validation['labels'].unique()) < 2: 
             return df_potential_validation
+
+        weak_label_threshold = df_potential_validation.groupby(['labels']).mean()['base_scores'].mean()
+        positive_ratio = len(self.df_dataset[self.df_dataset['base_scores']>weak_label_threshold]) / len(self.df_dataset)
+        df_positive = df_potential_validation[df_potential_validation['labels'] == 1]
+        df_negative = df_potential_validation[df_potential_validation['labels'] == 0]
+        bKeepPositive = (len(df_positive)/len(df_potential_validation)) > positive_ratio
+        df_keep = df_positive if bKeepPositive else df_negative
+        df_sample = df_negative if bKeepPositive else df_positive
+
+        if bKeepPositive:
+            sample_count = int(np.round((len(df_positive)/len(df_negative))/positive_ratio))
         else:
-            # has to be adjusted
-            return df_potential_validation
+            sample_count = int(np.round((len(df_negative)/len(df_positive))*positive_ratio))
+           
+        return pd.concat([df_keep, df_sample.sample(sample_count,replace=True)])
+
 
     def train_model(self, epochs=3, validate=True, freeze_encoder=True,
                     tag="", batch_size=8):
@@ -1213,6 +1237,10 @@ class CorpusClassifierMLP(CorpusClassifier):
         self.load_model()
 
         df_train = self.__sample_train_data()
+        if len(df_train) == 0:
+            logging.info(
+                    f"-- -- Samples from both classes are required for retraining the model")
+            return
         df_validation = self.__sample_validation_data()
 
         train_data = CustomDatasetMLP(df_train)
@@ -1230,6 +1258,55 @@ class CorpusClassifierMLP(CorpusClassifier):
         torch.save(self.model.state_dict(),
                    self.path2transformers / 'currentModel.pt')
 
+    def retrain_model(self, freeze_encoder=True, batch_size=8, epochs=3,
+                      annotation_gain=10):
+
+        self.load_model()
+
+
+
+        is_train = (self.df_dataset.train_test == TRAIN)
+        is_tr_unused = is_train & (self.df_dataset.learned == UNUSED)
+        is_tr_used = is_train & (self.df_dataset.learned == 1)
+        is_tr_new = is_train & (self.df_dataset.learned == 0)
+
+        self.df_dataset.loc[is_tr_unused, "sample_weight"] = 1
+        self.df_dataset.loc[is_tr_used, "sample_weight"] = annotation_gain
+        self.df_dataset.loc[is_tr_new, "sample_weight"] = annotation_gain
+
+        self.df_dataset.loc[is_train, "labels"] = self.df_dataset.loc[
+            is_train, "PUlabels"]
+        self.df_dataset.loc[is_tr_used, "labels"] = self.df_dataset.loc[
+            is_tr_used, "annotations"]
+        self.df_dataset.loc[is_tr_new, "labels"] = self.df_dataset.loc[
+            is_tr_new, "annotations"]
+
+        import pdb
+        pdb.set_trace()
+
+        df_train = self.__sample_train_data(retrain=True)
+        if len(df_train) == 0:
+            logging.info(
+                    f"-- -- Samples from both classes are required for retraining the model")
+            return
+        df_validation = self.__sample_validation_data(retrain=True)
+
+        train_data = CustomDatasetMLP(df_train)
+        train_iterator = data.DataLoader(train_data,
+                                         shuffle=True,
+                                         batch_size=8)
+        validation_data = CustomDatasetMLP(df_validation)
+        validation_iterator = data.DataLoader(validation_data,
+                                              shuffle=False,
+                                              batch_size=8)
+
+        self.model.train_loop(train_iterator, validation_iterator)
+
+        self.path2transformers.mkdir(exist_ok=True)
+        torch.save(self.model.state_dict(),
+                   self.path2transformers / 'currentModel.pt')
+
+
     def load_model(self):
         self.path2transformers.mkdir(exist_ok=True)
         self.model = MLP(768, 1024, 1)
@@ -1240,7 +1317,7 @@ class CorpusClassifierMLP(CorpusClassifier):
         except:
             pass
 
-    def train_test_split(self, max_imbalance=None, nmax=None, train_size=0.6,
+    def train_test_split(self, max_imbalance=None, nmax=None, train_size=0.5,
                          random_state=None):
 
         df_train, df_test = model_selection.train_test_split(

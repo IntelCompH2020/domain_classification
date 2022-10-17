@@ -1031,6 +1031,8 @@ class DataManager(object):
 
         # ########################
         # Saving id and class only
+        #deep copy to prevent that embeddings are deleted in object
+        df_dataset = df_dataset.copy(deep=True)
         df_dataset.drop(['embeddings'], axis=1, errors='ignore', inplace=True)
 
         dataset_fname = f'dataset_{self.corpus_name}_{tag}.feather'
