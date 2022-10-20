@@ -2,7 +2,7 @@
 Defines classes that define methods to run the main tasks in the project,
 using the core processing classes and methods.
 
-@author: J. Cid-Sueiro, L. Calvo-Bartolome, A. Gallardo-Antolin
+@author: J. Cid-Sueiro, L. Calvo-Bartolome, A. Gallardo-Antolin, T.Ahlers
 """
 
 import logging
@@ -146,7 +146,7 @@ class TaskManager(baseTaskManager):
 
         if self.df_dataset is None:
             if verbose:
-                logging.warning("-- No labels loaded. You must load or create "
+                logging.warning("-- No model is loaded. You must load or create "
                                 "a set of labels first")
             return False
 
@@ -189,10 +189,9 @@ class TaskManager(baseTaskManager):
         """
         Returns inference manager options
         """
+        return ['Inference MLP'] if self.DM.get_metadata()['corpus_has_embeddings'] else []
 
-        return ['Inference MLP']
-
-    def inference(self):
+    def inference(self, option=[]):
         """
         Infers data
 
@@ -201,6 +200,10 @@ class TaskManager(baseTaskManager):
         option:
             Unused
         """
+        if self.dc is None or self.dc.df_dataset is None:
+            logging.warning("-- No model is loaded. "
+                            "You must load or create a set of labels first")
+            return
         metadata = self.DM.get_metadata()
         dPaths = {  'd_documentEmbeddings': metadata['corpus'],
                    'p_prediction': self.path2output / self.class_name }
@@ -637,7 +640,7 @@ class TaskManager(baseTaskManager):
         """
 
         if self.dc is None or self.dc.df_dataset is None:
-            logging.warning("-- No labels loaded. "
+            logging.warning("-- No model is loaded. "
                             "You must load or create a set of labels first")
             return
 
@@ -773,7 +776,7 @@ class TaskManager(baseTaskManager):
         """
 
         if self.df_dataset is None:
-            logging.warning("-- No labels loaded. "
+            logging.warning("-- No model is loaded. "
                             "You must load or create a set of labels first")
             return
 
@@ -814,10 +817,16 @@ class TaskManager(baseTaskManager):
         self.dc.train_test_split(max_imbalance=max_imbalance, nmax=nmax,
                                  random_state=0)
 
+        import pdb 
+        pdb.set_trace()
+
         # Train the model using simpletransformers
         self.dc.train_model(epochs=epochs, validate=True,
                             freeze_encoder=freeze_encoder, tag="PU",
                             batch_size=batch_size)
+
+        import pdb 
+        pdb.set_trace()
 
         # Update status.
         # Since training takes much time, we store the classification results
@@ -848,6 +857,9 @@ class TaskManager(baseTaskManager):
 
         # Configuration parameters
         batch_size = self.global_parameters['classifier']['batch_size']
+
+        import pdb 
+        pdb.set_trace()
 
         # Evaluate the model over the test set
         result, wrong_predictions = self.dc.eval_model(

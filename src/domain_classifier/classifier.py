@@ -1,7 +1,7 @@
 """
 Defines the main domain classification class
 
-@author: J. Cid-Sueiro, J.A. Espinosa, A. Gallardo-Antolin
+@author: J. Cid-Sueiro, J.A. Espinosa, A. Gallardo-Antolin, T.Ahlers
 """
 import logging
 import pathlib
@@ -616,6 +616,7 @@ class CorpusClassifier(object):
 			of the classifier)
 		"""
 
+
 		# Make column names if not given
 		if pred_name is None:
 			pred_name = f"{tag}_prediction"
@@ -1203,8 +1204,6 @@ class CorpusClassifierMLP(CorpusClassifier):
 						 path2transformers=path2transformers,
 						 use_cuda=use_cuda)
 
-		self.model = None
-
 	def __sample_train_data(self,retrain=False):
 
 
@@ -1317,6 +1316,15 @@ class CorpusClassifierMLP(CorpusClassifier):
 		torch.save(self.model.state_dict(),
 				   self.path2transformers / 'currentModel.pt')
 
+		self.df_dataset['sample_weight'] = 1.0
+		result, wrong_predictions = self.eval_model() #prob_pred
+		self.df_dataset['PU_prediction'] = self.df_dataset['prob_pred'] > 0.5
+		self.df_dataset['PU_prob_pred'] = self.df_dataset['prob_pred']
+		self.df_dataset['prediction'] = self.df_dataset['prob_pred']
+
+		for column_name in ['PU_score_0', 'PU_score_1', 'prediction','prob_pred']:
+			self.df_dataset[column_name] = 0
+
 	def retrain_model(self, freeze_encoder=True, batch_size=8, epochs=3,
 					  annotation_gain=10):
 		"""
@@ -1357,8 +1365,6 @@ class CorpusClassifierMLP(CorpusClassifier):
 		self.df_dataset.loc[is_tr_new, "labels"] = self.df_dataset.loc[
 			is_tr_new, "annotations"]
 
-		import pdb
-		pdb.set_trace()
 
 		df_train = self.__sample_train_data(retrain=True)
 		if len(df_train) == 0:
@@ -1381,6 +1387,9 @@ class CorpusClassifierMLP(CorpusClassifier):
 		self.path2transformers.mkdir(exist_ok=True)
 		torch.save(self.model.state_dict(),
 				   self.path2transformers / 'currentModel.pt')
+
+		result, wrong_predictions = self.eval_model() #prob_pred
+		self.df_dataset['prediction'] = self.df_dataset['prob_pred'] > 0.5
 
 
 	def load_model(self):
@@ -1445,7 +1454,9 @@ class CorpusClassifierMLP(CorpusClassifier):
 		"""
 		pass
 
-	def eval_model(self):
+	def eval_model(self, samples="train_test", tag="", batch_size=8):
+		
+		#inference
 		"""
 		Compute predictions of the classification model over the input dataset
 		and compute performance metrics.
@@ -1463,55 +1474,25 @@ class CorpusClassifierMLP(CorpusClassifier):
 		batch_size : int, optiona (default=8)
 			Batch size
 		"""
+
 		self.model.eval()
-		df_inference = self.df_dataset[(self.df_dataset.train_test == TRAIN)
+		df_eval = self.df_dataset[(self.df_dataset.train_test == TRAIN)
 									   | (self.df_dataset.train_test == TEST)]
 
-		inference_data = CustomDatasetMLP(df_inference)
-		inference_iterator = data.DataLoader(
-			inference_data, shuffle=False, batch_size=8)
-		predictions = []
+		#new 
+		eval_data = CustomDatasetMLP(df_eval)
+		eval_iterator = data.DataLoader(
+			eval_data, shuffle=False, batch_size=8)
 
-		for (x, y) in tqdm(inference_iterator, desc="Inference", leave=False):
-			predictions_new = self.model.forward(
-				x).detach().cpu().numpy().reshape(-1)
-			if len(predictions) == 0:
-				predictions = predictions_new
-			else:
-				predictions = np.concatenate([predictions, predictions_new])
+		scores, total_loss, result = self.model.eval_model(
+				eval_iterator, device=self.device, batch_size=batch_size)
 
-		self.df_dataset.loc[df_inference.index, 'prob_pred'] = predictions
 
-	def AL_sample(self, n_samples=5, sampler='extremes', p_ratio=0.8,top_prob=0.1):
-		"""
-		Returns a given number of samples for active learning (AL)
+		self.df_dataset.loc[df_eval.index, 'prob_pred'] = scores
 
-		Parameters
-		----------
-		n_samples : int, optional (default=5)
-			Number of samples to return
-		sampler : str, optional (default="random")
-			Sample selection algorithm.
+		wrong_predictions = []
+		return result, wrong_predictions
 
-			- If "random", samples are taken at random from all docs with
-			  predictions
-			- If "extremes", samples are taken stochastically, but with
-			  documents with the highest or smallest probability scores are
-			  selected with higher probability.
-			- If "full_rs", samples are taken at random from the whole dataset
-			  for testing purposes. Half samples are taken at random from the
-			  train-test split, while the rest is taken from the other
-			  documents
-		"""
-
-		self.df_dataset['sample_weight'] = 1.0
-		for column_name in ['PU_score_0', 'PU_score_1', 'PU_prediction',
-							'PU_prob_pred', 'prediction', 'prob_pred']:
-			self.df_dataset[column_name] = 0
-
-		return super().AL_sample(
-			n_samples=n_samples, sampler=sampler, p_ratio=p_ratio,
-			top_prob=top_prob)
 
 	def inferData(self,dPaths):
 		"""

@@ -1,3 +1,10 @@
+"""
+PandasModifier encapsulate logic to do the inference
+DataHandler is a helper class for data handling 
+
+@author: T.Ahlers
+"""
+
 import numpy as np
 
 from tqdm import tqdm
@@ -41,7 +48,7 @@ class PandasModifier():
 		eval_iterator = data.DataLoader(eval_data,shuffle=False,batch_size=8)
 		predictions = []
 		for (x, y) in tqdm(eval_iterator, desc="Inference", leave=False):
-			predictions_new = self.classifier.forward(x).detach().cpu().numpy().reshape(-1)
+			predictions_new = self.classifier(x).detach().cpu().numpy().reshape(-1)
 			if len(predictions) == 0:
 				predictions = predictions_new
 			else:

@@ -17,7 +17,7 @@ from torch.utils.data import Dataset
 class CustomDatasetMLP(Dataset):
 
     def __init__(self, df_data):
-
+        super(CustomDatasetMLP, self).__init__()
         self.data = df_data[['embeddings', 'labels']].to_numpy().copy()
         # print(f'self.data:{self.data}')
 
@@ -84,7 +84,7 @@ class MLP(nn.Module):
             eval_data, shuffle=False, batch_size=8)
         predictions = []
         for (x, y) in tqdm(eval_iterator, desc="Inference", leave=False):
-            predictions_new = self.forward(x).detach().cpu().numpy()
+            predictions_new = self(x).detach().cpu().numpy()
             if len(predictions) == 0:
                 predictions = predictions_new
             else:
@@ -152,3 +152,105 @@ class MLP(nn.Module):
                     break
 
         return [train_losses[-1], eval_losses[-1], f1_scores[-1]]
+
+    def eval_model(self, eval_iterator, device="cuda", batch_size=8):
+        """
+        Evaluate trained model
+
+        Parameters
+        ----------
+        df_train : DataFrame
+            Training dataframe
+        epochs : int
+            Number of epochs to train model
+        device : str, optional (default="cuda")
+            If "cuda", a GPU is used if available
+        batch_size : int, optiona (default=8)
+            Batch size
+        """
+
+        #inference_data = CustomDatasetMLP(df_inference)
+        #inference_iterator = data.DataLoader(
+        #    inference_data, shuffle=False, batch_size=8)
+        #predictions = []
+#
+        #for (x, y) in tqdm(inference_iterator, desc="Inference", leave=False):
+        #    predictions_new = self.model(x).detach().cpu().numpy().reshape(-1)
+        #    if len(predictions) == 0:
+        #        predictions = predictions_new
+        #    else:
+        #        predictions = np.concatenate([predictions, predictions_new])
+
+        # Convert DataFrame to DataLoader
+
+        # turn on evaluation mode
+        self.eval()
+        predictions = []
+        total_loss = []
+        scores = {"tp": 0, "tn": 0, "fp": 0, "fn": 0}
+        metrics = {"precision": 0.0, "recall": 0.0, "f1": 0.0, "accuracy": 0.0}
+
+        with torch.no_grad():
+            for (x, y) in tqdm(eval_iterator, desc="Eval batch", leave=False):
+                y_pred = self(x)
+                predictions.extend(y_pred.to("cpu").tolist())
+                batch_scores = self._compute_scores_(y, y_pred)
+                for k, v in batch_scores.items():
+                    scores[k] += v
+
+        metrics = self._compute_metrics_(scores)
+
+        # Set outputs
+        predictions = np.array(predictions)
+        total_loss = np.sum(total_loss)
+        result = {**scores, **metrics}
+
+        return predictions, total_loss, result
+
+    def _compute_scores_(self, orig, pred):
+
+        scores = {"tp": 0, "fp": 0, "tn": 0, "fn": 0}
+        # Inputs to boolean
+        pred = torch.tensor(pred.tolist()).bool()
+        orig = torch.tensor(orig.tolist()).bool()
+
+        # TP, FP, TN, FN
+        TP = (pred & orig).sum().float().item()
+        FP = (pred & ~orig).sum().float().item()
+        TN = (~pred & ~orig).sum().float().item()
+        FN = (~pred & orig).sum().float().item()
+
+        scores["tp"] = TP
+        scores["fp"] = FP
+        scores["tn"] = TN
+        scores["fn"] = FN
+
+        return scores
+
+    def _compute_metrics_(self, scores):
+        """
+        Computes precision, recall and f1 scores
+        """
+        metrics = {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "accuracy": 0.0}
+        eps = 1e-12
+
+        TP = scores["tp"]
+        FP = scores["fp"]
+        TN = scores["tn"]
+        FN = scores["fn"]
+
+        # Compute metrics
+        precision = TP / (TP + FP + eps)
+        recall = TP / (TP + FN + eps)
+        f1 = 2 * precision * recall / (precision + recall + eps)
+        accuracy = (TP + TN) / (TP + TN + FP + FN)
+        metrics["precision"] = precision
+        metrics["recall"] = recall
+        metrics["f1"] = f1
+        metrics["accuracy"] = accuracy
+
+        return metrics
