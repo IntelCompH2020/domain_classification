@@ -819,14 +819,13 @@ class TaskManager(baseTaskManager):
 
         import pdb 
         pdb.set_trace()
+        #['id', 'text', 'base_scores', 'PUlabels', 'labels', 'train_test']
 
         # Train the model using simpletransformers
         self.dc.train_model(epochs=epochs, validate=True,
                             freeze_encoder=freeze_encoder, tag="PU",
                             batch_size=batch_size)
 
-        import pdb 
-        pdb.set_trace()
 
         # Update status.
         # Since training takes much time, we store the classification results
@@ -858,8 +857,6 @@ class TaskManager(baseTaskManager):
         # Configuration parameters
         batch_size = self.global_parameters['classifier']['batch_size']
 
-        import pdb 
-        pdb.set_trace()
 
         # Evaluate the model over the test set
         result, wrong_predictions = self.dc.eval_model(
@@ -1190,13 +1187,6 @@ class TaskManager(baseTaskManager):
         # Check if a classifier object exists
         if not self._is_model():
             return
-
-        #import pdb 
-        #pdb.set_trace()
-
-        #if self.DM.get_metadata()['corpus_has_embeddings']:
-        #    self.df_dataset = (self.CorpusProc.enrich_dataset_with_embeddings(
-        #                self.df_dataset, self.df_corpus))
 
 
         # Configuration parameters
