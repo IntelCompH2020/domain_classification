@@ -24,13 +24,13 @@ docker build <-t NAME:tag> <Dockerfile location>
 ```
 docker build -t dom-class .
 ```
-- The name of the image will be *dom-class*, with no specific version.
+- The name of the image in this case is *dom-class*, with no specific version.
 - The location of the `Dockerfile` is the current directory.
 
 ## Run image container
 To run a container with the previous configuration, the following command is needed:
 ```
-docker run <--rm> -i <--name CONTAINER-NAME> -v path/to/local/wordlists:/data/wordlists IMAGE-NAME
+docker run <--rm> -i <--name CONTAINER-NAME> -v path/to/local/data:/data/data IMAGE-NAME
 ```
 Flags:
 - --rm: remove the container when execution ends. (optional)
@@ -44,17 +44,17 @@ Flags:
 #### Execute container and access
 Create a container and access the CLI, as specified in `Dockerfile`
 ```
-docker run --rm -i --name cnt-ja-ml -v /Users/joseantem/Data/:/shared_data/ dom-class
+docker run --rm -i --name container-name -v path/to/local/data/:/shared_data/ dom-class
 ```
 
 #### Show help menu
 ```
-docker run --rm -i --name cnt-ja-ml -v /Users/joseantem/Data/:/shared_data/ dom-class --help
+docker run --rm -i --name container-name -v path/to/local/data/:/shared_data/ dom-class --help
 ```
 
 ### Execute task
 ```
-docker run --rm -i --name cnt-ja-ml -v /Users/joseantem/Data/:/shared_data/ dom-class python main_dc_single_task.py --p /shared_data/projects/docker_proj --source /shared_data/datasets --task 
+docker run --rm -i --name container-name -v path/to/local/data/:/shared_data/ dom-class python main_dc_single_task.py --p /shared_data/projects/docker_proj --source /shared_data/datasets --task 
 ```
 Alternatively, the command to execute the CLI can be executed first, and then the main command:
 ```
