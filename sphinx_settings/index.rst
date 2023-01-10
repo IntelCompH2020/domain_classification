@@ -18,6 +18,8 @@ Domain Classifier Docs
    dc_query_manager.rst
    dc_classifier.rst
    dc_custom_model.rst
+   dc_custom_model_mlp.rst
+   dc_inference.rst
    dc_preprocessor.rst
    dc_metrics.rst
    dc_plotter.rst
