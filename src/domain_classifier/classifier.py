@@ -1299,6 +1299,8 @@ class CorpusClassifierMLP(CorpusClassifier):
             Batch size
         """
 
+        logging.info("-- Training model...")
+
         self.load_model()
 
         df_train = self.__sample_train_data()
@@ -1325,6 +1327,7 @@ class CorpusClassifierMLP(CorpusClassifier):
                    self.path2transformers / 'currentModel.pt')
 
         self.df_dataset['sample_weight'] = 1.0
+
         result, wrong_predictions = self.eval_model()     # prob_pred
         self.df_dataset['PU_prediction'] = self.df_dataset['prob_pred'] > 0.5
         self.df_dataset['PU_prob_pred'] = self.df_dataset['prob_pred']
@@ -1332,6 +1335,8 @@ class CorpusClassifierMLP(CorpusClassifier):
 
         for col in ['PU_score_0', 'PU_score_1', 'prediction', 'prob_pred']:
             self.df_dataset[col] = 0
+
+        return
 
     def retrain_model(self, freeze_encoder=True, batch_size=8, epochs=3,
                       annotation_gain=10):
