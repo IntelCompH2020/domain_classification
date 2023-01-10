@@ -91,12 +91,12 @@ get_labels:
     - evaluate_PUlabels
 
 load_labels:
-  title: Load labels
+  title: Load models
   options:
     - get_method: _get_dataset_list
 
 reset_labels:
-  title: Reset labels
+  title: Reset models
   options:
     - get_method: _get_dataset_list
 

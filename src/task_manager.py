@@ -2,7 +2,7 @@
 Defines classes that define methods to run the main tasks in the project,
 using the core processing classes and methods.
 
-@author: J. Cid-Sueiro, L. Calvo-Bartolome, A. Gallardo-Antolin
+@author: J. Cid-Sueiro, L. Calvo-Bartolome, A. Gallardo-Antolin, T.Ahlers
 """
 
 import logging
@@ -16,7 +16,6 @@ from .query_manager import QueryManager
 from .domain_classifier.preprocessor import CorpusDFProcessor
 from .domain_classifier.classifier import CorpusClassifier
 from .domain_classifier.classifier import CorpusClassifierMLP
-from .domain_classifier.inference import Inference
 from .utils import plotter
 
 # A message that is used twice in different parts of the code. It is defined
@@ -137,8 +136,6 @@ class TaskManager(baseTaskManager):
         self.DM = DataManager(self.path2source, self.path2datasets,
                               self.path2models, self.path2embeddings)
 
-        self.inferenceManager = None
-
         return
 
     def _is_model(self, verbose=True):
@@ -149,7 +146,7 @@ class TaskManager(baseTaskManager):
 
         if self.df_dataset is None:
             if verbose:
-                logging.warning("-- No labels loaded. You must load or create "
+                logging.warning("-- No model is loaded. You must load or create "
                                 "a set of labels first")
             return False
 
@@ -192,13 +189,9 @@ class TaskManager(baseTaskManager):
         """
         Returns inference manager options
         """
+        return ['Inference MLP'] if self.DM.get_metadata()['corpus_has_embeddings'] else []
 
-        if self.inferenceManager is None:
-            self.inferenceManager = Inference(self)
-
-        return self.inferenceManager.getOptions()
-
-    def inference(self, option):
+    def inference(self, option=[]):
         """
         Infers data
 
@@ -207,8 +200,14 @@ class TaskManager(baseTaskManager):
         option:
             Unused
         """
-
-        self.inferenceManager.inferData()
+        if self.dc is None or self.dc.df_dataset is None:
+            logging.warning("-- No model is loaded. "
+                            "You must load or create a set of labels first")
+            return
+        metadata = self.DM.get_metadata()
+        dPaths = {  'd_documentEmbeddings': metadata['corpus'],
+                   'p_prediction': self.path2output / self.class_name }
+        self.dc.inferData(dPaths)
 
         return
 
@@ -641,7 +640,7 @@ class TaskManager(baseTaskManager):
         """
 
         if self.dc is None or self.dc.df_dataset is None:
-            logging.warning("-- No labels loaded. "
+            logging.warning("-- No model is loaded. "
                             "You must load or create a set of labels first")
             return
 
@@ -777,7 +776,7 @@ class TaskManager(baseTaskManager):
         """
 
         if self.df_dataset is None:
-            logging.warning("-- No labels loaded. "
+            logging.warning("-- No model is loaded. "
                             "You must load or create a set of labels first")
             return
 
@@ -818,10 +817,15 @@ class TaskManager(baseTaskManager):
         self.dc.train_test_split(max_imbalance=max_imbalance, nmax=nmax,
                                  random_state=0)
 
+        import pdb 
+        pdb.set_trace()
+        #['id', 'text', 'base_scores', 'PUlabels', 'labels', 'train_test']
+
         # Train the model using simpletransformers
         self.dc.train_model(epochs=epochs, validate=True,
                             freeze_encoder=freeze_encoder, tag="PU",
                             batch_size=batch_size)
+
 
         # Update status.
         # Since training takes much time, we store the classification results
@@ -852,6 +856,7 @@ class TaskManager(baseTaskManager):
 
         # Configuration parameters
         batch_size = self.global_parameters['classifier']['batch_size']
+
 
         # Evaluate the model over the test set
         result, wrong_predictions = self.dc.eval_model(
@@ -1182,13 +1187,6 @@ class TaskManager(baseTaskManager):
         # Check if a classifier object exists
         if not self._is_model():
             return
-
-        #import pdb 
-        #pdb.set_trace()
-
-        #if self.DM.get_metadata()['corpus_has_embeddings']:
-        #    self.df_dataset = (self.CorpusProc.enrich_dataset_with_embeddings(
-        #                self.df_dataset, self.df_corpus))
 
 
         # Configuration parameters
