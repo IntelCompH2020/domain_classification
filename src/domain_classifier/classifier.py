@@ -1161,7 +1161,11 @@ class CorpusClassifier(object):
 
         return
 
+"""
+Defines the main domain classification class using embeddings
 
+@author: J. Cid-Sueiro, J.A. Espinosa, A. Gallardo-Antolin, T.Ahlers
+"""
 class CorpusClassifierMLP(CorpusClassifier):
 
     def __init__(self, df_dataset, model_type="mpnet",
