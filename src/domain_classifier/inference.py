@@ -16,12 +16,6 @@ import pandas as pd
 import torch.utils.data as data
 from .custom_model_mlp import CustomDatasetMLP
 
-"""
-PandasModifier encapsulate logic to do the inference2
-DataHandler is a helper class for data handling
-
-@author: T.Ahlers
-"""
 class PandasModifier():
 
     def __init__(self, dh, kwargs):
@@ -50,7 +44,12 @@ class PandasModifier():
              'soft_prediction': predictions})
         return df_prediction
 
+"""
+Datahandler encapsulate logic to sequentially read files for pandas in a folder, 
+modifies them and write them to another location
 
+@author: T.Ahlers
+"""
 class DataHandler():
 
     def __init__(self, paths: {}, config: {} = {}, **kwargs: {}) -> None:
