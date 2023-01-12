@@ -16,7 +16,12 @@ import pandas as pd
 import torch.utils.data as data
 from .custom_model_mlp import CustomDatasetMLP
 
+"""
+PandasModifier encapsulate logic to do the inference2
+DataHandler is a helper class for data handling
 
+@author: T.Ahlers
+"""
 class PandasModifier():
 
     def __init__(self, dh, kwargs):
