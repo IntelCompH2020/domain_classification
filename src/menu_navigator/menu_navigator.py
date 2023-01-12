@@ -126,7 +126,7 @@ class MenuNavigator(object):
                              f'[{range_opt[0]}-{range_opt[-1]}]: ')
             try:
                 n_option = int(n_option)
-            except:
+            except Exception:
                 print('Write a number')
                 n_option = None
 

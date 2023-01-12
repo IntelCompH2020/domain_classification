@@ -215,7 +215,7 @@ class CorpusProcessor(object):
                     result = zsc(doc_i, keyword, multi_label=False)
                     in_process = False
 
-                except:
+                except Exception:
                     # An error is raised because "The expanded size of the
                     # tensor (519) must match the existing size (514) at
                     # non-singleton dimension 1.  Target sizes: [1, 519].

@@ -146,8 +146,8 @@ class TaskManager(baseTaskManager):
 
         if self.df_dataset is None:
             if verbose:
-                logging.warning("-- No model is loaded. You must load or create "
-                                "a set of labels first")
+                logging.warning("-- No model is loaded. You must load or "
+                                "create a set of labels first")
             return False
 
         elif not self.DM.is_model(self.class_name):
@@ -189,7 +189,9 @@ class TaskManager(baseTaskManager):
         """
         Returns inference manager options
         """
-        return ['Inference MLP'] if self.DM.get_metadata()['corpus_has_embeddings'] else []
+
+        corpus_has_embeddings = self.DM.get_metadata()['corpus_has_embeddings']
+        return ['Inference MLP'] if corpus_has_embeddings else []
 
     def inference(self, option=[]):
         """
@@ -205,8 +207,8 @@ class TaskManager(baseTaskManager):
                             "You must load or create a set of labels first")
             return
         metadata = self.DM.get_metadata()
-        dPaths = {  'd_documentEmbeddings': metadata['corpus'],
-                   'p_prediction': self.path2output / self.class_name }
+        dPaths = {'d_documentEmbeddings': metadata['corpus'],
+                  'p_prediction': self.path2output / self.class_name}
         self.dc.inferData(dPaths)
 
         return
@@ -817,15 +819,11 @@ class TaskManager(baseTaskManager):
         self.dc.train_test_split(max_imbalance=max_imbalance, nmax=nmax,
                                  random_state=0)
 
-        import pdb 
-        pdb.set_trace()
-        #['id', 'text', 'base_scores', 'PUlabels', 'labels', 'train_test']
-
+        # ['id', 'text', 'base_scores', 'PUlabels', 'labels', 'train_test']
         # Train the model using simpletransformers
         self.dc.train_model(epochs=epochs, validate=True,
                             freeze_encoder=freeze_encoder, tag="PU",
                             batch_size=batch_size)
-
 
         # Update status.
         # Since training takes much time, we store the classification results
@@ -856,7 +854,6 @@ class TaskManager(baseTaskManager):
 
         # Configuration parameters
         batch_size = self.global_parameters['classifier']['batch_size']
-
 
         # Evaluate the model over the test set
         result, wrong_predictions = self.dc.eval_model(
@@ -1071,8 +1068,6 @@ class TaskManager(baseTaskManager):
         return
 
     def get_labels_from_docs(self):
-
-
         """
         Requests feedback about the class of given documents.
 
@@ -1089,7 +1084,6 @@ class TaskManager(baseTaskManager):
 
         # Load sampled documents
         selected_docs = self.DM.load_selected_docs(tag=self.class_name)
-
 
         # Temporal query manager object
         QM = QueryManager()
@@ -1132,7 +1126,6 @@ class TaskManager(baseTaskManager):
         if not QM.confirm():
             logging.info("-- Canceling: new labels removed.")
             labels = []
-
 
         self.DM.save_new_labels(selected_docs.index, labels,
                                 tag=self.class_name)
@@ -1188,14 +1181,12 @@ class TaskManager(baseTaskManager):
         if not self._is_model():
             return
 
-
         # Configuration parameters
         batch_size = self.global_parameters['classifier']['batch_size']
 
         # Retrain model using the new labels
         self.dc.retrain_model(freeze_encoder=True, batch_size=batch_size,
                               epochs=epochs)
-
 
         # Update status.
         # Since training takes much time, we store the classification results

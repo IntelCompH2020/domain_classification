@@ -169,12 +169,12 @@ class MLP(nn.Module):
             Batch size
         """
 
-        #inference_data = CustomDatasetMLP(df_inference)
-        #inference_iterator = data.DataLoader(
+        # inference_data = CustomDatasetMLP(df_inference)
+        # inference_iterator = data.DataLoader(
         #    inference_data, shuffle=False, batch_size=8)
-        #predictions = []
-#
-        #for (x, y) in tqdm(inference_iterator, desc="Inference", leave=False):
+        # predictions = []
+        #
+        # for (x,y) in tqdm(inference_iterator, desc="Inference", leave=False):
         #    predictions_new = self.model(x).detach().cpu().numpy().reshape(-1)
         #    if len(predictions) == 0:
         #        predictions = predictions_new
