@@ -453,9 +453,9 @@ class TaskManager(baseTaskManager):
 
         return y, df_stats, kf_stats
 
-    def get_labels_by_keywords(
-            self, wt: float = 2.0, n_max: int = 2000, s_min: float = 1.0,
-            tag: str = "kwds", method: str = 'count', keywords: str = ""):
+    def get_labels_by_keywords(self, wt: float = 2.0, n_max: int = 2000,
+                               s_min: float = 1.0, tag: str = "kwds",
+                               method: str = 'count', keywords: str = ""):
         """
         Get a set of positive labels using keyword-based search
 
