@@ -24,7 +24,7 @@ class PandasModifier():
     def start(self):
         pass
     def change(self, df):
-"""
+        """
         does the inference and adds the soft and hard predictions to the dataframe
         Parameters
         ----------
@@ -32,7 +32,7 @@ class PandasModifier():
         Returns
         -------
         df: pd.DataFrame
-"""
+        """
         df_eval = df[['embeddings']].copy()
         df_eval.insert(0, 'labels', 0)
         eval_data = CustomDatasetMLP(df_eval)
@@ -68,7 +68,7 @@ class DataHandler():
         self.__buildConfig(config, init=True)
 
     def run(self, sourceKey: str, destination_key: str, PandasChanger) -> None:
-"""
+        """
         all files of a specific folder (given by source_key) gets changed with the given pandasChanger object and is written
         to the distiantion folder (given by destination_key)
         Parameters
@@ -80,7 +80,7 @@ class DataHandler():
         Returns
         -------
         file_paths: str array
-"""
+        """
         self.__isValidPath(sourceKey)
         self.__isValidPath(destination_key)
 
@@ -96,13 +96,13 @@ class DataHandler():
             self.writeFile(destination_key, df)
 
     def refresh(self, init: bool = False, create: bool = False) -> None:
- """
+        """
         refresh the attribute self.folders based on the paths.  
         Parameters
         ----------
         init: obsolete
         create: if True the folders of the path a created on the server
-"""
+        """
         self.folders = {}
         fileSets = self.paths  # if init else self.folders
         for k, v in fileSets.items():
@@ -119,7 +119,7 @@ class DataHandler():
                 'fileIdx': 0,
                 'params': {}}
     def getFolder(self, key: str, **kwargs: {}) -> Path:
- """
+        """
         get path of folder 
         Parameters
         ----------
@@ -128,12 +128,12 @@ class DataHandler():
         Returns
         -------
         folder_path: str
-"""
+        """
         self.__isValidPath(key)
         self.__buildConfig(kwargs)
         return self.folders[key]['folderPath']
     def getFiles(self, key: str, **kwargs: {}) -> []:
-"""
+        """
         get path of files 
         Parameters
         ----------
@@ -142,12 +142,12 @@ class DataHandler():
         Returns
         -------
         file_paths: str array
-"""
+        """
         self.__isValidPath(key)
         self.__buildConfig(kwargs)
         return self.folders[key]['filePaths']
     def readNextFile(self, key: str, **kwargs: {}) -> []:
-"""
+        """
         reads the next file in the sequence
         Parameters
         ----------
@@ -156,7 +156,7 @@ class DataHandler():
         Returns
         -------
         df: pd.DataFrame of file content
-"""
+        """
         self.__isValidPath(key)
         self.__buildConfig(kwargs)
 
@@ -176,14 +176,14 @@ class DataHandler():
         self.folders[key]['fileIdx'] += 1
         return result
     def writeFile(self, key: str, data: object, fileName: str = '') -> None:
-"""
+        """
         writes a new parquet file
         Parameters
         ----------
         key: specifies the path
         data: the file content
         fileName: name of file
-"""
+        """
 
         fileName = (fileName if fileName != ''
                     else self.lastFileName.split('/')[-1])
@@ -195,12 +195,12 @@ class DataHandler():
         data.to_parquet(self.folders[key]['folderPath'] / fileName)
         self.lastFileName = ''
     def __buildConfig(self, config, init=False):
-"""
+        """
         builds the config dictionary by mixing the given config with the passed config
         Parameters
         ----------
         config: config dictionary
-"""
+        """
         dConfig = {'fileType': 'parquet',
                    'minAge': 0,
                    'debug': False,
@@ -217,13 +217,13 @@ class DataHandler():
         if init or change:
             self.refresh(init, self.config['create'])
     def __createDeltaFiles(self, keys: str) -> None:
-"""
+        """
         create the delta between the destination folder and source folder so that just the delta gets proceed 
         Parameters
         ----------
         key: specifies the path
 
-"""
+        """
 
         keyA, keyB = self.__isValidDoubleKey(keys)
         self.__isValidPath(keyA, tryFix=False)
@@ -263,7 +263,7 @@ class DataHandler():
             'params': {'minAge': minAge}}
 
     def __getFilesFiltered(self, key: str, fileNames: [], minAge: int) -> []:
-"""
+        """
         return just the files which are older than than the minimum age
         Parameters
         ----------
@@ -274,7 +274,7 @@ class DataHandler():
         -------
         file_list: list of str
 
-"""
+        """
         returnFileNames = []
         for fileName in fileNames:
             if (time.time() - self.__get_file_creation_date(
@@ -283,7 +283,7 @@ class DataHandler():
             returnFileNames.append(fileName)
         return np.array(returnFileNames)
     def __get_file_creation_date(self, path_to_file) -> float:
-"""
+        """
         returns the file creation date
         Parameters
         ----------
@@ -292,7 +292,7 @@ class DataHandler():
         -------
         timestamp: 
 
-"""
+        """
         if platform.system() == 'Windows':
             return os.path.getctime(path_to_file)
         try:
@@ -302,7 +302,7 @@ class DataHandler():
             return stat.st_mtime
 
     def __isValidFile(self, filePath: str):
-"""
+        """
         returns if the file type is correct
         Parameters
         ----------
@@ -311,7 +311,7 @@ class DataHandler():
         ----------
         is_file_correct: bool
 
-"""
+        """
         if self.config['fileType'] == '':
             return True
         if self.config['fileType'] == filePath.split('.')[-1]:
@@ -319,7 +319,7 @@ class DataHandler():
         return False
 
     def __isValidPath(self, key: str, tryFix: bool = True) -> None:
-"""
+        """
         raises an exception if the path is not valid
         Parameters
         ----------
@@ -327,7 +327,7 @@ class DataHandler():
         Exceptions
         ----------
         ex: encapsulate that the path is wrong
-"""
+        """
         ex = Exception("path is not registered")
         if key not in self.folders.keys():
             if tryFix:
@@ -339,7 +339,7 @@ class DataHandler():
                 raise ex
 
     def __isValidDoubleKey(self, initKey: str) -> None:
-"""
+        """
         returns if a it is a valid double key
         ----------
         initKey: str double key
@@ -350,7 +350,7 @@ class DataHandler():
         -------
         Exception: encapsulate that the given format is wrong
 
-"""
+        """
         keyParts = initKey.split('_')
         if len(keyParts) != 2:
             raise Exception('format of key has to be x_x')
