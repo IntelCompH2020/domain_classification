@@ -1303,44 +1303,49 @@ class CorpusClassifierMLP(CorpusClassifier):
             Batch size
         """
 
+        import pdb 
+        pdb.set_trace()
+
         logging.info("-- Training model...")
 
-        self.load_model()
+        self.__train_model()
 
-        df_train = self.__sample_train_data()
-        if len(df_train) == 0:
-            logging.info(f"-- -- Samples from both classes are required for "
-                         "retraining the model")
-            return
-
-        df_validation = self.__sample_validation_data()
-
-        train_data = CustomDatasetMLP(df_train)
-        train_iterator = data.DataLoader(train_data,
-                                         shuffle=True,
-                                         batch_size=8)
-        validation_data = CustomDatasetMLP(df_validation)
-        validation_iterator = data.DataLoader(validation_data,
-                                              shuffle=False,
-                                              batch_size=8)
-
-        self.model.train_loop(train_iterator, validation_iterator)
-
-        self.path2transformers.mkdir(exist_ok=True)
-        torch.save(self.model.state_dict(),
-                   self.path2transformers / 'currentModel.pt')
-
-        self.df_dataset['sample_weight'] = 1.0
-
-        result, wrong_predictions = self.eval_model()     # prob_pred
-        self.df_dataset['PU_prediction'] = self.df_dataset['prob_pred'] > 0.5
-        self.df_dataset['PU_prob_pred'] = self.df_dataset['prob_pred']
-        self.df_dataset['prediction'] = self.df_dataset['prob_pred']
-
-        for col in ['PU_score_0', 'PU_score_1', 'prediction', 'prob_pred']:
-            self.df_dataset[col] = 0
-
-        return
+        #self.load_model()
+#
+        #df_train = self.__sample_train_data()
+        #if len(df_train) == 0:
+        #    logging.info(f"-- -- Samples from both classes are required for "
+        #                 "retraining the model")
+        #    return
+#
+        #df_validation = self.__sample_validation_data()
+#
+        #train_data = CustomDatasetMLP(df_train)
+        #train_iterator = data.DataLoader(train_data,
+        #                                 shuffle=True,
+        #                                 batch_size=8)
+        #validation_data = CustomDatasetMLP(df_validation)
+        #validation_iterator = data.DataLoader(validation_data,
+        #                                      shuffle=False,
+        #                                      batch_size=8)
+#
+        #self.model.train_loop(train_iterator, validation_iterator)
+#
+        #self.path2transformers.mkdir(exist_ok=True)
+        #torch.save(self.model.state_dict(),
+        #           self.path2transformers / 'currentModel.pt')
+#
+        #self.df_dataset['sample_weight'] = 1.0
+#
+        #result, wrong_predictions = self.eval_model()     # prob_pred
+        #self.df_dataset['PU_prediction'] = self.df_dataset['prob_pred'] > 0.5
+        #self.df_dataset['PU_prob_pred'] = self.df_dataset['prob_pred']
+        #self.df_dataset['prediction'] = self.df_dataset['prob_pred']
+#
+        #for col in ['PU_score_0', 'PU_score_1', 'prediction', 'prob_pred']:
+        #    self.df_dataset[col] = 0
+#
+        #return
 
     def retrain_model(self, freeze_encoder=True, batch_size=8, epochs=3,
                       annotation_gain=10):
@@ -1362,7 +1367,7 @@ class CorpusClassifierMLP(CorpusClassifier):
             annotated one.
         """
 
-        self.load_model()
+        #self.load_model()
 
         is_train = (self.df_dataset.train_test == TRAIN)
         is_tr_unused = is_train & (self.df_dataset.learned == UNUSED)
@@ -1380,12 +1385,49 @@ class CorpusClassifierMLP(CorpusClassifier):
         self.df_dataset.loc[is_tr_new, "labels"] = self.df_dataset.loc[
             is_tr_new, "annotations"]
 
-        df_train = self.__sample_train_data(retrain=True)
-        if len(df_train) == 0:
+        self.__train_model(retrain=True)
+
+        #df_train = self.__sample_train_data(retrain=True)
+        #if len(df_train) == 0:
+        #    logging.info(f"-- -- Samples from both classes are required for "
+        #                 "retraining the model")
+        #    return
+        #df_validation = self.__sample_validation_data(retrain=True)
+#
+        #train_data = CustomDatasetMLP(df_train)
+        #train_iterator = data.DataLoader(train_data,
+        #                                 shuffle=True,
+        #                                 batch_size=8)
+        #validation_data = CustomDatasetMLP(df_validation)
+        #validation_iterator = data.DataLoader(validation_data,
+        #                                      shuffle=False,
+        #                                      batch_size=8)
+#
+        #self.model.train_loop(train_iterator, validation_iterator)
+#
+        #self.path2transformers.mkdir(exist_ok=True)
+        #torch.save(self.model.state_dict(),
+        #           self.path2transformers / 'currentModel.pt')
+#
+        #result, wrong_predictions = self.eval_model()  # prob_pred
+        #self.df_dataset['prediction'] = self.df_dataset['prob_pred'] > 0.5
+
+    def __train_model(self,retrain=False):
+        """
+        trains the classifier model using annotations
+
+        Returns
+        -------
+        The loaded model is stored in attribute self.model
+        """
+        self.load_model()
+        df_train = self.__sample_train_data(retrain=retrain)
+        if retrain and len(df_train) == 0:
             logging.info(f"-- -- Samples from both classes are required for "
                          "retraining the model")
             return
-        df_validation = self.__sample_validation_data(retrain=True)
+
+        df_validation = self.__sample_validation_data(retrain=retrain)
 
         train_data = CustomDatasetMLP(df_train)
         train_iterator = data.DataLoader(train_data,
@@ -1402,8 +1444,17 @@ class CorpusClassifierMLP(CorpusClassifier):
         torch.save(self.model.state_dict(),
                    self.path2transformers / 'currentModel.pt')
 
+        self.df_dataset['sample_weight'] = 1.0
         result, wrong_predictions = self.eval_model()  # prob_pred
-        self.df_dataset['prediction'] = self.df_dataset['prob_pred'] > 0.5
+
+        if retrain:
+            self.df_dataset['prediction'] = self.df_dataset['prob_pred'] > 0.5
+        else:
+            self.df_dataset['PU_prediction'] = self.df_dataset['prob_pred'] > 0.5
+            self.df_dataset['PU_prob_pred'] = self.df_dataset['prob_pred']
+            self.df_dataset['prediction'] = self.df_dataset['prob_pred']
+            for col in ['PU_score_0', 'PU_score_1', 'prediction', 'prob_pred']:
+                self.df_dataset[col] = 0
 
     def load_model(self):
         """
