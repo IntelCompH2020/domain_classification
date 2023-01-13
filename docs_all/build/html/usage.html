@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<meta content="How to use the domain classifier." lang="en" name="description" xml:lang="en" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started with Domain Classifier &mdash; domain_classification_doc  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Menu Navigator" href="mn_menu_navigator.html" />
+    <link rel="prev" title="Domain Classifier Docs" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> domain_classification_doc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started with Domain Classifier</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#graphical-user-interface">Graphical User Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#terminal-mode">Terminal mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#single-task-execution-with-user-interaction">Single task execution with user interaction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#single-task-execution-without-user-interaction">Single task execution without user interaction</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mn_menu_navigator.html">Menu Navigator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_base_taskmanager.html">Base Task Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_task_manager.html">Task Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_data_manager.html">Data Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_query_manager.html">Query Manager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_classifier.html">Classifier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_custom_model.html">Custom Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_custom_model_mlp.html">Custom Model MLP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_preprocessor.html">Preprocessor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dc_plotter.html">Plotter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_main_window.html">Main Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_analyze_keywords_window.html">Analyze Keywords Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_constants.html">Constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_get_keywords_window.html">Get Keywords Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_get_topics_list_window.html">Get Topics List Window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_messages.html">Messages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_output_wrapper.html">Output Wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_util.html">Util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_worker_signals.html">Worker Signals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_worker.html">Worker</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">domain_classification_doc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Getting Started with Domain Classifier</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started-with-domain-classifier">
+<h1>Getting Started with Domain Classifier<a class="headerlink" href="#getting-started-with-domain-classifier" title="Permalink to this heading"></a></h1>
+<p>There are different scritps available to run the Domain Classifier. They differ in the way to manage the user interaction:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">main_gui.py</span></code>: user interacts through a Graphical User Interface (GUI).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">main_domain_classifier.py</span></code>: user interacts through a terminal (command window).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">main_dc_single_task.py</span></code>: to execute a single task (requires user interaction).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_dc_task.py</span></code>: to execute a single task (without user interaction).</p></li>
+</ol>
+</div></blockquote>
+<section id="graphical-user-interface">
+<h2>Graphical User Interface<a class="headerlink" href="#graphical-user-interface" title="Permalink to this heading"></a></h2>
+<p>You will need a terminal window to launch the GUI: open a terminal, go to the roof folder of the software and run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python main_gui.py --p /path/to/project
+                     --source /path/to/datasets
+                     —-zeroshot /path/to/zeroshot
+</pre></div>
+</div>
+<p>where</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/project</span></code> is the path to a new or an existing project in which the application’s output will be saved.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/datasets</span></code> is the path to the source data folder.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/zeroshot</span></code> is the path to a folder containing a pre-trained zero-shot model utilized for the selection of a subcorpus from a category name.</p></li>
+</ul>
+</div></blockquote>
+<p>All these parameters are optional. For instance, you can simply run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python main_gui.py
+</pre></div>
+</div>
+<p>and select the appropriate folders inside the GUI.</p>
+</section>
+<section id="terminal-mode">
+<h2>Terminal mode<a class="headerlink" href="#terminal-mode" title="Permalink to this heading"></a></h2>
+<p>To use the interaction through a command window, open a terminal, go to the root folder of the software and run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python main_domain_classifier.py --p /path/to/project
+                                   --source /path/to/datasets
+                                   —-zeroshot /path/to/zeroshot
+</pre></div>
+</div>
+<p>where</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/project</span></code> is the path to a new or an existing project in which the application’s output will be saved.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/datasets</span></code> is the path to the source data folder.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/zeroshot</span></code> is the path to a folder containing a pre-trained zero-shot model utilized for the selection of a subcorpus from a category name.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="single-task-execution-with-user-interaction">
+<h2>Single task execution with user interaction<a class="headerlink" href="#single-task-execution-with-user-interaction" title="Permalink to this heading"></a></h2>
+<p>To use the interaction through a command window, open a terminal, go to the root folder of the software and run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python main_dc_single_task.py --p /path/to/project
+                                --source /path/to/datasets
+                                —-zeroshot /path/to/zeroshot
+                                --task TASK
+</pre></div>
+</div>
+<p>where</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/project</span></code> is the path to a new or an existing project in which the application’s output will be saved.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/datasets</span></code> is the path to the source data folder.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/zeroshot</span></code> is the path to a folder containing a pre-trained zero-shot model utilized for the selection of a subcorpus from a category name.</p></li>
+<li><p>TASK is the name of the task to run.</p></li>
+</ul>
+</div></blockquote>
+<p>You can run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python main_dc_single_task.py --h
+</pre></div>
+</div>
+<p>to see available tasks.</p>
+</section>
+<section id="single-task-execution-without-user-interaction">
+<h2>Single task execution without user interaction<a class="headerlink" href="#single-task-execution-without-user-interaction" title="Permalink to this heading"></a></h2>
+<p>To run a specific task, all parameter of the task should be introduced through the comman window. To do so, you can run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python run_dc_task.py --p /path/to/project
+                        --source /path/to/datasets
+                        —-zeroshot /path/to/zeroshot
+                        --task TASK
+                        --class_name CLASS_NAME
+                        --param1 PARAM1
+                        --param1 PARAM2
+                        ...
+</pre></div>
+</div>
+<p>where</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/project</span></code> is the path to a new or an existing project in which the application’s output will be saved.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/datasets</span></code> is the path to the source data folder.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/zeroshot</span></code> is the path to a folder containing a pre-trained zero-shot model utilized for the selection of a subcorpus from a category name.</p></li>
+<li><p>TASK is the name of the task to run.</p></li>
+<li><p>CLASS_NAME is the name of the target category (only for tasks requiring it)</p></li>
+<li><p>param1, param2 are the names of the specific parameters</p></li>
+<li><p>PARAM1, PARAM2 are their values</p></li>
+</ul>
+</div></blockquote>
+<p>You can run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python run_dc_task.py --h
+</pre></div>
+</div>
+<p>to see available tasks.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Domain Classifier Docs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mn_menu_navigator.html" class="btn btn-neutral float-right" title="Menu Navigator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, J. Cid-Sueiro, L. Calvo, J.A. Espinosa, T. Ahlers, M. A. Vázquez.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
