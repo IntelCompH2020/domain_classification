@@ -1308,7 +1308,7 @@ class CorpusClassifierMLP(CorpusClassifier):
 
         logging.info("-- Training model...")
 
-        self.__train_model()
+        self._train_model()
 
         #self.load_model()
 #
@@ -1385,7 +1385,7 @@ class CorpusClassifierMLP(CorpusClassifier):
         self.df_dataset.loc[is_tr_new, "labels"] = self.df_dataset.loc[
             is_tr_new, "annotations"]
 
-        self.__train_model(retrain=True)
+        self._train_model(retrain=True)
 
         #df_train = self.__sample_train_data(retrain=True)
         #if len(df_train) == 0:
@@ -1412,7 +1412,7 @@ class CorpusClassifierMLP(CorpusClassifier):
         #result, wrong_predictions = self.eval_model()  # prob_pred
         #self.df_dataset['prediction'] = self.df_dataset['prob_pred'] > 0.5
 
-    def __train_model(self,retrain=False):
+    def _train_model(self,retrain=False):
         """
         trains the classifier model using annotations
 
