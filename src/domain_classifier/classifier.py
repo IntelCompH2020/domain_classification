@@ -6,7 +6,7 @@ Defines the main domain classification class
 import logging
 import pathlib
 from time import time
-from datetime import datetime
+from datetime import datetime 
 
 import pandas as pd
 import numpy as np
@@ -438,7 +438,6 @@ class CorpusClassifier(object):
         batch_size : int, optiona (default=8)
             Batch size
         """
-
         logging.info("-- Training model...")
 
         # ###############################
@@ -1303,8 +1302,6 @@ class CorpusClassifierMLP(CorpusClassifier):
             Batch size
         """
 
-        import pdb 
-        pdb.set_trace()
 
         logging.info("-- Training model...")
 
@@ -1350,12 +1347,12 @@ class CorpusClassifierMLP(CorpusClassifier):
     def retrain_model(self, freeze_encoder=True, batch_size=8, epochs=3,
                       annotation_gain=10):
         """
-        Re-train the classifier model using annotations
+        Re-train the classifier model using annotations. 
 
         Parameters
         ----------
         epochs : int, optional (default=3)
-            Number of training epochs
+            Number of training epochs 
         freeze_encoder : bool, optional (default=True)
             If True, the embedding layer is frozen, so that only the
             classification layers is updated. This is useful to use
