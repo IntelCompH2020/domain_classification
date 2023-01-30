@@ -191,14 +191,16 @@
 <dt class="sig sig-object py" id="src.domain_classifier.classifier.CorpusClassifier.AL_sample">
 <span class="sig-name descname"><span class="pre">AL_sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'extremes'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_prob</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.domain_classifier.classifier.CorpusClassifier.AL_sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a given number of samples for active learning (AL)</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dd class="field-odd"><ul>
 <li><p><strong>n_samples</strong> (<em>int, optional (default=5)</em>) – Number of samples to return</p></li>
-<li><p><strong>sampler</strong> (<em>str, optional (default=”random”)</em>) – Sample selection algorithm.</p>
-<ul>
-<li><p>If “random”, samples are taken at random from all docs with
-predictions</p></li>
+<li><p><strong>sampler</strong> (<em>str, optional (default=”random”)</em>) – Sample selection algorithm.
+- If “random”, samples are taken at random from all docs with</p>
+<blockquote>
+<div><p>predictions</p>
+</div></blockquote>
+<ul class="simple">
 <li><p>If “extremes”, samples are taken stochastically, but with
 documents with the highest or smallest probability scores are
 selected with higher probability.</p></li>

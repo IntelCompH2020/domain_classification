@@ -795,7 +795,6 @@ class CorpusClassifier(object):
             Number of samples to return
         sampler : str, optional (default="random")
             Sample selection algorithm.
-
             - If "random", samples are taken at random from all docs with
               predictions
             - If "extremes", samples are taken stochastically, but with
