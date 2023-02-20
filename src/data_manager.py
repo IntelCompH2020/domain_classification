@@ -20,6 +20,8 @@ from langdetect import detect
 import dask.dataframe as dd
 from dask.diagnostics import ProgressBar
 
+import gc
+
 
 def detect_english(x):
     """
@@ -34,7 +36,6 @@ def detect_english(x):
     -------
     True if x contains English text, False otherwise.
     """
-    print('count')
     # Default output value. Only if langdetect detects english, y will be True
     y = False
 
@@ -258,6 +259,7 @@ class DataManager(object):
 
         return keywords
 
+    #max_files
     def load_corpus(self, corpus_name, sampling_factor=1):
         """
         Loads a dataframe of documents from a given corpus.
@@ -276,6 +278,25 @@ class DataManager(object):
             Fraction of documents to be taken from the original corpus.
             (Used for SemanticScholar and patstat only)
         """
+        def corpus_has_embeddings(path2texts):
+            try:
+                pd.read_parquet(next(path2texts.glob('**/*')),columns=['embeddings'])
+                return True 
+            except:
+                return False
+        def sample_sub_set_from_folder(path2texts, selected_cols, sampling_factor):
+            fpaths = np.array([f for f in path2texts.glob('**/*')
+                      if f.is_file() and f.suffix == '.parquet'])
+            read_count = np.round(len(fpaths)*sampling_factor).astype(int)
+            rand_idx = np.random.choice(len(fpaths),read_count,replace=False).astype(int)
+            n_files = len(fpaths)
+            df_corpus = pd.DataFrame([])
+            for k, path_k in enumerate(fpaths[rand_idx]):
+                print(f"-- -- Loading file {k + 1} out of {len(rand_idx)}, Coprus len: {len(df_corpus)} \r",
+                      end="")
+                dfk = pd.read_parquet(path_k,columns=selected_cols)
+                df_corpus = pd.concat([df_corpus,dfk])
+            return df_corpus
 
         # Loading corpus
         logging.info(f'-- Loading corpus {corpus_name}')
@@ -506,17 +527,24 @@ class DataManager(object):
                 metadata = yaml.safe_load(f)
             path2texts = pathlib.Path(metadata['corpus'])
 
-            df = dd.read_parquet(path2texts)
-            dfsmall = df.sample(frac=sampling_factor, random_state=0)
+            if not corpus_has_embeddings(path2texts):
+                df = dd.read_parquet(path2texts, split_row_groups=True)
+                dfsmall = df.sample(frac=sampling_factor, random_state=0)
 
-            with ProgressBar():
-                df_corpus = dfsmall.compute()
+                with ProgressBar():
+                    df_corpus = dfsmall.compute()
 
-            # Remove unrelevant fields
-            selected_cols = ['id', 'title', 'paperAbstract', 'fieldsOfStudy']
-            if 'embeddings' in df_corpus:
-                selected_cols += ['embeddings']
-            df_corpus = df_corpus[selected_cols]
+                # Remove unrelevant fields
+                selected_cols = ['id', 'title',
+                                 'paperAbstract', 'fieldsOfStudy']
+                if 'embeddings' in df_corpus:
+                    selected_cols += ['embeddings']
+                df_corpus = df_corpus[selected_cols]
+            else:
+                selected_cols = np.array(['id', 'title', 'paperAbstract', 'fieldsOfStudy', 'embeddings'])
+                df_corpus = sample_sub_set_from_folder(path2texts, selected_cols, sampling_factor)
+                logging.info(f'-- -- Raw corpus {corpus_name} read with '
+                             f'{len(df_corpus)} documents')
 
             # Map column names to normalized names
             mapping = {'paperAbstract': 'description',
@@ -528,7 +556,6 @@ class DataManager(object):
             col = 'keywords'   # Just to abbreviate
             df_corpus[col] = df_corpus[col].apply(
                 lambda x: ','.join(x.astype(str)) if x is not None else '')
-
         elif corpus_name in {'patstat', 'patstat_emb'}:
 
             path2metadata = self.path2corpus / 'metadata.yaml'
@@ -610,9 +637,21 @@ class DataManager(object):
             l0 = len(df_corpus)
             logging.info("-- -- Applying language filter. This may take a "
                          "while")
-            df_corpus['eng'] = (
-                df_corpus['title'] + ' ' + df_corpus['description']).apply(
-                    detect_english)
+
+            # if 1 == 2:
+            #    df_corpus['eng'] = (
+            #        df_corpus['title'] + ' ' + df_corpus['description']).apply(
+            #            detect_english)
+            # else:
+            iPercent = -1
+            df_corpus['eng'] = False
+            for count, (index, row) in enumerate(df_corpus.iterrows()):
+                df_corpus.loc[index, 'eng'] = detect_english(
+                    row['title'] + ' ' + row['description'])
+                if int(100*count/len(df_corpus)) > iPercent:
+                    iPercent = int(100*count/len(df_corpus))
+                    logging.info(f"-- -- {iPercent} % of documents processed for applying language filter")
+
             df_corpus = df_corpus[df_corpus['eng']]
             df_corpus.drop(columns='eng', inplace=True)
 
@@ -1031,7 +1070,7 @@ class DataManager(object):
 
         # ########################
         # Saving id and class only
-        #deep copy to prevent that embeddings are deleted in object
+        # deep copy to prevent that embeddings are deleted in object
         df_dataset = df_dataset.copy(deep=True)
         df_dataset.drop(['embeddings'], axis=1, errors='ignore', inplace=True)
 

@@ -1,6 +1,5 @@
 """
-PandasModifier encapsulate logic to do the inference
-DataHandler is a helper class for data handling
+PandasModifier encapsulate the logic to do the inference
 
 @author: T.Ahlers
 """
@@ -16,7 +15,6 @@ import pandas as pd
 import torch.utils.data as data
 from .custom_model_mlp import CustomDatasetMLP
 
-
 class PandasModifier():
 
     def __init__(self, dh, kwargs):
@@ -25,8 +23,16 @@ class PandasModifier():
 
     def start(self):
         pass
-
     def change(self, df):
+        """
+        does the inference and adds the soft and hard predictions to the dataframe
+        Parameters
+        ----------
+        df: pd.DataFrame
+        Returns
+        -------
+        df: pd.DataFrame
+        """
         df_eval = df[['embeddings']].copy()
         df_eval.insert(0, 'labels', 0)
         eval_data = CustomDatasetMLP(df_eval)
@@ -45,7 +51,12 @@ class PandasModifier():
              'soft_prediction': predictions})
         return df_prediction
 
+"""
+Datahandler encapsulate logic to sequentially read all pandas file in a folder,
+change them with the help of a PandasChanger object and write them to a destination folder
 
+@author: T.Ahlers
+"""
 class DataHandler():
 
     def __init__(self, paths: {}, config: {} = {}, **kwargs: {}) -> None:
@@ -56,25 +67,42 @@ class DataHandler():
         self.kwargs = kwargs
         self.__buildConfig(config, init=True)
 
-    def __buildConfig(self, config, init=False):
-        dConfig = {'fileType': 'parquet',
-                   'minAge': 0,
-                   'debug': False,
-                   'create': True}
-        self.config = {}
-        change = False
-        for k, v in dConfig.items():
-            if k not in config:
-                self.config[k] = dConfig[k]
-            else:
-                change = True
-                self.config[k] = config[k]
+    def run(self, sourceKey: str, destination_key: str, PandasChanger) -> None:
+        """
+        all files of a specific folder (given by source_key) gets changed with the given pandasChanger object and is written
+        to the distiantion folder (given by destination_key)
+        Parameters
+        ----------
+        sourceKey: encapsulate the source folder
+        destination_key: encapsulate the destination folder
+        PandasChanger: the object which encpasulate the logic how to change the pandas file
 
-        if init or change:
-            self.refresh(init, self.config['create'])
+        Returns
+        -------
+        file_paths: str array
+        """
+        self.__isValidPath(sourceKey)
+        self.__isValidPath(destination_key)
 
-    # bug for not init
+        pandasChanger = PandasChanger(self, self.kwargs)
+        pandasChanger.start()
+
+        while len(df := self.readNextFile(sourceKey)) > 0:
+            df = pandasChanger.change(df)
+            if len(df) == 0:
+                continue
+
+            # print('write')
+            self.writeFile(destination_key, df)
+
     def refresh(self, init: bool = False, create: bool = False) -> None:
+        """
+        refresh the attribute self.folders based on the paths.  
+        Parameters
+        ----------
+        init: obsolete
+        create: if True the folders of the path a created on the server
+        """
         self.folders = {}
         fileSets = self.paths  # if init else self.folders
         for k, v in fileSets.items():
@@ -90,18 +118,45 @@ class DataHandler():
                      for n in f if self.__isValidFile(n)]),
                 'fileIdx': 0,
                 'params': {}}
-
     def getFolder(self, key: str, **kwargs: {}) -> Path:
+        """
+        get path of folder 
+        Parameters
+        ----------
+        key: specifies the path 
+
+        Returns
+        -------
+        folder_path: str
+        """
         self.__isValidPath(key)
         self.__buildConfig(kwargs)
         return self.folders[key]['folderPath']
-
     def getFiles(self, key: str, **kwargs: {}) -> []:
+        """
+        get path of files 
+        Parameters
+        ----------
+        key: specifies the path
+
+        Returns
+        -------
+        file_paths: str array
+        """
         self.__isValidPath(key)
         self.__buildConfig(kwargs)
         return self.folders[key]['filePaths']
-
     def readNextFile(self, key: str, **kwargs: {}) -> []:
+        """
+        reads the next file in the sequence
+        Parameters
+        ----------
+        key: specifies the path
+
+        Returns
+        -------
+        df: pd.DataFrame of file content
+        """
         self.__isValidPath(key)
         self.__buildConfig(kwargs)
 
@@ -120,8 +175,15 @@ class DataHandler():
         result = pd.read_parquet(self.lastFileName)
         self.folders[key]['fileIdx'] += 1
         return result
-
     def writeFile(self, key: str, data: object, fileName: str = '') -> None:
+        """
+        writes a new parquet file
+        Parameters
+        ----------
+        key: specifies the path
+        data: the file content
+        fileName: name of file
+        """
 
         fileName = (fileName if fileName != ''
                     else self.lastFileName.split('/')[-1])
@@ -132,26 +194,36 @@ class DataHandler():
         # print(f'write:{self.folders[key]["folderPath"]/fileName}')
         data.to_parquet(self.folders[key]['folderPath'] / fileName)
         self.lastFileName = ''
+    def __buildConfig(self, config, init=False):
+        """
+        builds the config dictionary by mixing the given config with the passed config
+        Parameters
+        ----------
+        config: config dictionary
+        """
+        dConfig = {'fileType': 'parquet',
+                   'minAge': 0,
+                   'debug': False,
+                   'create': True}
+        self.config = {}
+        change = False
+        for k, v in dConfig.items():
+            if k not in config:
+                self.config[k] = dConfig[k]
+            else:
+                change = True
+                self.config[k] = config[k]
 
-    def run(self, sourceKey: str, destination_key: str, PandasChanger) -> None:
-        self.__isValidPath(sourceKey)
-        self.__isValidPath(destination_key)
-
-        pandasChanger = PandasChanger(self, self.kwargs)
-        pandasChanger.start()
-
-        while len(df := self.readNextFile(sourceKey)) > 0:
-            df = pandasChanger.change(df)
-            if len(df) == 0:
-                continue
-
-            # print('write')
-            self.writeFile(destination_key, df)
-
-    def test(self):
-        return self.folders
-
+        if init or change:
+            self.refresh(init, self.config['create'])
     def __createDeltaFiles(self, keys: str) -> None:
+        """
+        create the delta between the destination folder and source folder so that just the delta gets proceed 
+        Parameters
+        ----------
+        key: specifies the path
+
+        """
 
         keyA, keyB = self.__isValidDoubleKey(keys)
         self.__isValidPath(keyA, tryFix=False)
@@ -191,7 +263,18 @@ class DataHandler():
             'params': {'minAge': minAge}}
 
     def __getFilesFiltered(self, key: str, fileNames: [], minAge: int) -> []:
+        """
+        return just the files which are older than than the minimum age
+        Parameters
+        ----------
+        key: specifies the path
+        fileNames: list of files
+        minAge: minimum age of file
+        Returns
+        -------
+        file_list: list of str
 
+        """
         returnFileNames = []
         for fileName in fileNames:
             if (time.time() - self.__get_file_creation_date(
@@ -199,9 +282,17 @@ class DataHandler():
                 continue
             returnFileNames.append(fileName)
         return np.array(returnFileNames)
-
     def __get_file_creation_date(self, path_to_file) -> float:
+        """
+        returns the file creation date
+        Parameters
+        ----------
+        path_to_file: file path
+        Returns
+        -------
+        timestamp: 
 
+        """
         if platform.system() == 'Windows':
             return os.path.getctime(path_to_file)
         try:
@@ -211,7 +302,16 @@ class DataHandler():
             return stat.st_mtime
 
     def __isValidFile(self, filePath: str):
+        """
+        returns if the file type is correct
+        Parameters
+        ----------
+        file_path: file path
+        Return
+        ----------
+        is_file_correct: bool
 
+        """
         if self.config['fileType'] == '':
             return True
         if self.config['fileType'] == filePath.split('.')[-1]:
@@ -219,7 +319,15 @@ class DataHandler():
         return False
 
     def __isValidPath(self, key: str, tryFix: bool = True) -> None:
-
+        """
+        raises an exception if the path is not valid
+        Parameters
+        ----------
+        key: file path
+        Exceptions
+        ----------
+        ex: encapsulate that the path is wrong
+        """
         ex = Exception("path is not registered")
         if key not in self.folders.keys():
             if tryFix:
@@ -231,7 +339,18 @@ class DataHandler():
                 raise ex
 
     def __isValidDoubleKey(self, initKey: str) -> None:
+        """
+        returns if a it is a valid double key
+        ----------
+        initKey: str double key
+        Returns
+        -------
+        keyParts: parts of the key in a list
+        Exception
+        -------
+        Exception: encapsulate that the given format is wrong
 
+        """
         keyParts = initKey.split('_')
         if len(keyParts) != 2:
             raise Exception('format of key has to be x_x')
