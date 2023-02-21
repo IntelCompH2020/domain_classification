@@ -20,7 +20,7 @@ from langdetect import detect
 import dask.dataframe as dd
 from dask.diagnostics import ProgressBar
 
-import gc
+# import gc
 
 
 def detect_english(x):
@@ -46,7 +46,7 @@ def detect_english(x):
         # (otherwise, the lang detector raises an error)
         if x.lower().islower():
             y = detect(x) == 'en'
-    except:
+    except Exception:
         logging.warning(f"-- Language detection error in string {x}")
 
     return y
@@ -118,21 +118,18 @@ class DataManager(object):
 
         return path2feather
 
-    def get_metadata(self):
-
-        return self.metadata
-
     def __load_metadata(self):
+        """
+        Loads the metadata file if it exists. If not, self.metadata takes the
+        default value (None)
+        """
 
         path2metadata = self.path2corpus / 'metadata.yaml'
-
-        if not path2metadata.is_file():
-            logging.error(
-                f"-- A metadata file in {path2metadata} is missed. It is "
-                "required for this corpus. Corpus not loaded")
-
-        with open(path2metadata, 'r', encoding='utf8') as f:
-            self.metadata = yaml.safe_load(f)
+        if path2metadata.is_file():
+            with open(path2metadata, 'r', encoding='utf8') as f:
+                self.metadata = yaml.safe_load(f)
+        else:
+            self.metadata = None
 
         return
 
@@ -151,6 +148,12 @@ class DataManager(object):
         self.__update_metadata()
 
         return
+
+    def get_metadata(self):
+        """
+        A method to access the metadata attribute from outside the data_manager
+        """
+        return self.metadata
 
     def is_model(self, class_name):
         """
@@ -259,7 +262,6 @@ class DataManager(object):
 
         return keywords
 
-    #max_files
     def load_corpus(self, corpus_name, sampling_factor=1):
         """
         Loads a dataframe of documents from a given corpus.
@@ -276,26 +278,34 @@ class DataManager(object):
 
         sampling_factor : float, optional (default=1)
             Fraction of documents to be taken from the original corpus.
-            (Used for SemanticScholar and patstat only)
+            (Used for SemanticScholar and Patstat only)
         """
+
         def corpus_has_embeddings(path2texts):
+
             try:
-                pd.read_parquet(next(path2texts.glob('**/*')),columns=['embeddings'])
-                return True 
-            except:
+                pd.read_parquet(next(path2texts.glob('**/*')),
+                                columns=['embeddings'])
+                return True
+            except Exception:
                 return False
-        def sample_sub_set_from_folder(path2texts, selected_cols, sampling_factor):
+
+        def sample_sub_set_from_folder(path2texts, selected_cols,
+                                       sampling_factor):
+
             fpaths = np.array([f for f in path2texts.glob('**/*')
-                      if f.is_file() and f.suffix == '.parquet'])
-            read_count = np.round(len(fpaths)*sampling_factor).astype(int)
-            rand_idx = np.random.choice(len(fpaths),read_count,replace=False).astype(int)
-            n_files = len(fpaths)
+                               if f.is_file() and f.suffix == '.parquet'])
+            read_count = np.round(len(fpaths) * sampling_factor).astype(int)
+            rand_idx = np.random.choice(
+                len(fpaths), read_count, replace=False).astype(int)
+
             df_corpus = pd.DataFrame([])
             for k, path_k in enumerate(fpaths[rand_idx]):
-                print(f"-- -- Loading file {k + 1} out of {len(rand_idx)}, Coprus len: {len(df_corpus)} \r",
-                      end="")
-                dfk = pd.read_parquet(path_k,columns=selected_cols)
-                df_corpus = pd.concat([df_corpus,dfk])
+                print(f"-- -- Loading file {k + 1} out of {len(rand_idx)},"
+                      " Coprus len: {len(df_corpus)} \r", end="")
+                dfk = pd.read_parquet(path_k, columns=selected_cols)
+                df_corpus = pd.concat([df_corpus, dfk])
+
             return df_corpus
 
         # Loading corpus
