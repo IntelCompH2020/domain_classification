@@ -203,8 +203,6 @@ class TaskManager(baseTaskManager):
         option:
             Unused
         """
-        import pdb 
-        pdb.set_trace()
         if self.dc is None or self.dc.df_dataset is None:
             logging.warning("-- No model is loaded. "
                             "You must load or create a set of labels first")
@@ -363,8 +361,6 @@ class TaskManager(baseTaskManager):
             Name of the corpus. It should be the name of a folder in
             self.path2source
         """
-        import pdb 
-        pdb.set_trace()
         # Dictionary of sampling factor for the corpus loader.
         sampling_factors = self.global_parameters['corpus']['sampling_factor']
         # Default sampling factor: 1 (loads the whole corpus)
