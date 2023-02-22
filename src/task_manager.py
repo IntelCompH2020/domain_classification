@@ -79,6 +79,7 @@ class TaskManager(baseTaskManager):
         self.ready2setup = None
         self.set_logs = None
         self.logger = None
+        self.corpus_has_embeddings = False
 
         super().__init__(path2project, path2source, config_fname=config_fname,
                          metadata_fname=metadata_fname, set_logs=set_logs)
@@ -185,13 +186,13 @@ class TaskManager(baseTaskManager):
 
         return dataset_list
 
-    def _get_inference(self):
-        """
-        Returns inference manager options
-        """
-
-        corpus_has_embeddings = self.DM.get_metadata()['corpus_has_embeddings']
-        return ['Inference MLP'] if corpus_has_embeddings else []
+#    def _get_inference(self):
+#        """
+#        Returns inference manager options
+#        """
+#        corpus_has_embeddings = self.corpus_has_embeddings
+#        #corpus_has_embeddings = self.DM.get_metadata()['corpus_has_embeddings']
+#        return ['Inference MLP'] if corpus_has_embeddings else []
 
     def inference(self, option=[]):
         """
@@ -202,6 +203,8 @@ class TaskManager(baseTaskManager):
         option:
             Unused
         """
+        import pdb 
+        pdb.set_trace()
         if self.dc is None or self.dc.df_dataset is None:
             logging.warning("-- No model is loaded. "
                             "You must load or create a set of labels first")
@@ -360,7 +363,8 @@ class TaskManager(baseTaskManager):
             Name of the corpus. It should be the name of a folder in
             self.path2source
         """
-
+        import pdb 
+        pdb.set_trace()
         # Dictionary of sampling factor for the corpus loader.
         sampling_factors = self.global_parameters['corpus']['sampling_factor']
         # Default sampling factor: 1 (loads the whole corpus)
@@ -379,6 +383,9 @@ class TaskManager(baseTaskManager):
 
         # Load corpus in a dataframe.
         self.df_corpus = self.DM.load_corpus(corpus_name, sampling_factor=sf)
+
+        #
+        self.corpus_has_embeddings = 'embeddings' in self.df_corpus.columns
 
         self.CorpusProc = CorpusDFProcessor(
             self.df_corpus, self.path2embeddings, self.path2zeroshot)
@@ -716,7 +723,8 @@ class TaskManager(baseTaskManager):
             model_type = self.global_parameters['classifier']['model_type']
             model_name = self.global_parameters['classifier']['model_name']
 
-            if self.DM.get_metadata()['corpus_has_embeddings']:
+            #if self.DM.get_metadata()['corpus_has_embeddings']:
+            if self.corpus_has_embeddings:
 
                 self.df_dataset = (
                     self.CorpusProc.enrich_dataset_with_embeddings(
@@ -802,7 +810,8 @@ class TaskManager(baseTaskManager):
 
         path2model = self.path2models / self.class_name
 
-        if self.DM.get_metadata()['corpus_has_embeddings']:
+        #if self.DM.get_metadata()['corpus_has_embeddings']:
+        if self.corpus_has_embeddings:
 
             self.df_dataset = self.CorpusProc.enrich_dataset_with_embeddings(
                 self.df_dataset, self.df_corpus)
@@ -1548,7 +1557,8 @@ class TaskManagerCMD(TaskManager):
         nmax = np.inf
         epochs = 0
 
-        if not self.DM.get_metadata()['corpus_has_embeddings']:
+        #if not self.DM.get_metadata()['corpus_has_embeddings']:
+        if not self.corpus_has_embeddings:
 
             # Get weight parameter (weight of title word wrt description words)
             max_imbalance = self.QM.ask_value(

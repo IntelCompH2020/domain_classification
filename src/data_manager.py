@@ -129,25 +129,25 @@ class DataManager(object):
             with open(path2metadata, 'r', encoding='utf8') as f:
                 self.metadata = yaml.safe_load(f)
         else:
-            self.metadata = None
+            self.metadata = {}
 
         return
 
-    def __update_metadata(self):
+#    def __update_metadata(self):
+#
+#        path2metadata = self.path2corpus / 'metadata.yaml'
+#        with open(path2metadata, 'w') as f:
+#            yaml.dump(self.metadata, f)
+#
+#        return
 
-        path2metadata = self.path2corpus / 'metadata.yaml'
-        with open(path2metadata, 'w') as f:
-            yaml.dump(self.metadata, f)
-
-        return
-
-    def __determineCorpusHasEmbeddings(self, columns):
-
-        self.metadata["corpus_has_embeddings"] = bool(
-            (np.array(columns) == 'embeddings').sum() > 0)
-        self.__update_metadata()
-
-        return
+#    def __determineCorpusHasEmbeddings(self, columns):
+#
+#        self.metadata["corpus_has_embeddings"] = bool(
+#            (np.array(columns) == 'embeddings').sum() > 0)
+#        self.__update_metadata()
+#
+#        return
 
     def get_metadata(self):
         """
@@ -328,7 +328,7 @@ class DataManager(object):
             logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
                          f" documents loaded in {time() - t0:.2f} secs.")
 
-            self.__determineCorpusHasEmbeddings(df_corpus.columns)
+            #self.__determineCorpusHasEmbeddings(df_corpus.columns)
 
             return df_corpus
 
@@ -672,7 +672,7 @@ class DataManager(object):
         # Reset the index and drop the old index
         df_corpus = df_corpus.reset_index(drop=True)
 
-        self.__determineCorpusHasEmbeddings(df_corpus.columns)
+        #self.__determineCorpusHasEmbeddings(df_corpus.columns)
 
         # ############
         # Log and save

@@ -129,8 +129,8 @@ import_export_annotations:
 
 inference:
   title: Inference
-  options:
-    - get_method: _get_inference
+  #options:
+  #  - get_method: _get_inference
     
 
 
