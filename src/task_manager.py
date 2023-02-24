@@ -191,7 +191,8 @@ class TaskManager(baseTaskManager):
 #        Returns inference manager options
 #        """
 #        corpus_has_embeddings = self.corpus_has_embeddings
-#        #corpus_has_embeddings = self.DM.get_metadata()['corpus_has_embeddings']
+#        # corpus_has_embeddings = (
+#              self.DM.get_metadata()['corpus_has_embeddings']
 #        return ['Inference MLP'] if corpus_has_embeddings else []
 
     def inference(self, option=[]):
@@ -203,14 +204,20 @@ class TaskManager(baseTaskManager):
         option:
             Unused
         """
+
         if self.dc is None or self.dc.df_dataset is None:
             logging.warning("-- No model is loaded. "
                             "You must load or create a set of labels first")
             return
+
         metadata = self.DM.get_metadata()
-        dPaths = {'d_documentEmbeddings': metadata['corpus'],
-                  'p_prediction': self.path2output / self.class_name}
-        self.dc.inferData(dPaths)
+
+        if 'corpus' in metadata:
+            dPaths = {'d_documentEmbeddings': metadata['corpus'],
+                      'p_prediction': self.path2output / self.class_name}
+            self.dc.inferData(dPaths)
+        else:
+            logging.warning("-- Option not available for this corpus")
 
         return
 
