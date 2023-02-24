@@ -672,7 +672,7 @@ class DataManager(object):
         # Reset the index and drop the old index
         df_corpus = df_corpus.reset_index(drop=True)
 
-        #self.__determineCorpusHasEmbeddings(df_corpus.columns)
+        # self.__determineCorpusHasEmbeddings(df_corpus.columns)
 
         # ############
         # Log and save
