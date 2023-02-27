@@ -11,7 +11,8 @@ import numpy as np
 # Local imports
 # You might need to update the location of the baseTaskManager class
 from .base_taskmanager import baseTaskManager
-from .data_manager import DataManager
+from .data_manager import LogicalDataManager
+from .data_manager import LocalDataManager
 from .query_manager import QueryManager
 from .domain_classifier.preprocessor import CorpusDFProcessor
 from .domain_classifier.classifier import CorpusClassifier
@@ -91,10 +92,11 @@ class TaskManager(baseTaskManager):
         # This list can be modified within an active project by adding new
         # folders. Every time a new entry is found in this list, a new folder
         # is created automatically.
-        self.f_struct = {'datasets': 'datasets',
+        self.f_struct = {'corpus': 'corpus',
+                         'datasets': 'datasets',
                          'models': 'models',
                          'output': 'output',
-                         'embeddings': 'embeddings',
+                         'embeddings': 'embeddings'
                          # 'labels': 'labels',     # No longer used
                          }
 
@@ -134,7 +136,11 @@ class TaskManager(baseTaskManager):
         self.metadata['corpus_name'] = None
 
         # Datamanager
-        self.DM = DataManager(self.path2source, self.path2datasets,
+        if 1 == 1:
+            self.DM = LogicalDataManager(self.path2source, self.path2datasets,
+                              self.path2models, self.path2project, self.path2embeddings)
+        else:
+            self.DM = LocalDataManager(self.path2source, self.path2datasets,
                               self.path2models, self.path2embeddings)
 
         return
@@ -191,8 +197,7 @@ class TaskManager(baseTaskManager):
 #        Returns inference manager options
 #        """
 #        corpus_has_embeddings = self.corpus_has_embeddings
-#        # corpus_has_embeddings = (
-#              self.DM.get_metadata()['corpus_has_embeddings']
+#        #corpus_has_embeddings = self.DM.get_metadata()['corpus_has_embeddings']
 #        return ['Inference MLP'] if corpus_has_embeddings else []
 
     def inference(self, option=[]):
@@ -204,20 +209,14 @@ class TaskManager(baseTaskManager):
         option:
             Unused
         """
-
         if self.dc is None or self.dc.df_dataset is None:
             logging.warning("-- No model is loaded. "
                             "You must load or create a set of labels first")
             return
-
         metadata = self.DM.get_metadata()
-
-        if 'corpus' in metadata:
-            dPaths = {'d_documentEmbeddings': metadata['corpus'],
-                      'p_prediction': self.path2output / self.class_name}
-            self.dc.inferData(dPaths)
-        else:
-            logging.warning("-- Option not available for this corpus")
+        dPaths = {'d_documentEmbeddings': metadata['corpus'],
+                  'p_prediction': self.path2output / self.class_name}
+        self.dc.inferData(dPaths)
 
         return
 
@@ -387,7 +386,7 @@ class TaskManager(baseTaskManager):
         # Load corpus in a dataframe.
         self.df_corpus = self.DM.load_corpus(corpus_name, sampling_factor=sf)
 
-        #
+
         self.corpus_has_embeddings = 'embeddings' in self.df_corpus.columns
 
         self.CorpusProc = CorpusDFProcessor(
@@ -396,7 +395,7 @@ class TaskManager(baseTaskManager):
         if not self.state['selected_corpus']:
             # Store the name of the corpus an object attribute because later
             # tasks will be referred to this corpus
-            self.metadata['corpus_name'] = corpus_name
+            self.metadata['corpus_name'] = str(corpus_name)
             self.state['selected_corpus'] = True
             self._save_metadata()
 
