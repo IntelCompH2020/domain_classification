@@ -1,0 +1,13 @@
+ai:
+  doc_selection:
+    keywords:
+    - _all_AI
+    method: count
+    n_max: 50000
+    s_min: 0.6
+    wt: 1
+corpus_name: SemanticScholar
+state:
+  configReady: true
+  isProject: true
+  selected_corpus: true

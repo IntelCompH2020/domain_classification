@@ -1,3 +1,7 @@
+# Parameters for Project fodler path
+project_folder_path: project_folder/DCmodels
+dataset_path: project_folder/datasets 
+
 # Parameters for the corpus loaders
 corpus:
   # Fraction of documents to be taken from the corpora

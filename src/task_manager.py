@@ -138,10 +138,10 @@ class TaskManager(baseTaskManager):
         # Datamanager
         if 1 == 1:
             self.DM = LogicalDataManager(self.path2source, self.path2datasets,
-                              self.path2models, self.path2project, self.path2embeddings)
+                              self.path2models, self.path2project, self, self.path2embeddings)
         else:
             self.DM = LocalDataManager(self.path2source, self.path2datasets,
-                              self.path2models, self.path2embeddings)
+                              self.path2models,self.path2embeddings)
 
         return
 
@@ -340,7 +340,6 @@ class TaskManager(baseTaskManager):
         Sets up the application projetc. To do so, it loads the configuration
         file and activates the logger objects.
         """
-
         super().setup()
 
         # Fill global parameters.

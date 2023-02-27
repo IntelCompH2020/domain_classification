@@ -6,6 +6,7 @@ the project.
 """
 
 import pathlib
+from pathlib import Path
 import pandas as pd
 import numpy as np
 import scipy.sparse as scp
@@ -1128,16 +1129,18 @@ class LogicalDataManager(DataManager):
     """
 
     def __init__(self, path2source, path2datasets, path2models,
-                 path2project,path2embeddings=None):
+                 path2project,tm,path2embeddings=None):
         super().__init__(path2project, path2datasets, path2models,
                  path2embeddings)
-        self.path2json = path2source
+        self.tm = tm
+        self.path2json = None
         self.corpus_manager = CorpusManager()
 
     def load_corpus(self, corpus_name, sampling_factor=1):
         logging.info(f'-- Loading corpus {corpus_name}')
         # #################################################
         # Load corpus data from feather file (if it exists)
+
         self.path2corpus = self.path2source 
         try:
             return self._get_corpus_from_feather(sampling_factor,corpus_name)
@@ -1168,7 +1171,7 @@ class LogicalDataManager(DataManager):
                                       dataset['titlefld'],
                                       dataset['textfld'],
                                       dataset['categoryfld']])
-        
+
             df = dd.read_parquet(dataset['parquet'], split_row_groups=True)
             dfsmall = df.sample(frac=sampling_factor, random_state=0)
             with ProgressBar():
@@ -1190,6 +1193,7 @@ class LogicalDataManager(DataManager):
         """
         Returns the list of available corpus
         """
+        self.path2json = Path(self.tm.global_parameters["dataset_path"]) 
         datasets = np.array(list(self.corpus_manager.listTrDtsets(self.path2json).keys()))
         for idx,dataset in enumerate(datasets):
             datasets[idx] = dataset.split('/')[-1].split('.')[0]

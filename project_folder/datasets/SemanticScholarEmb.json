@@ -1,0 +1,20 @@
+{
+ "name": "Scholar",
+ "description": "Semantic Scholar training dataset for DC",
+ "valid_for": "DC",
+ "visibility": "private",
+ "Dtsets": [
+   {
+     "parquet":"../../datasets/SemanticScholar/corpus",
+     "source": "Scholar",
+     "idfld": "id",
+     "titlefld": "title",
+     "textfld": "paperAbstract",
+     "categoryfld": "fieldsOfStudy",
+     "embeddingsfld": "embeddings",
+     "lemmasfld": "",
+     "filter": ""
+   }
+ ],
+ "creation_date": "2022-07-12 15:15:24.070089"
+}

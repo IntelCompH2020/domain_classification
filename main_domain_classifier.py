@@ -9,6 +9,7 @@ Created on March 20 2019
 
 import pathlib
 import argparse
+import yaml
 
 # Local imports
 from src.menu_navigator.menu_navigator import MenuNavigator
@@ -44,7 +45,11 @@ def main():
         while project_path is None or project_path == "":
             project_path = input('-- Write the path to the project to load or '
                                  'create: ')
-    project_path = pathlib.Path(project_path)
+    
+    with open('config/parameters.default.yaml', 'r', encoding='utf8') as f:
+        parameter_default = yaml.safe_load(f)
+
+    project_path = pathlib.Path(parameter_default['project_folder_path']) / pathlib.Path(project_path)
 
     if project_path.is_dir():
         option = 'load'
