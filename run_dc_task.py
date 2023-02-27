@@ -10,6 +10,7 @@ Created on Sep 06 2022
 import pathlib
 import argparse
 import inspect
+import yaml
 
 # Local imports
 from src.menu_navigator.menu_navigator import MenuNavigator
@@ -84,7 +85,11 @@ def main():
         args = parser.parse_args()
 
     # Create task manager object
-    project_path = pathlib.Path(args.p)
+    with open('config/parameters.default.yaml', 'r', encoding='utf8') as f:
+        parameter_default = yaml.safe_load(f)
+    project_path = pathlib.Path(parameter_default['project_folder_path']) / pathlib.Path(args.p)
+
+
     # tm = TaskManagerCMD(project_path, path2source=args.source,
     #                     path2zeroshot=args.zeroshot)
     tm = TaskManager(project_path, path2source=args.source,
