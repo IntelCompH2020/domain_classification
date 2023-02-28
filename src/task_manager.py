@@ -145,6 +145,8 @@ class TaskManager(baseTaskManager):
 
         return
 
+
+
     def _is_model(self, verbose=True):
         """
         Check if labels have been loaded and a domain classifier object has
@@ -200,7 +202,7 @@ class TaskManager(baseTaskManager):
 #        #corpus_has_embeddings = self.DM.get_metadata()['corpus_has_embeddings']
 #        return ['Inference MLP'] if corpus_has_embeddings else []
 
-    def inference(self, option=[]):
+    def inference(self, option=[]): 
         """
         Infers data
 
@@ -220,7 +222,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def _get_annotation_list(self):
+    def _get_annotation_list(self): 
         """
         Returns the list of available files with class annotations
         (i.e. class labels, likely obtained from annotations by humans in
@@ -240,7 +242,7 @@ class TaskManager(baseTaskManager):
 
         return annotations_list
 
-    def _get_gold_standard_labels(self):
+    def _get_gold_standard_labels(self): 
         """
         Returns the list of gold-standard labels or labelsets available
         in the current corpus.
@@ -264,7 +266,7 @@ class TaskManager(baseTaskManager):
 
         return gs_labels
 
-    def _convert_keywords(self, keywords, out='list'):
+    def _convert_keywords(self, keywords, out='list'): 
         """
         Converts a string variable keywords to the required format.
 
@@ -297,7 +299,7 @@ class TaskManager(baseTaskManager):
 
             return keywords
 
-    def _save_dataset(self):
+    def _save_dataset(self): 
         """
         Saves the dataset used by the last classifier object.
 
@@ -317,7 +319,7 @@ class TaskManager(baseTaskManager):
         self.DM.save_dataset(
             self.dc.df_dataset, tag=self.class_name, save_csv=True)
 
-    def load(self):
+    def load(self): 
         """
         Extends the load method from the parent class to load the project
         corpus and the dataset (if any)
@@ -335,7 +337,7 @@ class TaskManager(baseTaskManager):
 
         return msg
 
-    def setup(self):
+    def setup(self): 
         """
         Sets up the application projetc. To do so, it loads the configuration
         file and activates the logger objects.
@@ -356,7 +358,72 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def load_corpus(self, corpus_name: str):
+    def load_corpus_by_keywords(self, corpus_name: str,wt: float = 2.0, n_max: int = 2000,
+                               s_min: float = 1.0, tag: str = "kwds",
+                               method: str = 'count', keywords: str = ""):
+        """
+        combines method load_corpus and get_labels_by_keywords
+        ----------
+        corpus_name : str
+            Name of the corpus. It should be the name of a folder in
+            self.path2source
+        wt : float, optional (default=2)
+            Weighting factor for the title components. Keyword matches with
+            title words are weighted by this factor
+        n_max: int or None, optional (defaul=2000)
+            Maximum number of elements in the output list. The default is
+            a huge number that, in practice, means there is no loimit
+        s_min: float, optional (default=1)
+            Minimum score. Only elements strictly above s_min are selected
+        tag: str, optional (default='kwds')
+            Name of the output label set.
+        method: 'embedding' or 'count', optional
+            Selection method: 'count' (based on counting occurences of keywords
+            in docs) or 'embedding' (based on the computation of similarities
+            between doc and keyword embeddings)
+        keywords : str, optional (default="")
+            A comma-separated string of keywords.
+            If the string is empty, the keywords are read from self.keywords
+        """
+        self.load_corpus(corpus_name)
+        self.get_labels_by_keywords(wt,n_max,s_min,tag,method,keywords)
+
+    def load_corpus_by_zeroshot(self, corpus_name: str,n_max: int = 2000, s_min: float = 0.1,
+                               tag: str = "zeroshot", keywords: str = ""):
+        """
+        combines method load_corpus and get_labels_by_keywords
+        ----------
+        corpus_name : str
+            Name of the corpus. It should be the name of a folder in
+            self.path2source
+        n_max: int or None, optional (defaul=2000)
+            Maximum number of elements in the output list. The default is
+            a huge number that, in practice, means there is no loimit
+        s_min: float, optional (default=0.1)
+            Minimum score. Only elements strictly above s_min are selected
+        tag: str, optional (default=1)
+            Name of the output label set.
+        keywords : str, optional (default="")
+            A comma-separated string of keywords.
+            If the string is empty, the keywords are read from self.keywords
+        """
+        self.load_corpus(corpus_name)
+        self.get_labels_by_zeroshot(n_max,s_min,tag,keywords)
+
+
+    def load_corpus_by_topics(self, corpus_name: str):
+        """
+        combines method load_corpus and get_labels_by_keywords
+        ----------
+        corpus_name : str
+            Name of the corpus. It should be the name of a folder in
+            self.path2source
+        """
+        self.load_corpus(corpus_name)
+        self.get_labels_by_topics()
+
+
+    def load_corpus(self, corpus_name: str): 
         """
         Loads a dataframe of documents from a given corpus.
 
@@ -400,7 +467,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def import_AI_subcorpus(self):
+    def import_AI_subcorpus(self): 
         """
         Import a subcorpus of documents related to AI.
 
@@ -428,7 +495,7 @@ class TaskManager(baseTaskManager):
 
         return msg
 
-    def analyze_keywords(self, wt: float = 2.0, keywords: str = ""):
+    def analyze_keywords(self, wt: float = 2.0, keywords: str = ""): 
         """
         Get a set of positive labels using keyword-based search
 
@@ -463,7 +530,7 @@ class TaskManager(baseTaskManager):
 
     def get_labels_by_keywords(self, wt: float = 2.0, n_max: int = 2000,
                                s_min: float = 1.0, tag: str = "kwds",
-                               method: str = 'count', keywords: str = ""):
+                               method: str = 'count', keywords: str = ""): 
         """
         Get a set of positive labels using keyword-based search
 
@@ -530,7 +597,7 @@ class TaskManager(baseTaskManager):
         return msg
 
     def get_labels_by_zeroshot(self, n_max: int = 2000, s_min: float = 0.1,
-                               tag: str = "zeroshot", keywords: str = ""):
+                               tag: str = "zeroshot", keywords: str = ""): 
         """
         Get a set of positive labels using a zero-shot classification model
 
@@ -580,7 +647,7 @@ class TaskManager(baseTaskManager):
         return msg
 
     def get_labels_by_topics(self, topic_weights, n_max: int = 2000,
-                             s_min: float = 1.0, tag: str = "tpcs"):
+                             s_min: float = 1.0, tag: str = "tpcs"): 
         """
         Get a set of positive labels from a weighted list of topics
 
@@ -647,8 +714,7 @@ class TaskManager(baseTaskManager):
     def evaluate_PUlabels(self, true_label_name: str):
         """
         Evaluate the current set of PU labels
-        """
-
+        """ 
         if self.dc is None or self.dc.df_dataset is None:
             logging.warning("-- No model is loaded. "
                             "You must load or create a set of labels first")
@@ -701,7 +767,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def load_labels(self, class_name):
+    def load_labels(self, class_name): 
         """
         Load a set of labels and its corresponding dataset (if it exists)
 
@@ -748,7 +814,7 @@ class TaskManager(baseTaskManager):
 
         return msg
 
-    def reset_labels(self, class_name):
+    def reset_labels(self, class_name): 
         """
         Reset all labels and models associated to a given category
 
@@ -770,7 +836,7 @@ class TaskManager(baseTaskManager):
         return
 
     def train_PUmodel(self, max_imbalance: float = 3.0, nmax: int = 400,
-                      epochs: int = 3):
+                      epochs: int = 3): 
         """
         Train a domain classifiers
 
@@ -856,8 +922,7 @@ class TaskManager(baseTaskManager):
     def evaluate_PUmodel(self, samples: str = "train_test"):
         """
         Evaluate a domain classifiers
-        """
-
+        """ 
         # Check if a classifier object exists
         if not self._is_model():
             return
@@ -880,7 +945,7 @@ class TaskManager(baseTaskManager):
         return result
 
     def _performance_metrics(self, tag_model, true_label_name, subset,
-                             use_sampling_probs=True):
+                             use_sampling_probs=True): 
         """
         Compute all performance metrics based on the data available at the
         current dataset.
@@ -924,7 +989,7 @@ class TaskManager(baseTaskManager):
         return
 
     def _label2label_metrics(self, tag_model, true_label_name, subset,
-                             use_sampling_probs=True):
+                             use_sampling_probs=True): 
         """
         Compute all performance metrics based on the data available at the
         current dataset.
@@ -959,8 +1024,7 @@ class TaskManager(baseTaskManager):
         """
         Compute all performance metrics for the PU model, based on the data
         available at the current dataset
-        """
-
+        """ 
         # Check if a classifier object exists
         if not self._is_model():
             return
@@ -984,8 +1048,7 @@ class TaskManager(baseTaskManager):
         """
         Compute all performance metrics based on the data available at the
         current dataset.
-        """
-
+        """ 
         # Check if a classifier object exists
         if not self._is_model():
             return
@@ -1006,8 +1069,7 @@ class TaskManager(baseTaskManager):
     def get_feedback(self, sampler=None):
         """
         Gets some labels from a user for a selected subset of documents
-        """
-
+        """ 
         # This is for compatibility with the GUI
         if sampler is None:
             sampler = self.global_parameters['active_learning']['sampler']
@@ -1053,7 +1115,7 @@ class TaskManager(baseTaskManager):
     def sample_documents(self, sampler=None):
         """
         Gets some labels from a user for a selected subset of documents
-        """
+        """ 
         # This is for compatibility with the GUI
         if sampler is None:
             sampler = self.global_parameters['active_learning']['sampler']
@@ -1077,7 +1139,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def get_labels_from_docs(self):
+    def get_labels_from_docs(self): 
         """
         Requests feedback about the class of given documents.
 
@@ -1143,7 +1205,7 @@ class TaskManager(baseTaskManager):
 
         return labels
 
-    def annotate(self):
+    def annotate(self): 
         """
         Save user-provided labels in the dataset
         """
@@ -1183,7 +1245,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def retrain_model(self, epochs: int = 3):
+    def retrain_model(self, epochs: int = 3): 
         """
         Improves classifier performance using the labels provided by users
         """
@@ -1207,7 +1269,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def reevaluate_model(self, samples: str = "train_test"):
+    def reevaluate_model(self, samples: str = "train_test"): 
         """
         Evaluate a domain classifier
         """
@@ -1237,7 +1299,7 @@ class TaskManager(baseTaskManager):
 
         return result
 
-    def import_annotations(self, domain_name: str):
+    def import_annotations(self, domain_name: str): 
         """
         Imports / exports annotations from / to a file in the dataset folder.
 
@@ -1262,7 +1324,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def export_annotations(self, domain_name: str):
+    def export_annotations(self, domain_name: str): 
         """
         Imports / exports annotations from / to a file in the dataset folder.
 
