@@ -44,6 +44,8 @@ class TaskManager(baseTaskManager):
                       activated.
     """
 
+
+
     def __init__(self, path2project, path2source=None, path2zeroshot=None,
                  config_fname='parameters.yaml',
                  metadata_fname='metadata.yaml', set_logs=True):
@@ -144,6 +146,62 @@ class TaskManager(baseTaskManager):
                               self.path2models,self.path2embeddings)
 
         return
+
+    def on_create_list_of_keywords(self, corpus_name: str, wt: float = 2.0, n_max: int = 2000,
+                                    s_min: float = 1.0, tag: str = "kwds",
+                                    method: str = 'count', keywords: str = ""):
+        """
+            on button click create with option: from list of keywords
+
+        """
+        self.load_corpus(corpus_name)
+        self.get_labels_by_keywords(corpus_name,wt,n_max,s_min,tag,method,keywords)
+
+    def on_create_topic_selection(self, corpus_name: str,n_max: int = 2000, s_min: float = 0.1,
+                               tag: str = "zeroshot", keywords: str = ""):
+        """
+            on button click create with option: from topic selection function
+
+        """
+        self.load_corpus(corpus_name)
+        self.get_labels_by_zeroshot(n_max,s_min,tag,keywords)
+    def on_create_category_name(self, corpus_name: str):
+        """
+            on button click create with option: from category name
+
+        """
+        self.load_corpus(corpus_name)
+        self.get_labels_by_topics()
+    def on_retrain(self, epochs: int = 3):
+        """
+            on button click retrain
+
+        """
+        self.retrain_model(epochs)
+    def on_classify(self):
+        """
+           on button click classify
+
+        """
+        self.inference() 
+    def on_evaluate(self, true_label_name: str):
+        """
+            on button click evaluate
+
+        """
+        self.evaluate_PUlabels(true_label_name)
+    def on_sample(self, sampler=None):
+        """
+            on button click sample
+
+        """
+        self.get_feedback(sampler)
+    def on_save_feedback(self):
+        """
+            on button click save feedback
+
+        """
+        self.annotate()
 
 
 
@@ -357,70 +415,6 @@ class TaskManager(baseTaskManager):
         logging.info("-- Configuration file activated")
 
         return
-
-    def load_corpus_by_keywords(self, corpus_name: str,wt: float = 2.0, n_max: int = 2000,
-                               s_min: float = 1.0, tag: str = "kwds",
-                               method: str = 'count', keywords: str = ""):
-        """
-        combines method load_corpus and get_labels_by_keywords
-        ----------
-        corpus_name : str
-            Name of the corpus. It should be the name of a folder in
-            self.path2source
-        wt : float, optional (default=2)
-            Weighting factor for the title components. Keyword matches with
-            title words are weighted by this factor
-        n_max: int or None, optional (defaul=2000)
-            Maximum number of elements in the output list. The default is
-            a huge number that, in practice, means there is no loimit
-        s_min: float, optional (default=1)
-            Minimum score. Only elements strictly above s_min are selected
-        tag: str, optional (default='kwds')
-            Name of the output label set.
-        method: 'embedding' or 'count', optional
-            Selection method: 'count' (based on counting occurences of keywords
-            in docs) or 'embedding' (based on the computation of similarities
-            between doc and keyword embeddings)
-        keywords : str, optional (default="")
-            A comma-separated string of keywords.
-            If the string is empty, the keywords are read from self.keywords
-        """
-        self.load_corpus(corpus_name)
-        self.get_labels_by_keywords(wt,n_max,s_min,tag,method,keywords)
-
-    def load_corpus_by_zeroshot(self, corpus_name: str,n_max: int = 2000, s_min: float = 0.1,
-                               tag: str = "zeroshot", keywords: str = ""):
-        """
-        combines method load_corpus and get_labels_by_keywords
-        ----------
-        corpus_name : str
-            Name of the corpus. It should be the name of a folder in
-            self.path2source
-        n_max: int or None, optional (defaul=2000)
-            Maximum number of elements in the output list. The default is
-            a huge number that, in practice, means there is no loimit
-        s_min: float, optional (default=0.1)
-            Minimum score. Only elements strictly above s_min are selected
-        tag: str, optional (default=1)
-            Name of the output label set.
-        keywords : str, optional (default="")
-            A comma-separated string of keywords.
-            If the string is empty, the keywords are read from self.keywords
-        """
-        self.load_corpus(corpus_name)
-        self.get_labels_by_zeroshot(n_max,s_min,tag,keywords)
-
-
-    def load_corpus_by_topics(self, corpus_name: str):
-        """
-        combines method load_corpus and get_labels_by_keywords
-        ----------
-        corpus_name : str
-            Name of the corpus. It should be the name of a folder in
-            self.path2source
-        """
-        self.load_corpus(corpus_name)
-        self.get_labels_by_topics()
 
 
     def load_corpus(self, corpus_name: str): 
