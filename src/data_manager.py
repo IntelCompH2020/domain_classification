@@ -1140,7 +1140,6 @@ class LogicalDataManager(DataManager):
         logging.info(f'-- Loading corpus {corpus_name}')
         # #################################################
         # Load corpus data from feather file (if it exists)
-
         self.path2corpus = self.path2source 
         try:
             return self._get_corpus_from_feather(sampling_factor,corpus_name)
@@ -1151,7 +1150,8 @@ class LogicalDataManager(DataManager):
             return df_corpus
 
     def __get_metadata_from_json(self,corpus_name):
-        datasets = np.array(list(self.corpus_manager.listTrDtsets(self.path2json).keys()))
+        path2json = Path(self.tm.global_parameters["dataset_path"]) 
+        datasets = np.array(list(self.corpus_manager.listTrDtsets(path2json).keys()))
         idx = np.where(self.get_corpus_list()==corpus_name)[0][0]
         configFile = Path(datasets[idx])
         if not configFile.is_file():
