@@ -154,8 +154,9 @@ class TaskManager(baseTaskManager):
             on button click create with option: from list of keywords
 
         """
+        self.setup()
         self.load_corpus(corpus_name)
-        self.get_labels_by_keywords(corpus_name,wt,n_max,s_min,tag,method,keywords)
+        self.get_labels_by_keywords(wt,n_max,s_min,tag,method,keywords)
 
     def on_create_topic_selection(self, corpus_name: str,n_max: int = 2000, s_min: float = 0.1,
                                tag: str = "zeroshot", keywords: str = ""):
@@ -163,6 +164,7 @@ class TaskManager(baseTaskManager):
             on button click create with option: from topic selection function
 
         """
+        self.setup()
         self.load_corpus(corpus_name)
         self.get_labels_by_zeroshot(n_max,s_min,tag,keywords)
     def on_create_category_name(self, corpus_name: str):
@@ -170,6 +172,7 @@ class TaskManager(baseTaskManager):
             on button click create with option: from category name
 
         """
+        self.setup()
         self.load_corpus(corpus_name)
         self.get_labels_by_topics()
     def on_retrain(self, epochs: int = 3):
@@ -428,6 +431,7 @@ class TaskManager(baseTaskManager):
             self.path2source
         """
         # Dictionary of sampling factor for the corpus loader.
+
         sampling_factors = self.global_parameters['corpus']['sampling_factor']
         # Default sampling factor: 1 (loads the whole corpus)
         sf = 1
