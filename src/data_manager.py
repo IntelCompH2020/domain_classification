@@ -20,6 +20,8 @@ from langdetect import detect
 
 import dask.dataframe as dd
 from dask.diagnostics import ProgressBar
+import datetime
+import json
 
 # import gc
 
@@ -251,7 +253,7 @@ class DataManager(object):
         keywords: list
             A list of keywords (empty if the file does not exist)
         """
-
+        
         keywords_fpath = (self.path2source / self.corpus_name / 'queries'
                           / filename)
 
@@ -1115,6 +1117,21 @@ class DataManager(object):
 
         # The log message is returned to be shown in a GUI, if needed
         return msg
+    def save_model_json(self,model_name,description,visibility,tag,model_type,config_param):
+        json_ = {
+          "name": model_name,
+          "description": description,
+          "visibility": visibility, #"Private" or "Public"
+          "type": model_type, #"Keyword-based", "Zero-shot-based", "TM-based", "Source-based",
+          "corpus": str(self.path2corpus),
+          "tag": tag,
+          "path_to_config": str(self.path2models/'dc_config.json'),
+          "creation_date": datetime.datetime.now(),
+        }
+         
+        path = self.path2source / 'dc_config.json'
+        with path.open("w", encoding="utf-8") as fout:
+            json.dump(json_, fout, ensure_ascii=False,indent=2, default=str)
 
 from .manage_corpus import CorpusManager
 from pathlib import Path 
@@ -1198,6 +1215,31 @@ class LogicalDataManager(DataManager):
         for idx,dataset in enumerate(datasets):
             datasets[idx] = dataset.split('/')[-1].split('.')[0]
         return datasets
+
+    def get_keywords_list(self, filename='IA_keywords_SEAD_REV_JAG.txt'):
+        """
+        Returns a list of IA-related keywords read from a file.
+
+        Parameters
+        ----------
+        filename : str, optional (default=='IA_keywords_SEAD_REV_JAG.txt')
+            Name of the file with the keywords
+
+        Returns
+        -------
+        keywords: list
+            A list of keywords (empty if the file does not exist)
+        """
+
+        keywords_fpath = Path('project_folder/keywords') / filename
+
+        keywords = []
+        if keywords_fpath.is_file():
+            df_keywords = pd.read_csv(keywords_fpath, delimiter=',',
+                                      names=['keywords'])
+            keywords = list(df_keywords['keywords'])
+
+        return keywords
 
 
 class LocalDataManager(DataManager):

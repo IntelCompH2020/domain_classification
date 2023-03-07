@@ -147,64 +147,64 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def on_create_list_of_keywords(self, corpus_name: str, wt: float = 2.0, n_max: int = 2000,
-                                    s_min: float = 1.0, tag: str = "kwds",
-                                    method: str = 'count', keywords: str = ""):
-        """
-            on button click create with option: from list of keywords
-
-        """
-        self.setup()
-        self.load_corpus(corpus_name)
-        self.get_labels_by_keywords(wt,n_max,s_min,tag,method,keywords)
-
-    def on_create_topic_selection(self, corpus_name: str,n_max: int = 2000, s_min: float = 0.1,
-                               tag: str = "zeroshot", keywords: str = ""):
-        """
-            on button click create with option: from topic selection function
-
-        """
-        self.setup()
-        self.load_corpus(corpus_name)
-        self.get_labels_by_zeroshot(n_max,s_min,tag,keywords)
-    def on_create_category_name(self, corpus_name: str):
-        """
-            on button click create with option: from category name
-
-        """
-        self.setup()
-        self.load_corpus(corpus_name)
-        self.get_labels_by_topics()
-    def on_retrain(self, epochs: int = 3):
-        """
-            on button click retrain
-
-        """
-        self.retrain_model(epochs)
-    def on_classify(self):
-        """
-           on button click classify
-
-        """
-        self.inference() 
-    def on_evaluate(self, true_label_name: str):
-        """
-            on button click evaluate
-
-        """
-        self.evaluate_PUlabels(true_label_name)
-    def on_sample(self, sampler=None):
-        """
-            on button click sample
-
-        """
-        self.get_feedback(sampler)
-    def on_save_feedback(self):
-        """
-            on button click save feedback
-
-        """
-        self.annotate()
+    #def on_create_list_of_keywords(self, corpus_name: str, wt: float = 2.0, n_max: int = 2000,
+    #                                s_min: float = 1.0, tag: str = "kwds",
+    #                                method: str = 'count', keywords: str = ""):
+    #    """
+    #        on button click create with option: from list of keywords
+#
+    #    """
+    #    self.setup()
+    #    self.load_corpus(corpus_name)
+    #    self.get_labels_by_keywords(wt,n_max,s_min,tag,method,keywords)
+#
+    #def on_create_topic_selection(self, corpus_name: str,n_max: int = 2000, s_min: float = 0.1,
+    #                           tag: str = "zeroshot", keywords: str = ""):
+    #    """
+    #        on button click create with option: from topic selection function
+#
+    #    """
+    #    self.setup()
+    #    self.load_corpus(corpus_name)
+    #    self.get_labels_by_zeroshot(n_max,s_min,tag,keywords)
+    #def on_create_category_name(self, corpus_name: str):
+    #    """
+    #        on button click create with option: from category name
+#
+    #    """
+    #    self.setup()
+    #    self.load_corpus(corpus_name)
+    #    self.get_labels_by_topics()
+    #def on_retrain(self, epochs: int = 3):
+    #    """
+    #        on button click retrain
+#
+    #    """
+    #    self.retrain_model(epochs)
+    #def on_classify(self):
+    #    """
+    #       on button click classify
+#
+    #    """
+    #    self.inference() 
+    #def on_evaluate(self, true_label_name: str):
+    #    """
+    #        on button click evaluate
+#
+    #    """
+    #    self.evaluate_PUlabels(true_label_name)
+    #def on_sample(self, sampler=None):
+    #    """
+    #        on button click sample
+#
+    #    """
+    #    self.get_feedback(sampler)
+    #def on_save_feedback(self):
+    #    """
+    #        on button click save feedback
+#
+    #    """
+    #    self.annotate()
 
 
 
@@ -1775,3 +1775,90 @@ class TaskManagerGUI(TaskManager):
         logging.info(msg)
 
         return msg
+
+class TaskManagerIMT(TaskManager):
+    def on_create_list_of_keywords(self, corpus_name: str, 
+                                    model_name: str, description: str = "", visibility: str = 'Private',
+                                    wt: float = 2.0, n_max: int = 2000,
+                                    s_min: float = 1.0, tag: str = "kwds",
+                                    method: str = 'count', keyword_list: str = "", keywords: str = "",
+                                    max_imbalance: float = 3.0, nmax: int = 400,epochs: int = 3 ):
+                                    #method: str = 'count', keywords: str = ""):
+        """
+            on button click create with option: from list of keywords
+
+        """
+        self.setup()
+        self.load_corpus(corpus_name)
+        if keyword_list == '__all_AI':
+            self.keywords = (['artificial intelligence', 'argumentation framework',
+                         'intelligent tutoring system',
+                         'nonlinear archetypal analysis',
+                         'non-linear archetypal analysis',
+                         'random forest',
+                         'rule based translation', 'rule-based translation',
+                         'statistical machine translation', 'pytorch']
+                        + self.DM.get_keywords_list())
+        self.get_labels_by_keywords(wt,n_max,s_min,tag,method,keywords)
+        self.train_PUmodel(max_imbalance,nmax,epochs)
+
+        self.DM.save_model_json(model_name,description,visibility,tag,'Keyword-based',self.dc.config)
+
+
+    #  "name": "mpnet","description": "mpnet","visibility": "Public"
+    def on_create_topic_selection(self, corpus_name: str,
+                                  model_name: str, description: str = "", visibility: str = 'Private',
+                                  n_max: int = 2000, s_min: float = 0.1,
+                                  tag: str = "zeroshot", keywords: str = "", 
+                                  max_imbalance: float = 3.0, nmax: int = 400,epochs: int = 3):
+        """
+            on button click create with option: from topic selection function
+
+        """
+        self.setup()
+        self.load_corpus(corpus_name)
+        self.get_labels_by_zeroshot(n_max,s_min,tag,keywords)
+        self.train_PUmodel(max_imbalance,nmax,epochs)
+
+    def on_create_category_name(self, corpus_name: str, model_name: str, 
+                                description: str = "", visibility: str = 'Private',
+                                max_imbalance: float = 3.0, nmax: int = 400,epochs: int = 3):
+        """
+            on button click create with option: from category name
+
+        """
+        self.setup()
+        self.load_corpus(corpus_name)
+        self.get_labels_by_topics()
+        self.train_PUmodel(max_imbalance,nmax,epochs)
+
+    def on_retrain(self, epochs: int = 3):
+        """
+            on button click retrain
+
+        """
+        self.retrain_model(epochs)
+    def on_classify(self):
+        """
+           on button click classify
+
+        """
+        self.inference() 
+    def on_evaluate(self, true_label_name: str):
+        """
+            on button click evaluate
+
+        """
+        self.evaluate_PUlabels(true_label_name)
+    def on_sample(self, sampler=None):
+        """
+            on button click sample
+
+        """
+        self.get_feedback(sampler)
+    def on_save_feedback(self):
+        """
+            on button click save feedback
+
+        """
+        self.annotate()
