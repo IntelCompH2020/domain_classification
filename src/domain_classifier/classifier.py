@@ -89,6 +89,7 @@ class CorpusClassifier(object):
         path2transformers other than '.'.
         """
 
+
         logging.info("-- Initializing classifier object")
         self.path2transformers = pathlib.Path(path2transformers)
         self.model_type = model_type
@@ -239,6 +240,7 @@ class CorpusClassifier(object):
         ClassificationModel and save it.
         """
 
+
         path2model_config = self.path2transformers / "config.json"
         # The if model config file is available
         if not path2model_config.exists():
@@ -252,6 +254,7 @@ class CorpusClassifier(object):
             self.config = copy.deepcopy(model.config)
 
             # Save config
+
             self.config.to_json_file(path2model_config)
             logging.info("-- -- Model configuration saved")
 
@@ -271,6 +274,7 @@ class CorpusClassifier(object):
             logging.info("-- -- Model configuration loaded from file")
 
         return
+
 
     def load_model(self):
         """
@@ -322,7 +326,6 @@ class CorpusClassifier(object):
         batch_size : int, optiona (default=8)
             Batch size
         """
-
         logging.info("-- Training model...")
 
         # Freeze encoder layer if needed
@@ -1171,6 +1174,7 @@ class CorpusClassifierMLP(CorpusClassifier):
     def __init__(self, df_dataset, model_type="mpnet",
                  model_name="sentence-transformers/all-mpnet-base-v2",
                  path2transformers=".", use_cuda=True):
+
         """
         Initializes a classifier object
 

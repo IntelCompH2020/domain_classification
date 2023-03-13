@@ -7,6 +7,7 @@ using the core processing classes and methods.
 
 import logging
 import numpy as np
+import pandas as pd
 
 # Local imports
 # You might need to update the location of the baseTaskManager class
@@ -612,35 +613,55 @@ class TaskManager(baseTaskManager):
             A comma-separated string of keywords.
             If the string is empty, the keywords are read from self.keywords
         """
+        msg = None
+        try:
+            df_dataset = self.DM.load_dataset(tag)[0]
+            processed_ids = df_dataset['id'].to_numpy()
+        except:
+            df_dataset = pd.DataFrame([])
+            processed_ids = None
+        while True:
 
-        # Read keywords:
-        self.keywords = self._convert_keywords(keywords, out='list')
-        logging.info(f'-- Selected keyword: {self.keywords}')
+            # Read keywords:
+            self.keywords = self._convert_keywords(keywords, out='list')
+            logging.info(f'-- Selected keyword: {self.keywords}')
 
-        # Filter documents by zero-shot classification
-        ids, scores = self.CorpusProc.filter_by_zeroshot(
-            self.keywords, n_max=n_max, s_min=s_min)
+            # Filter documents by zero-shot classification
+            ids, scores = self.CorpusProc.filter_by_zeroshot(
+                self.keywords, n_max=n_max, s_min=s_min,
+                processed_ids = processed_ids)
 
-        # Set the working class
-        self.class_name = tag
+            if len(scores) == 0:
+                msg = '-- finished' 
+                break
 
-        # Generate dataset dataframe
-        self.df_dataset = self.CorpusProc.make_PU_dataset(ids, scores)
+            # Set the working class
+            self.class_name = tag
 
-        # ############
-        # Save dataset
-        msg = self.DM.save_dataset(
-            self.df_dataset, tag=self.class_name, save_csv=True)
+            # Generate dataset dataframe
+            self.df_dataset = self.CorpusProc.make_PU_dataset(ids, scores)
 
-        # ################################
-        # Save parameters in metadata file
-        self.metadata[tag] = {
-            'doc_selection': {
-                'method': 'zeroshot',
-                'keyword': self.keywords,
-                'n_max': n_max,
-                's_min': s_min}}
-        self._save_metadata()
+            #merge datasets
+            self.df_dataset = pd.concat([df_dataset,self.df_dataset])
+            self.df_dataset = self.df_dataset.reset_index(drop=True)
+
+            # ############
+            # Save dataset
+            msg = self.DM.save_dataset(
+                self.df_dataset, tag=self.class_name, save_csv=True)
+
+            processed_ids = self.df_dataset['id'].to_numpy()
+            df_dataset = self.df_dataset
+
+            # ################################
+            # Save parameters in metadata file
+            self.metadata[tag] = {
+                'doc_selection': {
+                    'method': 'zeroshot',
+                    'keyword': self.keywords,
+                    'n_max': n_max,
+                    's_min': s_min}}
+            self._save_metadata()
 
         return msg
 

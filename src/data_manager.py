@@ -253,7 +253,8 @@ class DataManager(object):
         keywords: list
             A list of keywords (empty if the file does not exist)
         """
-        
+        import pdb 
+        pdb.set_trace()
         keywords_fpath = (self.path2source / self.corpus_name / 'queries'
                           / filename)
 
