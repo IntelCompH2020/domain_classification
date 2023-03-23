@@ -1844,7 +1844,6 @@ class TaskManagerIMT(TaskManager):
         self.DM.save_model_json(self.project_folder,description,visibility,tag,'Keyword-based',self.dc.config)
 
 
-    #  "name": "mpnet","description": "mpnet","visibility": "Public"
     def on_create_category_name(self, corpus_name: str,
                                 description: str = "", visibility: str = 'Private',
                                 n_max: int = 2000, s_min: float = 0.1,
