@@ -613,13 +613,14 @@ class TaskManager(baseTaskManager):
             A comma-separated string of keywords.
             If the string is empty, the keywords are read from self.keywords
         """
+
         msg = None
         try:
             df_dataset = self.DM.load_dataset(tag)[0]
             processed_ids = df_dataset['id'].to_numpy()
         except:
             df_dataset = pd.DataFrame([])
-            processed_ids = None
+            processed_ids = []
         while True:
 
             # Read keywords:
@@ -786,7 +787,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def load_labels(self, class_name): 
+    def load_labels(self, class_name,model_type=None,model_name=None): 
         """
         Load a set of labels and its corresponding dataset (if it exists)
 
@@ -806,8 +807,11 @@ class TaskManager(baseTaskManager):
 
             logging.info("-- Loading classification model")
             path2model = self.path2models / self.class_name
-            model_type = self.global_parameters['classifier']['model_type']
-            model_name = self.global_parameters['classifier']['model_name']
+
+            if model_type == None:
+                model_type = self.global_parameters['classifier']['model_type']
+            if model_name == None:
+                model_name = self.global_parameters['classifier']['model_name']
 
             #if self.DM.get_metadata()['corpus_has_embeddings']:
             if self.corpus_has_embeddings:
@@ -855,7 +859,8 @@ class TaskManager(baseTaskManager):
         return
 
     def train_PUmodel(self, max_imbalance: float = 3.0, nmax: int = 400,
-                      epochs: int = 3): 
+                      epochs: int = 3, freeze_encoder: bool = None, batch_size: int = None,
+                      model_type: str = None, model_name: str = None): 
         """
         Train a domain classifiers
 
@@ -877,10 +882,14 @@ class TaskManager(baseTaskManager):
             return
 
         # Configuration parameters
-        freeze_encoder = self.global_parameters['classifier']['freeze_encoder']
-        batch_size = self.global_parameters['classifier']['batch_size']
-        model_type = self.global_parameters['classifier']['model_type']
-        model_name = self.global_parameters['classifier']['model_name']
+        if freeze_encoder == None:
+            freeze_encoder = self.global_parameters['classifier']['freeze_encoder']
+        if batch_size == None:
+            batch_size = self.global_parameters['classifier']['batch_size']
+        if model_type == None:
+            model_type = self.global_parameters['classifier']['model_type']
+        if model_name == None:
+            model_name = self.global_parameters['classifier']['model_name']
 
         if self.dc is not None:
             # If there exists a classifier object, update the local dataset,
@@ -1798,17 +1807,23 @@ class TaskManagerGUI(TaskManager):
         return msg
 
 class TaskManagerIMT(TaskManager):
-    def on_create_list_of_keywords(self, corpus_name: str, 
-                                    model_name: str, description: str = "", visibility: str = 'Private',
+    def __init__(self,path2project, path2source=None, path2zeroshot=None):
+        super().__init__(path2project,path2source,path2zeroshot)
+        self.project_folder = str(path2project).split('/')[-1]
+
+    def on_create_list_of_keywords(self, corpus_name: str, description: str = "", visibility: str = 'Private',
                                     wt: float = 2.0, n_max: int = 2000,
                                     s_min: float = 1.0, tag: str = "kwds",
                                     method: str = 'count', keyword_list: str = "", keywords: str = "",
-                                    max_imbalance: float = 3.0, nmax: int = 400,epochs: int = 3 ):
-                                    #method: str = 'count', keywords: str = ""):
+                                    max_imbalance: float = 3.0, nmax: int = 400,epochs: int = 3,
+                                    freeze_encoder: bool = True, batch_size: int = 8,
+                                    model_type: str = 'mpnet', model_name: str = 'sentence-transformers/all-mpnet-base-v2'  ):
+        #                           
         """
             on button click create with option: from list of keywords
 
         """
+
         self.setup()
         self.load_corpus(corpus_name)
         if keyword_list == '__all_AI':
@@ -1820,18 +1835,23 @@ class TaskManagerIMT(TaskManager):
                          'rule based translation', 'rule-based translation',
                          'statistical machine translation', 'pytorch']
                         + self.DM.get_keywords_list())
+        if keyword_list == '':
+            self.keywords = np.array(keywords.split(','))
         self.get_labels_by_keywords(wt,n_max,s_min,tag,method,keywords)
-        self.train_PUmodel(max_imbalance,nmax,epochs)
-
-        self.DM.save_model_json(model_name,description,visibility,tag,'Keyword-based',self.dc.config)
+        self.train_PUmodel(max_imbalance,nmax,epochs,
+                           freeze_encoder = freeze_encoder, batch_size=batch_size, 
+                           model_type=model_type, model_name = model_name)
+        self.DM.save_model_json(self.project_folder,description,visibility,tag,'Keyword-based',self.dc.config)
 
 
     #  "name": "mpnet","description": "mpnet","visibility": "Public"
-    def on_create_topic_selection(self, corpus_name: str,
-                                  model_name: str, description: str = "", visibility: str = 'Private',
-                                  n_max: int = 2000, s_min: float = 0.1,
-                                  tag: str = "zeroshot", keywords: str = "", 
-                                  max_imbalance: float = 3.0, nmax: int = 400,epochs: int = 3):
+    def on_create_category_name(self, corpus_name: str,
+                                description: str = "", visibility: str = 'Private',
+                                n_max: int = 2000, s_min: float = 0.1,
+                                tag: str = "zeroshot", keywords: str = "", 
+                                max_imbalance: float = 3.0, nmax: int = 400,epochs: int = 3,
+                                freeze_encoder: bool = True, batch_size: int = 8,
+                                model_type: str = 'mpnet', model_name: str = 'sentence-transformers/all-mpnet-base-v2'):
         """
             on button click create with option: from topic selection function
 
@@ -1839,11 +1859,15 @@ class TaskManagerIMT(TaskManager):
         self.setup()
         self.load_corpus(corpus_name)
         self.get_labels_by_zeroshot(n_max,s_min,tag,keywords)
-        self.train_PUmodel(max_imbalance,nmax,epochs)
+        self.train_PUmodel(max_imbalance,nmax,epochs,
+                           freeze_encoder = freeze_encoder, batch_size=batch_size, 
+                           model_type=model_type, model_name = model_name)
+        self.DM.save_model_json(self.project_folder,description,visibility,tag,'Keyword-based',self.dc.config)
 
-    def on_create_category_name(self, corpus_name: str, model_name: str, 
-                                description: str = "", visibility: str = 'Private',
-                                max_imbalance: float = 3.0, nmax: int = 400,epochs: int = 3):
+    def on_create_topic_selection(self, corpus_name: str, description: str = "", visibility: str = 'Private',
+                                  max_imbalance: float = 3.0, nmax: int = 400,epochs: int = 3,
+                                  freeze_encoder: bool = True, batch_size: int = 8,
+                                  model_type: str = 'mpnet', model_name: str = 'sentence-transformers/all-mpnet-base-v2'):
         """
             on button click create with option: from category name
 
@@ -1851,7 +1875,11 @@ class TaskManagerIMT(TaskManager):
         self.setup()
         self.load_corpus(corpus_name)
         self.get_labels_by_topics()
-        self.train_PUmodel(max_imbalance,nmax,epochs)
+        self.train_PUmodel(max_imbalance,nmax,epochs,
+                           freeze_encoder = freeze_encoder, batch_size=batch_size, 
+                           model_type=model_type, model_name = model_name)
+        self.DM.save_model_json(self.project_folder,description,visibility,tag,'Keyword-based',self.dc.config)
+
 
     def on_retrain(self, epochs: int = 3):
         """
