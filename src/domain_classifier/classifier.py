@@ -6,7 +6,7 @@ Defines the main domain classification class
 import logging
 import pathlib
 from time import time
-from datetime import datetime 
+from datetime import datetime
 
 import pandas as pd
 import numpy as np

@@ -186,14 +186,14 @@ class TaskManager(baseTaskManager):
 
         return dataset_list
 
-#    def _get_inference(self):
-#        """
-#        Returns inference manager options
-#        """
-#        corpus_has_embeddings = self.corpus_has_embeddings
-#        # corpus_has_embeddings = (
-#              self.DM.get_metadata()['corpus_has_embeddings']
-#        return ['Inference MLP'] if corpus_has_embeddings else []
+    # def _get_inference(self):
+    #     """
+    #     Returns inference manager options
+    #     """
+    #     corpus_has_embeddings = self.corpus_has_embeddings
+    #     # corpus_has_embeddings = (
+    #           self.DM.get_metadata()['corpus_has_embeddings']
+    #     return ['Inference MLP'] if corpus_has_embeddings else []
 
     def inference(self, option=[]):
         """

@@ -161,7 +161,7 @@ def base_plot_roc(fpr, tpr, fpr0=None, tpr0=None, label="", path2figure=None,
     if fpr0 is not None and tpr0 is not None:
         plt.plot([fpr0], [tpr0], '.', color='red', markersize=10,
                  label='Op. point')
-    plt.grid(b=True, which='major', color='gray', alpha=0.6,
+    plt.grid(visible=True, which='major', color='gray', alpha=0.6,
              linestyle='dotted', lw=1.5)
     plt.xlabel('False Positive Rate (FPR)')
     plt.ylabel('True Positive Rate (TPR)')

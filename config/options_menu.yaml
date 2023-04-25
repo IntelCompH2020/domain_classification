@@ -14,7 +14,7 @@ root:
     - load_labels
     - reset_labels
     - PU_learning
-    - get_feedback
+    - get_feedback_options
     - update_model
     - import_export_annotations
     - inference
@@ -107,9 +107,10 @@ PU_learning:
     - evaluate_PUmodel
     - performance_metrics_PU
 
-get_feedback:
+get_feedback_options:
   title: Get relevance feedback from user
   options:
+    - get_feedback
     - sample_documents
     - get_labels_from_docs
     - annotate
@@ -128,7 +129,7 @@ import_export_annotations:
     - export_annotations
 
 inference:
-  title: Inference
+  title: Apply inference over precomputed embeddings (if available, only)
   #options:
   #  - get_method: _get_inference
     
@@ -172,8 +173,17 @@ evaluate_PUmodel:
 performance_metrics_PU:
   title: Show all performance metrics
 
-# ########################
-# Options for get_feedback
+# ################################
+# Options for get_feedback_options
+
+get_feedback:
+  title: (All in one step) Sample documents, get labels and annotate
+  options:
+    - parameters:
+        random: Random sampling over the test-train split, for retraining
+        least_confidence: Least confidence over the test-train split, for retraining
+        extremes: Sampling biased towards confident predictions, for retraining
+        full_rs: Fully random sampling over the whole dataset, for testing
 
 sample_documents:
   title: Sample documents for annotation
@@ -215,38 +225,3 @@ import_annotations:
 
 export_annotations:
   title: "Export annotations (warning: deletes older annotation files)"
-
-# ####################
-# ####################
-# ####################
-# ####################
-# Options for
-
-
-# import_data:
-#   title: Import data from external sources
-#   options:
-#     - parameters:
-#         sql: Import data from sql database
-#         files: Import data from files
-#         url: Import data from the web
-
-# computeA:
-#   title: Basic computations with the very famous method A
-#   options:
-#     - parameters:
-#         alg1: Use algorithm 1
-#         alg2: Use algorithm 2
-#         alg3: Use algorithm 3
-#     - path: input    # This must be one of the keys in paths2data (see main)
-
-# computeB:
-#   title: Complex computations with the unknown method B
-#   options:
-#     - parameters:
-#         alg4: Use algorithm 4
-#         alg5: Use algorithm 5
-#         alg6: Use algorithm 6
-#     - path: input    # This must be one of the keys in paths2data (see main)
-#     - get_method: get_model   # A method with this name must exist in the
-#                               # taskmanager
