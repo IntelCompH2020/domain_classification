@@ -25,6 +25,8 @@ import json
 
 # import gc
 
+from .manage_corpus import CorpusManager
+
 
 def detect_english(x):
     """
@@ -53,6 +55,7 @@ def detect_english(x):
         logging.warning(f"-- Language detection error in string {x}")
 
     return y
+
 
 class DataManager(object):
     """
@@ -125,7 +128,6 @@ class DataManager(object):
         Loads the metadata file if it exists. If not, self.metadata takes the
         default value (None)
         """
-
 
         path2metadata = self.path2corpus / 'metadata.yaml'
         if path2metadata.is_file():
@@ -253,8 +255,7 @@ class DataManager(object):
         keywords: list
             A list of keywords (empty if the file does not exist)
         """
-        import pdb 
-        pdb.set_trace()
+
         keywords_fpath = (self.path2source / self.corpus_name / 'queries'
                           / filename)
 
@@ -332,7 +333,7 @@ class DataManager(object):
             logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
                          f" documents loaded in {time() - t0:.2f} secs.")
 
-            #self.__determineCorpusHasEmbeddings(df_corpus.columns)
+            # self.__determineCorpusHasEmbeddings(df_corpus.columns)
 
             return df_corpus
 
@@ -555,8 +556,10 @@ class DataManager(object):
                     selected_cols += ['embeddings']
                 df_corpus = df_corpus[selected_cols]
             else:
-                selected_cols = np.array(['id', 'title', 'paperAbstract', 'fieldsOfStudy', 'embeddings'])
-                df_corpus = sample_sub_set_from_folder(path2texts, selected_cols, sampling_factor)
+                selected_cols = np.array(['id', 'title', 'paperAbstract',
+                                          'fieldsOfStudy', 'embeddings'])
+                df_corpus = sample_sub_set_from_folder(
+                    path2texts, selected_cols, sampling_factor)
                 logging.info(f'-- -- Raw corpus {corpus_name} read with '
                              f'{len(df_corpus)} documents')
 
@@ -627,9 +630,10 @@ class DataManager(object):
             for count, (index, row) in enumerate(df_corpus.iterrows()):
                 df_corpus.loc[index, 'eng'] = detect_english(
                     row['title'] + ' ' + row['description'])
-                if int(100*count/len(df_corpus)) > iPercent:
-                    iPercent = int(100*count/len(df_corpus))
-                    logging.info(f"-- -- {iPercent} % of documents processed for applying language filter")
+                if int(100 * count / len(df_corpus)) > iPercent:
+                    iPercent = int(100 * count / len(df_corpus))
+                    logging.info(f"-- -- {iPercent} % of documents processed "
+                                 "for applying language filter")
 
             df_corpus = df_corpus[df_corpus['eng']]
             df_corpus.drop(columns='eng', inplace=True)
@@ -645,30 +649,30 @@ class DataManager(object):
         # Log and save
         logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
                      f" documents loaded in {time() - t0:.2f} secs.")
-        self._save_feather(df_corpus,path2feather)
+        self._save_feather(df_corpus, path2feather)
 
         return df_corpus
 
-    def _get_corpus_from_feather(self,sampling_factor,corpus_name):
+    def _get_corpus_from_feather(self, sampling_factor, corpus_name):
         t0 = time()
         path2feather = self._get_path2feather(sampling_factor)
         if not path2feather.is_file():
             raise Exception('No feather file')
 
         logging.info(f'-- -- Feather file {path2feather} found...')
-        df_corpus =  pd.read_feather(path2feather)
+        df_corpus = pd.read_feather(path2feather)
 
         logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
                      f" documents loaded in {time() - t0:.2f} secs.")
         return df_corpus
 
-    def _save_feather(self,df_corpus,path2feather):
+    def _save_feather(self, df_corpus, path2feather):
         # Save to feather file
         df_corpus.to_feather(path2feather)
         logging.info(f"-- -- Corpus saved in feather file {path2feather}")
 
+    def _clean_corpus(self, df_corpus):
 
-    def _clean_corpus(self,df_corpus):
         l0 = len(df_corpus)
         logging.info(f"-- -- {l0} base documents loaded")
 
@@ -1118,25 +1122,26 @@ class DataManager(object):
 
         # The log message is returned to be shown in a GUI, if needed
         return msg
-    def save_model_json(self,model_name,description,visibility,tag,model_type,config_param):
+
+    def save_model_json(self, model_name, description, visibility, tag,
+                        model_type, config_param):
+
         json_ = {
-          "name": model_name,
-          "description": description,
-          "visibility": visibility, #"Private" or "Public"
-          "type": model_type, #"Keyword-based", "Zero-shot-based", "TM-based", "Source-based",
-          "corpus": str(self.path2corpus),
-          "tag": tag,
-          "path_to_config": str(self.path2models/'dc_config.json'),
-          "creation_date": datetime.datetime.now(),
+            "name": model_name,
+            "description": description,
+            "visibility": visibility,  # "Private" or "Public"
+            "type": model_type,  # "Keyword-based", "Zero-shot-based",
+                                 # "TM-based", "Source-based",
+            "corpus": str(self.path2corpus),
+            "tag": tag,
+            "path_to_config": str(self.path2models / 'dc_config.json'),
+            "creation_date": datetime.datetime.now(),
         }
-         
+
         path = self.path2source / 'dc_config.json'
         with path.open("w", encoding="utf-8") as fout:
-            json.dump(json_, fout, ensure_ascii=False,indent=2, default=str)
+            json.dump(json_, fout, ensure_ascii=False, indent=2, default=str)
 
-from .manage_corpus import CorpusManager
-from pathlib import Path 
-import json
 
 class LogicalDataManager(DataManager):
     """
@@ -1147,30 +1152,35 @@ class LogicalDataManager(DataManager):
     """
 
     def __init__(self, path2source, path2datasets, path2models,
-                 path2project,tm,path2embeddings=None):
+                 path2project, tm, path2embeddings=None):
         super().__init__(path2project, path2datasets, path2models,
-                 path2embeddings)
+                         path2embeddings)
         self.tm = tm
         self.path2json = None
         self.corpus_manager = CorpusManager()
 
     def load_corpus(self, corpus_name, sampling_factor=1):
+
         logging.info(f'-- Loading corpus {corpus_name}')
+
         # #################################################
         # Load corpus data from feather file (if it exists)
-        self.path2corpus = self.path2source 
+        self.path2corpus = self.path2source
         try:
-            return self._get_corpus_from_feather(sampling_factor,corpus_name)
-        except:
-            df_corpus = self.__get_corpus_from_logical_dataset(sampling_factor,corpus_name)
+            return self._get_corpus_from_feather(sampling_factor, corpus_name)
+        except Exception:
+            df_corpus = self.__get_corpus_from_logical_dataset(
+                sampling_factor, corpus_name)
             path2feather = self._get_path2feather(sampling_factor)
-            self._save_feather(df_corpus,path2feather)
+            self._save_feather(df_corpus, path2feather)
             return df_corpus
 
-    def __get_metadata_from_json(self,corpus_name):
-        path2json = Path(self.tm.global_parameters["dataset_path"]) 
-        datasets = np.array(list(self.corpus_manager.listTrDtsets(path2json).keys()))
-        idx = np.where(self.get_corpus_list()==corpus_name)[0][0]
+    def __get_metadata_from_json(self, corpus_name):
+
+        path2json = Path(self.tm.global_parameters["dataset_path"])
+        datasets = np.array(list(
+            self.corpus_manager.listTrDtsets(path2json).keys()))
+        idx = np.where(self.get_corpus_list() == corpus_name)[0][0]
         configFile = Path(datasets[idx])
         if not configFile.is_file():
             logging.info(f'-- Json file{configFile} is not a file')
@@ -1178,7 +1188,8 @@ class LogicalDataManager(DataManager):
         with configFile.open('r', encoding='utf8') as fin:
             return json.load(fin)
 
-    def __get_corpus_from_logical_dataset(self,sampling_factor,corpus_name):   
+    def __get_corpus_from_logical_dataset(self, sampling_factor, corpus_name):
+
         # #########################################
         # Load corpus data from its original source
         t0 = time()
@@ -1195,8 +1206,10 @@ class LogicalDataManager(DataManager):
             with ProgressBar():
                 df_corpus = dfsmall.compute()
             df_corpus = df_corpus[selected_cols]
-            df_corpus.columns = np.array(['id','title','description','keywords'])
+            df_corpus.columns = np.array(
+                ['id', 'title', 'description', 'keywords'])
             dfs.append(df_corpus)
+
         # ############
         # Clean corpus
         df_corpus = pd.concat(dfs)
@@ -1211,9 +1224,12 @@ class LogicalDataManager(DataManager):
         """
         Returns the list of available corpus
         """
-        self.path2json = Path(self.tm.global_parameters["dataset_path"]) 
-        datasets = np.array(list(self.corpus_manager.listTrDtsets(self.path2json).keys()))
-        for idx,dataset in enumerate(datasets):
+
+        self.path2json = Path(self.tm.global_parameters["dataset_path"])
+        datasets = np.array(list(
+            self.corpus_manager.listTrDtsets(self.path2json).keys()))
+
+        for idx, dataset in enumerate(datasets):
             datasets[idx] = dataset.split('/')[-1].split('.')[0]
         return datasets
 
@@ -1254,8 +1270,4 @@ class LocalDataManager(DataManager):
     def __init__(self, path2source, path2datasets, path2models,
                  path2embeddings=None):
         super().__init__(path2source, path2datasets, path2models,
-                 path2embeddings)
-
-
-
-
+                         path2embeddings)
