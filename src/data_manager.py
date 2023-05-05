@@ -328,7 +328,7 @@ class DataManager(object):
             logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
                          f" documents loaded in {time() - t0:.2f} secs.")
 
-            #self.__determineCorpusHasEmbeddings(df_corpus.columns)
+            # self.__determineCorpusHasEmbeddings(df_corpus.columns)
 
             return df_corpus
 
@@ -551,8 +551,11 @@ class DataManager(object):
                     selected_cols += ['embeddings']
                 df_corpus = df_corpus[selected_cols]
             else:
-                selected_cols = np.array(['id', 'title', 'paperAbstract', 'fieldsOfStudy', 'embeddings'])
-                df_corpus = sample_sub_set_from_folder(path2texts, selected_cols, sampling_factor)
+                selected_cols = np.array(
+                    ['id', 'title', 'paperAbstract', 'fieldsOfStudy',
+                     'embeddings'])
+                df_corpus = sample_sub_set_from_folder(
+                    path2texts, selected_cols, sampling_factor)
                 logging.info(f'-- -- Raw corpus {corpus_name} read with '
                              f'{len(df_corpus)} documents')
 
@@ -634,10 +637,33 @@ class DataManager(object):
             df_corpus['description'] = (
                 df_corpus['description'].str.replace('\t', ''))
 
-            # Log results
-            l2 = len(df_corpus)
-            logging.info(f"-- -- {l1 - l2} documents with empty title or "
-                         "description: removed")
+            # This is to map all keywords to the same data type. Since nan
+            # cells in column 'keywords' have been mapped empty strings, they
+            # must be re-mapped to list or numpy arrays to keep the same type
+            # for the whole column
+            if (('keywords' in df_corpus)
+                    and (df_corpus.keywords.dtype == 'O')):
+                # Set of all data types in the keywords column
+                dtypes = set([type(x) for x in df_corpus.keywords])
+                # Set of all strings
+                strings = set([x for x in df_corpus.keywords if
+                               isinstance(x, str)])
+
+                if strings == {''}:
+                    if (list in dtypes) or (np.ndarray in dtypes):
+                        # Map empty strings to empty lists
+                        df_corpus['keywords'] = df_corpus['keywords'].apply(
+                            lambda x: [] if isinstance(x, str) else x)
+                    if np.ndarray in dtypes:
+                        # Map empty lists to empty arrays
+                        df_corpus['keywords'] = df_corpus['keywords'].apply(
+                            lambda x: np.ndarray([], dtype=np.int64)
+                            if isinstance(x, str) else x)
+
+                # Log results
+                l2 = len(df_corpus)
+                logging.info(f"-- -- {l1 - l2} documents with empty title or "
+                             "description: removed")
 
         # ###############################################
         # Remove documents without description in english
@@ -648,19 +674,19 @@ class DataManager(object):
             logging.info("-- -- Applying language filter. This may take a "
                          "while")
 
-            # if 1 == 2:
-            #    df_corpus['eng'] = (
-            #        df_corpus['title'] + ' ' + df_corpus['description']).apply(
-            #            detect_english)
-            # else:
+            # df_corpus['eng'] = (
+            #     df_corpus['title'] + ' ' + df_corpus['description']).apply(
+            #         detect_english)
             iPercent = -1
             df_corpus['eng'] = False
             for count, (index, row) in enumerate(df_corpus.iterrows()):
                 df_corpus.loc[index, 'eng'] = detect_english(
                     row['title'] + ' ' + row['description'])
-                if int(100*count/len(df_corpus)) > iPercent:
-                    iPercent = int(100*count/len(df_corpus))
-                    logging.info(f"-- -- {iPercent} % of documents processed for applying language filter")
+                if int(100 * count / len(df_corpus)) > iPercent:
+                    iPercent = int(100 * count / len(df_corpus))
+                    logging.info(
+                        f"-- -- {iPercent} % of documents processed for "
+                        "applying language filter")
 
             df_corpus = df_corpus[df_corpus['eng']]
             df_corpus.drop(columns='eng', inplace=True)

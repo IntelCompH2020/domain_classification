@@ -13,7 +13,7 @@ import inspect
 
 # Local imports
 from src.menu_navigator.menu_navigator import MenuNavigator
-from src.task_manager import TaskManager      # , TaskManagerCMD
+from src.task_manager import TaskManagerIMT      # , TaskManagerCMD
 
 
 # ########################
@@ -60,7 +60,7 @@ def main():
     # This if is used to avoid the cases which would re-read parameter
     # class_name, because it has been already read, raising an error
     if args.task not in {'load_labels', 'reset_labels'}:
-        params = inspect.getfullargspec(getattr(TaskManager, args.task))
+        params = inspect.getfullargspec(getattr(TaskManagerIMT, args.task))
         n_params = len(params.args)
         n_defaults = 0 if params.defaults is None else len(params.defaults)
 
@@ -85,10 +85,9 @@ def main():
 
     # Create task manager object
     project_path = pathlib.Path(args.p)
-    # tm = TaskManagerCMD(project_path, path2source=args.source,
-    #                     path2zeroshot=args.zeroshot)
-    tm = TaskManager(project_path, path2source=args.source,
-                     path2zeroshot=args.zeroshot)
+
+    tm = TaskManagerIMT(project_path, path2source=args.source,
+                        path2zeroshot=args.zeroshot)
 
     # #####################
     # Run preparation tasks
@@ -104,12 +103,14 @@ def main():
 
         # Load labels if the task requires it
         options_needing_labels = {
-            'load_labels', 'PU_learning', 'get_feedback', 'update_model',
-            'import_export_annotations', 'evaluate_PUlabels', 'train_PUmodel',
-            'evaluate_PUmodel', 'performance_metrics_PU', 'sample_documents',
+            'load_labels', 'evaluate_PUlabels', 'train_PUmodel',
+            'evaluate_PUmodel', 'performance_metrics_PU',
+            'performance_metrics_PN', 'get_feedback', 'sample_documents',
             'get_labels_from_docs', 'annotate', 'retrain_model',
-            'reevaluate_model', 'performance_metrics_PN', 'import_annotations',
-            'export_annotations'}
+            'reevaluate_model', 'import_annotations', 'export_annotations',
+            # Options added for the IMT:
+            'inference', 'on_retrain', 'on_classify', 'on_evaluate',
+            'on_sample', 'on_save_feedback'}
 
         option = args.task
         if option in options_needing_labels:

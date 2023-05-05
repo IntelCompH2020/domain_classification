@@ -139,6 +139,20 @@ class TaskManager(baseTaskManager):
 
         return
 
+    def _is_corpus(self, verbose=True):
+        """
+        Check if a corpus has been loaded.
+        """
+
+        # Just to abbreviate
+        is_corpus = self.metadata['corpus_name'] is not None
+        if not is_corpus:
+            logging.warning("\n")
+            logging.warning(
+                "-- No corpus loaded. You must load a corpus first")
+
+        return is_corpus
+
     def _is_model(self, verbose=True):
         """
         Check if labels have been loaded and a domain classifier object has
@@ -170,19 +184,13 @@ class TaskManager(baseTaskManager):
 
     def _get_dataset_list(self):
         """
-        Returns the list of available corpus
+        Returns the list of available datasets
         """
 
-        # Just to abbreviate
-        corpus_name = self.metadata['corpus_name']
-
-        if corpus_name is None:
-            logging.warning("\n")
-            logging.warning(
-                "-- No corpus loaded. You must load a corpus first")
-            dataset_list = []
-        else:
+        if self._is_corpus():
             dataset_list = self.DM.get_dataset_list()
+        else:
+            dataset_list = []
 
         return dataset_list
 
@@ -252,10 +260,13 @@ class TaskManager(baseTaskManager):
         learning.
         """
 
+        if not self._is_corpus():
+            return []
+
         gs_labels = [x for x in self.df_corpus.columns
                      if x.startswith('target_')]
 
-        if ANNOTATIONS in self.dc.df_dataset:
+        if self.dc is not None and ANNOTATIONS in self.dc.df_dataset:
             gs_labels.append(ANNOTATIONS)
 
         if gs_labels == []:
@@ -387,7 +398,6 @@ class TaskManager(baseTaskManager):
         # Load corpus in a dataframe.
         self.df_corpus = self.DM.load_corpus(corpus_name, sampling_factor=sf)
 
-        #
         self.corpus_has_embeddings = 'embeddings' in self.df_corpus.columns
 
         self.CorpusProc = CorpusDFProcessor(
@@ -490,6 +500,11 @@ class TaskManager(baseTaskManager):
             If the string is empty, the keywords are read from self.keywords
         """
 
+        # Check if corpus has been loaded
+
+        if not self._is_corpus():
+            return "No corpus has been loaded"
+
         # Read keywords:
         self.keywords = self._convert_keywords(keywords, out='list')
         logging.info(f'-- Selected keywords: {self.keywords}')
@@ -550,6 +565,10 @@ class TaskManager(baseTaskManager):
             If the string is empty, the keywords are read from self.keywords
         """
 
+        # Check if corpus has been loaded
+        if not self._is_corpus():
+            return "No corpus has been loaded"
+
         # Read keywords:
         self.keywords = self._convert_keywords(keywords, out='list')
         logging.info(f'-- Selected keyword: {self.keywords}')
@@ -600,6 +619,10 @@ class TaskManager(baseTaskManager):
         tag: str, optional (default=1)
             Name of the output label set.
         """
+
+        # Check if corpus has been loaded
+        if not self._is_corpus():
+            return "No corpus has been loaded"
 
         # It topic_weights is a string, convert to dictionary
         if isinstance(topic_weights, str):
@@ -703,7 +726,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def load_labels(self, class_name):
+    def load_labels(self, class_name, model_type=None, model_name=None):
         """
         Load a set of labels and its corresponding dataset (if it exists)
 
@@ -711,6 +734,10 @@ class TaskManager(baseTaskManager):
         ----------
         class_name : str
             Name of the target category
+        model_type : str
+            Type of classifier model
+        model_name : str
+            Name of the specific classifier model
         """
 
         self.class_name = class_name
@@ -723,10 +750,12 @@ class TaskManager(baseTaskManager):
 
             logging.info("-- Loading classification model")
             path2model = self.path2models / self.class_name
-            model_type = self.global_parameters['classifier']['model_type']
-            model_name = self.global_parameters['classifier']['model_name']
+            if model_type is None:
+                model_type = self.global_parameters['classifier']['model_type']
+            if model_name is None:
+                model_name = self.global_parameters['classifier']['model_name']
 
-            #if self.DM.get_metadata()['corpus_has_embeddings']:
+            # if self.DM.get_metadata()['corpus_has_embeddings']:
             if self.corpus_has_embeddings:
 
                 self.df_dataset = (
@@ -772,9 +801,11 @@ class TaskManager(baseTaskManager):
         return
 
     def train_PUmodel(self, max_imbalance: float = 3.0, nmax: int = 400,
-                      epochs: int = 3):
+                      epochs: int = 3, freeze_encoder: bool = None,
+                      batch_size: int = None, model_type: str = None,
+                      model_name: str = None):
         """
-        Train a domain classifiers
+        Train a domain classifier
 
         Parameters
         ----------
@@ -788,16 +819,23 @@ class TaskManager(baseTaskManager):
             Number of training epoch
         """
 
+        breakpoint()
+
         if self.df_dataset is None:
             logging.warning("-- No model is loaded. "
                             "You must load or create a set of labels first")
             return
 
         # Configuration parameters
-        freeze_encoder = self.global_parameters['classifier']['freeze_encoder']
-        batch_size = self.global_parameters['classifier']['batch_size']
-        model_type = self.global_parameters['classifier']['model_type']
-        model_name = self.global_parameters['classifier']['model_name']
+        params = self.global_parameters['classifier']  # Just to abbreviate
+        if freeze_encoder is None:
+            freeze_encoder = params['freeze_encoder']
+        if batch_size is None:
+            batch_size = params['batch_size']
+        if model_type is None:
+            model_type = params['model_type']
+        if model_name is None:
+            model_name = params['model_name']
 
         if self.dc is not None:
             # If there exists a classifier object, update the local dataset,
@@ -813,7 +851,7 @@ class TaskManager(baseTaskManager):
 
         path2model = self.path2models / self.class_name
 
-        #if self.DM.get_metadata()['corpus_has_embeddings']:
+        # if self.DM.get_metadata()['corpus_has_embeddings']:
         if self.corpus_has_embeddings:
 
             self.df_dataset = self.CorpusProc.enrich_dataset_with_embeddings(
@@ -1005,9 +1043,15 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def get_feedback(self, sampler=None):
+    def get_feedback(self, sampler: str = None):
         """
         Gets some labels from a user for a selected subset of documents
+
+        Parameters
+        ----------
+        sampler : str, optional (default = "")
+            Type of sampler. If "", the sampler is read from the global
+            parameters
         """
 
         # This is for compatibility with the GUI
@@ -1052,10 +1096,17 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def sample_documents(self, sampler=None):
+    def sample_documents(self, sampler: str = None):
         """
         Gets some labels from a user for a selected subset of documents
+
+        Parameters
+        ----------
+        sampler : str, optional (default = "")
+            Type of sampler. If "", the sampler is read from the global
+            parameters
         """
+
         # This is for compatibility with the GUI
         if sampler is None:
             sampler = self.global_parameters['active_learning']['sampler']
@@ -1560,7 +1611,7 @@ class TaskManagerCMD(TaskManager):
         nmax = np.inf
         epochs = 0
 
-        #if not self.DM.get_metadata()['corpus_has_embeddings']:
+        # if not self.DM.get_metadata()['corpus_has_embeddings']:
         if not self.corpus_has_embeddings:
 
             # Get weight parameter (weight of title word wrt description words)
@@ -1717,3 +1768,127 @@ class TaskManagerGUI(TaskManager):
         logging.info(msg)
 
         return msg
+
+
+class TaskManagerIMT(TaskManager):
+    """
+    Provides extra functionality to the task manager, to be used by the
+    Interactive Model Trainer of the IntelComp project.
+    """
+
+    def __init__(self, path2project, path2source=None, path2zeroshot=None):
+
+        super().__init__(path2project, path2source, path2zeroshot)
+        self.project_folder = str(path2project).split('/')[-1]
+
+    def on_create_list_of_keywords(
+            self, corpus_name: str, description: str = "",
+            visibility: str = 'Private', wt: float = 2.0, n_max: int = 2000,
+            s_min: float = 1.0, tag: str = "kwds", method: str = 'count',
+            keyword_list: str = "", keywords: str = "",
+            max_imbalance: float = 3.0, nmax: int = 400, epochs: int = 3,
+            freeze_encoder: bool = True, batch_size: int = 8,
+            model_type: str = 'mpnet',
+            model_name: str = 'sentence-transformers/all-mpnet-base-v2'):
+        """
+        on button click create with option: from list of keywords
+        """
+
+        self.setup()
+        self.load_corpus(corpus_name)
+        if keyword_list == '__all_AI':
+            self.keywords = (
+                ['artificial intelligence', 'argumentation framework',
+                 'intelligent tutoring system',
+                 'nonlinear archetypal analysis',
+                 'non-linear archetypal analysis',
+                 'random forest',
+                 'rule based translation', 'rule-based translation',
+                 'statistical machine translation', 'pytorch']
+                + self.DM.get_keywords_list())
+        if keyword_list == '':
+            self.keywords = np.array(keywords.split(','))
+
+        self.get_labels_by_keywords(wt, n_max, s_min, tag, method, keywords)
+        self.train_PUmodel(
+            max_imbalance, nmax, epochs, freeze_encoder=freeze_encoder,
+            batch_size=batch_size, model_type=model_type,
+            model_name=model_name)
+        self.DM.save_model_json(
+            self.project_folder, description, visibility, tag, 'Keyword-based',
+            self.dc.config)
+
+    def on_create_category_name(
+            self, corpus_name: str, description: str = "",
+            visibility: str = 'Private', n_max: int = 2000, s_min: float = 0.1,
+            tag: str = "zeroshot", keywords: str = "",
+            max_imbalance: float = 3.0, nmax: int = 400, epochs: int = 3,
+            freeze_encoder: bool = True, batch_size: int = 8,
+            model_type: str = 'mpnet',
+            model_name: str = 'sentence-transformers/all-mpnet-base-v2'):
+        """
+        on button click create with option: from topic selection function
+        """
+
+        self.setup()
+        self.load_corpus(corpus_name)
+        self.get_labels_by_zeroshot(n_max, s_min, tag, keywords)
+        self.train_PUmodel(
+            max_imbalance, nmax, epochs, freeze_encoder=freeze_encoder,
+            batch_size=batch_size, model_type=model_type,
+            model_name=model_name)
+        self.DM.save_model_json(
+            self.project_folder, description, visibility, tag, 'Keyword-based',
+            self.dc.config)
+
+    def on_create_topic_selection(
+            self, corpus_name: str, description: str = "", tag: str = "topics",
+            visibility: str = 'Private', max_imbalance: float = 3.0,
+            nmax: int = 400, epochs: int = 3, freeze_encoder: bool = True,
+            batch_size: int = 8, model_type: str = 'mpnet',
+            model_name: str = 'sentence-transformers/all-mpnet-base-v2'):
+        """
+        on button click create with option: from category name
+        """
+
+        self.setup()
+        self.load_corpus(corpus_name)
+        self.get_labels_by_topics()
+        self.train_PUmodel(
+            max_imbalance, nmax, epochs, freeze_encoder=freeze_encoder,
+            batch_size=batch_size, model_type=model_type,
+            model_name=model_name)
+        self.DM.save_model_json(
+            self.project_folder, description, visibility, tag, 'Keyword-based',
+            self.dc.config)
+
+    def on_retrain(self, epochs: int = 3):
+        """
+        on button click retrain
+        """
+        self.retrain_model(epochs)
+
+    def on_classify(self):
+        """
+        on button click classify
+        """
+        self.inference()
+
+    def on_evaluate(self, true_label_name: str):
+        """
+        on button click evaluate
+        """
+        self.evaluate_PUlabels(true_label_name)
+
+    def on_sample(self, sampler=""):
+        """
+        on button click sample
+        """
+        self.get_feedback(sampler)
+
+    def on_save_feedback(self):
+        """
+        on button click save feedback
+        """
+        self.annotate()
+
