@@ -5,7 +5,7 @@
  "visibility": "private",
  "Dtsets": [
    {
-     "parquet":"/Users/Documents/Intelcomp/fromHDFS/CORDIS.parquet",
+     "parquet":"../../datasets/CORDIS.parquet",
      "source": "CORDIS",
      "idfld": "id",
      "titlefld": "title",

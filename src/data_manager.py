@@ -699,6 +699,28 @@ class DataManager(object):
         df_corpus['description'] = (
             df_corpus['description'].str.replace('\t', ''))
 
+        # This is to map all keywords to the same data type. Since nan cells in
+        # column 'keywords' have been mapped empty strings, they must be
+        # re-mapped to list or numpy arrays to keep the same type for the
+        # whole column
+        if (('keywords' in df_corpus) and (df_corpus.keywords.dtype == 'O')):
+            # Set of all data types in the keywords column
+            dtypes = set([type(x) for x in df_corpus.keywords])
+            # Set of all strings
+            strings = set([x for x in df_corpus.keywords if
+                           isinstance(x, str)])
+
+            if strings == {''}:
+                if (list in dtypes) or (np.ndarray in dtypes):
+                    # Map empty strings to empty lists
+                    df_corpus['keywords'] = df_corpus['keywords'].apply(
+                        lambda x: [] if isinstance(x, str) else x)
+                if np.ndarray in dtypes:
+                    # Map empty lists to empty arrays
+                    df_corpus['keywords'] = df_corpus['keywords'].apply(
+                        lambda x: np.ndarray([], dtype=np.int64)
+                        if isinstance(x, str) else x)
+
         # Log results
         l2 = len(df_corpus)
         logging.info(f"-- -- {l1 - l2} documents with empty title or "
