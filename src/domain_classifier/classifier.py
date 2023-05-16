@@ -6,7 +6,7 @@ Defines the main domain classification class
 import logging
 import pathlib
 from time import time
-from datetime import datetime 
+from datetime import datetime
 
 import pandas as pd
 import numpy as np
@@ -88,7 +88,6 @@ class CorpusClassifier(object):
         with some large files. You might like to use a value of
         path2transformers other than '.'.
         """
-
 
         logging.info("-- Initializing classifier object")
         self.path2transformers = pathlib.Path(path2transformers)
@@ -274,7 +273,6 @@ class CorpusClassifier(object):
             logging.info("-- -- Model configuration loaded from file")
 
         return
-
 
     def load_model(self):
         """
@@ -1134,9 +1132,15 @@ class CorpusClassifier(object):
 
         # Training data not annotated (i.e., UNUSED in column 'learned')
         is_train = (self.df_dataset.train_test == TRAIN)
-        is_tr_unused = is_train & (self.df_dataset.learned == UNUSED)
-        is_tr_used = is_train & (self.df_dataset.learned == 1)
-        is_tr_new = is_train & (self.df_dataset.learned == 0)
+
+        if 'learned' in self.df_dataset:
+            is_tr_unused = is_train & (self.df_dataset.learned == UNUSED)
+            is_tr_used = is_train & (self.df_dataset.learned == 1)
+            is_tr_new = is_train & (self.df_dataset.learned == 0)
+        else:
+            is_tr_unused = is_train
+            is_tr_used = []
+            is_tr_new = []
 
         self.df_dataset.loc[is_tr_unused, "sample_weight"] = 1
         self.df_dataset.loc[is_tr_used, "sample_weight"] = annotation_gain
@@ -1144,10 +1148,11 @@ class CorpusClassifier(object):
 
         self.df_dataset.loc[is_train, "labels"] = self.df_dataset.loc[
             is_train, "PUlabels"]
-        self.df_dataset.loc[is_tr_used, "labels"] = self.df_dataset.loc[
-            is_tr_used, "annotations"]
-        self.df_dataset.loc[is_tr_new, "labels"] = self.df_dataset.loc[
-            is_tr_new, "annotations"]
+        if 'annotations' in self.df_dataset:
+            self.df_dataset.loc[is_tr_used, "labels"] = self.df_dataset.loc[
+                is_tr_used, "annotations"]
+            self.df_dataset.loc[is_tr_new, "labels"] = self.df_dataset.loc[
+                is_tr_new, "annotations"]
 
         # #######
         # Retrain
@@ -1160,16 +1165,18 @@ class CorpusClassifier(object):
         # Update dataframe
 
         # Mark new annotations as used
-        self.df_dataset.loc[self.df_dataset.learned == 0, 'learned'] = 1
+        if 'learned' in self.df_dataset:
+            self.df_dataset.loc[self.df_dataset.learned == 0, 'learned'] = 1
 
         return
 
-"""
-Defines the main domain classification class using embeddings
 
-@author: J. Cid-Sueiro, J.A. Espinosa, A. Gallardo-Antolin, T.Ahlers
-"""
 class CorpusClassifierMLP(CorpusClassifier):
+    """
+    Defines the main domain classification class using embeddings
+
+    @author: J. Cid-Sueiro, J.A. Espinosa, A. Gallardo-Antolin, T.Ahlers
+    """
 
     def __init__(self, df_dataset, model_type="mpnet",
                  model_name="sentence-transformers/all-mpnet-base-v2",
@@ -1313,51 +1320,51 @@ class CorpusClassifierMLP(CorpusClassifier):
         self._train_model()
 
         #self.load_model()
-#
-        #df_train = self.__sample_train_data()
-        #if len(df_train) == 0:
-        #    logging.info(f"-- -- Samples from both classes are required for "
-        #                 "retraining the model")
-        #    return
-#
-        #df_validation = self.__sample_validation_data()
-#
-        #train_data = CustomDatasetMLP(df_train)
-        #train_iterator = data.DataLoader(train_data,
-        #                                 shuffle=True,
-        #                                 batch_size=8)
-        #validation_data = CustomDatasetMLP(df_validation)
-        #validation_iterator = data.DataLoader(validation_data,
-        #                                      shuffle=False,
-        #                                      batch_size=8)
-#
-        #self.model.train_loop(train_iterator, validation_iterator)
-#
-        #self.path2transformers.mkdir(exist_ok=True)
-        #torch.save(self.model.state_dict(),
-        #           self.path2transformers / 'currentModel.pt')
-#
-        #self.df_dataset['sample_weight'] = 1.0
-#
-        #result, wrong_predictions = self.eval_model()     # prob_pred
-        #self.df_dataset['PU_prediction'] = self.df_dataset['prob_pred'] > 0.5
-        #self.df_dataset['PU_prob_pred'] = self.df_dataset['prob_pred']
-        #self.df_dataset['prediction'] = self.df_dataset['prob_pred']
-#
-        #for col in ['PU_score_0', 'PU_score_1', 'prediction', 'prob_pred']:
-        #    self.df_dataset[col] = 0
-#
-        #return
+        #
+        # df_train = self.__sample_train_data()
+        # if len(df_train) == 0:
+        #     logging.info(f"-- -- Samples from both classes are required for "
+        #                  "retraining the model")
+        #     return
+        #
+        # df_validation = self.__sample_validation_data()
+        #
+        # train_data = CustomDatasetMLP(df_train)
+        # train_iterator = data.DataLoader(train_data,
+        #                                  shuffle=True,
+        #                                  batch_size=8)
+        # validation_data = CustomDatasetMLP(df_validation)
+        # validation_iterator = data.DataLoader(validation_data,
+        #                                       shuffle=False,
+        #                                       batch_size=8)
+        #
+        # self.model.train_loop(train_iterator, validation_iterator)
+        #
+        # self.path2transformers.mkdir(exist_ok=True)
+        # torch.save(self.model.state_dict(),
+        #            self.path2transformers / 'currentModel.pt')
+        #
+        # self.df_dataset['sample_weight'] = 1.0
+        #
+        # result, wrong_predictions = self.eval_model()     # prob_pred
+        # self.df_dataset['PU_prediction'] = self.df_dataset['prob_pred'] > 0.5
+        # self.df_dataset['PU_prob_pred'] = self.df_dataset['prob_pred']
+        # self.df_dataset['prediction'] = self.df_dataset['prob_pred']
+        #
+        # for col in ['PU_score_0', 'PU_score_1', 'prediction', 'prob_pred']:
+        #     self.df_dataset[col] = 0
+        #
+        # return
 
     def retrain_model(self, freeze_encoder=True, batch_size=8, epochs=3,
                       annotation_gain=10):
         """
-        Re-train the classifier model using annotations. 
+        Re-train the classifier model using annotations.
 
         Parameters
         ----------
         epochs : int, optional (default=3)
-            Number of training epochs 
+            Number of training epochs
         freeze_encoder : bool, optional (default=True)
             If True, the embedding layer is frozen, so that only the
             classification layers is updated. This is useful to use
@@ -1369,12 +1376,19 @@ class CorpusClassifierMLP(CorpusClassifier):
             annotated one.
         """
 
-        #self.load_model()
+        # self.load_model()
 
+        # Training data not annotated (i.e., UNUSED in column 'learned')
         is_train = (self.df_dataset.train_test == TRAIN)
-        is_tr_unused = is_train & (self.df_dataset.learned == UNUSED)
-        is_tr_used = is_train & (self.df_dataset.learned == 1)
-        is_tr_new = is_train & (self.df_dataset.learned == 0)
+
+        if 'learned' in self.df_dataset:
+            is_tr_unused = is_train & (self.df_dataset.learned == UNUSED)
+            is_tr_used = is_train & (self.df_dataset.learned == 1)
+            is_tr_new = is_train & (self.df_dataset.learned == 0)
+        else:
+            is_tr_unused = is_train
+            is_tr_used = []
+            is_tr_new = []
 
         self.df_dataset.loc[is_tr_unused, "sample_weight"] = 1
         self.df_dataset.loc[is_tr_used, "sample_weight"] = annotation_gain
@@ -1382,39 +1396,47 @@ class CorpusClassifierMLP(CorpusClassifier):
 
         self.df_dataset.loc[is_train, "labels"] = self.df_dataset.loc[
             is_train, "PUlabels"]
-        self.df_dataset.loc[is_tr_used, "labels"] = self.df_dataset.loc[
-            is_tr_used, "annotations"]
-        self.df_dataset.loc[is_tr_new, "labels"] = self.df_dataset.loc[
-            is_tr_new, "annotations"]
+        if 'annotations' in self.df_dataset:
+            self.df_dataset.loc[is_tr_used, "labels"] = self.df_dataset.loc[
+                is_tr_used, "annotations"]
+            self.df_dataset.loc[is_tr_new, "labels"] = self.df_dataset.loc[
+                is_tr_new, "annotations"]
 
         self._train_model(retrain=True)
 
-        #df_train = self.__sample_train_data(retrain=True)
-        #if len(df_train) == 0:
+        # ################
+        # Update dataframe
+
+        # Mark new annotations as used
+        if 'learned' in self.df_dataset:
+            self.df_dataset.loc[self.df_dataset.learned == 0, 'learned'] = 1
+
+        # df_train = self.__sample_train_data(retrain=True)
+        # if len(df_train) == 0:
         #    logging.info(f"-- -- Samples from both classes are required for "
         #                 "retraining the model")
         #    return
-        #df_validation = self.__sample_validation_data(retrain=True)
-#
-        #train_data = CustomDatasetMLP(df_train)
-        #train_iterator = data.DataLoader(train_data,
-        #                                 shuffle=True,
-        #                                 batch_size=8)
-        #validation_data = CustomDatasetMLP(df_validation)
-        #validation_iterator = data.DataLoader(validation_data,
-        #                                      shuffle=False,
-        #                                      batch_size=8)
-#
-        #self.model.train_loop(train_iterator, validation_iterator)
-#
-        #self.path2transformers.mkdir(exist_ok=True)
-        #torch.save(self.model.state_dict(),
+        # df_validation = self.__sample_validation_data(retrain=True)
+        #
+        # train_data = CustomDatasetMLP(df_train)
+        # train_iterator = data.DataLoader(train_data,
+        #                                  shuffle=True,
+        #                                  batch_size=8)
+        # validation_data = CustomDatasetMLP(df_validation)
+        # validation_iterator = data.DataLoader(validation_data,
+        #                                       shuffle=False,
+        #                                       batch_size=8)
+        #
+        # self.model.train_loop(train_iterator, validation_iterator)
+        #
+        # self.path2transformers.mkdir(exist_ok=True)
+        # torch.save(self.model.state_dict(),
         #           self.path2transformers / 'currentModel.pt')
-#
-        #result, wrong_predictions = self.eval_model()  # prob_pred
-        #self.df_dataset['prediction'] = self.df_dataset['prob_pred'] > 0.5
+        #
+        # result, wrong_predictions = self.eval_model()  # prob_pred
+        # self.df_dataset['prediction'] = self.df_dataset['prob_pred'] > 0.5
 
-    def _train_model(self,retrain=False):
+    def _train_model(self, retrain=False):
         """
         trains the classifier model using annotations
 

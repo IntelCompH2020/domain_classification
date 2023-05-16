@@ -948,7 +948,7 @@ class DataManager(object):
         # The log message is returned to be shown in a GUI, if needed
         return ids_pos, msg
 
-    def load_selected_docs(self, tag=""):
+    def load_selected_docs(self, tag="", fmt="csv"):
         """
         Loads a temporal dataframe of documents selected for annotation
 
@@ -956,6 +956,8 @@ class DataManager(object):
         ----------
         tag : str, optional (default="")
             Label suffix for the file name
+        fmt : str in {'csv', 'json'}, optional (default='csv')
+            Input file format
 
         Returns
         -------
@@ -963,15 +965,17 @@ class DataManager(object):
             Selected documents
         """
 
-        # Create temporary folder
-        fpath = self.path2datasets / "temp" / f"selected_docs_{tag}.csv"
-        # Below, index_col=0 is used to use the first column as indices.
-        # Otherwise, an additional index colums would be used.
-        df = pd.read_csv(fpath, index_col=0)
+        fpath = self.path2datasets / "temp" / f"selected_docs_{tag}.{fmt}"
+        if fmt == 'csv':
+            # Below, index_col=0 is used to use the first column as indices.
+            # Otherwise, an additional index colums would be used.
+            df = pd.read_csv(fpath, index_col=0)
+        elif fmt == 'json':
+            df = pd.read_json(fpath)
 
         return df
 
-    def save_selected_docs(self, df_docs, tag=""):
+    def save_selected_docs(self, df_docs, tag="", fmt="csv"):
         """
         Save a temporal dataframe of documents selected for annotation
 
@@ -981,6 +985,8 @@ class DataManager(object):
             Dataframe of documents to be annotated
         tag : str, optional (default="")
             Suffix for the file name
+        fmt : str in {'csv', 'json'}, optional (default='csv')
+            Output file format
         """
 
         # Create temporary folder
@@ -989,14 +995,15 @@ class DataManager(object):
             folder.mkdir()
 
         # Save
-        fpath = folder / f"selected_docs_{tag}.csv"
-        # Below, index_col=0 is used to use the first column as indices.
-        # Otherwise, an additional index colums would be used.
-        df_docs.to_csv(fpath)
+        fpath = folder / f"selected_docs_{tag}.{fmt}"
+        if fmt == 'csv':
+            df_docs.to_csv(fpath)
+        elif fmt == 'json':
+            df_docs.to_json(fpath)
 
         return
 
-    def load_new_labels(self, tag=""):
+    def load_new_labels(self, tag="", fmt="csv"):
         """
         Loads a temporal dataframe of documents selected for annotation
 
@@ -1004,6 +1011,8 @@ class DataManager(object):
         ----------
         tag : str, optional (default="")
             Suffix for the file name
+        fmt : str in {'csv', 'json'}, optional (default='csv')
+            Input file format
 
         Returns
         -------
@@ -1012,12 +1021,15 @@ class DataManager(object):
         """
 
         # Create temporary folder
-        fpath = self.path2datasets / "temp" / f"new_labels_{tag}.csv"
-        df = pd.read_csv(fpath, index_col=0)
+        fpath = self.path2datasets / "temp" / f"new_labels_{tag}.{fmt}"
+        if fmt == 'csv':
+            df = pd.read_csv(fpath, index_col=0)
+        else:
+            df = pd.read_json(fpath)
 
         return df
 
-    def save_new_labels(self, idx, labels, tag=""):
+    def save_new_labels(self, idx, labels, tag="", fmt="csv"):
         """
         Save labels from the last annotation round in a temporary file
 
@@ -1029,6 +1041,8 @@ class DataManager(object):
             List of labels
         tag : str, optional (default="")
             Label suffix for the file name
+        fmt : str in {'csv', 'json'}, optional (default='csv')
+            Output file format
         """
 
         # Make dataframe (to save easily into a csv file)
@@ -1040,25 +1054,36 @@ class DataManager(object):
             folder.mkdir()
 
         # Save
-        fpath = folder / f"new_labels_{tag}.csv"
+        fpath = folder / f"new_labels_{tag}.{fmt}"
         df_labels.to_csv(fpath)
+        if fmt == 'csv':
+            df_labels.to_csv(fpath)
+        elif fmt == 'json':
+            df_labels.to_json(fpath)
 
         return
 
     def remove_temp_files(self, tag):
         """
         Removes temporary files associated to a given annotation round
+
+        Parameters
+        ----------
+        tag : str, optional (default="")
+            Label suffix for the file name
         """
 
-        folder = self.path2datasets / "temp"
-        # Remove selected docs file.
-        fpath = folder / f"selected_docs_{tag}.csv"
-        if fpath.exists():
-            fpath.unlink()
-        # Remove labels file.
-        fpath = folder / f"new_labels_{tag}.csv"
-        if fpath.exists():
-            fpath.unlink()
+        files_to_remove = [
+            f"selected_docs_{tag}.csv",
+            f"selected_docs_{tag}.json"
+            f"new_labels_{tag}.csv"
+            f"new_labels_{tag}.json"]
+
+        # Remove files
+        for file in files_to_remove:
+            fpath = self.path2datasets / "temp" / file
+            if fpath.exists():
+                fpath.unlink()
 
         return
 
