@@ -58,5 +58,5 @@ docker run --rm -i --name container-name -v path/to/local/data/:/shared_data/ do
 ```
 Alternatively, the command to execute the CLI can be executed first, and then the main command:
 ```
-python main_dc_single_task.py --p /shared_data/projects/docker_proj --source /shared_data/datasets --task 
+python run_dc_task.py --p /shared_data/projects/docker_proj --source /shared_data/datasets --task 
 ```

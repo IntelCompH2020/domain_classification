@@ -7,10 +7,13 @@ using the core processing classes and methods.
 
 import logging
 import numpy as np
+import pandas as pd
 
 # Local imports
 # You might need to update the location of the baseTaskManager class
 from .base_taskmanager import baseTaskManager
+from .data_manager import LogicalDataManager
+from .data_manager import LocalDataManager
 from .data_manager import DataManager
 from .query_manager import QueryManager
 from .domain_classifier.preprocessor import CorpusDFProcessor

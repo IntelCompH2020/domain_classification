@@ -133,8 +133,6 @@ inference:
   #options:
   #  - get_method: _get_inference
     
-
-
 # ######################
 # Options for get_labels
 import_AI_subcorpus:

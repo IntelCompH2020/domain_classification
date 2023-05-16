@@ -6,6 +6,7 @@ the project.
 """
 
 import pathlib
+from pathlib import Path
 import pandas as pd
 import numpy as np
 import scipy.sparse as scp
@@ -19,8 +20,13 @@ from langdetect import detect
 
 import dask.dataframe as dd
 from dask.diagnostics import ProgressBar
+import datetime
+import json
 
 # import gc
+
+# Local imports
+from .manage_corpus import CorpusManager
 
 
 def detect_english(x):
@@ -118,7 +124,7 @@ class DataManager(object):
 
         return path2feather
 
-    def __load_metadata(self):
+    def _load_metadata(self):
         """
         Loads the metadata file if it exists. If not, self.metadata takes the
         default value (None)
@@ -133,21 +139,17 @@ class DataManager(object):
 
         return
 
-#    def __update_metadata(self):
-#
-#        path2metadata = self.path2corpus / 'metadata.yaml'
-#        with open(path2metadata, 'w') as f:
-#            yaml.dump(self.metadata, f)
-#
-#        return
+    # def __update_metadata(self):
+    #     path2metadata = self.path2corpus / 'metadata.yaml'
+    #     with open(path2metadata, 'w') as f:
+    #         yaml.dump(self.metadata, f)
+    #     return
 
-#    def __determineCorpusHasEmbeddings(self, columns):
-#
-#        self.metadata["corpus_has_embeddings"] = bool(
-#            (np.array(columns) == 'embeddings').sum() > 0)
-#        self.__update_metadata()
-#
-#        return
+    # def __determineCorpusHasEmbeddings(self, columns):
+    #     self.metadata["corpus_has_embeddings"] = bool(
+    #         (np.array(columns) == 'embeddings').sum() > 0)
+    #     self.__update_metadata()
+    #     return
 
     def get_metadata(self):
         """
@@ -314,7 +316,7 @@ class DataManager(object):
 
         self.corpus_name = corpus_name
         self.path2corpus = self.path2source / corpus_name
-        self.__load_metadata()
+        self._load_metadata()
         path2feather = self._get_path2feather(sampling_factor)
 
         # #################################################
@@ -551,9 +553,8 @@ class DataManager(object):
                     selected_cols += ['embeddings']
                 df_corpus = df_corpus[selected_cols]
             else:
-                selected_cols = np.array(
-                    ['id', 'title', 'paperAbstract', 'fieldsOfStudy',
-                     'embeddings'])
+                selected_cols = np.array(['id', 'title', 'paperAbstract',
+                                          'fieldsOfStudy', 'embeddings'])
                 df_corpus = sample_sub_set_from_folder(
                     path2texts, selected_cols, sampling_factor)
                 logging.info(f'-- -- Raw corpus {corpus_name} read with '
@@ -610,60 +611,7 @@ class DataManager(object):
         # ############
         # Clean corpus
         if clean_corpus:
-
-            l0 = len(df_corpus)
-            logging.info(f"-- -- {l0} base documents loaded")
-
-            # Remove duplicates, if any
-            df_corpus.drop_duplicates(subset=['id'], inplace=True)
-            l1 = len(df_corpus)
-            logging.info(f"-- -- {l0 - l1} duplicated documents removed")
-
-            # Remove documents with missing data, if any
-            ind_notna = df_corpus['title'].notna()
-            df_corpus = df_corpus[ind_notna]
-            ind_notna = df_corpus['description'] == 0
-            df_corpus = df_corpus[~ind_notna]
-
-            # Fill nan cells with empty strings
-            df_corpus.fillna("", inplace=True)
-
-            # Remove documents with zero-length title or description
-            df_corpus = df_corpus[df_corpus['title'] != ""]
-            df_corpus = df_corpus[df_corpus['description'] != ""]
-
-            # Remove special characters
-            df_corpus['title'] = df_corpus['title'].str.replace('\t', '')
-            df_corpus['description'] = (
-                df_corpus['description'].str.replace('\t', ''))
-
-            # This is to map all keywords to the same data type. Since nan
-            # cells in column 'keywords' have been mapped empty strings, they
-            # must be re-mapped to list or numpy arrays to keep the same type
-            # for the whole column
-            if (('keywords' in df_corpus)
-                    and (df_corpus.keywords.dtype == 'O')):
-                # Set of all data types in the keywords column
-                dtypes = set([type(x) for x in df_corpus.keywords])
-                # Set of all strings
-                strings = set([x for x in df_corpus.keywords if
-                               isinstance(x, str)])
-
-                if strings == {''}:
-                    if (list in dtypes) or (np.ndarray in dtypes):
-                        # Map empty strings to empty lists
-                        df_corpus['keywords'] = df_corpus['keywords'].apply(
-                            lambda x: [] if isinstance(x, str) else x)
-                    if np.ndarray in dtypes:
-                        # Map empty lists to empty arrays
-                        df_corpus['keywords'] = df_corpus['keywords'].apply(
-                            lambda x: np.ndarray([], dtype=np.int64)
-                            if isinstance(x, str) else x)
-
-                # Log results
-                l2 = len(df_corpus)
-                logging.info(f"-- -- {l1 - l2} documents with empty title or "
-                             "description: removed")
+            df_corpus = self._clean_corpus(df_corpus)
 
         # ###############################################
         # Remove documents without description in english
@@ -674,9 +622,6 @@ class DataManager(object):
             logging.info("-- -- Applying language filter. This may take a "
                          "while")
 
-            # df_corpus['eng'] = (
-            #     df_corpus['title'] + ' ' + df_corpus['description']).apply(
-            #         detect_english)
             iPercent = -1
             df_corpus['eng'] = False
             for count, (index, row) in enumerate(df_corpus.iterrows()):
@@ -684,9 +629,8 @@ class DataManager(object):
                     row['title'] + ' ' + row['description'])
                 if int(100 * count / len(df_corpus)) > iPercent:
                     iPercent = int(100 * count / len(df_corpus))
-                    logging.info(
-                        f"-- -- {iPercent} % of documents processed for "
-                        "applying language filter")
+                    logging.info(f"-- -- {iPercent} % of documents processed "
+                                 "for applying language filter")
 
             df_corpus = df_corpus[df_corpus['eng']]
             df_corpus.drop(columns='eng', inplace=True)
@@ -698,17 +642,88 @@ class DataManager(object):
         # Reset the index and drop the old index
         df_corpus = df_corpus.reset_index(drop=True)
 
-        # self.__determineCorpusHasEmbeddings(df_corpus.columns)
-
         # ############
         # Log and save
-
-        # Save to feather file
         logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
                      f" documents loaded in {time() - t0:.2f} secs.")
+        self._save_feather(df_corpus, path2feather)
+
+        return df_corpus
+
+    def _get_corpus_from_feather(self, sampling_factor, corpus_name):
+        t0 = time()
+        path2feather = self._get_path2feather(sampling_factor)
+        if not path2feather.is_file():
+            raise Exception('No feather file')
+
+        logging.info(f'-- -- Feather file {path2feather} found...')
+        df_corpus = pd.read_feather(path2feather)
+
+        logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
+                     f" documents loaded in {time() - t0:.2f} secs.")
+        return df_corpus
+
+    def _save_feather(self, df_corpus, path2feather):
+        # Save to feather file
         df_corpus.to_feather(path2feather)
         logging.info(f"-- -- Corpus saved in feather file {path2feather}")
 
+    def _clean_corpus(self, df_corpus):
+
+        l0 = len(df_corpus)
+        logging.info(f"-- -- {l0} base documents loaded")
+
+        # Remove duplicates, if any
+        df_corpus.drop_duplicates(subset=['id'], inplace=True)
+        l1 = len(df_corpus)
+        logging.info(f"-- -- {l0 - l1} duplicated documents removed")
+
+        # Remove documents with missing data, if any
+        ind_notna = df_corpus['title'].notna()
+        df_corpus = df_corpus[ind_notna]
+        ind_notna = df_corpus['description'] == 0
+        df_corpus = df_corpus[~ind_notna]
+
+        # Fill nan cells with empty strings
+        df_corpus.fillna("", inplace=True)
+
+        # Remove documents with zero-length title or description
+        df_corpus = df_corpus[df_corpus['title'] != ""]
+        df_corpus = df_corpus[df_corpus['description'] != ""]
+
+        # Remove special characters
+        df_corpus['title'] = df_corpus['title'].str.replace('\t', '')
+        df_corpus['description'] = (
+            df_corpus['description'].str.replace('\t', ''))
+
+        # This is to map all keywords to the same data type. Since nan cells in
+        # column 'keywords' have been mapped empty strings, they must be
+        # re-mapped to list or numpy arrays to keep the same type for the
+        # whole column
+        if (('keywords' in df_corpus) and (df_corpus.keywords.dtype == 'O')):
+            # Set of all data types in the keywords column
+            dtypes = set([type(x) for x in df_corpus.keywords])
+            # Set of all strings
+            strings = set([x for x in df_corpus.keywords if
+                           isinstance(x, str)])
+
+            if strings == {''}:
+                if (list in dtypes) or (np.ndarray in dtypes):
+                    # Map empty strings to empty lists
+                    df_corpus['keywords'] = df_corpus['keywords'].apply(
+                        lambda x: [] if isinstance(x, str) else x)
+                if np.ndarray in dtypes:
+                    # Map empty lists to empty arrays
+                    df_corpus['keywords'] = df_corpus['keywords'].apply(
+                        lambda x: np.ndarray([], dtype=np.int64)
+                        if isinstance(x, str) else x)
+
+        # Log results
+        l2 = len(df_corpus)
+        logging.info(f"-- -- {l1 - l2} documents with empty title or "
+                     "description: removed")
+
+        df_corpus = df_corpus.reset_index(drop=True)
         return df_corpus
 
     def load_topics(self):
@@ -1126,3 +1141,152 @@ class DataManager(object):
 
         # The log message is returned to be shown in a GUI, if needed
         return msg
+
+    def save_model_json(self, model_name, description, visibility, tag,
+                        model_type, config_param):
+
+        json_ = {
+            "name": model_name,
+            "description": description,
+            "visibility": visibility,  # "Private" or "Public"
+            "type": model_type,  # "Keyword-based", "Zero-shot-based",
+                                 # "TM-based", "Source-based",
+            "corpus": str(self.path2corpus),
+            "tag": tag,
+            "path_to_config": str(self.path2models / 'dc_config.json'),
+            "creation_date": datetime.datetime.now(),
+        }
+
+        path = self.path2source / 'dc_config.json'
+        with path.open("w", encoding="utf-8") as fout:
+            json.dump(json_, fout, ensure_ascii=False, indent=2, default=str)
+
+
+class LogicalDataManager(DataManager):
+    """
+    This class contains all read / write functionalities required by the
+    domain_classification project.
+
+    It assumes that source and destination data will be stored in files.
+    """
+
+    def __init__(self, path2source, path2datasets, path2models,
+                 path2project, tm, path2embeddings=None):
+        super().__init__(path2project, path2datasets, path2models,
+                         path2embeddings)
+        self.tm = tm
+        self.path2json = None
+        self.corpus_manager = CorpusManager()
+
+    def load_corpus(self, corpus_name, sampling_factor=1):
+
+        logging.info(f'-- Loading corpus {corpus_name}')
+
+        # #################################################
+        # Load corpus data from feather file (if it exists)
+        self.path2corpus = self.path2source
+        try:
+            return self._get_corpus_from_feather(sampling_factor, corpus_name)
+        except Exception:
+            df_corpus = self.__get_corpus_from_logical_dataset(
+                sampling_factor, corpus_name)
+            path2feather = self._get_path2feather(sampling_factor)
+            self._save_feather(df_corpus, path2feather)
+            return df_corpus
+
+    def __get_metadata_from_json(self, corpus_name):
+
+        path2json = Path(self.tm.global_parameters["dataset_path"])
+        datasets = np.array(list(
+            self.corpus_manager.listTrDtsets(path2json).keys()))
+        idx = np.where(self.get_corpus_list() == corpus_name)[0][0]
+        configFile = Path(datasets[idx])
+        if not configFile.is_file():
+            logging.info(f'-- Json file{configFile} is not a file')
+            raise Exception()
+        with configFile.open('r', encoding='utf8') as fin:
+            return json.load(fin)
+
+    def __get_corpus_from_logical_dataset(self, sampling_factor, corpus_name):
+
+        # #########################################
+        # Load corpus data from its original source
+        t0 = time()
+        metadata = self.__get_metadata_from_json(corpus_name)
+        dfs = []
+        for dataset in metadata['Dtsets']:
+            selected_cols = np.array([dataset['idfld'],
+                                      dataset['titlefld'],
+                                      dataset['textfld'],
+                                      dataset['categoryfld']])
+
+            df = dd.read_parquet(dataset['parquet'], split_row_groups=True)
+            dfsmall = df.sample(frac=sampling_factor, random_state=0)
+            with ProgressBar():
+                df_corpus = dfsmall.compute()
+            df_corpus = df_corpus[selected_cols]
+            df_corpus.columns = np.array(
+                ['id', 'title', 'description', 'keywords'])
+            dfs.append(df_corpus)
+
+        # ############
+        # Clean corpus
+        df_corpus = pd.concat(dfs)
+        df_corpus = self._clean_corpus(df_corpus)
+
+        logging.info(f"-- -- Corpus {corpus_name} with {len(df_corpus)} "
+                     f" documents loaded in {time() - t0:.2f} secs.")
+
+        return df_corpus
+
+    def get_corpus_list(self):
+        """
+        Returns the list of available corpus
+        """
+
+        self.path2json = Path(self.tm.global_parameters["dataset_path"])
+        datasets = np.array(list(
+            self.corpus_manager.listTrDtsets(self.path2json).keys()))
+
+        for idx, dataset in enumerate(datasets):
+            datasets[idx] = dataset.split('/')[-1].split('.')[0]
+        return datasets
+
+    def get_keywords_list(self, filename='IA_keywords_SEAD_REV_JAG.txt'):
+        """
+        Returns a list of IA-related keywords read from a file.
+
+        Parameters
+        ----------
+        filename : str, optional (default=='IA_keywords_SEAD_REV_JAG.txt')
+            Name of the file with the keywords
+
+        Returns
+        -------
+        keywords: list
+            A list of keywords (empty if the file does not exist)
+        """
+
+        keywords_fpath = Path('project_folder/keywords') / filename
+
+        keywords = []
+        if keywords_fpath.is_file():
+            df_keywords = pd.read_csv(keywords_fpath, delimiter=',',
+                                      names=['keywords'])
+            keywords = list(df_keywords['keywords'])
+
+        return keywords
+
+
+class LocalDataManager(DataManager):
+    """
+    This class contains all read / write functionalities required by the
+    domain_classification project.
+
+    It assumes that source and destination data will be stored in files.
+    """
+
+    def __init__(self, path2source, path2datasets, path2models,
+                 path2embeddings=None):
+        super().__init__(path2source, path2datasets, path2models,
+                         path2embeddings)

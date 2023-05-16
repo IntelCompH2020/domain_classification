@@ -10,6 +10,7 @@ Created on Sep 06 2022
 import pathlib
 import argparse
 import inspect
+import yaml
 
 # Local imports
 from src.menu_navigator.menu_navigator import MenuNavigator
@@ -52,6 +53,9 @@ def main():
     parser.add_argument(
         '--class_name',
         help="Name of the labeled dataset")
+    parser.add_argument(
+        '-i', '--ignore_IMT_root_path', action='store_true',
+        help="Use the project path as it is, ignoring the imt root")
     args, other_args = parser.parse_known_args()
 
     # ################################################
@@ -84,7 +88,17 @@ def main():
         args = parser.parse_args()
 
     # Create task manager object
-    project_path = pathlib.Path(args.p)
+    if args.ignore_IMT_root_path:
+        project_path = pathlib.Path(args.p)
+    else:
+        # This is used for the IMT: the project path is rooted into a default
+        # project path taken from the parameters.default.yaml.
+        # FIXME: This must be changed, because I do not think it is a good idea
+        # to take parameters from a file of default values.
+        with open('config/parameters.default.yaml', 'r', encoding='utf8') as f:
+            parameter_default = yaml.safe_load(f)
+        project_path = pathlib.Path(
+            parameter_default['project_folder_path']) / pathlib.Path(args.p)
 
     tm = TaskManagerIMT(project_path, path2source=args.source,
                         path2zeroshot=args.zeroshot)

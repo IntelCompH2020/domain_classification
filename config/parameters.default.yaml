@@ -1,3 +1,9 @@
+# Parameters for Project folder path.
+# Used for the IMT only. In general, the project folder and the dataset
+# can be specified as args of the command running the application
+project_folder_path: project_folder/DCmodels
+dataset_path: project_folder/datasets 
+
 # Parameters for the corpus loaders
 corpus:
   # Fraction of documents to be taken from the corpora
