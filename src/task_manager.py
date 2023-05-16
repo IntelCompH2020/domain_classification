@@ -822,8 +822,6 @@ class TaskManager(baseTaskManager):
             Number of training epoch
         """
 
-        breakpoint()
-
         if self.df_dataset is None:
             logging.warning("-- No model is loaded. "
                             "You must load or create a set of labels first")
@@ -1099,7 +1097,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def sample_documents(self, sampler: str = None):
+    def sample_documents(self, sampler: str = None, fmt: str = "csv"):
         """
         Gets some labels from a user for a selected subset of documents
 
@@ -1108,6 +1106,8 @@ class TaskManager(baseTaskManager):
         sampler : str, optional (default = "")
             Type of sampler. If "", the sampler is read from the global
             parameters
+        fmt : str in {'csv', 'json'}, optional, default = "csv"
+            Output file format
         """
 
         # This is for compatibility with the GUI
@@ -1126,7 +1126,7 @@ class TaskManager(baseTaskManager):
             top_prob=self.global_parameters['active_learning']['top_prob'])
 
         # TODO: Save selected_docs
-        self.DM.save_selected_docs(selected_docs, tag=self.class_name)
+        self.DM.save_selected_docs(selected_docs, tag=self.class_name, fmt=fmt)
 
         # Update dataset file (AL_sample changes data in some colums)
         self._save_dataset()
@@ -1199,14 +1199,20 @@ class TaskManager(baseTaskManager):
 
         return labels
 
-    def annotate(self):
+    def annotate(self, fmt: str = "csv"):
         """
         Save user-provided labels in the dataset
+
+        Parameters
+        ----------
+        fmt : str in {'csv', 'json'}, optional, default = "csv"
+            Input file format
         """
 
         # Load sampled documents
-        selected_docs = self.DM.load_selected_docs(tag=self.class_name)
-        df_labels = self.DM.load_new_labels(tag=self.class_name)
+        selected_docs = self.DM.load_selected_docs(
+            tag=self.class_name, fmt=fmt)
+        df_labels = self.DM.load_new_labels(tag=self.class_name, fmt=fmt)
 
         # Indices of the selected docs
         idx = selected_docs.index
@@ -1243,6 +1249,7 @@ class TaskManager(baseTaskManager):
         """
         Improves classifier performance using the labels provided by users
         """
+
         # Check if a classifier object exists
         if not self._is_model():
             return
@@ -1887,11 +1894,11 @@ class TaskManagerIMT(TaskManager):
         """
         on button click sample
         """
-        self.get_feedback(sampler)
+        self.sample_documents(sampler, fmt="json")
 
     def on_save_feedback(self):
         """
         on button click save feedback
         """
-        self.annotate()
+        self.annotate(fmt='json')
 
