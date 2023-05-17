@@ -14,7 +14,6 @@ import pandas as pd
 from .base_taskmanager import baseTaskManager
 from .data_manager import LogicalDataManager
 from .data_manager import LocalDataManager
-from .data_manager import DataManager
 from .query_manager import QueryManager
 from .domain_classifier.preprocessor import CorpusDFProcessor
 from .domain_classifier.classifier import CorpusClassifier
@@ -48,7 +47,8 @@ class TaskManager(baseTaskManager):
 
     def __init__(self, path2project, path2source=None, path2zeroshot=None,
                  config_fname='parameters.yaml',
-                 metadata_fname='metadata.yaml', set_logs=True):
+                 metadata_fname='metadata.yaml', set_logs=True,
+                 logical_dm=False):
         """
         Opens a task manager object.
 
@@ -68,6 +68,9 @@ class TaskManager(baseTaskManager):
         set_logs : bool, optional (default=True)
             If True logger objects are created according to the parameters
             specified in the configuration file
+        logical_dm : bool, optional (default=True)
+            It True, a logical data manager is used
+            If False, a local data manager is used
         """
 
         # Attributes that will be initialized in the base class
@@ -98,6 +101,7 @@ class TaskManager(baseTaskManager):
                          'models': 'models',
                          'output': 'output',
                          'embeddings': 'embeddings',
+                         'corpus': 'corpus'        # Used by the IMT only
                          # 'labels': 'labels',     # No longer used
                          }
 
@@ -137,8 +141,14 @@ class TaskManager(baseTaskManager):
         self.metadata['corpus_name'] = None
 
         # Datamanager
-        self.DM = DataManager(self.path2source, self.path2datasets,
-                              self.path2models, self.path2embeddings)
+        if logical_dm:
+            self.DM = LogicalDataManager(
+                self.path2source, self.path2datasets, self.path2models,
+                self.path2project, self, self.path2embeddings)
+        else:
+            self.DM = LocalDataManager(
+                self.path2source, self.path2datasets, self.path2models,
+                self.path2embeddings)
 
         return
 
@@ -382,6 +392,7 @@ class TaskManager(baseTaskManager):
             Name of the corpus. It should be the name of a folder in
             self.path2source
         """
+
         # Dictionary of sampling factor for the corpus loader.
         sampling_factors = self.global_parameters['corpus']['sampling_factor']
         # Default sampling factor: 1 (loads the whole corpus)
@@ -409,7 +420,7 @@ class TaskManager(baseTaskManager):
         if not self.state['selected_corpus']:
             # Store the name of the corpus an object attribute because later
             # tasks will be referred to this corpus
-            self.metadata['corpus_name'] = corpus_name
+            self.metadata['corpus_name'] = str(corpus_name)
             self.state['selected_corpus'] = True
             self._save_metadata()
 
@@ -504,7 +515,6 @@ class TaskManager(baseTaskManager):
         """
 
         # Check if corpus has been loaded
-
         if not self._is_corpus():
             return "No corpus has been loaded"
 
@@ -1044,7 +1054,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def get_feedback(self, sampler: str = None):
+    def get_feedback(self, sampler: str = ""):
         """
         Gets some labels from a user for a selected subset of documents
 
@@ -1056,7 +1066,7 @@ class TaskManager(baseTaskManager):
         """
 
         # This is for compatibility with the GUI
-        if sampler is None:
+        if sampler == "" or sampler is None:
             sampler = self.global_parameters['active_learning']['sampler']
 
         # Check if a classifier object exists
@@ -1097,7 +1107,7 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def sample_documents(self, sampler: str = None, fmt: str = "csv"):
+    def sample_documents(self, sampler: str = "", fmt: str = "csv"):
         """
         Gets some labels from a user for a selected subset of documents
 
@@ -1111,7 +1121,7 @@ class TaskManager(baseTaskManager):
         """
 
         # This is for compatibility with the GUI
-        if sampler is None:
+        if sampler == "" or sampler is None:
             sampler = self.global_parameters['active_learning']['sampler']
 
         # Check if a classifier object exists
@@ -1772,8 +1782,7 @@ class TaskManagerGUI(TaskManager):
         self.keywords = keywords
 
         # Get labels
-        msg = super().get_labels_by_zeroshot(
-            n_max=n_max, s_min=s_min, tag=tag)
+        msg = super().get_labels_by_zeroshot(n_max=n_max, s_min=s_min, tag=tag)
 
         logging.info(msg)
 
@@ -1790,6 +1799,81 @@ class TaskManagerIMT(TaskManager):
 
         super().__init__(path2project, path2source, path2zeroshot)
         self.project_folder = str(path2project).split('/')[-1]
+
+    def get_labels_by_zeroshot(self, n_max: int = 2000, s_min: float = 0.1,
+                               tag: str = "zeroshot", keywords: str = ""):
+        """
+        Get a set of positive labels using a zero-shot classification model
+
+        Parameters
+        ----------
+        n_max: int or None, optional (defaul=2000)
+            Maximum number of elements in the output list. The default is
+            a huge number that, in practice, means there is no loimit
+        s_min: float, optional (default=0.1)
+            Minimum score. Only elements strictly above s_min are selected
+        tag: str, optional (default=1)
+            Name of the output label set.
+        keywords : str, optional (default="")
+            A comma-separated string of keywords.
+            If the string is empty, the keywords are read from self.keywords
+        """
+
+        # Check if corpus has been loaded
+        if not self._is_corpus():
+            return "No corpus has been loaded"
+
+        msg = None
+        try:
+            df_dataset = self.DM.load_dataset(tag)[0]
+            processed_ids = df_dataset['id'].to_numpy()
+        except Exception:
+            df_dataset = pd.DataFrame([])
+            processed_ids = []
+        while True:
+
+            # Read keywords:
+            self.keywords = self._convert_keywords(keywords, out='list')
+            logging.info(f'-- Selected keyword: {self.keywords}')
+
+            # Filter documents by zero-shot classification
+            ids, scores = self.CorpusProc.filter_by_zeroshot(
+                self.keywords, n_max=n_max, s_min=s_min,
+                processed_ids=processed_ids)
+
+            if len(scores) == 0:
+                msg = '-- finished'
+                break
+
+            # Set the working class
+            self.class_name = tag
+
+            # Generate dataset dataframe
+            self.df_dataset = self.CorpusProc.make_PU_dataset(ids, scores)
+
+            # merge datasets
+            self.df_dataset = pd.concat([df_dataset, self.df_dataset])
+            self.df_dataset = self.df_dataset.reset_index(drop=True)
+
+            # ############
+            # Save dataset
+            msg = self.DM.save_dataset(
+                self.df_dataset, tag=self.class_name, save_csv=True)
+
+            processed_ids = self.df_dataset['id'].to_numpy()
+            df_dataset = self.df_dataset
+
+            # ################################
+            # Save parameters in metadata file
+            self.metadata[tag] = {
+                'doc_selection': {
+                    'method': 'zeroshot',
+                    'keyword': self.keywords,
+                    'n_max': n_max,
+                    's_min': s_min}}
+            self._save_metadata()
+
+        return msg
 
     def on_create_list_of_keywords(
             self, corpus_name: str, description: str = "",
@@ -1901,4 +1985,3 @@ class TaskManagerIMT(TaskManager):
         on button click save feedback
         """
         self.annotate(fmt='json')
-

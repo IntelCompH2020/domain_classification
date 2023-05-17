@@ -91,7 +91,6 @@ class baseTaskManager(object):
         """
 
         # Log to file and console
-
         p = self.global_parameters['logformat']
         fpath = self.path2project / p['filename']
 

@@ -1310,12 +1310,11 @@ class CorpusClassifierMLP(CorpusClassifier):
             Batch size
         """
 
-
         logging.info("-- Training model...")
 
         self._train_model()
 
-        #self.load_model()
+        # self.load_model()
         #
         # df_train = self.__sample_train_data()
         # if len(df_train) == 0:

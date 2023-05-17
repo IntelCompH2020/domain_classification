@@ -29,6 +29,7 @@ class PandasModifier():
         """
         does the inference and adds the soft and hard predictions to the
         dataframe
+
         Parameters
         ----------
         df: pd.DataFrame
@@ -55,16 +56,14 @@ class PandasModifier():
         return df_prediction
 
 
-"""
-Datahandler encapsulate logic to sequentially read all pandas file in a folder,
-change them with the help of a PandasChanger object and write them to a
-destination folder
-
-@author: T.Ahlers
-"""
-
-
 class DataHandler():
+    """
+    Datahandler encapsulates logic to sequentially read all pandas file in a
+    folder, change them with the help of a PandasChanger object and write them
+    to a destination folder
+
+    @author: T.Ahlers
+    """
 
     def __init__(self, paths: {}, config: {} = {}, **kwargs: {}) -> None:
 
@@ -214,8 +213,8 @@ class DataHandler():
 
     def __buildConfig(self, config, init=False):
         """
-        builds the config dictionary by mixing the given config with the
-        passed config
+        builds the config dictionary by mixing the given config with the passed
+        config
 
         Parameters
         ----------
@@ -287,16 +286,18 @@ class DataHandler():
     def __getFilesFiltered(self, key: str, fileNames: [], minAge: int) -> []:
         """
         return just the files which are older than than the minimum age
+
         Parameters
         ----------
         key: specifies the path
         fileNames: list of files
         minAge: minimum age of file
+
         Returns
         -------
         file_list: list of str
-
         """
+
         returnFileNames = []
         for fileName in fileNames:
             if (time.time() - self.__get_file_creation_date(
@@ -308,9 +309,11 @@ class DataHandler():
     def __get_file_creation_date(self, path_to_file) -> float:
         """
         returns the file creation date
+
         Parameters
         ----------
         path_to_file: file path
+
         Returns
         -------
         timestamp:
@@ -327,14 +330,16 @@ class DataHandler():
     def __isValidFile(self, filePath: str):
         """
         returns if the file type is correct
+
         Parameters
         ----------
         file_path: file path
-        Return
-        ----------
-        is_file_correct: bool
 
+        Returns
+        -------
+        is_file_correct: bool
         """
+
         if self.config['fileType'] == '':
             return True
         if self.config['fileType'] == filePath.split('.')[-1]:
@@ -344,13 +349,16 @@ class DataHandler():
     def __isValidPath(self, key: str, tryFix: bool = True) -> None:
         """
         raises an exception if the path is not valid
+
         Parameters
         ----------
         key: file path
+
         Exceptions
         ----------
         ex: encapsulate that the path is wrong
         """
+
         ex = Exception("path is not registered")
         if key not in self.folders.keys():
             if tryFix:
@@ -364,16 +372,20 @@ class DataHandler():
     def __isValidDoubleKey(self, initKey: str) -> None:
         """
         returns if a it is a valid double key
+
+        Parameters
         ----------
         initKey: str double key
+
         Returns
         -------
         keyParts: parts of the key in a list
-        Exception
-        -------
-        Exception: encapsulate that the given format is wrong
 
+        Exception
+        ---------
+        Exception: encapsulate that the given format is wrong
         """
+
         keyParts = initKey.split('_')
         if len(keyParts) != 2:
             raise Exception('format of key has to be x_x')
