@@ -9,7 +9,6 @@ import yaml
 
 import pathlib
 import logging
-from pathlib import Path
 
 
 class baseTaskManager(object):
@@ -50,9 +49,7 @@ class baseTaskManager(object):
         """
 
         # This is the minimal information required to start with a project
-        self.default_param = self._load_global_parameters()
-
-        self.path2project = Path(path2project)
+        self.path2project = pathlib.Path(path2project)
         self.path2metadata = self.path2project / metadata_fname
         self.path2config = self.path2project / config_fname
         if path2source is not None:
@@ -88,19 +85,12 @@ class baseTaskManager(object):
 
         return
 
-    def _load_global_parameters(self):
-        with open('config/parameters.default.yaml', 'r', encoding='utf8') as f:
-            return yaml.safe_load(f)
-
-
     def _set_logs(self):
         """
         Configure logging messages.
         """
 
         # Log to file and console
-
-
         p = self.global_parameters['logformat']
         fpath = self.path2project / p['filename']
 
@@ -192,6 +182,7 @@ class baseTaskManager(object):
         To do so, it defines the main folder structure, and creates (or cleans)
         the project folder, specified in self.path2project
         """
+
         print("\n*** CREATING NEW PROJECT")
 
         # #####################
@@ -306,13 +297,12 @@ class baseTaskManager(object):
 
         return
 
-
-
     def setup(self):
         """
         Sets up the application projetc. To do so, it loads the configuration
         file and activates the logger objects.
         """
+
         # #################################################
         # Activate configuration file and load data Manager
         print("\n*** ACTIVATING CONFIGURATION FILE")

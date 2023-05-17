@@ -222,8 +222,6 @@ class CorpusClassifier(object):
             df_subset, train_size=train_size, random_state=random_state,
             shuffle=True, stratify=None)
 
-
-
         # Marc train and test samples in the dataset.
         self.df_dataset['train_test'] = UNUSED
         self.df_dataset.loc[df_train.index, 'train_test'] = TRAIN
@@ -239,7 +237,6 @@ class CorpusClassifier(object):
         ClassificationModel and save it.
         """
 
-
         path2model_config = self.path2transformers / "config.json"
         # The if model config file is available
         if not path2model_config.exists():
@@ -253,7 +250,6 @@ class CorpusClassifier(object):
             self.config = copy.deepcopy(model.config)
 
             # Save config
-
             self.config.to_json_file(path2model_config)
             logging.info("-- -- Model configuration saved")
 
@@ -324,6 +320,7 @@ class CorpusClassifier(object):
         batch_size : int, optiona (default=8)
             Batch size
         """
+
         logging.info("-- Training model...")
 
         # Freeze encoder layer if needed
@@ -1181,7 +1178,6 @@ class CorpusClassifierMLP(CorpusClassifier):
     def __init__(self, df_dataset, model_type="mpnet",
                  model_name="sentence-transformers/all-mpnet-base-v2",
                  path2transformers=".", use_cuda=True):
-
         """
         Initializes a classifier object
 
@@ -1314,12 +1310,11 @@ class CorpusClassifierMLP(CorpusClassifier):
             Batch size
         """
 
-
         logging.info("-- Training model...")
 
         self._train_model()
 
-        #self.load_model()
+        # self.load_model()
         #
         # df_train = self.__sample_train_data()
         # if len(df_train) == 0:
@@ -1413,9 +1408,9 @@ class CorpusClassifierMLP(CorpusClassifier):
 
         # df_train = self.__sample_train_data(retrain=True)
         # if len(df_train) == 0:
-        #    logging.info(f"-- -- Samples from both classes are required for "
-        #                 "retraining the model")
-        #    return
+        #     logging.info(f"-- -- Samples from both classes are required for "
+        #                  "retraining the model")
+        #     return
         # df_validation = self.__sample_validation_data(retrain=True)
         #
         # train_data = CustomDatasetMLP(df_train)
