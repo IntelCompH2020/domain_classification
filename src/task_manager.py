@@ -1107,7 +1107,8 @@ class TaskManager(baseTaskManager):
 
         return
 
-    def sample_documents(self, sampler: str = "", fmt: str = "csv"):
+    def sample_documents(self, sampler: str = "", fmt: str = "csv",
+                         n_samples: int = None):
         """
         Gets some labels from a user for a selected subset of documents
 
@@ -1118,7 +1119,14 @@ class TaskManager(baseTaskManager):
             parameters
         fmt : str in {'csv', 'json'}, optional, default = "csv"
             Output file format
+        n_samples : int, optional (default=None)
+            Number of samples to return.
+            If None, the number of samples is taken from the configuration file
         """
+
+        # Set the number of documents to sample
+        if n_samples is None:
+            n_samples = self.global_parameters['active_learning']['n_docs']
 
         # This is for compatibility with the GUI
         if sampler == "" or sampler is None:
@@ -1130,8 +1138,7 @@ class TaskManager(baseTaskManager):
 
         # STEP 1: Select bunch of documents at random
         selected_docs = self.dc.AL_sample(
-            n_samples=self.global_parameters['active_learning']['n_docs'],
-            sampler=sampler,
+            n_samples=n_samples, sampler=sampler,
             p_ratio=self.global_parameters['active_learning']['p_ratio'],
             top_prob=self.global_parameters['active_learning']['top_prob'])
 
@@ -1176,7 +1183,8 @@ class TaskManager(baseTaskManager):
             print(f"Document {k} out of {len(selected_docs)}")
             k += 1
             print(f"ID: {doc.id}")
-            if self.metadata['corpus_name'] == 'EU_projects':
+            # if self.metadata['corpus_name'] == 'EU_projects':
+            if 'title' in self.df_corpus and 'description' in self.df_corpus:
                 # Locate document in corpus
                 doc_corpus = self.df_corpus[self.df_corpus['id'] == doc.id]
                 # Get and print title
@@ -1797,7 +1805,9 @@ class TaskManagerIMT(TaskManager):
 
     def __init__(self, path2project, path2source=None, path2zeroshot=None):
 
-        super().__init__(path2project, path2source, path2zeroshot)
+        super().__init__(path2project, path2source, path2zeroshot,
+                         logical_dm=True)
+
         self.project_folder = str(path2project).split('/')[-1]
 
     def get_labels_by_zeroshot(self, n_max: int = 2000, s_min: float = 0.1,
@@ -1974,11 +1984,11 @@ class TaskManagerIMT(TaskManager):
         """
         self.evaluate_PUlabels(true_label_name)
 
-    def on_sample(self, sampler=""):
+    def on_sample(self, sampler="", n_samples=None):
         """
         on button click sample
         """
-        self.sample_documents(sampler, fmt="json")
+        self.sample_documents(sampler, fmt="json", n_samples=n_samples)
 
     def on_save_feedback(self):
         """
