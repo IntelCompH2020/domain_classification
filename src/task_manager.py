@@ -1108,7 +1108,7 @@ class TaskManager(baseTaskManager):
         return
 
     def sample_documents(self, sampler: str = "", fmt: str = "csv",
-                         n_samples: int = None):
+                         n_samples: int = -1):
         """
         Gets some labels from a user for a selected subset of documents
 
@@ -1119,13 +1119,13 @@ class TaskManager(baseTaskManager):
             parameters
         fmt : str in {'csv', 'json'}, optional, default = "csv"
             Output file format
-        n_samples : int, optional (default=None)
+        n_samples : int, optional (default=-1)
             Number of samples to return.
-            If None, the number of samples is taken from the configuration file
+            If -1, the number of samples is taken from the configuration file
         """
 
         # Set the number of documents to sample
-        if n_samples is None:
+        if n_samples == -1:
             n_samples = self.global_parameters['active_learning']['n_docs']
 
         # This is for compatibility with the GUI
@@ -1984,9 +1984,18 @@ class TaskManagerIMT(TaskManager):
         """
         self.evaluate_PUlabels(true_label_name)
 
-    def on_sample(self, sampler="", n_samples=None):
+    def on_sample(self, sampler: str = "", n_samples: int = -1):
         """
         on button click sample
+
+        Parameters
+        ----------
+        sampler : str, optional (default = "")
+            Type of sampler. If "", the sampler is read from the global
+            parameters
+        n_samples : int, optional (default=-1)
+            Number of samples to return.
+            If -1, the number of samples is taken from the configuration file
         """
         self.sample_documents(sampler, fmt="json", n_samples=n_samples)
 
