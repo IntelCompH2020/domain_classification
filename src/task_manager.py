@@ -882,26 +882,32 @@ class TaskManager(baseTaskManager):
 
         # ['id', 'text', 'base_scores', 'PUlabels', 'labels', 'train_test']
         # Train the model using simpletransformers
-        self.dc.train_model(epochs=epochs, validate=True,
-                            freeze_encoder=freeze_encoder, tag="PU",
-                            batch_size=batch_size)
+        train_ok = self.dc.train_model(
+            epochs=epochs, validate=True, freeze_encoder=freeze_encoder,
+            tag="PU", batch_size=batch_size)
 
-        # Update status.
-        # Since training takes much time, we store the classification results
-        # in files
-        self._save_dataset()
-        self.state['trained_model'] = True
+        if train_ok:
+            # Update status.
+            # Since training takes much time, we store the classification
+            # results in files
+            self._save_dataset()
+            self.state['trained_model'] = True
 
-        self.metadata[self.class_name]['PU_training'] = {
-            'model_type': model_type,
-            'model_name': model_name,
-            'freeze_encoder': freeze_encoder,
-            'max_imbalance': max_imbalance,
-            'nmax': nmax,
-            'epochs': epochs,
-            'best_epoch': self.dc.best_epoch}
-        self._save_metadata()
+            self.metadata[self.class_name]['PU_training'] = {
+                'model_type': model_type,
+                'model_name': model_name,
+                'freeze_encoder': freeze_encoder,
+                'max_imbalance': max_imbalance,
+                'nmax': nmax,
+                'epochs': epochs,
+                'best_epoch': self.dc.best_epoch}
+            self._save_metadata()
 
+        else:
+            logging.warning(
+                "-- The model could not be trained. Maybe you can make a "
+                "feasible dataset by get more documents from the positive "
+                "class")
         return
 
     def evaluate_PUmodel(self, samples: str = "train_test"):
