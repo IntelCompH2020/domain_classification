@@ -1269,7 +1269,7 @@ class LogicalDataManager(DataManager):
             with ProgressBar():
                 df_corpus = dfsmall.compute()
 
-            if dataset['categoryfld'] == "":
+            if 'categoryfld' not in dataset or dataset['categoryfld'] == "":
                 selected_cols = np.array([dataset['idfld'],
                                           dataset['titlefld'],
                                           dataset['textfld']])
