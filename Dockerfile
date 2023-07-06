@@ -36,7 +36,7 @@ WORKDIR /app
 # Application
 COPY src/ src/
 COPY config/ config/
-COPY main_dc_single_task.py .
+COPY run_dc_task.py .
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 

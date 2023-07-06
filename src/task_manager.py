@@ -487,7 +487,7 @@ class TaskManager(baseTaskManager):
 
         return y, df_stats, kf_stats
 
-    def get_labels_by_keywords(self, wt: float = 2.0, n_max: int = 2000,
+    def get_labels_by_keywords(self, wt: float = 2.0, n_max: int = 10_000,
                                s_min: float = 1.0, tag: str = "kwds",
                                method: str = 'count', keywords: str = ""):
         """
@@ -496,11 +496,10 @@ class TaskManager(baseTaskManager):
         Parameters
         ----------
         wt : float, optional (default=2)
-            Weighting factor for the title components. Keyword matches with
-            title words are weighted by this factor
-        n_max: int or None, optional (defaul=2000)
-            Maximum number of elements in the output list. The default is
-            a huge number that, in practice, means there is no loimit
+            Weighting factor for the title components. Keywords in the title
+            are weighted by this factor
+        n_max: int or None, optional (default=10_000)
+            Maximum number of elements in the output list.
         s_min: float, optional (default=1)
             Minimum score. Only elements strictly above s_min are selected
         tag: str, optional (default='kwds')

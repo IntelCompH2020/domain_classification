@@ -672,12 +672,12 @@ class CorpusDFProcessor(object):
         keywords : list of str
             List of keywords
         wt : float, optional (default=2)
-            Weighting factor for the title components. Keyword matches with
-            title words are weighted by this factor. Not used if
-            self.path2embeddings is None
+            Weighting factor for the title components. Keywords in the title
+            are weighted by this factor. Not used if self.path2embeddings is
+            None
         n_max: int or None, optional (defaul=1e100)
             Maximum number of elements in the output list. The default is
-            a huge number that, in practice, means there is no loimit
+            a huge number that, in practice, means there is no limit
         s_min: float, optional (default=0)
             Minimum score. Only elements strictly above s_min are selected
         model_name : str, optinal (default = 'all-MiniLM-L6-v2')
