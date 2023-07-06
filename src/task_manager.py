@@ -498,7 +498,7 @@ class TaskManager(baseTaskManager):
         wt : float, optional (default=2)
             Weighting factor for the title components. Keywords in the title
             are weighted by this factor
-        n_max: int or None, optional (default=10_000)
+        n_max: int or None, optional (default=50_000)
             Maximum number of elements in the output list.
         s_min: float, optional (default=1)
             Minimum score. Only elements strictly above s_min are selected
