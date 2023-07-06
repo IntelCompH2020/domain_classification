@@ -684,7 +684,8 @@ class CorpusDFProcessor(object):
             Name of the SBERT transformer model
         method : str in {'embedding', 'count'}
             - If 'count', documents are scored according to word counts
-            - If 'embedding', scores are based on neural embeddings
+            - If 'embedding', scores are based on transformer embeddings
+            The count method is much faster.
 
         Returns
         -------

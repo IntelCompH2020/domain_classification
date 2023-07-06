@@ -487,7 +487,7 @@ class TaskManager(baseTaskManager):
 
         return y, df_stats, kf_stats
 
-    def get_labels_by_keywords(self, wt: float = 2.0, n_max: int = 10_000,
+    def get_labels_by_keywords(self, wt: float = 2.0, n_max: int = 50_000,
                                s_min: float = 1.0, tag: str = "kwds",
                                method: str = 'count', keywords: str = ""):
         """
