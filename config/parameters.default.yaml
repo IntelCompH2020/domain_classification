@@ -28,7 +28,7 @@ keywords:
   wt: 1 
   # Maximum number of documents to be selected.
   n_max: 50000
-  # Minimum score. Only docs scored strictly above s_min are selected
+  # Minimum score. Only docs with higher scores are selected
   s_min: 0.6
   # Name of the SBERT model. Available pretrained models can be found in 
   # https://www.sbert.net/docs/pretrained_models.html
@@ -38,14 +38,14 @@ keywords:
 zeroshot:
   # Maximum number of documents to be selected.
   n_max: 4000
-  # Minimum score. Only docs scored strictly above s_min are selected
+  # Minimum score. Only docs with higher scores are selected
   s_min: 0.6
 
 # Parameter for the topic-based document selector
 topics:
   # Maximum number of documents to be selected.
   n_max: 4000
-  # Minimum score. Only docs scored strictly above s_min are selected
+  # Minimum score. Only docs with higher scores are selected
   s_min: 0.2
 
 # Parameters for the classifier
