@@ -19,7 +19,9 @@ corpus:
 
 # Parameter for the keyword-based document selector
 keywords:
-  # Selection method: 'embedding' or 'count'
+  # Selection method: 'embedding' or 'count'. If 'count' (faster), documents
+  # are scored according to word counts. If 'embedding' (slower), scores are
+  # based on transformer embeddings.
   method: 'count'
   # Weight of the title. A word in the title is equivalent to wt repetitions
   # of the word in the description. (For method='count' only)
