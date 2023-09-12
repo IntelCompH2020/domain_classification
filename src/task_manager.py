@@ -1429,7 +1429,7 @@ class TaskManager(baseTaskManager):
                             "You must load or create a set of labels first")
             return
 
-        subcorpus = self.df_dataset[self.df_dataset.prediction == 1]
+        subcorpus = self.df_dataset[self.df_dataset.PU_prediction == 1]
 
         # Save ids only
         path2parquet = (
