@@ -175,6 +175,7 @@ class DataManager(object):
         fpaths = [f for f in path2texts.glob('**/*')
                   if f.is_file() and f.suffix == '.parquet']
         n_files = len(fpaths)
+        breakpoint()
 
         # ###########
         # Load corpus
