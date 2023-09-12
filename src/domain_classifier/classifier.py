@@ -968,20 +968,37 @@ class CorpusClassifier(object):
 
         elif sampler == 'full_rs':
 
-            # Compute sampling probabilities
-            n_half = n_samples // 2
-            p_selected = 1 / len(selected_docs)
-            p_unused = 1 / len(unused_docs)
+            # Take the number of documents from the train-test split
+            # (selected_docs) and the number of other docs (unused)
+            n_selected = len(selected_docs)
+            n_unused = len(unused_docs)
+            # This condition should not happen, but just in case
+            if n_samples > n_selected + n_unused:
+                n_samples = n_selected + n_unused
+
+            # We take half documents from the selected_docs and the rest from
+            # the unused docs...
+            n2sample = n_samples // 2
+            # ... but, if there are not enough documents from one type, we take
+            # more from the other
+            if n_selected < n2sample:
+                n2sample = n_selected
+            elif n_unused < n_samples - n2sample:
+                n2sample = n_samples - n_unused
 
             # Sample docs
-            if len(selected_docs) > n_half:
-                selected_docs = selected_docs.sample(n_half)
-            if len(unused_docs) > n_samples - n_half:
-                unused_docs = unused_docs.sample(n_samples - n_half)
+            if n_selected > n2sample:
+                selected_docs = selected_docs.sample(n2sample)
+            if n_unused > n_samples - n2sample:
+                unused_docs = unused_docs.sample(n_samples - n2sample)
 
             # Assign sampling probabilities
-            selected_docs['sampling_prob'] = p_selected
-            unused_docs['sampling_prob'] = p_unused
+            if n_selected > 0:
+                p_selected = 1 / n_selected
+                selected_docs['sampling_prob'] = p_selected
+            if n_unused > 0:
+                p_unused = 1 / n_unused
+                unused_docs['sampling_prob'] = p_unused
 
             # Join samples from the train-test and the unused subdatasets
             selected_docs = pd.concat((selected_docs, unused_docs))
