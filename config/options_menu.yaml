@@ -16,7 +16,7 @@ root:
     - PU_learning
     - get_feedback_options
     - update_model
-    - import_export_annotations
+    - import_export_data
     - inference
 
 # In the following, each menu option is described.
@@ -123,11 +123,12 @@ update_model:
     - reevaluate_model
     - performance_metrics_PN
 
-import_export_annotations:
-  title: Import / export annotations
+import_export_data:
+  title: Import / export data
   options:
     - import_annotations
     - export_annotations
+    - export_subcorpus
 
 inference:
   title: Apply inference over precomputed embeddings (if available, only)
@@ -227,3 +228,7 @@ import_annotations:
 
 export_annotations:
   title: "Export annotations (warning: deletes older annotation files)"
+
+export_subcorpus:
+  title: "Export subcorpus"
+

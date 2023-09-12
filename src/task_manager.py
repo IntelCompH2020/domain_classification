@@ -1418,6 +1418,29 @@ class TaskManager(baseTaskManager):
 
         return
 
+    def export_subcorpus(self):
+        """
+        Exports the list of IDs corresponding to documents from the positive
+        class
+        """
+
+        if self.df_dataset is None:
+            logging.warning("-- No model is loaded. "
+                            "You must load or create a set of labels first")
+            return
+
+        subcorpus = self.df_dataset[self.df_dataset.prediction == 1]
+
+        # Save ids only
+        path2parquet = (
+            self.path2output / f'subcorpus_{self.class_name}.parquet')
+        path2csv = (
+            self.path2output / f'subcorpus_{self.class_name}.csv')
+        subcorpus[['id']].to_parquet(path2parquet)
+        subcorpus[['id']].to_csv(path2csv)
+
+        return
+
 
 class TaskManagerCMD(TaskManager):
     """
