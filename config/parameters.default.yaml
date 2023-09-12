@@ -48,6 +48,13 @@ topics:
   # Minimum score. Only docs with higher scores are selected
   s_min: 0.2
 
+# Parameter for the document selection based on available scores
+score_based_selection:
+  # Maximum number of documents to be selected.
+  n_max: 50000
+  # Minimum score. Only docs with higher scores are selected
+  s_min: 0.5
+
 # Parameters for the classifier
 classifier:
   # Type of transformer for ClassificationModel (e.g. roberta, mpnet), see

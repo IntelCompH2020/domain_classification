@@ -88,6 +88,7 @@ get_labels:
     - analyze_keywords
     - get_labels_by_topics
     - get_labels_by_zeroshot
+    - get_labels_from_scores
     - evaluate_PUlabels
 
 load_labels:
@@ -149,6 +150,9 @@ get_labels_by_topics:
 
 get_labels_by_zeroshot:
     title: Get subcorpus from a category name
+
+get_labels_from_scores:
+    title: Take labels from a column of scores available in the corpus
 
 evaluate_PUlabels:
     title: Evaluate subcorpus with respect to a gold standard

@@ -681,6 +681,58 @@ class TaskManager(baseTaskManager):
 
         return msg
 
+    def get_labels_from_scores(self, n_max: int = 50_000, s_min: float = 1.0,
+                               col: str = "scores", tag: str = "oracle"):
+        """
+        Get a set of positive labels using a column of scores available at
+        the corpus dataframe
+
+        Parameters
+        ----------
+        n_max : int or None, optional (default=50_000)
+            Maximum number of elements in the output list.
+        s_min : float, optional (default=1)
+            Minimum score. Only elements strictly above s_min are selected
+        col : str, optional (default="scores")
+            Name of the column containing the scores in the corpus dataframe
+        tag : str, optional (default='oracle')
+            Name of the output label set.
+        """
+
+        # Check if corpus has been loaded
+        if not self._is_corpus():
+            return "No corpus has been loaded"
+
+        breakpoint()
+
+        # Find the documents with the highest scores given the keywords
+        ids, scores = self.CorpusProc.filter_by_scores(
+            col=col, n_max=n_max, s_min=s_min)
+
+        # Set the working class
+        self.class_name = tag
+        # Generate dataset dataframe
+        self.df_dataset = self.CorpusProc.make_PU_dataset(ids, scores)
+
+        # ############
+        # Save dataset
+        # (note that we do not call self._save_dataset() here, because we
+        #  are saving self.df_dataset, and not self.dc.df_dataset (the
+        #  classifier object has not been created yet))
+        msg = self.DM.save_dataset(
+            self.df_dataset, tag=self.class_name, save_csv=True)
+
+        # ################################
+        # Save parameters in metadata file
+        self.metadata[tag] = {
+            'doc_selection': {
+                'n_max': n_max,
+                's_min': s_min}}
+
+        self._save_metadata()
+
+        return msg
+
     def evaluate_PUlabels(self, true_label_name: str):
         """
         Evaluate the current set of PU labels
@@ -1618,6 +1670,33 @@ class TaskManagerCMD(TaskManager):
             topic_weights, n_max=n_max, s_min=s_min, tag=tag)
 
         return msg
+
+    def get_labels_from_scores(self):
+        """
+        Get a set of positive labels using a column of scores available at
+        the corpus dataframe
+        """
+
+        # ##############
+        # Get parameters
+
+        # Get weight parameter (weight of title word wrt description words)
+        n_max = self.QM.ask_value(
+            query=("Set maximum number of returned documents"),
+            convert_to=int,
+            default=self.global_parameters['score_based_selection']['n_max'])
+
+        # Get score threshold
+        s_min = self.QM.ask_value(
+            query=("Set score_threshold"),
+            convert_to=float,
+            default=self.global_parameters['score_based_selection']['s_min'])
+
+        # ##########
+        # Get labels
+        super().get_labels_from_scores(n_max=n_max, s_min=s_min)
+
+        return
 
     def export_annotations(self):
 
