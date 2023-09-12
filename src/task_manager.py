@@ -703,8 +703,6 @@ class TaskManager(baseTaskManager):
         if not self._is_corpus():
             return "No corpus has been loaded"
 
-        breakpoint()
-
         # Find the documents with the highest scores given the keywords
         ids, scores = self.CorpusProc.filter_by_scores(
             col=col, n_max=n_max, s_min=s_min)

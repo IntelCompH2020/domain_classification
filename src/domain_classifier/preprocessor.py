@@ -724,7 +724,6 @@ class CorpusDFProcessor(object):
 
         # Check if embeddings have been provided
         scores = np.array(self.df_corpus[col])
-        breakpoint()
         ids = self.get_top_scores(scores, n_max=n_max, s_min=s_min)
 
         return ids, scores
