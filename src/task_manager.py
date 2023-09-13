@@ -1092,9 +1092,9 @@ class TaskManager(baseTaskManager):
             self._performance_metrics("PU", ANNOTATIONS, "all")
 
             # Test PU predictions against annotations
-            self._performance_metrics("PUlabels", ANNOTATIONS, "test")
-            self._performance_metrics("PUlabels", ANNOTATIONS, "unused")
-            self._performance_metrics("PUlabels", ANNOTATIONS, "all")
+            self._label2label_metrics("PUlabels", ANNOTATIONS, "test")
+            self._label2label_metrics("PUlabels", ANNOTATIONS, "unused")
+            self._label2label_metrics("PUlabels", ANNOTATIONS, "all")
         return
 
     def performance_metrics_PN(self):
