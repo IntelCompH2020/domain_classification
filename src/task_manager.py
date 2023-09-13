@@ -724,6 +724,7 @@ class TaskManager(baseTaskManager):
         # Save parameters in metadata file
         self.metadata[tag] = {
             'doc_selection': {
+                'method': 'Imported from data files',
                 'n_max': n_max,
                 's_min': s_min}}
 
@@ -1065,6 +1066,12 @@ class TaskManager(baseTaskManager):
         """
         Compute all performance metrics for the PU model, based on the data
         available at the current dataset
+
+        This methods compares three types of labels/predictions:
+
+        PUlabels:    Labels produced by the document selection process
+        PU:          Predictions from the model trained with the PUlabels
+        Annotations: Ground-truth labels, typically annotated by the user.
         """
 
         # Check if a classifier object exists
@@ -1084,6 +1091,10 @@ class TaskManager(baseTaskManager):
             self._performance_metrics("PU", ANNOTATIONS, "unused")
             self._performance_metrics("PU", ANNOTATIONS, "all")
 
+            # Test PU predictions against annotations
+            self._performance_metrics("PUlabels", ANNOTATIONS, "test")
+            self._performance_metrics("PUlabels", ANNOTATIONS, "unused")
+            self._performance_metrics("PUlabels", ANNOTATIONS, "all")
         return
 
     def performance_metrics_PN(self):
@@ -1607,7 +1618,7 @@ class TaskManagerCMD(TaskManager):
         elif method == 'c':
             method = 'count'
 
-        # Get keywords and labels
+        # Get keywords and a label name
         self.keywords = self._ask_keywords()
         tag = self._ask_label_tag()
 
@@ -1713,9 +1724,12 @@ class TaskManagerCMD(TaskManager):
             convert_to=float,
             default=self.global_parameters['score_based_selection']['s_min'])
 
+        # As a name for the new labels
+        tag = self._ask_label_tag()
+
         # ##########
         # Get labels
-        super().get_labels_from_scores(n_max=n_max, s_min=s_min)
+        super().get_labels_from_scores(n_max=n_max, s_min=s_min, tag=tag)
 
         return
 
