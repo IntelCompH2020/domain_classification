@@ -386,9 +386,11 @@ class DataManager(object):
         # By default, neither corpus cleaning nor language filtering are done
         clean_corpus = corpus_name in {
             'SemanticScholar', 'SemanticScholar_emb', 'patstat', 'patstat_emb',
-            'AEI_projects', 'CORDIS.parquet', 'S2CS.parquet'}
+            'AEI_projects', 'CORDIS.parquet', 'S2CS.parquet',
+            'patstat_intersection_vs_all'}
         remove_non_en = corpus_name in {
-            'SemanticScholar', 'SemanticScholar_emb', 'patstat', 'patstat_emb'}
+            'SemanticScholar', 'SemanticScholar_emb', 'patstat', 'patstat_emb',
+            'patstat_intersection_vs_all'}
 
         if corpus_name == 'EU_projects':
 
@@ -548,7 +550,7 @@ class DataManager(object):
             df_c1 = self._load_parquet(path2_c1, columns, mapping)
             df_corpus = self._load_parquet(path2_c0, columns, mapping)
 
-            # All items in cordis_evoc should be in cordis_all. Check it
+            # All items in df_c1 should be in df_corpus. Check it
             id1 = set(df_c1.id)
             id0 = set(df_corpus.id)
             n_notinall = len(id1 - id0)
@@ -568,6 +570,42 @@ class DataManager(object):
                 df_corpus[col] = df_corpus[col].apply(
                     lambda x: ','.join(
                         x.astype(str)) if x is not None else '')
+
+            logging.info(f'-- -- Raw corpus {corpus_name} read with '
+                         f'{len(df_corpus)} documents')
+
+        elif corpus_name == 'patstat_intersection_vs_all':
+
+            # Original fields are:
+            #   'appln_id', 'docdb_family_id', 'appln_title', 'appln_title_lg',
+            #   'appln_abstract', 'appln_abstract_lg', 'appln_filing_year',
+            #   'earliest_filing_year', 'granted', 'appln_auth',
+            #   'receiving_office', 'ipr_type'
+
+            # Load data from parquet files
+            columns = ['appln_id', 'appln_title', 'appln_abstract']
+            mapping = {'appln_id': 'id', 'appln_title': 'title',
+                       'appln_abstract': 'description'}
+
+            path2texts = self.path2corpus / 'corpus'
+            path2_c1 = path2texts / 'PATSTAT_intersection_Cancer.parquet'
+            path2_c0 = path2texts / 'PATSTAT_all_Cancer.parquet'
+
+            df_c1 = self._load_parquet(path2_c1, columns, mapping)
+            df_corpus = self._load_parquet(path2_c0, columns, mapping)
+
+            # All items in df_c1 should be in df_corpus. Check it
+            id1 = set(df_c1.id)
+            id0 = set(df_corpus.id)
+            n_notinall = len(id1 - id0)
+            if len(id1 - id0) > 0:
+                logging.warning(
+                    f"-- {n_notinall} items in the intersection files are not "
+                    "in the complete dataset and will be ignored")
+                id1 = id1.setintersection(id0)
+
+            # Create column of given scores. For this dataset, scores are 0/1
+            df_corpus['scores'] = df_corpus['id'].isin(id1).astype(float)
 
             logging.info(f'-- -- Raw corpus {corpus_name} read with '
                          f'{len(df_corpus)} documents')
@@ -717,6 +755,26 @@ class DataManager(object):
         logging.info(f"-- -- Corpus saved in feather file {path2feather}")
 
     def _clean_corpus(self, df_corpus):
+        """
+        Cleans the corpus by:
+
+        - Removing duplicates, if any
+        - Removing documents with missing data, if any
+        - Filling nan cells with empty strings
+        - Removing documents with zero-length title or description
+        - Removing some special characters
+        - Uniformize the data type in the "keywords" column, if it exists
+
+        Parameters
+        ----------
+        df_corpus : pandas.DataFrame
+            Corpus
+
+        Returns
+        -------
+        df_corpus : pandas.DataFrame
+            Cleaned corpus
+        """
 
         l0 = len(df_corpus)
         logging.info(f"-- -- {l0} base documents loaded")
