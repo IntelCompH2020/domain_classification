@@ -386,7 +386,8 @@ class DataManager(object):
         # By default, neither corpus cleaning nor language filtering are done
         clean_corpus = corpus_name in {
             'SemanticScholar', 'SemanticScholar_emb', 'patstat', 'patstat_emb',
-            'AEI_projects', 'CORDIS.parquet', 'S2CS.parquet'}
+            'AEI_projects', 'CORDIS.parquet', 'S2CS.parquet',
+            'cordis_evoc_vs_all', 'patstat_intersection_vs_all'}
         remove_non_en = corpus_name in {
             'SemanticScholar', 'SemanticScholar_emb', 'patstat', 'patstat_emb'}
 
