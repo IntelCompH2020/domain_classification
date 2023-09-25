@@ -942,7 +942,9 @@ class DataManager(object):
         else:
             # Rename path to load a csv file.
             path2dataset = self.path2datasets / csv_fname
-            df_dataset = pd.read_csv(path2dataset)
+            # dtype is required because to_csv may have converted the ids to
+            # to integers automatically (when all ids are strings of integers)
+            df_dataset = pd.read_csv(path2dataset, dtype={'id': str})
 
         msg = (f"-- -- Dataset with {len(df_dataset)} samples loaded from "
                f"{path2dataset} in {time() - t0} secs.")
@@ -1071,7 +1073,9 @@ class DataManager(object):
         if fmt == 'csv':
             # Below, index_col=0 is used to use the first column as indices.
             # Otherwise, an additional index colums would be used.
-            df = pd.read_csv(fpath, index_col=0)
+            # Also, dtype is required because to_csv may have converted the ids
+            # to integers automatically (when all ids are strings of integers)
+            df = pd.read_csv(fpath, index_col=0, dtype={'id': str})
         elif fmt == 'json':
             df = pd.read_json(fpath)
 
@@ -1101,6 +1105,7 @@ class DataManager(object):
         if fmt == 'csv':
             df_docs.to_csv(fpath)
         elif fmt == 'json':
+            # Preventing data type conversion is not needed using json.
             df_docs.to_json(fpath)
 
         return
