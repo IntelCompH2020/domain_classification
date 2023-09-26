@@ -1268,6 +1268,10 @@ class TaskManager(baseTaskManager):
                 print(f"PREDICTED CLASS: {doc.prediction}")
             if 'prob_pred' in doc:
                 print(f"SCORE: {doc.prob_pred}")
+            if 'PUlabels' in doc:
+                print(f"PUlabel: {doc.PUlabels}")
+            if 'labels' in doc:
+                print(f"Label: {doc.labels}")
 
             labels.append(QM.ask_label())
             print(width * "=")
