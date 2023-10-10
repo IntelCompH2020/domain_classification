@@ -67,7 +67,7 @@ classifier:
   # Maximum number of documents in the training set.
   nmax: 400
   # If True, the embedding layer is fixed, and not fine-tuned.
-  # During learning, only the layers aftert the encoder of the sentence
+  # During learning, only the layers after the encoder of the sentence
   # transformer are updated.
   freeze_encoder: True
   # Number of epochs
