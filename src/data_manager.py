@@ -387,7 +387,8 @@ class DataManager(object):
         clean_corpus = corpus_name in {
             'SemanticScholar', 'SemanticScholar_emb', 'patstat', 'patstat_emb',
             'AEI_projects', 'CORDIS.parquet', 'S2CS.parquet',
-            'cordis_evoc_vs_all', 'patstat_intersection_vs_all'}
+            'cordis_evoc_vs_all', 'OA_AIkwds_3vs1',
+            'patstat_intersection_vs_all'}
         remove_non_en = corpus_name in {
             'SemanticScholar', 'SemanticScholar_emb', 'patstat', 'patstat_emb'}
 
@@ -569,6 +570,38 @@ class DataManager(object):
                 df_corpus[col] = df_corpus[col].apply(
                     lambda x: ','.join(
                         x.astype(str)) if x is not None else '')
+
+            logging.info(f'-- -- Raw corpus {corpus_name} read with '
+                         f'{len(df_corpus)} documents')
+
+        elif corpus_name == 'OA_AIkwds_3vs1':
+
+            # Original fields are:
+            #   'id', 'title', 'description', 'Kwd_count'
+
+            # Load data from parquet files
+            columns = ['id', 'title', 'description', 'Kwd_count']
+            mapping = {'projectID': 'id', 'objective': 'description'}
+
+            path2texts = self.path2corpus / 'corpus'
+            path2_c1 = path2texts / 'OA_Kwds3_AI.parquet'
+            path2_c0 = path2texts / 'OA_Kwds_AI.parquet'
+
+            df_c1 = self._load_parquet(path2_c1, columns, mapping)
+            df_corpus = self._load_parquet(path2_c0, columns, mapping)
+
+            # All items in df_c1 should be in df_corpus. Check it
+            id1 = set(df_c1.id)
+            id0 = set(df_corpus.id)
+            n_notinall = len(id1 - id0)
+            if len(id1 - id0) > 0:
+                logging.warning(
+                    f"-- {n_notinall} items in the evoc files are not in the"
+                    "complete dataset and will be ignored")
+                id1 = id1.setintersection(id0)
+
+            # Create column of given scores. For this dataset, scores are 0/1
+            df_corpus['scores'] = df_corpus['id'].isin(id1).astype(float)
 
             logging.info(f'-- -- Raw corpus {corpus_name} read with '
                          f'{len(df_corpus)} documents')
