@@ -628,8 +628,8 @@ class DataManager(object):
                        'appln_abstract': 'description'}
 
             path2texts = self.path2corpus / 'corpus'
-            path2_c1 = path2texts / 'patstat_Kwds3_AI.parquet'
-            path2_c0 = path2texts / 'patstat_Kwds_AI.parquet'
+            path2_c1 = path2texts / 'PATSTAT_Kwds3_AI.parquet'
+            path2_c0 = path2texts / 'PATSTAT_Kwds_AI.parquet'
 
             df_c1 = self._load_parquet(path2_c1, columns, mapping)
             df_corpus = self._load_parquet(path2_c0, columns, mapping)
