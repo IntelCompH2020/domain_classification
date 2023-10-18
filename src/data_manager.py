@@ -387,8 +387,8 @@ class DataManager(object):
         clean_corpus = corpus_name in {
             'SemanticScholar', 'SemanticScholar_emb', 'patstat', 'patstat_emb',
             'AEI_projects', 'CORDIS.parquet', 'S2CS.parquet',
-            'cordis_evoc_vs_all', 'OA_AIkwds_3vs1',
-            'patstat_intersection_vs_all'}
+            'cordis_evoc_vs_all', 'OA_AIkwds_3vs1', 'cordis_AIkwds_3vs1',
+            'patstat_AIkwds_3vs1', 'patstat_intersection_vs_all'}
         remove_non_en = corpus_name in {
             'SemanticScholar', 'SemanticScholar_emb', 'patstat', 'patstat_emb'}
 
@@ -556,8 +556,8 @@ class DataManager(object):
             n_notinall = len(id1 - id0)
             if len(id1 - id0) > 0:
                 logging.warning(
-                    f"-- {n_notinall} items in the evoc files are not in the"
-                    "complete dataset and will be ignored")
+                    f"-- {n_notinall} items in the subcorpus files are not in "
+                    "the complete dataset and will be ignored")
                 id1 = id1.setintersection(id0)
 
             # Create column of given scores. For this dataset, scores are 0/1
@@ -570,6 +570,82 @@ class DataManager(object):
                 df_corpus[col] = df_corpus[col].apply(
                     lambda x: ','.join(
                         x.astype(str)) if x is not None else '')
+
+            logging.info(f'-- -- Raw corpus {corpus_name} read with '
+                         f'{len(df_corpus)} documents')
+
+        elif corpus_name == 'cordis_AIkwds_3vs1':
+
+            # Original fields are:
+            #   'id', 'title', 'description', 'Kwd_count'
+            #   'projectID', 'acronym', 'status', 'title', 'startDate',
+            #   'endDate', 'totalCost', 'ecMaxContribution', 'ecSignatureDate',
+            #   'frameworkProgramme', 'masterCall', 'subCall', 'fundingScheme',
+            #   'nature', 'objective', 'contentUpdateDate', 'rcn', 'grantDoi',
+            #   'topic', 'topic_title', 'countryContr', 'orgContr',
+            #   'coordinatorCountry', 'coordinatorOrg', 'euroSciVocCode',
+            #   'publicationID', 'patentID', 'Kwd_count'
+
+            # Load data from parquet files
+            columns = ['projectID', 'title', 'objective', 'Kwd_count']
+            mapping = {'projectID': 'id', 'objective': 'description'}
+
+            path2texts = self.path2corpus / 'corpus'
+            path2_c1 = path2texts / 'cordis_Kwds3_AI.parquet'
+            path2_c0 = path2texts / 'cordis_Kwds_AI.parquet'
+
+            df_c1 = self._load_parquet(path2_c1, columns, mapping)
+            df_corpus = self._load_parquet(path2_c0, columns, mapping)
+
+            # All items in df_c1 should be in df_corpus. Check it
+            id1 = set(df_c1.id)
+            id0 = set(df_corpus.id)
+            n_notinall = len(id1 - id0)
+            if len(id1 - id0) > 0:
+                logging.warning(
+                    f"-- {n_notinall} items in the subcorpus files are not in "
+                    "the complete dataset and will be ignored")
+                id1 = id1.setintersection(id0)
+
+            # Create column of given scores. For this dataset, scores are 0/1
+            df_corpus['scores'] = df_corpus['id'].isin(id1).astype(float)
+
+            logging.info(f'-- -- Raw corpus {corpus_name} read with '
+                         f'{len(df_corpus)} documents')
+
+        elif corpus_name == 'patstat_AIkwds_3vs1':
+
+            # Original fields are:
+            #   'appln_id', 'docdb_family_id', 'appln_title', 'appln_title_lg',
+            #   'appln_abstract', 'appln_abstract_lg', 'appln_filing_year',
+            #   'earliest_filing_year', 'granted', 'appln_auth',
+            #   'receiving_office', 'ipr_type', 'Kwd_count'
+
+            # Load data from parquet files
+            columns = ['appln_id', 'appln_title', 'appln_abstract',
+                       'Kwd_count']
+            mapping = {'appln_id': 'id', 'appln_title': 'title',
+                       'appln_abstract': 'description'}
+
+            path2texts = self.path2corpus / 'corpus'
+            path2_c1 = path2texts / 'patstat_Kwds3_AI.parquet'
+            path2_c0 = path2texts / 'patstat_Kwds_AI.parquet'
+
+            df_c1 = self._load_parquet(path2_c1, columns, mapping)
+            df_corpus = self._load_parquet(path2_c0, columns, mapping)
+
+            # All items in df_c1 should be in df_corpus. Check it
+            id1 = set(df_c1.id)
+            id0 = set(df_corpus.id)
+            n_notinall = len(id1 - id0)
+            if len(id1 - id0) > 0:
+                logging.warning(
+                    f"-- {n_notinall} items in the subcorpus files are not in "
+                    "the complete dataset and will be ignored")
+                id1 = id1.setintersection(id0)
+
+            # Create column of given scores. For this dataset, scores are 0/1
+            df_corpus['scores'] = df_corpus['id'].isin(id1).astype(float)
 
             logging.info(f'-- -- Raw corpus {corpus_name} read with '
                          f'{len(df_corpus)} documents')
@@ -596,8 +672,8 @@ class DataManager(object):
             n_notinall = len(id1 - id0)
             if len(id1 - id0) > 0:
                 logging.warning(
-                    f"-- {n_notinall} items in the evoc files are not in the"
-                    "complete dataset and will be ignored")
+                    f"-- {n_notinall} items in the subcorpus files are not in "
+                    "the complete dataset and will be ignored")
                 id1 = id1.setintersection(id0)
 
             # Create column of given scores. For this dataset, scores are 0/1
