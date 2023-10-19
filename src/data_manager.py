@@ -378,6 +378,12 @@ class DataManager(object):
 
             # self.__determineCorpusHasEmbeddings(df_corpus.columns)
 
+            # Convert the id column, which might be int, into string
+            # This should be not necessary with the current version of the sw,
+            # but it is included for compatibility with feather files generated
+            # from older versions
+            df_corpus['id'] = df_corpus['id'].astype(str)
+
             return df_corpus
 
         # #########################################
@@ -833,6 +839,9 @@ class DataManager(object):
 
         # Reset the index and drop the old index
         df_corpus = df_corpus.reset_index(drop=True)
+
+        # Convert the id column, which might be int, into string
+        df_corpus['id'] = df_corpus['id'].astype(str)
 
         # ############
         # Log and save
