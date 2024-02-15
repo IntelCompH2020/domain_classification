@@ -473,7 +473,7 @@ class TaskManager(baseTaskManager):
         logging.info(f'-- Selected keywords: {self.keywords}')
 
         df_stats, kf_stats = self.CorpusProc.compute_keyword_stats(
-            self.keywords, wt)
+            self.keywords, wt, case_sen=False)
         plotter.plot_top_values(
             df_stats, title="Document frequencies", xlabel="No. of docs")
         plotter.plot_top_values(
@@ -527,7 +527,7 @@ class TaskManager(baseTaskManager):
         # Find the documents with the highest scores given the keywords
         ids, scores = self.CorpusProc.filter_by_keywords(
             self.keywords, wt=wt, n_max=n_max, s_min=s_min,
-            model_name=model_name, method=method)
+            model_name=model_name, method=method, case_sen=False)
 
         # Set the working class
         self.class_name = tag

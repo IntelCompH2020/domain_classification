@@ -63,7 +63,7 @@ class CorpusProcessor(object):
 
         return
 
-    def score_docs_by_keyword_count(self, corpus, keywords):
+    def score_docs_by_keyword_count(self, corpus, keywords, case_sen=False):
         """
         Computes a score for every document in a given pandas dataframe
         according to the frequency of appearing some given keywords
@@ -74,6 +74,8 @@ class CorpusProcessor(object):
             Input corpus.
         keywords : list of str
             List of keywords
+        case_sen : boolean, optimal (default=False)
+            If True, keyword comparison is case-sensitive. Otherwise, not.
 
         Returns
         -------
@@ -84,14 +86,25 @@ class CorpusProcessor(object):
         score = []
         n_docs = len(corpus)
 
-        for i, doc in enumerate(corpus):
-            print(f"-- Processing document {i} out of {n_docs}   \r", end="")
-            reps = [doc.count(k) for k in keywords]
-            score.append(sum(reps))
+        if not case_sen:
+            # Convert keywords to lowercase
+            keywords_ = [k.lower() for k in keywords]
+
+        if case_sen:
+            for i, doc in enumerate(corpus):
+                print(f"-- Processing document {i} out of {n_docs} \r", end="")
+                reps = [doc.count(k) for k in keywords]
+                score.append(sum(reps))
+        else:
+            for i, doc in enumerate(corpus):
+                print(f"-- Processing document {i} out of {n_docs} \r", end="")
+                doc_ = doc.lower()
+                reps = [doc_.count(k) for k in keywords_]
+                score.append(sum(reps))
 
         return score
 
-    def score_docs_by_keywords(self, corpus, keywords,
+    def score_docs_by_keywords(self, corpus, keywords, case_sen=False,
                                model_name='all-MiniLM-L6-v2'):
         """
         Computes a score for every document in a given pandas dataframe
@@ -103,8 +116,11 @@ class CorpusProcessor(object):
             Input corpus.
         keywords : list of str
             List of keywords
-        model_name : str, optinal (default = 'all-MiniLM-L6-v2')
+        model_name : str, optional (default = 'all-MiniLM-L6-v2')
             Name of the SBERT transformer model
+        case_sen : boolean, optimal (default=False)
+            If True, keyword comparison is case-sensitive. Otherwise, not.
+            (Only for keyword-count scoring)
 
         Returns
         -------
@@ -114,7 +130,8 @@ class CorpusProcessor(object):
 
         # Check if embeddings have been provided
         if self.path2embeddings is None:
-            score = self.score_docs_by_keyword_count(corpus, keywords)
+            score = self.score_docs_by_keyword_count(
+                corpus, keywords, case_sen=case_sen)
             return score
 
         # 1. Load sentence transformer model
@@ -234,7 +251,7 @@ class CorpusProcessor(object):
 
         return score
 
-    def compute_keyword_stats(self, corpus, keywords):
+    def compute_keyword_stats(self, corpus, keywords, case_sen=False):
         """
         Computes keyword statistics
 
@@ -244,6 +261,8 @@ class CorpusProcessor(object):
             Input corpus.
         keywords : list of str
             List of keywords
+        case_sen : boolean, optimal (default=False)
+            If True, keyword comparison is case-sensitive. Otherwise, not.
 
         Returns
         -------
@@ -261,7 +280,10 @@ class CorpusProcessor(object):
         for i, k in enumerate(keywords):
             print(f"-- Processing keyword {i + 1} out of {n_keywords}    \r",
                   end="")
-            counts = [doc.count(k) for doc in corpus]
+            if case_sen:
+                counts = [doc.count(k) for doc in corpus]
+            else:
+                counts = [doc.lower().count(k) for doc in corpus]
             df_stats[k] = np.count_nonzero(counts)
             kf_stats[k] = np.sum(counts)
 
@@ -460,7 +482,7 @@ class CorpusDFProcessor(object):
 
         return T_out, df_out
 
-    def compute_keyword_stats(self, keywords, wt=2):
+    def compute_keyword_stats(self, keywords, wt=2, case_sen=False):
         """
         Computes keyword statistics
 
@@ -470,6 +492,8 @@ class CorpusDFProcessor(object):
             Dataframe of corpus.
         keywords : list of str
             List of keywords
+        case_sen : boolean, optimal (default=False)
+            If True, keyword comparison is case-sensitive. Otherwise, not.
 
         Returns
         -------
@@ -490,11 +514,12 @@ class CorpusDFProcessor(object):
         corpus = ((self.df_corpus['title'] + ' ') * intwt
                   + self.df_corpus['description'])
 
-        df_stats, kf_stats = self.prep.compute_keyword_stats(corpus, keywords)
+        df_stats, kf_stats = self.prep.compute_keyword_stats(
+            corpus, keywords, case_sen=case_sen)
 
         return df_stats, kf_stats
 
-    def score_by_keyword_count(self, keywords, wt=2):
+    def score_by_keyword_count(self, keywords, wt=2, case_sen=False):
         """
         Computes a score for every document in a given pandas dataframe
         according to the frequency of appearing some given keywords
@@ -508,6 +533,8 @@ class CorpusDFProcessor(object):
         wt : float, optional (default=2)
             Weighting factor for the title components. Keyword matches with
             title words are weighted by this factor
+        case_sen : boolean, optimal (default=False)
+            If True, keyword comparison is case-sensitive. Otherwise, not.
 
         Returns
         -------
@@ -516,16 +543,16 @@ class CorpusDFProcessor(object):
         """
 
         score_title = self.prep.score_docs_by_keyword_count(
-            self.df_corpus['title'], keywords)
+            self.df_corpus['title'], keywords, case_sen=case_sen)
         score_descr = self.prep.score_docs_by_keyword_count(
-            self.df_corpus['description'], keywords)
+            self.df_corpus['description'], keywords, case_sen=case_sen)
 
         score = wt * np.array(score_title) + np.array(score_descr)
 
         return score
 
     def score_by_keywords(self, keywords, wt=2, model_name='all-MiniLM-L6-v2',
-                          method='embedding'):
+                          method='embedding', case_sen=False):
         """
         Computes a score for every document in a given pandas dataframe
         according to the frequency of appearing some given keywords
@@ -543,6 +570,9 @@ class CorpusDFProcessor(object):
         method : str in {'embedding', 'count'}
             - If 'count', documents are scored according to word counts
             - If 'embedding', scores are based on neural embeddings
+        case_sen : boolean, optimal (default=False)
+            If True, keyword comparison is case-sensitive. Otherwise, not.
+            (only for method='count')
 
         Returns
         -------
@@ -552,7 +582,8 @@ class CorpusDFProcessor(object):
 
         # Check if embeddings have been provided
         if method == 'count' or self.path2embeddings is None:
-            scores = self.score_by_keyword_count(keywords, wt)
+            scores = self.score_by_keyword_count(
+                keywords, wt, case_sen=case_sen)
             return scores
 
         # Copy relevant columns only
@@ -565,7 +596,7 @@ class CorpusDFProcessor(object):
         df_dataset.drop(columns=['description', 'title'], inplace=True)
 
         scores = self.prep.score_docs_by_keywords(
-            df_dataset['text'], keywords, model_name)
+            df_dataset['text'], keywords, model_name, case_sen=case_sen)
 
         return scores
 
@@ -662,8 +693,8 @@ class CorpusDFProcessor(object):
         return ids
 
     def filter_by_keywords(self, keywords, wt=2, n_max=1e100, s_min=0,
-                           model_name='all-MiniLM-L6-v2',
-                           method='embedding'):
+                           model_name='all-MiniLM-L6-v2', method='embedding',
+                           case_sen=False):
         """
         Select documents from a given set of keywords
 
@@ -686,6 +717,9 @@ class CorpusDFProcessor(object):
             - If 'count', documents are scored according to word counts
             - If 'embedding', scores are based on transformer embeddings
             The count method is much faster.
+        case_sen : boolean, optimal (default=True)
+            If True, keyword comparison is case-sensitive. Otherwise, not.
+            (only for method 'count')
 
         Returns
         -------
@@ -695,7 +729,8 @@ class CorpusDFProcessor(object):
             List of scores, one per documents in corpus
         """
 
-        scores = self.score_by_keywords(keywords, wt, model_name, method)
+        scores = self.score_by_keywords(
+            keywords, wt, model_name, method, case_sen=case_sen)
         ids = self.get_top_scores(scores, n_max=n_max, s_min=s_min)
 
         return ids, scores
