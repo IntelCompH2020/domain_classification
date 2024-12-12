@@ -882,6 +882,8 @@ class TaskManager(baseTaskManager):
             Number of training epoch
         """
 
+        breakpoint()
+
         if self.df_dataset is None:
             logging.warning("-- No model is loaded. "
                             "You must load or create a set of labels first")
@@ -2022,6 +2024,7 @@ class TaskManagerIMT(TaskManager):
         """
 
         self.setup()
+        breakpoint()
         self.load_corpus(corpus_name)
         if keyword_list == '__all_AI':
             self.keywords = (

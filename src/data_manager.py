@@ -535,6 +535,29 @@ class DataManager(object):
             logging.info(f'-- -- Raw corpus {corpus_name} read with '
                          f'{len(df_corpus)} documents')
 
+        elif corpus_name == 'SS_202403':
+
+            # Load data from parquet files
+            path2texts = self.path2corpus / 'corpus'
+            # Original fields are:
+            #  'actID', 'Order', 'ActivityType', 'Title', 'Keywords',
+            #  'ResearchAreas', 'DOI', 'Year', 'Publisher', 'ISSN', 'EISSN',
+            #  'ISBN', 'referencecount', 'citationcount',
+            #  'influentialcitationcount', 'paperAbstract'
+            columns = ['actID', 'Title', 'paperAbstract', 'Keywords']
+            # Map column names to normalized names
+            mapping = {'actID': 'id',
+                       'Title': 'title',
+                       'paperAbstract': 'description',
+                       'Keywords': 'keywords'}
+            
+            breakpoint()
+
+            df_corpus = self._load_parquet(path2texts, columns, mapping)
+
+            logging.info(f'-- -- Raw corpus {corpus_name} read with '
+                         f'{len(df_corpus)} documents')
+
         elif corpus_name == 'cordis_evoc_vs_all':
 
             # Original fields are:
@@ -1495,7 +1518,8 @@ class LogicalDataManager(DataManager):
             with ProgressBar():
                 df_corpus = dfsmall.compute()
 
-            if 'categoryfld' not in dataset or dataset['categoryfld'] == "":
+            if ('categoryfld' not in dataset or dataset['categoryfld'] == ""
+                    or dataset['categoryfld'] is None):
                 selected_cols = np.array([dataset['idfld'],
                                           dataset['titlefld'],
                                           dataset['textfld']])
