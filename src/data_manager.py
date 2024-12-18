@@ -394,9 +394,12 @@ class DataManager(object):
             'SemanticScholar', 'SemanticScholar_emb', 'patstat', 'patstat_emb',
             'AEI_projects', 'CORDIS.parquet', 'S2CS.parquet',
             'cordis_evoc_vs_all', 'OA_AIkwds_3vs1', 'cordis_AIkwds_3vs1',
-            'patstat_AIkwds_3vs1', 'patstat_intersection_vs_all'}
+            'patstat_AIkwds_3vs1', 'patstat_intersection_vs_all',
+            'cordis_intersection_vs_all',
+            'S2_AIkwds_3vs1','S2_cancerkwds_3vs1'}
         remove_non_en = corpus_name in {
             'SemanticScholar', 'SemanticScholar_emb', 'patstat', 'patstat_emb'}
+            # 'S2_AIkwds_3vs1', 'S2_cancerkwds_3vs1'}
 
         if corpus_name == 'EU_projects':
 
@@ -551,8 +554,6 @@ class DataManager(object):
                        'paperAbstract': 'description',
                        'Keywords': 'keywords'}
             
-            breakpoint()
-
             df_corpus = self._load_parquet(path2texts, columns, mapping)
 
             logging.info(f'-- -- Raw corpus {corpus_name} read with '
@@ -603,7 +604,8 @@ class DataManager(object):
             logging.info(f'-- -- Raw corpus {corpus_name} read with '
                          f'{len(df_corpus)} documents')
 
-        elif corpus_name == 'cordis_AIkwds_3vs1':
+        elif corpus_name in {'cordis_AIkwds_3vs1',
+                             'cordis_intersection_vs_all'}:
 
             # Original fields are:
             #   'id', 'title', 'description', 'Kwd_count'
@@ -616,12 +618,16 @@ class DataManager(object):
             #   'publicationID', 'patentID', 'Kwd_count'
 
             # Load data from parquet files
-            columns = ['projectID', 'title', 'objective', 'Kwd_count']
-            mapping = {'projectID': 'id', 'objective': 'description'}
-
             path2texts = self.path2corpus / 'corpus'
-            path2_c1 = path2texts / 'cordis_Kwds3_AI.parquet'
-            path2_c0 = path2texts / 'cordis_Kwds_AI.parquet'
+            if corpus_name == 'cordis_AIkwds_3vs1':
+                path2_c1 = path2texts / 'cordis_Kwds3_AI.parquet'
+                path2_c0 = path2texts / 'cordis_Kwds_AI.parquet'
+                columns = ['projectID', 'title', 'objective', 'Kwd_count']
+            else:
+                path2_c1 = path2texts / 'cordis_intersection_Cancer.parquet'
+                path2_c0 = path2texts / 'cordis_all_Cancer.parquet'
+                columns = ['projectID', 'title', 'objective']
+            mapping = {'projectID': 'id', 'objective': 'description'}
 
             df_c1 = self._load_parquet(path2_c1, columns, mapping)
             df_corpus = self._load_parquet(path2_c0, columns, mapping)
@@ -642,6 +648,42 @@ class DataManager(object):
             logging.info(f'-- -- Raw corpus {corpus_name} read with '
                          f'{len(df_corpus)} documents')
 
+        elif corpus_name in {'S2_AIkwds_3vs1', 'S2_cancerkwds_3vs1'}:
+
+            # Original fields are:
+            #   'id', 'pmid', 'doi', 'year', 'title', 'paperAbstract',
+            #   'Kwd_count'
+
+            # Load data from parquet files
+            path2texts = self.path2corpus / 'corpus'
+            if corpus_name == 'S2_AIkwds_3vs1':
+                path2_c1 = path2texts / 'S2_Kwds3_AI.parquet'
+                path2_c0 = path2texts / 'S2_Kwds_AI.parquet'
+            else:
+                path2_c1 = path2texts / 'S2_Kwds3_cancer.parquet'
+                path2_c0 = path2texts / 'S2_Kwds_cancer.parquet'
+
+            columns = ['id', 'title', 'paperAbstract']
+            mapping = {'paperAbstract': 'description'}
+            df_c1 = self._load_parquet(path2_c1, columns, mapping)
+            df_corpus = self._load_parquet(path2_c0, columns, mapping)
+
+            # All items in df_c1 should be in df_corpus. Check it
+            id1 = set(df_c1.id)
+            id0 = set(df_corpus.id)
+            n_notinall = len(id1 - id0)
+            if len(id1 - id0) > 0:
+                logging.warning(
+                    f"-- {n_notinall} items in the subcorpus files are not in "
+                    "the complete dataset and will be ignored")
+                id1 = id1.setintersection(id0)
+
+            # Create column of given scores. For this dataset, scores are 0/1
+            df_corpus['scores'] = df_corpus['id'].isin(id1).astype(float)
+
+            logging.info(f'-- -- Raw corpus {corpus_name} read with '
+                         f'{len(df_corpus)} documents')
+            
         elif corpus_name == 'patstat_AIkwds_3vs1':
 
             # Original fields are:
@@ -850,8 +892,8 @@ class DataManager(object):
                     row['title'] + ' ' + row['description'])
                 if int(100 * count / len(df_corpus)) > iPercent:
                     iPercent = int(100 * count / len(df_corpus))
-                    logging.info(f"-- -- {iPercent} % of documents processed "
-                                 "for applying language filter")
+                    print(f"-- -- {iPercent} % of documents processed for "
+                          "applying language filter  \r", end="")
 
             df_corpus = df_corpus[df_corpus['eng']]
             df_corpus.drop(columns='eng', inplace=True)
