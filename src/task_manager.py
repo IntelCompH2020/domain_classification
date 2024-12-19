@@ -882,8 +882,6 @@ class TaskManager(baseTaskManager):
             Number of training epoch
         """
 
-        breakpoint()
-
         if self.df_dataset is None:
             logging.warning("-- No model is loaded. "
                             "You must load or create a set of labels first")
