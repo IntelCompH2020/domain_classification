@@ -648,7 +648,7 @@ class DataManager(object):
             logging.info(f'-- -- Raw corpus {corpus_name} read with '
                          f'{len(df_corpus)} documents')
 
-        elif corpus_name in {'S2_AIkwds_3vs1', 'S2_cancerkwds_3vs1'}:
+        elif corpus_name in {'S2_AIkwds_3vs1', 'S2_cancerkwds_3vs1', 'S2_cancer_hceres_vs_1kwd'}:
 
             # Original fields are:
             #   'id', 'pmid', 'doi', 'year', 'title', 'paperAbstract',
@@ -659,9 +659,13 @@ class DataManager(object):
             if corpus_name == 'S2_AIkwds_3vs1':
                 path2_c1 = path2texts / 'S2_Kwds3_AI.parquet'
                 path2_c0 = path2texts / 'S2_Kwds_AI.parquet'
-            else:
+            elif corpus_name == 'S2_cancerkwds_3vs1':
                 path2_c1 = path2texts / 'S2_Kwds3_cancer.parquet'
                 path2_c0 = path2texts / 'S2_Kwds_cancer.parquet'
+            else:
+                path2_c1 = path2texts / 'S2_cancer_HCERES.parquet'
+                path2_c0 = path2texts / 'S2_kwd_extended_cancer.parquet'
+                
 
             columns = ['id', 'title', 'paperAbstract']
             mapping = {'paperAbstract': 'description'}
