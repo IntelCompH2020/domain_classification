@@ -396,9 +396,11 @@ class DataManager(object):
             'cordis_evoc_vs_all', 'OA_AIkwds_3vs1', 'cordis_AIkwds_3vs1',
             'patstat_AIkwds_3vs1', 'patstat_intersection_vs_all',
             'cordis_intersection_vs_all',
-            'S2_AIkwds_3vs1','S2_cancerkwds_3vs1'}
+            'S2_AIkwds_3vs1','S2_cancerkwds_3vs1',
+            'S2_cancer_hceres_vs_1kwd'}
         remove_non_en = corpus_name in {
             'SemanticScholar', 'SemanticScholar_emb', 'patstat', 'patstat_emb'}
+            # 'S2_cancer_hceres_vs_1kwd'}
             # 'S2_AIkwds_3vs1', 'S2_cancerkwds_3vs1'}
 
         if corpus_name == 'EU_projects':
