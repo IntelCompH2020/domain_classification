@@ -86,21 +86,29 @@ class CorpusProcessor(object):
         score = []
         n_docs = len(corpus)
 
-        if not case_sen:
+        if case_sen:
+            # Keep keywords as they are. No conversion to lowercase
+            keywords_ = keywords
+        else:
             # Convert keywords to lowercase
             keywords_ = [k.lower() for k in keywords]
 
-        if case_sen:
-            for i, doc in enumerate(corpus):
-                print(f"-- Processing document {i} out of {n_docs} \r", end="")
-                reps = [doc.count(k) for k in keywords]
-                score.append(sum(reps))
-        else:
-            for i, doc in enumerate(corpus):
-                print(f"-- Processing document {i} out of {n_docs} \r", end="")
+        # Separate positive and negative keywords. Negative keywords are those
+        # starting with a "--" string
+        pos_keywords = [k for k in keywords_ if not k.startswith("--")]
+        neg_keywords = [k[2:] for k in keywords_ if k.startswith("--")]
+
+        for i, doc in enumerate(corpus):
+            print(f"-- Processing document {i} out of {n_docs} \r", end="")
+            if case_sen:
+                pos_reps = [doc.count(k) for k in pos_keywords]
+                neg_reps = [doc.count(k) for k in neg_keywords]
+            else:
                 doc_ = doc.lower()
-                reps = [doc_.count(k) for k in keywords_]
-                score.append(sum(reps))
+                pos_reps = [doc_.count(k) for k in pos_keywords]
+                neg_reps = [doc_.count(k) for k in neg_keywords]
+
+            score.append(sum(pos_reps) - sum(neg_reps))
 
         return score
 
